@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss version="2.0">
+  <channel>
+    <title>LIFIA - Novedades</title>
+    <link>http://www.lifia.info.unlp.edu.ar/</link>
+    <description>Laboratorio de Investigación y Formación en Informática Avanzada</description>
+    <language>es</language>
+      <pubDate>Thu, 18 Sep 2008 012:55:00 GMT</pubDate>
+    <lastBuildDate>Tue, 04 Sep 2008 015:15:00 GMT</lastBuildDate>
+    <docs>http://www.lifia.info.unlp.edu.ar/feed.xml</docs>
+	
+	<!-- Notas del sitio-->
+	
+	<title>GSPCA (por Andoni Zubimendi) 18/Septiembre/2008</title>
+	        <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080917.htm</link>
+      <description>
+	  Meses atrás me había decidido a comprar una webcam para casa. Esto no tiene mucha dificultad a primera vista, salvo por el detalle de ser un usuario de GNU/Linux, lo que hace que uno tenga que buscar el hardware soportado con un poco más de detenimiento. Busqué webcams soportadas por el núcleo Linux, ya sea directamente o por controladores de terceros, comparé con las que estaban disponibles en el mercado y finalmente me decidí a comprar una webcam Genius VideoCam Look 300. Esta cámara tiene soporte oficial desde hace un tiempo en el núcleo, y no tiene reportes de fallos ni de calidad de imagen. Parecía un candidato perfecto. 
+</description>
+      <pubDate>Thu, 18 Sep 2008 012:55:00 GMT</pubDate>
+    </item>
+	
+	<item>
+      <title>Proyecto Wii Remote(por Laureano Bulus)- 04/Septiembre/2008 </title>
+	        <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080904.htm</link>
+      <description>
+	  Desde su lanzamiento a fines de 2006 en los mercados más importantes del mundo, Wii ha revolucionado el mundo de los video juegos. Es la última consola de Nintendo que ha salido al campo de batalla para luchar contra sus archienemigos PlayStation 3 y XBOX 360, empleando características distintivas como son su reducido tamaño y amplia posibilidad de interconexión (USB, BlueTooth y WiFi) y llevando al frente su estandarte: el novedoso Control Remoto Wii (Wii Remote o comúnmente Wiimote). Dentro del LINSE la intención original es emplear el Wiimote en relación con software de juegos, sin embargo su rango de aplicación es mucho más amplio.
+</description>
+      <pubDate>Tue, 04 Sep 2008 015:15:00 GMT</pubDate>
+    </item>
+	
+	
+	<item>
+      <title>Los patrones como una herramienta de diseño de juegos (por Inés Pederiva) - 07/Agosto/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080807.htm</link>
+      <description>
+En LINSE (Laboratorio de Investigación en Software de Entretenimiento o LIFIA 48), estamos analizando patrones para el diseño de juegos. En particular, nos focalizamos en patrones que aplican a los llamados juegos de reels de casinos.  	  </description>
+      <pubDate>Tue, 07 Ago 2008 014:40:00 GMT</pubDate>
+    </item>
+	
+	
+	
+	<item>
+      <title>EMOOSE y su gente (por Gabriela Arévalo) - 29/Julio/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080729.htm</link>
+      <description>
+En esta nota Gabriela nos cuenta qué es el EMOOSE, y como se realiza el intercambio entre estudiantes sudamericanos y europeos. También nos cuenta quiénes fueron los lifianos que en los últimos años participaron de este intercambio. 	  </description>
+      <pubDate>Thu, 29 Jul 2008 014:20:00 GMT</pubDate>
+    </item>
+	
+	
+	
+	<item>
+      <title>JavaScript by example (Leandro Yalet) - 17/Julio/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080717.htm</link>
+      <description>
+ 			En esta nota Leandro, nos muestra ejemplos de Javascript, utilizando la biblioteca Mootools, y el poco esfuerzo que lleva realizarlo.
+	  </description>
+      <pubDate>Tue, 17 Jul 2008 014:20:00 GMT</pubDate>
+    </item>
+	
+	<item>
+      <title>Relevamiento y Diagnóstico en la Comisión de Investigaciones Científicas (por Diego Cano) - 24/Junio/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080624.htm</link>
+      <description>
+ 			La Comisión de Investigaciones Científicas (CIC) es una institución perteneciente al Gobierno de la Provincia de Buenos Aires. Su misión es promover, patrocinar, orientar y realizar investigaciones científicas y técnicas, dentro de la política general que al respecto fije el Poder Ejecutivo, procurando una correcta coordinación de los esfuerzos. Diego nos cuenta el trabajo que realizó el LIFIA en colaboración con el LINTI.
+	  </description>
+      <pubDate>Thu, 26  Jun 2008 015:00:00 GMT</pubDate>
+    </item>
+
+	<item>
+      <title>¿Cómo la tecnología puede facilitar un medio ambiente sostenible? (por Ricardo Tesoriero) 10/Junio/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080610.htm</link>
+      <description>
+ 			  Uno de los alumnos a los cuales le co-dirijo el proyecto de fin de carrera junto con José Antonio Gallud, es un entusiasta de .NET y quería participar en el concurso Imagine Cup que organiza Microsoft todos los años. El tema era "Como la tecnología puede facilitar un medio ambiente sostenible". Ricardo nos cuenta sobre la experiencia de utilizar RFID.
+	  </description>
+      <pubDate>Tue, 10  Jun 2008 009:00:00 GMT</pubDate>
+    </item>
+	
+	
+	<item>
+      <title>Tesis Cano-Trilla (por Diego Cano) 08/Mayo/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080508.htm</link>
+      <description>
+ 			  Un Sistema de Información Geográfica (SIG) es un conjunto de procedimientos manuales o computarizados utilizados para almacenar y manipular datos referenciados geográficamente. Un SIG no es una aplicación concreta, sino que constituye un núcleo, un conjunto de métodos para la gestión de datos georeferenciados que cualquier aplicación concreta de cualquier dominio puede utilizar. Las aplicaciones concretas en que se utiliza un SIG actualmente son muy numerosas y diversas.
+El presente trabajo de grado consiste en el desarrollo de un modelo genérico que brinde funcionalidad referente a la gestión de información geográfica. Este modelo constituye una capa de SIG y se busca que sobre la misma pueda montarse cualquier aplicación cliente concreta que necesite gestionar información geográfica. Los requisitos de integración entre esta capa genérica y las aplicaciones clientes concretas deben ser mínimos de modo reducir el esfuerzo de integración entre ambas.
+	  </description>
+      <pubDate>Thu, 08 May 2008 016:30:00 GMT</pubDate>
+    </item>
+		
+		
+	<item>
+      <title>Herramienta de Tasación de Llamadas Telefónicas de Interconexión (por Federico Tello Gentile) 24/Abril/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080424.htm</link>
+      <description>
+ 			  Cuando cualquiera de nosotros hace una llamada telefónica pueden intervenir una o varias empresas de telefonía para llevarla a cabo. En el caso de las llamadas internacionales es evidente que ninguna empresa puede tener conectados a todos los teléfonos del mundo, de manera que tendrá que pasarle la llamada a alguna otra que sí esté conectada con el destinatario. Pero aún, dentro de un mismo país y en la misma ciudad, puede haber llamadas entre empresas diferentes (por ejemplo de un móvil de Personal a un teléfono fijo de Telefónica). La operación que realiza una empresa de telefonía cuando le pasa una llamada a otra se denomina interconexión. Toda operación de ese tipo implica una transacción comercial, ya que las empresas cobran por el uso de la red.
+	  </description>
+      <pubDate>Thu, 24 Apr 2008 014:30:00 GMT</pubDate>
+    </item>
+
+	<item>
+      <title>Tesis Doctoral (Por Roxana Giandini) 15/Abril/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080415.htm</link>
+      <description>El paradigma MDE (Model Driven Engeenering) tiene dos ejes principales: - por un lado hace énfasis en la separación entre la especificación de la funcionalidad esencial del sistema y la implementación de dicha funcionalidad usando plataformas tecnológicas específicas. Los modelos son considerados los conductores primarios en todos los aspectos del desarrollo de software. La transformación entre modelos constituye el motor del MDE y de esta manera los modelos pasan de ser entidades meramente contemplativas a ser entidades productivas. Existe también una visión genérica sobre la metodología MDE, en la cual el proceso de desarrollo de software es implementado mediante una red de transformaciones que se combinan o componen en modos diversos. La habilidad de organizar o componer diferentes transformaciones en manera flexible y confiable con el fin de producir el resultado requerido, es un desafío principal en MDE. Por lo tanto la definición formal de lenguajes de transformación debe incluir mecanismos de composición. </description>
+      <pubDate>Tue, 15 Apr 2008 013:30:00 GMT</pubDate>
+    </item>
+
+	<item>
+      <title>Javascript (por Leandro Yalet) 03/Abril/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080403.htm</link>
+      <description>En esta nota Leandro nos cuenta un poco de la historia de Javascript y las características que posee. </description>
+      <pubDate>Thu, 03 Apr 2008 011:30:00 GMT</pubDate>
+    </item>
+	
+	<item>
+      <title>Aspectos en el modelo de dominio – Tesis de grado (por Chiarle-Martinez)26/Marzo/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080326.htm</link>
+      <description>La calidad del software depende fuertemente de sus requerimientos. Boehm establece que reparar errores en las etapas posteriores a la de requerimientos puede llegar a ocasionar un costo de entre 100 a 200 veces mayor que hacerlo en la de definición de requerimientos. Según Ackoff: ¿Fallamos más a menudo porque resolvemos el problema incorrecto, que porque obtenemos una solución inadecuada del problema correcto?. Es en este punto que una declaración general del alcance de software es refinada en una especificación concreta que llega a ser la base para todas las actividades de ingeniería de software que dirige lo que sigue.
+El software generalmente permite a diferentes tipos de usuarios interactuar con complejos sistemas de información, por eso es razonable que surjan muchos aspectos diferentes y no relacionados. Muchos de ellos son inherentes a las aplicaciones en general, tales como la persistencia, la seguridad y la privacidad; otros se relacionan al dominio específico del problema. La única manera de tratar con éstos aspectos es poder identificarlos y modularizarlos correctamente, entender los impactos y relaciones entre ellos y sus relaciones con los artefactos de diseño que los representan. Identificarlos y encapsularlos en módulos separados, independientemente de su naturaleza (funcional o no funcional), es fundamental para facilitar su reuso, rastreabilidad y evolución.  </description>
+      <pubDate>Wed, 26 Mar 2008 016:30:00 GMT</pubDate>
+    </item>
+	
+
+<item>
+      <title>¿Qué es integración continua (IC)? (por Germán Insogna) 13/Marzo/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080313.htm</link>
+      <description>La integración continua es una práctica de desarrollo de software donde los miembros de un equipo de desarrollo integran su trabajo con frecuencia, por lo general se hace una integración una vez al día, teniendo múltiples integraciones diarias por equipo. Cada integración es verificada y posiblemente realizada por un sistema automatizado de construcción (incluidas las pruebas). De esta manera se pueden detectar errores en la integración lo más rápido posible. Los equipos de desarrollo encuentran en este enfoque una solución que los lleva a reducir los problemas de integración y permitir el desarrollo de software rápidamente.  </description>
+      <pubDate>Thu, 13 Mar 2008 015:30:00 GMT</pubDate>
+    </item>
+
+
+
+
+<item>
+      <title>Generación de micromundos para transformación de modelos – Tesina de licenciatura (por María Noel Castro Manacero y Martín Saporiti) 03/Marzo/2008 </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080303.htm</link>
+      <description>Escribir transformaciones de modelos es una tarea compleja y propensa a errores. Garantizar formalmente la correctitud de estas transformaciones es difícil, siendo requeridas técnicas de verificación formal. Una aproximación alternativa es la validación por testeo. El testeo de una trasformación de modelos es típicamente realizado chequeando el resultado de la transformación aplicada a un conjunto de modelos de entrada. Para que la transformación sea confiable y esté librada de errores, lo ideal es extraer del modelo un conjunto de instancias con estado representativo y verificar si las condiciones de refinamiento establecidas entre los modelos se satisfacen para esas instancias. Este conjunto de instancias es llamado "micromundo". En la práctica, la construcción manual y la edición de los micromundos son tareas tediosas (la estructura de los datos puede ser compleja, y los modelos pueden ser difíciles de manejar). La generación de los micromundos debe entonces estar automatizada para evitar la tarea de construirlos manualmente. La motivación de este trabajo es definir e implementar una estrategia eficiente y confiable para validar transformaciones de modelos UML. Dicha estrategia se basará en la técnica de generación de micromundos la cual ha sido propuesta y explotada para la V&V de sistemas de software tradicionales.  </description>
+      <pubDate>Mon, 03 Mar 2008 008:50:00 GMT</pubDate>
+    </item>
+	
+
+
+<item>
+      <title>Proyecto Universia (por Darío Silva Morán) 21/Febrero/2008 </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080221.htm</link>
+      <description>Universia nació en Julio de 2000 como una iniciativa en Internet, en el ámbito de la educación superior, impulsada por un grupo de universidades españolas y el patrocinio del Grupo Santander.
+Oficialmente se presentó en Madrid (España) el 9 de julio de 2000 y se planteó como una iniciativa española con vocación iberoamericana. Hoy está presente en Argentina, Brasil, Chile, Colombia, España, México, Perú, Portugal, Puerto Rico, Uruguay y Venezuela.
+La Red Universia está formada por 1056 Universidades de esos 11 países de Iberoamérica. Cuenta con 12 portales en Internet, uno por país donde está presente y uno global que recoge información y contenidos de toda la Red.
+Lifia se involucra en Octubre del 2007 con el fin unificar las BD de los portales y construir aplicaciones para la gestión y consulta de esta información. </description>
+      <pubDate>Thu, 21 Feb 2008 008:45:00 GMT</pubDate>
+    </item>
+	
+
+
+<item>
+      <title>Migrador Genérico (por Alfonso Quiroga) 21/Enero/2008 </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080121.htm</link>
+      <description>En Chile se encuentra "Tiendas Paris", una tienda con varias sucursales que vende todo tipo de productos. La consultora informática NECTIA trabaja para ellos, y en esta ocasión se necesitaba hacer una migración de datos. El problema era migrar archivos .xls, la solución fue desarrollar un migrador genérico.</description>
+      <pubDate>Mon, 21 Ene 2008 011:50:00 GMT</pubDate>
+    </item>
+
+
+<item>
+      <title>Seguridad simple para un sitio web (por Marcelo Barreto y Esteban Cerutti) 11/Enero/2008 </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080111.htm</link>
+      <description>Enterate de como se puede restringir el acceso a una página web, realizada solamente en Html, en forma simple.</description>
+      <pubDate>Fri, 11 Ene 2008 010:15:00 GMT</pubDate>
+    </item>
+	
+
+<item>
+      <title>Struts 1 vs struts 2 (por Federico Carpi) 03/Enero/2008</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20080103.htm</link>
+      <description>Struts es una herramienta de soporte para el desarrollo de aplicaciones Web bajo el patrón MVC en la plataforma J2EE. Una de las características principales es que permite reducir el tiempo de desarrollo. Su carácter de " software libre" y su compatibilidad con todas las plataformas en que Java esta disponible, lo convierte en una herramienta altamente disponible. En esta nota enterate de las similitudes, ventajas y desventajas que poseen cada una de las versiones.  </description>
+      <pubDate>Thu, 03 Ene 2008 009:45:00 GMT</pubDate>
+    </item>
+
+
+
+<item>
+      <title>ESI Center Cono Sur 17/Diciembre/2007</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20071217.htm</link>
+      <description>El European Software Institute (ESI) es una fundación sin fines de lucro lanzada como una iniciativa de la Comisión Europea, con el apoyo del Gobierno Vasco y las principales empresas europeas que trabajan en el campo de tecnología de la información. El European Software Institute es además una entidad reconocida por sus redes mundiales de excelencia en ingeniería de software y es uno de los principales SEI Partner para certificaciones CMMI(R). Enterate en esta nota de la conformación del ESI Center Cono Sur, que firmaron los Laboratorios de la Facultad, junto con el Grupo Tekne. </description>
+      <pubDate>Tue, 18 Dic 2007 011:00:00 GMT</pubDate>
+    </item>
+
+
+    <item>
+      <title>Embedded systems por Nahuel Lofeudo) - 5/Julio/2007</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070705.htm</link>
+      <description> Todos estamos rodeados de computadoras que no se ven, y que hacen su 
+trabajo sin molestarnos con cartelitos de error o reinstalaciones, y
+sin darse a conocer. Son lo que en la jerga se llama "embedded
+systems", que se traduce como "sistemas empotrados" o "sistemas
+embebidos". En el grupo de Context-Aware del Lifia estamos trabajando
+con microcontroladores para crear software que pueda reaccionar a su
+entorno, sensando su posición en el espacio y actuando en
+consecuencia..</description>
+      <pubDate>Sun, 08 Jul 2007 011:00:00 GMT</pubDate>
+    </item>
+	
+	   <item>
+      <title>EJB 3 Persistence API (por Santiago Urrizola) - 18/Julio/2007</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070718.htm</link>
+      <description>  EJB 3 Persistence API es el estándar de persistencia  que reemplaza
+a los "Entity Beans". Algunas de las ventajas que provee son: (i)
+independencia del mecanismo de persistencia utilizado. (ii) soporte
+para ejecutar EJBs en ambientes no controlados por el contenedor (como
+pruebas con Junit o aplicaciones desktop)..</description>
+      <pubDate>Wed, 18 Jul 2007 011:00:00 GMT</pubDate>
+    </item>
+	
+	  <item>
+      <title>Los jugadores virtuales de casino: “Las RULES” (por C. Sebastián Castañeda) - 27/Julio/2007</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070727.htm</link>
+      <description> Uno de los principales testings que realizamos a los juegos desarrollados en casino es el de lograr que los mismos jueguen durante horas sin parar, como si ya estuviesen instalados en un casino. Obviamente, realizar esta tarea en forma manual es un poco complicada, principalmente porque se necesitarían muchos recursos humanos. Aún contando con la cantidad necesaria de personas dedicadas únicamente a jugar se necesitarían varios días para lograr la cantidad razonable (más de un millón) de jugadas, que nos permita afirmar que el juego ha logrado un alto nivel de estabilidad y que funciona correctamente....</description>
+      <pubDate>Mon, 30 Jul 2007 014:00:00 GMT</pubDate>
+    </item>
+    
+	  <item>
+      <title>Asistencia sensible al contexto en aplicaciones de Hipermedia Física (por Cecilia Challiol) - 16/Agosto/2007 </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070816.htm</link>
+      <description>Las aplicaciones de Hipermedia Física (HF) extienden el paradigma de Hipermedia, brindando soporte para que los usuarios con dispositivos móviles puedan explorar tanto digitalmente como físicamente los objetos de interés. El objetivo de esta investigación está relacionado con la exploración en detalle de la funcionalidad necesaria para soportar la navegación siguiendo links físicos. El resultado concreto esperado del trabajo es la definición de una arquitectura de soporte a la navegación física, materializada por un framework que permita el agregado y la composición de servicios sensibles al contexto de asistencia a la navegación física..</description>
+      <pubDate>Thu, 16 Aug 2007 020:30:00 GMT</pubDate>
+    </item>
+	
+	  <item>
+      <title>Grupo de investigación en juegos (por Maximiliano Davids y Federico Balaguer) - 27/Agosto/2007  </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070827.htm</link>
+      <description>El grupo de investigación en juegos es un área de Investigación y Desarrollo del LIFIA iniciada a partir de un convenio con la empresa ID Interactive. El objetivo de este grupo es generar innovación tecnológica interactuando fuertemente con el equipo de desarrollo de la empresa así como con otros grupos de investigacion y desarrollo que trabajan en temas afines.</description>
+      <pubDate>Sun, 26 Aug 2007 009:20:00 GMT</pubDate>
+    </item>
+	
+	  <item>
+      <title>Spring scheduling (por Santiago Urrizola) - 10/Septiembre/2007  </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070910.htm</link>
+      <description>En aplicaciones donde muchas de las tareas son automáticas (y no disparadas por la acción de un usuario) es indispensable la utilización de procesos. Anteriormente se recurría a envío de mensajes asincrónicos (JMS por ejemplo) desde algún otro proceso con un CRON de LINUX para la ejecución de los procesos dentro de la aplicación. Con la aparición de frameworks como Timer y Quartz, junto con la integración transparente que provee Spring, la definición entera de los procesos queda dentro del scope de la aplicación.</description>
+      <pubDate>Tue, 11 Sep 2007 010:20:00 GMT</pubDate>
+    </item>
+	
+	  <item>
+      <title>Lifia Formación Corporativa –LFC- 26/Septiembre/2007   </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20070926.htm</link>
+      <description>Una nueva capacitación integrada ha comenzado y con ella el desafío institucional para satisfacer la demanda de formación de uno de los entes del estado más grande e importante: AFIP. </description>
+      <pubDate>Wed, 26 Sep 2007 011:10:00 GMT</pubDate>
+    </item>
+	
+	  <item>
+      <title>Hibernate cache (por  Santiago Urrizola) 24/Octubre/2007   </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20071024.htm</link>
+      <description>La arquitectura de caché de Hibernate es muy potente: ofrece dos niveles de caché orientados a tareas muy diferentes. Solo el primero de ellos es obligatorio. Por si fuese poco, Hibernate incluye una caché de consultas que nos da la posibilidad de obtener rápidamente resultados que ya habían sido consultados previamente. En este nota Santiago nos traslada su experiencia con esta tecnología.</description>
+      <pubDate>Wed, 24 Oct 2007 016:30:00 GMT</pubDate>
+    </item>
+	
+	  <item>
+      <title>Usted está aquí (por Nahuel Lofeudo) 13/Noviembre/2007   </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20071107.htm</link>
+      <description>El tema de sensar la posición en el espacio para los equipos móviles tiene larga data. Desde que se inventaron las computadoras portátiles hay gente que está tratando de hacer que las aplicaciones sepan dónde están y hagan algo con eso. Los famosos navegadores satelitales que están tan en boga estos días son una buena muestra de que la investigación ha dado, hasta cierto punto, sus frutos. Nahuel nos describe la tecnología que utiliza para sensar posición.</description>
+      <pubDate>Tue, 13 Nov 2007 012:00:00 GMT</pubDate>
+    </item>
+	
+	 <item>
+      <title>Compilación Distribuida (por Abel Valente) 29/Noviembre/2007  	  </title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/difusion/20071128.htm</link>
+      <description>El problema que tuvieron los chicos del proyecto casino, es que la compilación de los juegos siempre fue algo lenta. Luego de pasar por varias versiones de compiladores, decidieron buscar una forma de acelerar este proceso. La solución fue utilizar compilación distribuida, con la que pudieron reducir el tiempo de compilación notablemente.</description>
+      <pubDate>Thu, 29 Nov 2007 014:15:00 GMT</pubDate>
+    </item>
+	
+		<!-- Capacitación Inicial-->
+		
+	<item>
+      <title>Capacitación Inicial</title>
+      <link>http://www.lifia.info.unlp.edu.ar/es/rr_training.htm</link>
+      <description>
+			La capacitación inicial tiene lugar dos veces al año: de Marzo a Julio y de Agosto a Diciembre. Se convoca abiertamente 			por medio de carteleras en facultades de informática de la ciudad de La Plata. Para mas información diríjase a la wiki 																																																																																																																																																																																																																									           de la capacitación inicial.
+	  </description>
+      <pubDate>Tue, 29 Apr 2008 013:30:00 GMT</pubDate>
+    </item>
+	
+	
+   </channel>
+</rss>

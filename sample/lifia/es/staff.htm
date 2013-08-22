@@ -1,0 +1,644 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Lifia</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="shortcut icon" href="imagenes/lifiaicon.ico" >
+<style type="text/css">
+<!--
+@import url(estilos_lifia.css);
+body {
+	background-color: #bec2d1;
+	margin-left: 0px;
+	margin-top: 5px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-image: url();
+}
+a:link {
+	color: #255282;
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+	color: #255282;
+}
+a:hover {
+	text-decoration: none;
+	color: #FF9933;
+}
+a:active {
+	text-decoration: none;
+	color: #FF9933;
+}
+.Estilo4 {color: #666666}
+-->
+</style>
+<link href="site_map.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+-->
+</style>
+<link href="inproceedings.css" rel="stylesheet" type="text/css">
+<link href="referencias.css" rel="stylesheet" type="text/css">
+<link href="pag_personales.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.Estilo7 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #255282;
+}
+.Estilo8 {font-size: 10px; font-style: normal; line-height: normal; font-variant: normal; vertical-align: middle; color: #255282; white-space: normal; text-align: left; letter-spacing: normal; text-indent: 10pt; padding-bottom: 1px; padding-top: 2px; border-top-width: 1px; border-top-style: solid; border-top-color: #CAD2E4; font-family: Verdana, Arial, Helvetica, sans-serif;}
+.Estilo10 {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color: #255282; font-weight: bold; }
+-->
+</style>
+<script language="JavaScript" type="text/JavaScript">
+<!--
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_nbGroup(event, grpName) { //v6.0
+  var i,img,nbArr,args=MM_nbGroup.arguments;
+  if (event == "init" && args.length > 2) {
+    if ((img = MM_findObj(args[2])) != null && !img.MM_init) {
+      img.MM_init = true; img.MM_up = args[3]; img.MM_dn = img.src;
+      if ((nbArr = document[grpName]) == null) nbArr = document[grpName] = new Array();
+      nbArr[nbArr.length] = img;
+      for (i=4; i < args.length-1; i+=2) if ((img = MM_findObj(args[i])) != null) {
+        if (!img.MM_up) img.MM_up = img.src;
+        img.src = img.MM_dn = args[i+1];
+        nbArr[nbArr.length] = img;
+    } }
+  } else if (event == "over") {
+    document.MM_nbOver = nbArr = new Array();
+    for (i=1; i < args.length-1; i+=3) if ((img = MM_findObj(args[i])) != null) {
+      if (!img.MM_up) img.MM_up = img.src;
+      img.src = (img.MM_dn && args[i+2]) ? args[i+2] : ((args[i+1])? args[i+1] : img.MM_up);
+      nbArr[nbArr.length] = img;
+    }
+  } else if (event == "out" ) {
+    for (i=0; i < document.MM_nbOver.length; i++) {
+      img = document.MM_nbOver[i]; img.src = (img.MM_dn) ? img.MM_dn : img.MM_up; }
+  } else if (event == "down") {
+    nbArr = document[grpName];
+    if (nbArr)
+      for (i=0; i < nbArr.length; i++) { img=nbArr[i]; img.src = img.MM_up; img.MM_dn = 0; }
+    document[grpName] = nbArr = new Array();
+    for (i=2; i < args.length-1; i+=2) if ((img = MM_findObj(args[i])) != null) {
+      if (!img.MM_up) img.MM_up = img.src;
+      img.src = img.MM_dn = (args[i+1])? args[i+1] : img.MM_up;
+      nbArr[nbArr.length] = img;
+  } }
+}
+//-->
+</script>
+</head>
+
+<body onLoad="MM_preloadImages('imagenes/EnviarPorEmail2b.gif')">
+<table width="830" border="0" align="center" cellpadding="0" cellspacing="0" background="imagenes/line_830.gif">
+  <!--DWLayoutTable-->
+  <tr>
+    <td width="30" rowspan="6" valign="top"><img src="imagenes/spacer_izq2.gif" width="30" height="615"></td>
+    <td colspan="4" valign="top"><table width="780" height="114" border="0" cellpadding="0" cellspacing="0">
+        <!--DWLayoutTable-->
+        <tr>
+          <td width="780" height="153" valign="top"><img src="imagenes/top_staff.gif" width="780" height="172" border="0"></td>
+        </tr>
+    </table></td>
+  <td width="20" rowspan="6" valign="top" class="titulo_principal_gen"><img src="imagenes/spacer_der2.gif" width="20" height="485"></td>
+  </tr>
+  <tr>
+    <td width="245" height="1228" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <!--DWLayoutTable-->
+        <tr>
+          <td height="19" colspan="4" valign="top"><img src="imagenes/spacer_vert_19.gif" width="10" height="19" /></td>
+        </tr>
+        <tr>
+          <td width="41" rowspan="8" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+              <td height="19" colspan="3" valign="top" class="menu_izq"><a href="index.htm" target="_self">Bienvenida</a></td>
+        </tr>
+        <tr>
+          <td height="19" colspan="3" valign="top" class="menu_izq"><a href="about_us.htm" target="_self">Sobre nosotros</a> </td>
+        </tr>
+        <tr>
+          <td height="19" colspan="3" valign="top" class="menu_izq"><a href="research.htm">Investigaci&oacute;n</a> </td>
+        </tr>
+        <tr>
+          <td height="19" colspan="3" valign="top" class="menu_izq"><a href="publications.htm">Publicaciones <strong>&#13;</strong> &#13;</a></td>
+        </tr>
+        <tr>
+          <td height="19" colspan="3" valign="top" class="menu_izq"><a href="technology.htm" target="_self">Transferencia de tec. &amp; servicios  </a><strong>&#13;</strong></td>
+        </tr>
+        <tr>
+          <td height="19" colspan="3" valign="top" class="menu_izq"><a href="capabilities.htm" target="_self">Capacidades</a><strong>&#13;</strong> &#13;</td>
+        </tr>
+          <tr>
+          <td colspan="3" valign="top" class="menu_izq"><a href="difusion.htm">Difusi&oacute;n</a></td>
+        </tr>
+        <tr>
+          <td colspan="3" valign="top" class="menu_izq"><a href="../pdfs/brochure_def1.pdf" > <span class="titles_der_project" >Memorias del LIFIA 2000-2007</span></a></td>
+        </tr>
+        <tr>
+          <td height="76" colspan="4" valign="top"><img src="imagenes/spacer_vert_76.gif" width="10" height="76"></td>
+        </tr>
+        <tr>
+          <td height="19" colspan="2" valign="top"><div align="center" class="menu_negrita Estilo4"><a href="sitemap.htm" target="_self">mapa del sitio</a> </div></td>
+          <td colspan="2" rowspan="2" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+        </tr>
+        <tr>
+          <td height="16" colspan="2" valign="top"><div align="center" class="Estilo8">staff</div></td>
+        </tr>
+        <tr>
+          <td rowspan="2" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td height="16" colspan="2" valign="top"><span class="Estilo10">investigaci&oacute;n</span></td>
+          <td width="44" rowspan="2" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+        </tr>
+        <tr>
+          <td height="16" colspan="2" valign="top"><span class="Estilo7"><a href="staff_transferencia.htm" target="_self">transferencia de tecnolog&iacute;a</a> </span></td>
+        </tr>
+        <tr>
+          <td height="16" colspan="2" valign="top"><div align="center" class="menu_negrita Estilo4"><a href="contact.htm" target="_self">contacto</a></div></td>
+          <td colspan="2" rowspan="2" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+        </tr>
+        <tr>
+          <td height="16" colspan="2" valign="top"><div align="center" class="menu_negrita Estilo4"><a href="../en/index.htm" target="_self">english version</a> </div></td>
+        </tr>
+        <tr>
+          <td height="76">&nbsp;</td>
+          <td width="82"></td>
+          <td width="78"></td>
+          <td></td>
+        </tr>
+    </table></td>
+    <td width="40">&nbsp;</td>
+    <td width="392" rowspan="2" valign="top"><table width="392" border="0" cellpadding="0" cellspacing="0">
+        <!--DWLayoutTable-->
+        <tr class="titulos_pers_menu">
+          <td height="25" colspan="8" valign="top" class="titulo_principal">Directores<a name="top"></a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff">
+          	<a href="mailto:Gabriel.Baum@lifia.info.unlp.edu.ar" target="_top" 
+            onClick="MM_nbGroup('down','group1','1','imagenes/EnviarPorEmail2b.gif',1)" 
+            onMouseOver="MM_nbGroup('over','1','imagenes/EnviarPorEmail2b.gif','',1)" 
+            onMouseOut="MM_nbGroup('out')">
+            	<img src="imagenes/EnviarPorEmail2.gif" name="1" width="15" height="12" border="0">            </a>          </td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">Lic. Gabriel Baum </td>
+          <td colspan="5" valign="top" class="nombres_personales_staff"> | <a href="baum.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+         <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Alicia.Diaz@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','2','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','2','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="2" width="15" height="12" border="0"></a></span></td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">Dra.  Alicia Diaz</td>
+          <td colspan="6" valign="top" class="nombres_personales_staff">| <a href="alicia.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Silvia.Gordillo@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','3','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','3','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="3" width="15" height="12" border="0"></a></span></td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">Dr. Silvia Gordillo</td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">| <a href="silvia.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Gustavo.Rossi@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','4','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','4','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="4" width="15" height="12" border="0"></a></span></td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">Dr. Gustavo Rossi</td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">|  <a href="rossi.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        
+        <tr class="titulos_pers_menu">
+          <td height="25" colspan="8" valign="top" class="titulo_principal">Investigaci&oacute;n</td>
+          <td width="26"></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="32" colspan="8" valign="top"><a href="#investigadores">Investigadores </a>| <a href="#doctorandos" target="_self"> Doctorandos</a> |<a href="#asistentes" target="_top"> Asistentes de investigaci&oacute;n</a> | <a href="#becarios">Becarios y Pasantes de Investigaci&oacute;n</a></td>
+          <td></td>
+        </tr>
+        
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td width="23"></td>
+          <td width="83"></td>
+          <td width="18"></td>
+          <td width="12"></td>
+          <td width="16"></td>
+          <td width="11"></td>
+          <td width="173"></td>
+          <td width="30"></td>
+          <td></td>
+        </tr>
+      <tr class="titulos_pers_menu">
+          <td height="16" colspan="8" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+       
+        <tr class="titulo_secund_res">
+          <td height="19" colspan="8" valign="top">Investigadores<a name="investigadores"></a></td>
+          <td></td>
+        </tr>
+                     <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Gabriela.Arevalo@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','5','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','5','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="5" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dra. Gabriela Ar&eacute;valo</td>
+          <td colspan="3" valign="top" class="nombres_personales_staff">| <a href="gabriela.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+         <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Federico.Balaguer@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','6','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','6','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="6" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dr. Federico Balaguer</td>
+          <td colspan="3" valign="top" class="nombres_personales_staff">| <a href="federico.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Gabriel.Baum@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','7','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','7','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="7" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. Gabriel Baum </td>
+          <td colspan="3" valign="top" class="nombres_personales_staff"> | <a href="baum.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Eduardo.Bonelli@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','8','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','8','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="8" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dr. Eduardo Bonelli</td>
+          <td colspan="3" valign="top" class="nombres_personales_staff">| <a href="eduardo.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Alicia.Diaz@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','9','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','9','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="9" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dra.  Alicia Diaz</td>
+          <td colspan="3" valign="top" class="nombres_personales_staff">| <a href="alicia.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+             <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Alejandro.Fernandez@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','10','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','10','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="10" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dr. Alejandro Fern&aacute;ndez</td>
+          <td colspan="3" valign="top" class="nombres_personales_staff">| <a href="casco.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Alejandra.Garrido@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','11','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','11','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="11" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dra. Alejandra Garrido</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">| <a href="garrido.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+	
+	    <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Roxana.Giandini@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','12','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','12','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="12" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dra. Roxana Giandini</td>
+          <td colspan="4" valign="top" class="nombres_personales_staff"> | <a href="roxana.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+                <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Silvia.Gordillo@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','13','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','13','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="13" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dr. Silvia Gordillo</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">| <a href="silvia.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="21" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Matias.Menni@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','15','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','15','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="15" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dr. Matias Menni</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="21" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Catalina.Mostaccio@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','16','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','16','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="16" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dra. Catalina Mostaccio</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Claudia.Pons@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','17','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','17','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="17" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dra. Claudia Pons</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">| <a href="claudia.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Gustavo.Rossi@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','18','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','18','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="18" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Dr. Gustavo Rossi</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">|  <a href="rossi.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        
+        <tr class="titulos_pers_menu">
+          <td height="16" colspan="8" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" colspan="8" valign="top" class="titulo_secund_res">Doctorandos<a name="doctorandos" id="doctorandos"></a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+    <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Leandro.Antonelli@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','19','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','19','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="19" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Mg. Leandro Antonelli </td>
+          <td colspan="3" valign="top" class="nombres_personales_staff"> | <a href="lanto.htm"><span class="to_page">p&aacute;gina personal</span></a></td>
+          <td></td>
+        </tr>
+      
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Cecilia.Challiol@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','20','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','20','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="20" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. Cecilia Challiol</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">| <a href="cecilia.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+<tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:sergio.firmenich@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','20','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','20','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="20" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. Sergio Firmenich</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">| </td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Andres.Fortier@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','21','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','21','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="21" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. Andres Fortier</td>
+          <td colspan="2" valign="top" class="nombres_personales_staff">| <a href="andresfortier.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Jerónimo.Irazabal@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','22','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','22','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="22" width="15" height="12" border="0"></a></td>
+          <td colspan="10" valign="top" class="nombres_personales_staff">Mg. Lic. Jerónimo Irazabal</td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Fernando.Lyardet@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','23','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','23','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="23" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. José Matías Rivero</td>
+          <td></td>
+        </tr>
+          <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Gabriela.Perez@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','24','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','24','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="24" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. Gabriela Perez</td>
+          <td></td>
+        </tr>
+          <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Esteban.Robles@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','25','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','25','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="25" width="15" height="12" border="0"></a></span></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Lic. Esteban Robles</td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">|  <a href="esteban.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+      
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Martin.Rosenfeld@ifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','26','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','26','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="26" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Lic. Martín Rosenfeld </td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Diego.Torres@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','27','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','27','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="27" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Lic. Diego Torres</td>
+          <td></td>
+        </tr>
+
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:matiasurbieta@gmail.com
+" target="_top" onClick="MM_nbGroup('down','group1','28','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','28','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="28" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Lic. Mat&iacute;as Urbieta</td>
+          <td></td>
+        </tr>
+
+     
+        <tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="16" colspan="8" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" colspan="7" valign="top" class="titulo_secund_res">Asistentes de investigaci&oacute;n<a name="asistentes"></a></td>
+        <td valign="top"><a href="#top"><img src="imagenes/flecha_top2.gif" width="30" height="19" border="0"></a></td>
+        <td></td>
+        </tr>
+        
+              <tr class="titulos_pers_menu">
+          <td valign="top" class="nombres_personales_staff"><a href="mailto:Javier.Bazzocco@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','30','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','30','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="30" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Mg. Javier Bazzocco</td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">| <a href="javier.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+		    <td valign="top" class="nombres_personales_staff"><a href="mailto:Alejandra.Lliteras@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','34','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','34','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="34" width="15" height="12" border="0"></a></td>
+		        <td colspan="7" valign="top" class="nombres_personales_staff">Lic. Alejandra Lliteras</td>
+		        <td></td>
+        </tr>
+        		   
+         <tr class="titulos_pers_menu">
+ <td valign="top" class="nombres_personales_staff"><a href="mailto:Andres.Rodriguez@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','36','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','36','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="36" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Andrés Rodriguez</td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">| <a href="andres.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+
+         <tr class="titulos_pers_menu">
+ <td valign="top" class="nombres_personales_staff"><a href="mailto:arturo@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','36','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','36','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="36" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">Arturo Zambrano</td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">| <a href="http://pleiad.cl/people/azambrano"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        
+
+      <tr class="titulos_pers_menu">
+          <td height="16" colspan="8" valign="top"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+       <tr class="titulos_pers_menu">
+          <td height="19" colspan="7" valign="top" class="titulo_secund_res">Becarios y Pasantes de investigaci&oacute;n<a name="becarios"></a></td>
+        <td valign="top"><a href="#top"><img src="imagenes/flecha_top2.gif" width="30" height="19" border="0"></a></td>
+        <td></td>
+        </tr>
+      
+        
+      <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:francisco.blanco@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','39','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','39','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="39" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Francisco Blanco </td>
+          <td></td>
+        </tr>
+        
+      <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:sebastian.castaneda@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','39','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','39','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="39" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Sebastian Castañeda </td>
+          <td></td>
+        </tr>
+      <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Natalia.Correa@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','39','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','39','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="39" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Natalia Correa </td>
+          <td></td>
+        </tr>
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:mdavids@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','40','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','40','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="40" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Maximiliano Davids </td>
+          <td></td>
+        </tr>
+           <tr class="titulos_pers_menu">
+                <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Lautaro.fernandez@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','41','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','41','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="41" width="15" height="12" border="0"></a></td>
+                <td colspan="7" valign="top" class="nombres_personales_staff">Lautaro  Fern&aacute;ndez </td>
+                <td></td>
+              </tr>
+           </tr>
+        <tr class="titulos_pers_menu">
+ <td valign="top" class="nombres_personales_staff"><a href="mailto:julian.grigera@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','43','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','43','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="43" width="15" height="12" border="0"></a></td>
+          <td colspan="5" valign="top" class="nombres_personales_staff">A. C. Julian Grigera</td>
+          <td colspan="4" valign="top" class="nombres_personales_staff">| <a href="jgrigera.htm"><span class="to_page">p&aacute;gina personal</span> </a></td>
+          <td></td>
+        </tr>
+        
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Lucas.Hahn@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','44','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','44','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="44" width="15" height="12" border="0"></a></span></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Lucas Hahn</td>
+        <td></td>
+        </tr>
+        
+             <tr class="titulos_pers_menu">
+   <td height="19" valign="top" class="nombres_personales_staff"><span class="nombres_personales_staff"><a href="mailto:Leandro.Mendoza@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','45','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','45','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="45" width="15" height="12" border="0"></a></span></td>
+          <td colspan="3" valign="top" class="nombres_personales_staff">Leandro Mendoza</td>          
+          <td></td>
+        </tr>
+             
+         <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Emiliano.Perez@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','46','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','46','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="46" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Emiliano Perez </td>
+          <td></td>
+        </tr>
+      
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:sebastian.perez.escribano@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','48','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','48','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="48" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Sebasti&aacute;n Perez Escribano </td>
+          <td></td>
+        </tr>
+     
+		   <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Santiago.Robles@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','49,'imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','49','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="49" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Santiago Robles</td>
+          <td></td>
+        </tr>
+		
+        <tr class="titulos_pers_menu">
+          <td height="19" valign="top" class="nombres_personales_staff"><a href="mailto:Ignacio.Vidal@lifia.info.unlp.edu.ar" target="_top" onClick="MM_nbGroup('down','group1','52','imagenes/EnviarPorEmail2b.gif',1)" onMouseOver="MM_nbGroup('over','52','imagenes/EnviarPorEmail2b.gif','',1)" onMouseOut="MM_nbGroup('out')"><img src="imagenes/EnviarPorEmail2.gif" name="52" width="15" height="12" border="0"></a></td>
+          <td colspan="7" valign="top" class="nombres_personales_staff">Ignacio Vidal </td>
+          <td></td>
+        </tr>
+        
+
+        <tr class="titulos_pers_menu">
+          <td height="18" colspan="8" valign="top" class="titulo_secund_res"><!--DWLayoutEmptyCell-->&nbsp;</td>
+          <td></td>
+        </tr>
+<tr class="titulos_pers_menu">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+    </table></td>
+  <td width="103">&nbsp;</td>
+  </tr>
+  <tr>
+    <td height="13"></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td colspan="4" valign="top" nowrap class="menu_pie"><!--DWLayoutEmptyCell-->&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="4" valign="top" nowrap class="menu_pie"><a href="about_us.htm" target="_self"> sobre nosotros</a> <span class="secciones">| <a href="research.htm" target="_self">investigaci&oacute;n</a> |</span> <a href="publications.htm" target="_self">publicaciones</a> <span class="secciones">|</span> <a href="technology.htm" target="_self">transferencia de T.</a> <span class="secciones">|</span> <a href="capabilities.htm" target="_self">capacidades</a> </td>
+  </tr>
+  <tr>
+    <td colspan="6" valign="bottom" nowrap><img src="imagenes/barra_down.gif" width="830" height="43" border="0" usemap="#Map"></td>
+  </tr>
+</table>
+</body>
+</html>
+
+<!-- Localized -->
