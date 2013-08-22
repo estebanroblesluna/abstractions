@@ -1,4 +1,4 @@
-@STATIC;1.0;p;9;CupDraw.jt;3323;@STATIC;1.0;i;23;CPCancelableTextField.ji;22;LPMultiLineTextField.ji;24;CPCustomRowTableColumn.ji;15;GeometryUtils.ji;14;HandleMagnet.ji;8;Figure.ji;17;CompositeFigure.ji;7;Model.ji;10;Property.ji;6;Grid.ji;9;Drawing.ji;14;DrawingModel.ji;8;Handle.ji;17;CompositeFigure.ji;10;Polyline.ji;12;Connection.ji;13;ImageFigure.ji;15;ToolboxFigure.ji;13;LabelFigure.ji;12;LinkFigure.ji;18;PropertiesFigure.ji;17;IconLabelFigure.ji;17;RectangleFigure.ji;13;GroupFigure.ji;11;ToolState.ji;27;SelectionToolInitialState.ji;15;SelectedState.ji;18;MoveFiguresState.ji;17;MoveHandleState.ji;23;MarqueeSelectionState.ji;6;Tool.ji;18;StateMachineTool.ji;15;SelectionTool.ji;26;AbstractCreateFigureTool.ji;17;CreateImageTool.ji;17;CreateLabelTool.ji;9;Command.ji;14;GroupCommand.ji;16;UngroupCommand.ji;13;LockCommand.ji;15;UnlockCommand.ji;21;BringToFrontCommand.ji;19;SendToBackCommand.ji;21;BringForwardCommand.ji;21;SendBackwardCommand.ji;18;AlignLeftCommand.ji;19;AlignRightCommand.ji;20;AlignCenterCommand.ji;17;AlignTopCommand.ji;20;AlignBottomCommand.ji;20;AlignMiddleCommand.ji;16;EditorDelegate.jt;2228;objj_executeFile("CPCancelableTextField.j", YES);
+@STATIC;1.0;p;9;CupDraw.jt;3475;@STATIC;1.0;i;23;CPCancelableTextField.ji;22;LPMultiLineTextField.ji;24;CPCustomRowTableColumn.ji;15;GeometryUtils.ji;14;HandleMagnet.ji;8;Figure.ji;17;CompositeFigure.ji;7;Model.ji;10;Property.ji;6;Grid.ji;9;Drawing.ji;14;DrawingModel.ji;8;Handle.ji;17;CompositeFigure.ji;10;Polyline.ji;12;Connection.ji;13;ImageFigure.ji;15;ToolboxFigure.ji;13;LabelFigure.ji;12;LinkFigure.ji;18;PropertiesFigure.ji;17;IconLabelFigure.ji;17;RectangleFigure.ji;14;CircleFigure.ji;13;GroupFigure.ji;11;ToolState.ji;27;SelectionToolInitialState.ji;15;SelectedState.ji;18;MoveFiguresState.ji;17;MoveHandleState.ji;23;MarqueeSelectionState.ji;6;Tool.ji;18;StateMachineTool.ji;15;SelectionTool.ji;26;AbstractCreateFigureTool.ji;30;AbstractCreateConnectionTool.ji;17;CreateImageTool.ji;17;CreateLabelTool.ji;9;Command.ji;14;GroupCommand.ji;16;UngroupCommand.ji;13;LockCommand.ji;15;UnlockCommand.ji;21;BringToFrontCommand.ji;19;SendToBackCommand.ji;21;BringForwardCommand.ji;21;SendBackwardCommand.ji;18;AlignLeftCommand.ji;19;AlignRightCommand.ji;20;AlignCenterCommand.ji;17;AlignTopCommand.ji;20;AlignBottomCommand.ji;20;AlignMiddleCommand.ji;16;EditorDelegate.jt;2326;objj_executeFile("CPCancelableTextField.j", YES);
 objj_executeFile("LPMultiLineTextField.j", YES);
 objj_executeFile("CPCustomRowTableColumn.j", YES);
 objj_executeFile("GeometryUtils.j", YES);
@@ -21,6 +21,7 @@ objj_executeFile("LinkFigure.j", YES);
 objj_executeFile("PropertiesFigure.j", YES);
 objj_executeFile("IconLabelFigure.j", YES);
 objj_executeFile("RectangleFigure.j", YES);
+objj_executeFile("CircleFigure.j", YES);
 objj_executeFile("GroupFigure.j", YES);
 objj_executeFile("ToolState.j", YES);
 objj_executeFile("SelectionToolInitialState.j", YES);
@@ -32,6 +33,7 @@ objj_executeFile("Tool.j", YES);
 objj_executeFile("StateMachineTool.j", YES);
 objj_executeFile("SelectionTool.j", YES);
 objj_executeFile("AbstractCreateFigureTool.j", YES);
+objj_executeFile("AbstractCreateConnectionTool.j", YES);
 objj_executeFile("CreateImageTool.j", YES);
 objj_executeFile("CreateLabelTool.j", YES);
 objj_executeFile("Command.j", YES);
@@ -952,6 +954,50 @@ var meta_class = the_class.isa;class_addMethods(the_class, [new objj_method(sel_
 },["void","CPCoder"])]);
 }
 
+p;14;CircleFigure.jt;2367;@STATIC;1.0;t;2348;{var the_class = objj_allocateClassPair(Figure, "CircleFigure"),
+meta_class = the_class.isa;objj_registerClassPair(the_class);
+class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:"), function $CircleFigure__initWithFrame_(self, _cmd, aFrame)
+{ with(self)
+{
+ self = objj_msgSendSuper({ receiver:self, super_class:objj_getClass("CircleFigure").super_class }, "initWithFrame:",  aFrame);
+ if (self) {
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topLeft"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topMiddle"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topRight"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "middleLeft"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "middleRight"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomLeft"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomMiddle"));
+  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomRight"));
+  return self;
+ }
+}
+},["id","CGRect"]), new objj_method(sel_getUid("drawRect:on:"), function $CircleFigure__drawRect_on_(self, _cmd, rect, context)
+{ with(self)
+{
+        CGContextSetFillColor(context, objj_msgSend(self, "backgroundColor"));
+        CGContextFillEllipseInRect(context, objj_msgSend(self, "bounds"));
+  CGContextSetLineWidth(context, 0.5);
+        CGContextSetStrokeColor(context, objj_msgSend(self, "foregroundColor"));
+        CGContextStrokeEllipseInRect(context, objj_msgSend(self, "bounds"));
+}
+},["void","CGRect","id"])]);
+class_addMethods(meta_class, [new objj_method(sel_getUid("newAt:"), function $CircleFigure__newAt_(self, _cmd, aPoint)
+{ with(self)
+{
+ var frame = CGRectMake(aPoint.x, aPoint.y, 50, 50);
+ var widget = objj_msgSend(objj_msgSend(self, "new"), "initWithFrame:",  frame);
+ return widget;
+}
+},["CircleFigure","CGPoint"]), new objj_method(sel_getUid("newWith:"), function $CircleFigure__newWith_(self, _cmd, aFrame)
+{ with(self)
+{
+ var widget = objj_msgSend(objj_msgSend(self, "new"), "initWithFrame:",  aFrame);
+ return widget;
+}
+},["CircleFigure","id"])]);
+}
+
 p;17;CompositeFigure.jt;1823;@STATIC;1.0;t;1804;{var the_class = objj_allocateClassPair(Figure, "CompositeFigure"),
 meta_class = the_class.isa;objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("addFigure:"), function $CompositeFigure__addFigure_(self, _cmd, aFigure)
@@ -997,7 +1043,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("addFigure:"), function 
 },["CPArray","id"])]);
 }
 
-p;12;Connection.jt;6294;@STATIC;1.0;t;6275;{var the_class = objj_allocateClassPair(Polyline, "Connection"),
+p;12;Connection.jt;6549;@STATIC;1.0;t;6530;{var the_class = objj_allocateClassPair(Polyline, "Connection"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_sourceFigure"), new objj_ivar("_targetFigure"), new objj_ivar("_magnet1"), new objj_ivar("_magnet2"), new objj_ivar("_p1Arrow"), new objj_ivar("_p2Arrow")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initWithSource:target:points:"), function $Connection__initWithSource_target_points_(self, _cmd, aSourceFigure, aTargetFigure, anArrayOfPoints)
@@ -1112,7 +1158,12 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithSource:target:p
     return _targetFigure;
 }
 },["Figure"])]);
-class_addMethods(meta_class, [new objj_method(sel_getUid("source:target:"), function $Connection__source_target_(self, _cmd, aSourceFigure, aTargetFigure)
+class_addMethods(meta_class, [new objj_method(sel_getUid("connect:with:"), function $Connection__connect_with_(self, _cmd, aTargetFigure, aSourceFigure)
+{ with(self)
+{
+ return objj_msgSend(self, "source:target:",  aSourceFigure,  aTargetFigure);
+}
+},["Connection","Figure","Figure"]), new objj_method(sel_getUid("source:target:"), function $Connection__source_target_(self, _cmd, aSourceFigure, aTargetFigure)
 { with(self)
 {
  return objj_msgSend(self, "source:target:points:",  aSourceFigure,  aTargetFigure,  nil);
@@ -1125,7 +1176,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("source:target:"), func
 },["Connection","Figure","Figure","id"])]);
 }
 
-p;8;Figure.jt;16178;@STATIC;1.0;t;16158;{var the_class = objj_allocateClassPair(CPView, "Figure"),
+p;8;Figure.jt;16478;@STATIC;1.0;t;16458;{var the_class = objj_allocateClassPair(CPView, "Figure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("handles"), new objj_ivar("_inConnections"), new objj_ivar("_outConnections"), new objj_ivar("_backgroundColor"), new objj_ivar("_foregroundColor"), new objj_ivar("_selectable"), new objj_ivar("_moveable"), new objj_ivar("_editable"), new objj_ivar("_model"), new objj_ivar("_selected")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $Figure__init(self, _cmd)
@@ -1383,7 +1434,12 @@ class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $Figur
  var newFrame = CGRectMake(aPoint.x, oldFrame.origin.y, oldFrame.size.width + widthOffset, oldFrame.size.height + heightOffset);
  objj_msgSend(self, "setFrame:",  newFrame);
 }
-},["void",null]), new objj_method(sel_getUid("middleRight"), function $Figure__middleRight(self, _cmd)
+},["void",null]), new objj_method(sel_getUid("center"), function $Figure__center(self, _cmd)
+{ with(self)
+{
+ return CGPointMake(objj_msgSend(self, "frame").origin.x + (objj_msgSend(self, "frame").size.width / 2), objj_msgSend(self, "frame").origin.y + (objj_msgSend(self, "frame").size.height / 2));
+}
+},["CPPoint"]), new objj_method(sel_getUid("middleRight"), function $Figure__middleRight(self, _cmd)
 { with(self)
 {
  return CGPointMake(objj_msgSend(self, "frame").origin.x + objj_msgSend(self, "frame").size.width, objj_msgSend(self, "frame").origin.y + (objj_msgSend(self, "frame").size.height / 2));
@@ -1558,7 +1614,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:"), funct
 },["id"])]);
 }
 
-p;8;Handle.jt;5572;@STATIC;1.0;t;5553;{var the_class = objj_allocateClassPair(Figure, "Handle"),
+p;8;Handle.jt;5555;@STATIC;1.0;t;5536;{var the_class = objj_allocateClassPair(Figure, "Handle"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_targetFigure"), new objj_ivar("_getSelector"), new objj_ivar("_setSelector"), new objj_ivar("_extraArgument"), new objj_ivar("_displayColor")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initWithTarget:getSelector:setSelector:extraArgument:"), function $Handle__initWithTarget_getSelector_setSelector_extraArgument_(self, _cmd, aTargetFigure, getSelector, setSelector, extraArgument)
@@ -1573,9 +1629,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithTarget:getSelec
  objj_msgSend(objj_msgSend(CPNotificationCenter, "defaultCenter"), "addObserver:selector:name:object:",  self,  sel_getUid("updateLocation:"),  "CPViewFrameDidChangeNotification",  _targetFigure);
  var point = objj_msgSend(self, "getPoint");
  self = objj_msgSendSuper({ receiver:self, super_class:objj_getClass("Handle").super_class }, "initWithFrame:",  CGRectMake(point.x - 4, point.y - 4, 8, 8));
- if (self) {
-  return self;
- }
+ return self;
 }
 },["id","id","SEL","SEL","id"]), new objj_method(sel_getUid("extraArgument"), function $Handle__extraArgument(self, _cmd)
 { with(self)
@@ -2204,23 +2258,23 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("defaultFrame"), functi
 },["PropertiesFigure","CGPoint","Drawing"])]);
 }
 
-p;17;RectangleFigure.jt;2373;@STATIC;1.0;t;2354;{var the_class = objj_allocateClassPair(Figure, "RectangleFigure"),
+p;17;RectangleFigure.jt;2499;@STATIC;1.0;t;2480;{var the_class = objj_allocateClassPair(Figure, "RectangleFigure"),
 meta_class = the_class.isa;objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:"), function $RectangleFigure__initWithFrame_(self, _cmd, aFrame)
 { with(self)
 {
- self = objj_msgSendSuper({ receiver:self, super_class:objj_getClass("RectangleFigure").super_class }, "initWithFrame:",  aFrame);
- if (self) {
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topLeft"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topMiddle"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topRight"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "middleLeft"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "middleRight"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomLeft"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomMiddle"));
-  objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomRight"));
-  return self;
- }
+ objj_msgSendSuper({ receiver:self, super_class:objj_getClass("RectangleFigure").super_class }, "initWithFrame:",  aFrame);
+ objj_msgSend(self, "backgroundColor:",  objj_msgSend(CPColor, "whiteColor"));
+ objj_msgSend(self, "foregroundColor:",  objj_msgSend(CPColor, "blackColor"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topLeft"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topMiddle"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "topRight"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "middleLeft"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "middleRight"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomLeft"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomMiddle"));
+ objj_msgSend(handles, "addObject:",  objj_msgSend(Handle, "target:selector:",  self,  "bottomRight"));
+ return self;
 }
 },["id","CGRect"]), new objj_method(sel_getUid("drawRect:on:"), function $RectangleFigure__drawRect_on_(self, _cmd, rect, context)
 { with(self)
@@ -2563,6 +2617,91 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("name:value:"), functio
  return objj_msgSend(objj_msgSend(self, "new"), "initWithName:displayName:value:type:",  aPropertyName,  aDisplayName,  aValue,  aType);
 }
 },["Property","id","id","id","id"])]);
+}
+
+p;30;AbstractCreateConnectionTool.jt;4109;@STATIC;1.0;t;4090;{var the_class = objj_allocateClassPair(Tool, "AbstractCreateConnectionTool"),
+meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_connection"), new objj_ivar("_initialFigure"), new objj_ivar("_figureClass"), new objj_ivar("_validStartingConnection")]);
+objj_registerClassPair(the_class);
+class_addMethods(the_class, [new objj_method(sel_getUid("figureClass:"), function $AbstractCreateConnectionTool__figureClass_(self, _cmd, aFigureClass)
+{ with(self)
+{
+ _figureClass = aFigureClass;
+}
+},["void","id"]), new objj_method(sel_getUid("mouseDown:"), function $AbstractCreateConnectionTool__mouseDown_(self, _cmd, anEvent)
+{ with(self)
+{
+ var point = objj_msgSend(anEvent, "locationInWindow");
+ var figure = objj_msgSend(_drawing, "figureAt:",  point);
+ var figureAcceptsNewConnection = objj_msgSend(self, "acceptsNewStartingConnection:",  figure);
+ _validStartingConnection = figureAcceptsNewConnection;
+ var points = objj_msgSend(CPMutableArray, "array");
+ objj_msgSend(points, "addObject:",  objj_msgSend(figure, "center"));
+ objj_msgSend(points, "addObject:",  objj_msgSend(figure, "center"));
+ var connection = objj_msgSend(objj_msgSend(Connection, "alloc"), "initWithPoints:",  points);
+ objj_msgSend(connection, "recomputeFrame");
+ objj_msgSend(_drawing, "addFigure:",  connection);
+ _connection = connection;
+ _initialFigure = figure;
+ if (!_validStartingConnection) {
+  objj_msgSend(_connection, "foregroundColor:",  objj_msgSend(CPColor, "colorWithHexString:",  "CC0000"));
+  objj_msgSend(_connection, "lineWidth:",  2);
+ }
+}
+},["void","CPEvent"]), new objj_method(sel_getUid("mouseDragged:"), function $AbstractCreateConnectionTool__mouseDragged_(self, _cmd, anEvent)
+{ with(self)
+{
+ if (_connection != nil) {
+  var point = objj_msgSend(anEvent, "locationInWindow");
+  point = CGPointMake(point.x - 6, point.y - 6);
+  objj_msgSend(_connection, "pointAt:put:",  1,  point);
+ }
+}
+},["void","CPEvent"]), new objj_method(sel_getUid("mouseUp:"), function $AbstractCreateConnectionTool__mouseUp_(self, _cmd, anEvent)
+{ with(self)
+{
+ CPLog.debug("[CreateConnectionTool] Mouse up");
+ if (_validStartingConnection) {
+  var point = objj_msgSend(anEvent, "locationInWindow");
+  var figure = objj_msgSend(_drawing, "figureAt:",  point);
+  CPLog.debug("[CreateConnectionTool] Mouse up figure: " + figure);
+  var acceptsNewEndingConnection = objj_msgSend(self, "acceptsNewEndingConnection:",  figure);
+  if (acceptsNewEndingConnection) {
+   var connectionFigure = objj_msgSend(_figureClass, "source:target:points:",  _initialFigure,  figure,  nil);
+   objj_msgSend(_drawing, "addFigure:",  connectionFigure);
+   objj_msgSend(self, "postConnectionCreated:",  connectionFigure);
+  } else {
+   objj_msgSend(_connection, "foregroundColor:",  objj_msgSend(CPColor, "colorWithHexString:",  "CC0000"));
+   objj_msgSend(_connection, "lineWidth:",  2);
+   objj_msgSend(_connection, "invalidate");
+  }
+ } else {
+  CPLog.debug("[CreateConnectionTool] Connection is nil");
+ }
+ if (_connection != nil && (objj_msgSend(_connection, "superview") != nil)) {
+  objj_msgSend(_connection, "removeFromSuperview");
+ }
+ _connection = nil;
+ _initialFigure = nil;
+ objj_msgSend(self, "activateSelectionTool");
+}
+},["void","CPEvent"]), new objj_method(sel_getUid("postConnectionCreated:"), function $AbstractCreateConnectionTool__postConnectionCreated_(self, _cmd, aConnectionFigure)
+{ with(self)
+{
+}
+},["void","Connection"])]);
+class_addMethods(meta_class, [new objj_method(sel_getUid("drawing:"), function $AbstractCreateConnectionTool__drawing_(self, _cmd, aDrawing)
+{ with(self)
+{
+ return objj_msgSend(self, "drawing:figure:",  aDrawing,  objj_msgSend(Connection, "class"));
+}
+},["id","Drawing"]), new objj_method(sel_getUid("drawing:figure:"), function $AbstractCreateConnectionTool__drawing_figure_(self, _cmd, aDrawing, aFigureClass)
+{ with(self)
+{
+ var tool = objj_msgSendSuper({ receiver:self, super_class:objj_getMetaClass("AbstractCreateConnectionTool").super_class }, "drawing:",  aDrawing);
+ objj_msgSend(tool, "figureClass:",  aFigureClass);
+ return tool;
+}
+},["id","Drawing","id"])]);
 }
 
 p;26;AbstractCreateFigureTool.jt;653;@STATIC;1.0;t;635;{var the_class = objj_allocateClassPair(Tool, "AbstractCreateFigureTool"),
@@ -3222,7 +3361,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithWidget:label:wi
 },["void"])]);
 }
 
-p;15;GeometryUtils.jt;4017;@STATIC;1.0;t;3998;{var the_class = objj_allocateClassPair(CPObject, "GeometryUtils"),
+p;15;GeometryUtils.jt;4012;@STATIC;1.0;t;3993;{var the_class = objj_allocateClassPair(CPObject, "GeometryUtils"),
 meta_class = the_class.isa;objj_registerClassPair(the_class);
 class_addMethods(meta_class, [new objj_method(sel_getUid("computeFrameFor:"), function $GeometryUtils__computeFrameFor_(self, _cmd, points)
 { with(self)
@@ -3312,7 +3451,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("computeFrameFor:"), fu
  var yOff = (p1.y - p2.y);
  return objj_msgSend(CPPredicateUtilities, "sqrt:",  (xOff * xOff + yOff * yOff))
 }
-},["CGPoint","CGPoint","CGPoint"]), new objj_method(sel_getUid("distanceFrom:and:to:"), function $GeometryUtils__distanceFrom_and_to_(self, _cmd, a, b, p)
+},["id","CGPoint","CGPoint"]), new objj_method(sel_getUid("distanceFrom:and:to:"), function $GeometryUtils__distanceFrom_and_to_(self, _cmd, a, b, p)
 { with(self)
 {
  if (a == b) {
