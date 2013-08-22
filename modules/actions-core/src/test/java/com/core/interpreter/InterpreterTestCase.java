@@ -166,7 +166,7 @@ public class InterpreterTestCase extends TestCase {
 		assertEquals(4l, thread.getCurrentMessage().getProperty("inc3"));
 	}
 
-	public void testWireTapRouter() throws ServiceException {
+	public void testWireTapRouter() throws ServiceException, InterruptedException {
 		ObjectDefinition source = new ObjectDefinition("INC");
 		ObjectDefinition router = new ObjectDefinition("WIRE_TAP_ROUTER");
 		ObjectDefinition inc2 = new ObjectDefinition("INC2");
@@ -193,6 +193,8 @@ public class InterpreterTestCase extends TestCase {
 		Thread thread = interpreter.run(message);
 		assertEquals(3l, thread.getCurrentMessage().getPayload());
 
+		java.lang.Thread.sleep(500);
+		
 		assertNotNull(((ListenerProcessor) listener.getInstance()).getLastMessage());
 
 		assertEquals(1l, ((ListenerProcessor) listener.getInstance()).getLastMessage().getPayload());
