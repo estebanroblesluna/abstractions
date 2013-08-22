@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+<TABLE WIDTH=593 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+				<COL WIDTH=87>
+				<COL WIDTH=224>
+				<COL WIDTH=255>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Caracter&iacute;stica</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Struts
+						1 (S1)</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Struts
+						2 (S2)</B></FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Acciones</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S1
+						requiere que las clases Action extiendan una clase abstracta
+						propia del framework.  Un problema com&uacute;n en S1 es
+						programar con clases abstractas en vez de interfaces</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Un
+						Action en S2 puede implementar una interface Action, entre
+						otras interfaces para habilitar servicios opcionales. S2 provee
+						una clase base &ldquo;ActionSupport&rdquo; la cual implementa
+						las interfaces m&aacute;s comunes.</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Modelo
+						de Threads</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Las
+						acciones en S1 son singletons y deben ser &ldquo;thread-safe&rdquo;
+						dado que hay una &uacute;nica instancia de la clase que maneja
+						todos los requerimientos. La estrategia del uso de singletons
+						agrega restricciones sobre las cosas que se pueden hacer con
+						S1. Los recursos de una acci&oacute;n deben ser &ldquo;thread-safe&rdquo;
+						o &ldquo;synchronized&rdquo;.</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Los
+						objetos de las acciones de S2 son instanciados por cada
+						&ldquo;request&rdquo;, con lo cual no existen problemas de
+						&ldquo;thread-safety&rdquo;.</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Dependencia
+						API Servlets</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Las
+						acciones de S1 poseen dependencias sobre la API de Servlets
+						desde que  los objetos HttpServletRequest y HttpServletResponse
+						son pasados como par&aacute;metros a los m&eacute;todos de las
+						acciones.</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Las
+						acciones de S2 no est&aacute;n acopladas al contenedor. La
+						mayor&iacute;a de los contextos de un servlet (Request,
+						Session) son representados como simples Maps, permitiendo esto
+						testear las acciones aisladamente.</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Capacidad
+						de testing</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Uno
+						de los mayores problemas de S1 es la dificultad de poder
+						testear las acciones sin tener que levantar un servidor que las
+						contenga. Esto es as&iacute; dada la dependencia con la API de
+						Servlets. Existen una extensi&oacute;n (Struts TestCase) que
+						ofrece un conjunto de &ldquo;mock objects&rdquo; para poder
+						realizar los tests.</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Las
+						acciones de S2 pueden ser testeadas directamente instanciando
+						la Acci&oacute;n, asignarle valores a sus atributos e invocar
+						el m&eacute;todo que se quiere testear. El soporte de inyecci&oacute;n
+						de dependencias nos permite que el proceso de testing sea m&aacute;s
+						sencillo a&uacute;n.</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Carga
+						de formularios</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S1
+						usa los objetos &ldquo;ActionForm&rdquo; para capturar la
+						entrada en un formulario web. Tal como las acciones, todos los
+						&ldquo;forms&rdquo; de nuestro sistema deben extender una clase
+						base. Dado que no es posible usar JavaBeans como ActionForms es
+						com&uacute;n que los desarrolladores escriban c&oacute;digo
+						redundante para capturar la entrada de los formularios web.</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S2
+						utiliza las propiedades de una acci&oacute;n como &ldquo;campos
+						de entrada&rdquo; de un formulario, con lo cual no es necesario
+						utilizar objetos secundarios para capturar la entrada de los
+						formularios. Particularmente es posible tener en la acci&oacute;n
+						objetos de nuestro modelo o DTOs los cuales ser&aacute;n
+						instanciados por S2 sin ser el desarrollador el que instancia
+						los objetos y carga sus valores.</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Lenguaje
+						de expresiones</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S1
+						esta integrado con JSTL, es decir que es posible hacer uso de
+						JSTL EL (Expresi&oacute;n Lenguaje).</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S2
+						puede usar JSTL pero provee soporte de un lenguaje de
+						expresiones mucho m&aacute;s poderoso  y flexible llamado
+						&ldquo;Object Graph Notation Language&rdquo; (ONGL)</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Conversi&oacute;n
+						de tipos</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">Las
+						propiedades de los formularios de S1 son generalmente simples
+						&ldquo;String&rdquo;. S1 utiliza &ldquo;Commons-Beanutils&rdquo;
+						para la conversi&oacute;n de tipos. Las conversiones son por
+						clase y no es posible configurarlo por instancia.</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S2
+						utiliza ONGL para la conversi&oacute;n de tipos. El framework
+						incluye conversiones para objetos y tipos primitivos.</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=87>
+						<P ALIGN=CENTER><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>Control
+						de la ejecuci&oacute;n de una acci&oacute;n</B></FONT></FONT></P>
+					</TD>
+					<TD WIDTH=224>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S1
+						soporta &ldquo;request processors&rdquo; por cada mo&acute;dulo,
+						pero todas las acciones del m&oacute;dulo deben compartir el
+						mismo ciclo de vida.</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=255>
+						<P ALIGN=JUSTIFY><FONT FACE="Trebuchet MS, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">S2
+						permite crear diferentes ciclos de vida, uno por acci&oacute;n,
+						mediante el uso de la pila de interceptores. Las pilas de
+						interceptores configurados pueden ser creadas y usadas con
+						diferentes acciones. </FONT></FONT>
+						</P>
+					</TD>
+				</TR>
+			</TABLE>
+</body>
+</html>
+
+<!-- Localized -->

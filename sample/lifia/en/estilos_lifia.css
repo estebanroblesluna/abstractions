@@ -1,0 +1,491 @@
+.menu_negrita
+ {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	font-variant: normal;
+	vertical-align: middle;
+	color: #666666;
+	white-space: normal;
+	text-align: left;
+	letter-spacing: normal;
+	text-indent: 10pt;
+	padding-bottom: 1px;
+	padding-top: 2px;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #CAD2E4;
+}
+.titulo_principal {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: bold;
+	color: #CC3333;
+	letter-spacing: normal;
+	text-align: justify;
+	padding-bottom: 3px;
+}
+.menu_izq {
+	font-family: Tahoma, Verdana;
+	font-size: 11px;
+	font-style: normal;
+	color: #255282;
+	text-align: justify;
+	list-style-position: outside;
+	list-style-type: square;
+	cursor: auto;
+	height: 19px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+}
+.parrafo_normal {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #666666;
+	text-align: justify;
+	padding-right: 0px;
+	padding-bottom: 7px;
+	padding-left: 0px;
+	line-height: 15px;
+	padding-top: 0px;
+}
+.titulo_secundario {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	color: #255282;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-bottom: 4px;
+	padding-left: 0px;
+}
+.titulos_parrafo_normal {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #255282;
+	font-size: 10px;
+	font-style: normal;
+	font-weight: normal;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 5px;
+	margin-left: 0px;
+}
+.menu_izq_naranja {
+	font-family: Tahoma, Verdana;
+	font-size: 11px;
+	font-weight: bold;
+	color: #FF9933;
+}
+.more {
+	font-family: Tahoma, Verdana;
+	font-size: 12px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	color: #1EA173;
+	padding-bottom: 5px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+.titles_der {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: bold;
+	color: #255282;
+	padding: 2px 0px 3px;
+}
+.titles_der_up {
+
+	font-family: Tahoma, Verdana;
+	font-size: 12px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	color: #666666;
+	padding-bottom: 4px;
+	padding-top: 2px;
+	padding-right: 0px;
+	padding-left: 0px;
+	text-indent: 5pt;
+}
+.parrafo_normal_news {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #003366;
+	text-align: justify;
+	white-space: normal;
+	letter-spacing: normal;
+	padding-top: 3px;
+	padding-right: 4px;
+	padding-bottom: 6px;
+	padding-left: 4px;
+	list-style-position: outside;
+	list-style-type: none;
+	list-style-image: url(imagenes/bullet_dot_red.gif);
+	line-height: 17px;
+	background-repeat: no-repeat;
+	background-position: center bottom;
+}
+.titles_der_tema {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #1EA173;
+	padding-bottom: 4px;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+	text-indent: 10pt;
+	font-variant: normal;
+	text-transform: capitalize;
+}
+.titles_der_borde {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 17px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #255282;
+	padding-bottom: 4px;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+	font-variant: normal;
+	text-transform: none;
+	border: 1px #666666;
+}
+.titles_dates {
+
+	font-family: Tahoma, Verdana;
+	font-size: 10px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #666666;
+	padding-bottom: 4px;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+.technolgy_news {
+
+
+	font-family: Tahoma, Verdana;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #215C95;
+	text-align: justify;
+	white-space: normal;
+	letter-spacing: normal;
+	word-spacing: normal;
+	padding-top: 3px;
+	padding-right: 4px;
+	padding-bottom: 6px;
+	padding-left: 4px;
+}
+.parrafo_nota_color {
+	font-family: Tahoma, Verdana;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #999999;
+	text-align: left;
+	white-space: normal;
+	letter-spacing: normal;
+	word-spacing: normal;
+	padding-top: 6px;
+	padding-right: 5px;
+	padding-bottom: 6px;
+	padding-left: 2px;
+	background-color: #DFFFDF;
+	border-top: 1px solid #66CC99;
+	border-right: 1px none #66CC99;
+	border-bottom: 1px solid #66CC99;
+	border-left: 1px none #66CC99;
+}
+.parrafo_normal_caja {
+	font-family: Tahoma, Verdana;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+	color: #3d5267;
+	text-align: justify;
+	text-indent: 10pt;
+	white-space: normal;
+	letter-spacing: normal;
+	word-spacing: normal;
+	padding-top: 6px;
+	padding-right: 7px;
+	padding-bottom: 6px;
+	padding-left: 7px;
+	background-color: #F0ECE9;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: none;
+	border-bottom-style: solid;
+	border-left-style: none;
+	border-top-color: #CCCCCC;
+	border-right-color: #CCCCCC;
+	border-bottom-color: #CCCCCC;
+	border-left-color: #CCCCCC;
+}
+.menu_izq_trebuchet {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 11px;
+	font-style: normal;
+	color: #255282;
+	text-align: justify;
+	list-style-position: outside;
+	list-style-type: square;
+	cursor: auto;
+	height: 19px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	font-variant: small-caps;
+	font-weight: lighter;
+}
+.volanta {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 11px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	color: #666666;
+	padding-bottom: 2px;
+	padding-top: 1px;
+	padding-right: 5px;
+	font-variant: normal;
+	padding-left: 2px;
+}
+.titles_der_project {
+	font-family: Tahoma, Verdana;
+	font-size: 11px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #006699;
+	padding-bottom: 2px;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+	text-indent: 0px;
+}
+.titles_der_capab {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 12px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #1EA173;
+	padding-bottom: 3px;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+.menu_pie {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	font-variant: normal;
+	color: #999999;
+	padding-bottom: 2px;
+	padding-top: 2px;
+	padding-left: 287px;
+}
+.titles_der_cap {
+
+	font-family: Tahoma, Verdana;
+	font-size: 11px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #1EA173;
+	padding-bottom: 3px;
+	padding-top: 4px;
+	padding-right: 0px;
+	padding-left: 0px;
+}
+.titulo_principal_cap {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: bold;
+	color: #1EA173;
+	letter-spacing: normal;
+	padding-bottom: 3px;
+}
+.titulo_principal_gen {
+
+
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: bold;
+	color: #255282;
+	letter-spacing: normal;
+}
+.parrafo_normal_lista {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #215C95;
+	text-align: justify;
+	white-space: normal;
+	letter-spacing: normal;
+	word-spacing: normal;
+	padding-top: 3px;
+	padding-right: 4px;
+	padding-bottom: 6px;
+	padding-left: 4px;
+	list-style-position: outside;
+	list-style-type: none;
+	list-style-image: url(imagenes/bullet_dot_red.gif);
+}
+.parrafo_normal_news_caja {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: normal;
+	color: #006699;
+	text-align: justify;
+	white-space: normal;
+	letter-spacing: normal;
+	padding-top: 3px;
+	padding-bottom: 15px;
+	list-style-position: outside;
+	list-style-type: none;
+	list-style-image: url(imagenes/bullet_dot_red.gif);
+	line-height: 17px;
+	border: none;
+	background-image: url(imagenes/fondo_news.gif);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+}
+.caja_tabla_proyectos {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #777777;
+	text-align: center;
+	white-space: normal;
+	letter-spacing: normal;
+	word-spacing: normal;
+	padding-top: 4px;
+	padding-right: 3px;
+	padding-bottom: 4px;
+	padding-left: 3px;
+	text-indent: 5pt;
+	border-top: thin none #C2D4E4;
+	border-right: thin solid #C2D4E4;
+	border-bottom: thin solid #C2D4E4;
+	border-left: thin none #C2D4E4;
+}
+.caja_available {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #777777;
+	border-top: thin solid #FFFFFF;
+	border-right: thin #FFFFFF;
+	border-bottom: thin #FFFFFF;
+	border-left: thin #FFFFFF;
+	background-color: #FF9933;
+	background-image: url(imagenes/available.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.titulo_secund_cap {
+
+
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+	color: #1EA173;
+	letter-spacing: normal;
+}
+.titulo_secund_res {
+
+
+
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+	color: #CC3333;
+	letter-spacing: normal;
+}
+.divisor {
+
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: normal;
+	color: #006699;
+	text-align: justify;
+	white-space: normal;
+	letter-spacing: normal;
+	padding-top: 3px;
+	padding-right: 4px;
+	padding-bottom: 0px;
+	padding-left: 4px;
+	list-style-position: outside;
+	list-style-type: none;
+	list-style-image: url(imagenes/bullet_dot_red.gif);
+	border: none;
+	background-image: url(imagenes/fondo_news.gif);
+	background-repeat: no-repeat;
+	background-position: center bottom;
+}
+.caja_check {
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #777777;
+	border-top: thin solid #FFFFFF;
+	border-right: thin #FFFFFF;
+	border-bottom: thin #FFFFFF;
+	border-left: thin #FFFFFF;
+	background-color: #CC3300;
+	background-image: url(imagenes/check.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+.titulo_secund_soporte {
+
+
+
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: normal;
+	color: #7C9DC0;
+	letter-spacing: normal;
+}

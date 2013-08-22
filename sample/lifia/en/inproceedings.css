@@ -1,0 +1,28 @@
+.apellido {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-variant: normal;
+	text-transform: capitalize;
+	color: #006699;
+	font-style: normal;
+	font-weight: bold;
+}
+.titulo_libro {
+	font-family: "Trebuchet MS", Verdana;
+	font-size: 11px;
+	font-style: normal;
+	text-transform: capitalize;
+	color: #666666;
+	font-weight: normal;
+	text-align: justify;
+	line-height: 17px;
+}
+.titulo {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+	text-transform: none;
+	color: #7C9DC0;
+	font-style: normal;
+	font-weight: bold;
+}

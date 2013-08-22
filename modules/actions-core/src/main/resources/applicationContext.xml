@@ -1,0 +1,60 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="
+          http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+          http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security-3.0.xsd
+          http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+          http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+          ">
+	
+	
+  <import resource="classpath://mapping.xml" />
+
+  <tx:annotation-driven/>
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:app.properties</value>
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="inMemoryRepository" class="com.service.repository.InMemoryContextRepository">
+    <constructor-arg index="0" ref="namesMapping" />
+  </bean>
+
+  <bean id="databaseRepository" class="com.service.repository.JdbcRepository">
+    <constructor-arg index="0" ref="dataSource" />
+    <constructor-arg index="1" ref="namesMapping" />
+  </bean>
+
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="${jdbc.driverClassName}"/>
+      <property name="url" value="${jdbc.url}"/>
+      <property name="username" value="${jdbc.username}"/>
+      <property name="password" value="${jdbc.password}"/>
+  </bean>
+	
+  <bean id="contextHolder" class="com.service.core.ContextHolder">
+    <constructor-arg index="0" value="10" />
+    <constructor-arg index="1" value="MINUTES" />
+  </bean>
+  <bean id="interpreterHolder" class="com.service.core.InterpreterHolder" />
+	
+  <bean id="contextRest" class="com.service.rest.ContextRESTService">
+    <constructor-arg index="0" ref="contextHolder" />
+    <constructor-arg index="1" ref="namesMapping" />
+    <constructor-arg index="2" value="1" />
+    <constructor-arg index="3" ref="databaseRepository" />
+  </bean>
+
+  <bean id="elementRest" class="com.service.rest.ElementRESTService">
+    <constructor-arg index="0" ref="contextHolder" />
+    <constructor-arg index="1" ref="namesMapping" />
+  </bean>
+</beans>

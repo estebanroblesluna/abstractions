@@ -1,0 +1,21 @@
+.site_map_text {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #255282;
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	letter-spacing: normal;
+	word-spacing: normal;
+	border: 1px #C2D4E4;
+}
+.site_map_title {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #255282;
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	word-spacing: normal;
+	border: 1px #66CC99;
+}

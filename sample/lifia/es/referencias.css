@@ -1,0 +1,39 @@
+.investigacion {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	color: #FF0000;
+	line-height: 15px;
+	text-align: right;
+}
+.transferencia {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	color: #1EA173;
+	line-height: 15px;
+	text-align: right;
+}
+.capacitacion {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	color: #228DCB;
+	line-height: 15px;
+}
+.soporte {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	color: #FFCC00;
+	line-height: 15px;
+	text-align: right;
+}
+.caja_referencias {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	line-height: 15px;
+	text-align: right;
+	padding-right: 2px;
+}
