@@ -57,7 +57,6 @@
 @import "Window/DebugWindow.j"
 
 @import "Tool/CreateProcessorTool.j"
-@import "Tool/CreateConnectionTool.j"
 @import "Tool/CreateNextInChainTool.j"
 @import "Tool/CreateAllConnectionTool.j"
 @import "Tool/CreateChoiceConnectionTool.j"
