@@ -15,20 +15,14 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation AbstractConnection : Connection 
+@implementation ElementConnection : Connection 
 {
-	id _id;
-}
-
-+ (void) connect: (id) aConnection with: (Figure) aSourceFigure
-{
-	[CPException raise: "Subclass responsibility" reason: "Subclass responsibility"];
+	id _elementName;
 }
 
 - (id) initWithSource: (Figure) aSourceFigure target: (Figure) aTargetFigure points: (id) anArrayOfPoints
 { 
 	self = [super initWithSource: aSourceFigure target: aTargetFigure points: anArrayOfPoints];
-	_foregroundColor = [CPColor colorWithHexString: [self defaultColor]];
 	
 	var contextMenu = [[CPMenu alloc] init]; 
     [contextMenu setDelegate: self]; 
@@ -43,33 +37,14 @@
 	return self;
 }
 
-- (id) id
+- (id) elementName
 {
-	return _id;
-}
-
-- (void) id: anId
-{
-	_id = anId;
-	[self model: [[self modelClass] 
-					contextId: [[self drawing] contextId] 
-					elementId: _id 
-					hasBreakpoint: NO]];
+	return _elementName;
 }
 
 - (void) deleteFromServer
 {
 	[[self model] deleteFromServer];
 	[self removeFromSuperview];
-}
-
-- (id) modelClass
-{
-	[CPException raise: "Subclass responsibility" reason: "Subclass responsibility"];
-}
-
-- (id) defaultColor
-{
-	[CPException raise: "Subclass responsibility" reason: "Subclass responsibility"];
 }
 @end

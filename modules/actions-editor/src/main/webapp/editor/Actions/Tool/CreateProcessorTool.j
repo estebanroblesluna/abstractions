@@ -16,93 +16,54 @@
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
  
-var _iconMapping = [CPDictionary dictionary];
-var _modelMapping = [CPDictionary dictionary];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"ALL"];
-[_modelMapping setObject: [AllModel class]  forKey: @"ALL"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"CHOICE"];
-[_modelMapping setObject: [ChoiceModel class]  forKey: @"CHOICE"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"WIRE_TAP"];
-[_modelMapping setObject: [WireTapModel class]  forKey: @"WIRE_TAP"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"GROOVY"];
-[_modelMapping setObject: [GroovyModel class]  forKey: @"GROOVY"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"HTTP_FETCHER"];
-[_modelMapping setObject: [HttpFetcherModel class]  forKey: @"HTTP_FETCHER"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"FILE_READER"];
-[_modelMapping setObject: [FileReaderModel class]  forKey: @"FILE_READER"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"DUST_RENDERER"];
-[_modelMapping setObject: [DustRendererModel class]  forKey: @"DUST_RENDERER"];
-
-[_iconMapping setObject: @"Resources/groovy.gif" forKey: @"LOG"];
-[_modelMapping setObject: [LogModel class]  forKey: @"LOG"];
-
-
 @implementation CreateProcessorTool : AbstractCreateFigureTool
 {
 	id _elementName;
-	id _iconUrl;
+	id _generator;
 }
 
-+ (id) drawing: (Drawing) aDrawing elementName: (id) anElementName
++ (id) drawing: (Drawing) aDrawing elementName: (id) anElementName generator: (id) aGenerator
 {
 	var tool = [super drawing: aDrawing];
 	[tool elementName: anElementName];
+	[tool generator: aGenerator];
 	return tool;
-}
-
-+ (id) isProcessor: anElementName
-{
-	return [_iconMapping containsKey: anElementName];
-}
-
-- (void) elementName: (id) anElementName
-{
-	_elementName = anElementName;
 }
 
 - (void) createFigureAt: (id) aPoint on: (id) aDrawing
 {
-	[[self class] createFigureAt: aPoint on: aDrawing elementName: _elementName edit: YES elementId: nil initialProperties: nil tool: self];
+	[[self class] 
+		createFigureAt: aPoint 
+		on: aDrawing 
+		elementName: _elementName 
+		edit: YES 
+		elementId: nil 
+		initialProperties: nil 
+		tool: self];
 }
 
 + (void) createFigureAt: (id) aPoint on: (id) aDrawing elementName: (id) elementName edit: (id) activateEdit elementId: (id) elementId initialProperties: (id) properties tool: (id) aTool
 {
-	var iconUrl = [_iconMapping objectForKey: elementName];
-	var modelClass = [_modelMapping objectForKey: elementName];
-
+	var generator = [aTool generator];
+	var iconUrl = [generator icon: elementName];
+	
 	var contextId = [aDrawing contextId];
     var newFigure = [ProcessorFigure newAt: aPoint iconUrl: iconUrl];
-    var newModel;
-    
     var hasBreakpoint = [properties objectForKey: "_breakpoint"];
     
-    
-    if (elementId == nil) {
-    	newModel = [modelClass contextId: contextId];
-    } else {
-    	newModel = [modelClass contextId: contextId elementId: elementId hasBreakpoint: hasBreakpoint];
-    }
-    
-    if (properties != nil) {
-    	CPLog.debug(@"Setting initial properties");
-    	[newModel initializeWithProperties: properties];
-    	[newModel changed];
-    	CPLog.debug(@"Initial properties set");
-    }
-    
+	var newModel = [generator 
+		modelFor: elementName 
+		elementId: elementId 
+		contextId: contextId 
+		initialProperties: properties
+		hasBreakpoint: hasBreakpoint];
+	
     var stateFigure = [ElementStateFigure newAt: aPoint elementModel: newModel];
     var magnet = [Magnet newWithSource: newFigure target: stateFigure selector: @selector(topLeft)];
     
     [newFigure model: newModel];
     [newFigure checkModelFeature: @"name"];
-    
+    [newModel changed];
 	[aDrawing addProcessor: newFigure];
 	[aDrawing addFigure: stateFigure];
 	
@@ -110,5 +71,22 @@ var _modelMapping = [CPDictionary dictionary];
 	if (activateEdit && aTool != nil) {
 		[newFigure switchToEditMode];
 	}
+	
+	return newFigure;
+}
+
+- (id) generator
+{
+	return _generator;
+}
+
+- (void) generator: (id) aGenerator
+{
+	_generator = aGenerator;
+}
+
+- (void) elementName: (id) anElementName
+{
+	_elementName = anElementName;
 }
 @end

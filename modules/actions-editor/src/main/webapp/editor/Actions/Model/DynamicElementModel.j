@@ -15,27 +15,29 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation AllConnectionModel : ElementModel
+@implementation DynamicElementModel : ElementModel
 {
-}
-
-- (id) init
-{
-	[super init];
-	
-	CPLog.debug("[AllConnectionModel] Adding properties of AllConnectionModel");
-	[self addProperty: @"targetExpression" displayName:@"Target expression" value: @"expression:groovy:message.properties['r1'] = result.payload"];
-	
-	return self;
-}
-
-- (id) defaultNameValue
-{
-	return @"All connection";
+	id _elementName;
+	id _defaultName;
 }
 
 - (id) elementName
 {
-	return @"ALL_CONNECTION";
+	return _elementName;
+}
+
+- (void) elementName: (id) anElementName
+{
+	_elementName = anElementName;
+}
+
+- (id) defaultNameValue
+{
+	return _defaultName;
+}
+
+- (void) defaultNameValue: (id) aDefaultValue
+{
+	_defaultName = aDefaultValue;
 }
 @end

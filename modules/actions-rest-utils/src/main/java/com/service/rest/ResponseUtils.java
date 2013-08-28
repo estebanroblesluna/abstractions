@@ -39,4 +39,23 @@ public class ResponseUtils {
 				.entity(message)
 				.build();
 	}
+
+	public static Response ok(String key, JSONObject value) {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("result", "success");
+			json.put(key, value);
+			String output = json.toString();
+			return Response
+					.status(200)
+					.entity(output)
+					.type(MediaType.APPLICATION_JSON)
+					.build();
+		} catch (JSONException e) {
+			return Response
+					.status(500)
+					.entity("Error creating response")
+					.build();
+		}
+	}
 }

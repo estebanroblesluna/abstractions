@@ -15,28 +15,50 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation DustRendererModel : ElementModel
+@implementation DynamicMessageSourceModel : ElementModel
 {
+	id _elementName;
+	id _defaultName;
+	id _state;
 }
 
 - (id) init
 {
 	[super init];
 	
-	CPLog.debug("[DustRendererModel] Adding properties of DustRendererModel");
-	[self addProperty: @"template" displayName:@"Template expression" value: @"exp"];
-	[self addProperty: @"jsonData" displayName:@"JSON data expression" value: @"exp"];
+	_state = "STOP";
 
 	return self;
 }
 
 - (id) elementName
 {
-	return @"DUST_RENDERER";
+	return _elementName;
+}
+
+- (void) elementName: (id) anElementName
+{
+	_elementName = anElementName;
 }
 
 - (id) defaultNameValue
 {
-	return @"Dust renderer";
+	return _defaultName;
+}
+
+- (void) defaultNameValue: (id) aDefaultValue
+{
+	_defaultName = aDefaultValue;
+}
+
+- (id) messageSourceState
+{
+	return _state;
+}
+
+- (void) messageSourceState: (id) anState
+{
+	_state = anState;
+	[self changed];
 }
 @end

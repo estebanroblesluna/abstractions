@@ -11,26 +11,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@import <Foundation/CPObject.j>
+@import <Foundation/Foundation.j>
 
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation AllConnection : AbstractConnection 
+@implementation LibraryAPI : CPObject
 {
 }
 
-+ (void) connect: (id) aConnection with: (Figure) aSourceFigure
+- (id) libraries: (id) aFunction
 {
-	[aSourceFigure addAllConnection: aConnection];
+	CPLog.debug("Getting libraries");
+
+	$.ajax({
+		type: "GET",
+		url: "../service/library/"
+	}).done(function( result ) {
+		CPLog.debug("Libraries received");
+		aFunction(result);
+	});
+	
+	return self;
 }
 
-- (id) modelClass
-{
-	return AllConnectionModel;
-}
-
-- (id) defaultColor
-{
-	return @"00bb00";
-}
 @end

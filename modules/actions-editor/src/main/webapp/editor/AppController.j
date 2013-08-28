@@ -45,78 +45,6 @@
 
 	drawing = [ActionsDrawing frame: [contentView bounds] contextId: contextId];
 
-	var basicToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(20,70)];
-	[basicToolbox columns: 2];
-
-	[basicToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"GROOVY"] 
-		withTitle: @"Groovy" 
-		image: @"Resources/groovy.gif"];
-
-	[basicToolbox 
-		addTool: [CreateNextInChainTool drawing: drawing] 
-		withTitle: @"Next in chain connection" 
-		image: @"Resources/nextInChainConnection.png"];
-
-	[basicToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"CHOICE"] 
-		withTitle: @"Choice" 
-		image: @"Resources/groovy.gif"];
-
-	[basicToolbox 
-		addTool: [CreateChoiceConnectionTool drawing: drawing] 
-		withTitle: @"Choice connection" 
-		image: @"Resources/choiceConnection.png"];
-
-	[basicToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"ALL"] 
-		withTitle: @"All" 
-		image: @"Resources/groovy.gif"];
-
-	[basicToolbox 
-		addTool: [CreateAllConnectionTool drawing: drawing] 
-		withTitle: @"All connection" 
-		image: @"Resources/allConnection.png"];
-
-	[basicToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"WIRE_TAP"] 
-		withTitle: @"Wire tap" 
-		image: @"Resources/groovy.gif"];
-
-	[basicToolbox 
-		addTool: [CreateWireTapConnectionTool drawing: drawing] 
-		withTitle: @"Wire tap connection" 
-		image: @"Resources/allConnection.png"];
-
-	var modulesToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(20,400)];
-	[modulesToolbox columns: 2];
-
-	[modulesToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"HTTP_FETCHER"] 
-		withTitle: @"Http fetcher" 
-		image: @"Resources/groovy.gif"];
-
-	[modulesToolbox 
-		addTool: [CreateMessageSourceTool drawing: drawing elementName: @"HTTP_MESSAGE_SOURCE"] 
-		withTitle: @"Http message source" 
-		image: @"Resources/groovy.gif"];
-
-	[modulesToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"FILE_READER"] 
-		withTitle: @"File reader" 
-		image: @"Resources/groovy.gif"];
-
-	[modulesToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"DUST_RENDERER"] 
-		withTitle: @"Dust renderer" 
-		image: @"Resources/groovy.gif"];
-
-	[modulesToolbox 
-		addTool: [CreateProcessorTool drawing: drawing elementName: @"LOG"] 
-		withTitle: @"Log" 
-		image: @"Resources/groovy.gif"];
-
-
 	var commonToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(800,70)];
 	[commonToolbox columns: 2];
 
@@ -153,12 +81,9 @@
 
 	[contentView addSubview: drawing];
 	
-	[drawing toolbox: basicToolbox];
-	[drawing addFigure: commonToolbox];
+	[drawing toolbox: commonToolbox];
 	[drawing addFigure: alignToolbox];
-	[drawing addFigure: modulesToolbox];
 	[drawing properties: properties];
-	
 
     if (contextId != nil) {
         var command = [LoadActionsCommand drawing: drawing];

@@ -2312,7 +2312,7 @@ with(_22){
 return objj_msgSend(objj_msgSend(_22,"new"),"initWithName:displayName:value:type:",_24,_25,_26,_27);
 }
 })]);
-p;30;AbstractCreateConnectionTool.jt;2960;@STATIC;1.0;t;2941;
+p;30;AbstractCreateConnectionTool.jt;3134;@STATIC;1.0;t;3115;
 var _1=objj_allocateClassPair(Tool,"AbstractCreateConnectionTool"),_2=_1.isa;
 class_addIvars(_1,[new objj_ivar("_connection"),new objj_ivar("_initialFigure"),new objj_ivar("_figureClass"),new objj_ivar("_validStartingConnection")]);
 objj_registerClassPair(_1);
@@ -2356,9 +2356,7 @@ var _16=objj_msgSend(_drawing,"figureAt:",_15);
 CPLog.debug("[CreateConnectionTool] Mouse up figure: "+_16);
 var _17=objj_msgSend(_12,"acceptsNewEndingConnection:",_16);
 if(_17){
-var _18=objj_msgSend(_figureClass,"source:target:points:",_initialFigure,_16,nil);
-objj_msgSend(_drawing,"addFigure:",_18);
-objj_msgSend(_12,"postConnectionCreated:",_18);
+objj_msgSend(_12,"createFigureFrom:target:points:",_initialFigure,_16,nil);
 }else{
 objj_msgSend(_connection,"foregroundColor:",objj_msgSend(CPColor,"colorWithHexString:","CC0000"));
 objj_msgSend(_connection,"lineWidth:",2);
@@ -2374,19 +2372,25 @@ _connection=nil;
 _initialFigure=nil;
 objj_msgSend(_12,"activateSelectionTool");
 }
-}),new objj_method(sel_getUid("postConnectionCreated:"),function(_19,_1a,_1b){
-with(_19){
+}),new objj_method(sel_getUid("createFigureFrom:target:points:"),function(_18,_19,_1a,_1b,_1c){
+with(_18){
+var _1d=objj_msgSend(_figureClass,"source:target:points:",_1a,_1b,_1c);
+objj_msgSend(_drawing,"addFigure:",_1d);
+objj_msgSend(_18,"postConnectionCreated:",_1d);
+}
+}),new objj_method(sel_getUid("postConnectionCreated:"),function(_1e,_1f,_20){
+with(_1e){
 }
 })]);
-class_addMethods(_2,[new objj_method(sel_getUid("drawing:"),function(_1c,_1d,_1e){
-with(_1c){
-return objj_msgSend(_1c,"drawing:figure:",_1e,objj_msgSend(Connection,"class"));
+class_addMethods(_2,[new objj_method(sel_getUid("drawing:"),function(_21,_22,_23){
+with(_21){
+return objj_msgSend(_21,"drawing:figure:",_23,objj_msgSend(Connection,"class"));
 }
-}),new objj_method(sel_getUid("drawing:figure:"),function(_1f,_20,_21,_22){
-with(_1f){
-var _23=objj_msgSendSuper({receiver:_1f,super_class:objj_getMetaClass("AbstractCreateConnectionTool").super_class},"drawing:",_21);
-objj_msgSend(_23,"figureClass:",_22);
-return _23;
+}),new objj_method(sel_getUid("drawing:figure:"),function(_24,_25,_26,_27){
+with(_24){
+var _28=objj_msgSendSuper({receiver:_24,super_class:objj_getMetaClass("AbstractCreateConnectionTool").super_class},"drawing:",_26);
+objj_msgSend(_28,"figureClass:",_27);
+return _28;
 }
 })]);
 p;26;AbstractCreateFigureTool.jt;421;@STATIC;1.0;t;403;

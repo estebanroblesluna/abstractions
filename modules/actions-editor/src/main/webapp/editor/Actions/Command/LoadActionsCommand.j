@@ -66,25 +66,34 @@
 			
 			var aPoint = CGPointMake(x, y);
 
-			if ([self isProcessor: elementName]) {
-				[CreateProcessorTool 
+			var figure = nil;
+			if ([self isProcessor: elementName] || [self isRouter: elementName]) {
+				var tool = [CreateProcessorTool drawing: _drawing elementName: elementName generator: [_drawing generator]];
+				
+				figure = [CreateProcessorTool 
 					createFigureAt: aPoint 
 					on: _drawing
 					elementName: elementName 
 					edit: NO
 					elementId: elementId
 					initialProperties: properties
-					tool: nil];
+					tool: tool];
 			} else if ([self isMessageSource: elementName]) {
-				[CreateMessageSourceTool 
+				var tool = [CreateMessageSourceTool drawing: _drawing elementName: elementName generator: [_drawing generator]];
+				figure = [CreateMessageSourceTool 
 					createFigureAt: aPoint 
 					on: _drawing
 					elementName: elementName 
 					edit: NO
 					elementId: elementId
 					initialProperties: properties
-					tool: nil];
+					tool: tool];
 			}
+			
+			if (figure != nil) {
+				[_drawing registerElement: figure for: elementId];
+			}
+			
 		}
 		
 	}
@@ -95,14 +104,23 @@
 	}
 }
 
+
+- (id) isRouter: (id) anElementName
+{
+	var generator = [_drawing generator];
+	return [generator isRouter: anElementName];
+}
+
 - (id) isProcessor: (id) anElementName
 {
-	return [CreateProcessorTool isProcessor: anElementName];
+	var generator = [_drawing generator];
+	return [generator isProcessor: anElementName];
 }
 
 - (id) isMessageSource: (id) anElementName
 {
-	return [CreateMessageSourceTool isMessageSource: anElementName];
+	var generator = [_drawing generator];
+	return [generator isMessageSource: anElementName];
 }
 
 - (void) processConnection: (id) aConnection
@@ -117,7 +135,6 @@
 		properties = [CPDictionary dictionaryWithJSObject: aConnection.properties];
 	}
 	
-
 	var pointsAsString = aConnection.properties["points"];
 	var points = nil;
 
@@ -140,31 +157,16 @@
 
 	var elementId = aConnection.id;
 	var elementName = aConnection.name;
-	var connectionClass = [NextInChainConnection class];
-	var model;
-
-	if ([elementName isEqual: "NEXT_IN_CHAIN_CONNECTION"]) {
-		connectionClass = [NextInChainConnection class];
-	} else if ([elementName isEqual: "CHOICE_CONNECTION"]) {
-		connectionClass = [ChoiceConnection class];
-	} else if ([elementName isEqual: "ALL_CONNECTION"]) {
-		connectionClass = [AllConnection class];
-	} else if ([elementName isEqual: "WIRE_TAP_CONNECTION"]) {
-		connectionClass = [WireTapConnection class];
-	}
+	var connectionTool = [CreateElementConnectionTool				
+						drawing: _drawing
+						acceptedSourceTypes: nil
+						acceptedSourceMax: 0 
+						acceptedTargetTypes: nil
+						acceptedTargetMax: 0 
+						elementName: elementName];
 	
-	var figure = [connectionClass 
-					source: source
-					target: target
-					points: points];
-	[_drawing addFigure: figure];
-
-	[figure id: elementId];
-	
-    if (properties != nil) {
-    	CPLog.debug(@"[LoadActionsCommand] Setting initial properties of connection " + properties);
-    	[[figure model] initializeWithProperties: properties];
-    	CPLog.debug(@"[LoadActionsCommand] Initial properties set of connection");
-    }					
+	var connectionFigure = [ElementConnection source: source target: target points: points];
+	[_drawing addFigure: connectionFigure];
+	[connectionTool postConnectionCreated: connectionFigure figureId: elementId properties: properties];
 }
 @end

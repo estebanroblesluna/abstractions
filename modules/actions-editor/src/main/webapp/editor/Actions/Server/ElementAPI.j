@@ -223,4 +223,9 @@
 		
 	}
 }
+
+- (id) id: (id) anID
+{
+	_elementId = anID;
+}
 @end

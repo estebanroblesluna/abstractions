@@ -175,7 +175,7 @@ public class ObjectDefinition implements Startable, Terminable {
 			String type = definition.getProperty("type");
 			this.addToUrns("__connections" + type, "urn:" + definition.getId());
 			
-			if (type.equals(ConnectionType.NEXT_IN_CHAIN.getElementName())) {
+			if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
 				this.setProperty("__next_in_chain", "urn:" + definition.getId());
 			}
 		}
@@ -189,14 +189,14 @@ public class ObjectDefinition implements Startable, Terminable {
 			}
 			this.removeToUrns("__connections" + type, "urn:" + definition.getId());
 
-			if (type.equals(ConnectionType.NEXT_IN_CHAIN.getElementName())) {
+			if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
 				this.properties.remove("__next_in_chain");
 			}
 		}
 	}
 	
 	public ObjectDefinition getUniqueConnectionOfType(String type, ContextDefinition context) {
-		if (type.equals(ConnectionType.NEXT_IN_CHAIN.getElementName())) {
+		if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
 			String urn = this.properties.get("__next_in_chain");
 			if (urn != null) {
 				return context.resolve(urn);

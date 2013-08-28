@@ -84,7 +84,7 @@ public class ContextPerfTest extends TestCase {
 			if (source == null) {
 				this.startId = definition.getId();
 			} else {
-				this.context.addConnection(source.getId(), definition.getId(), ConnectionType.NEXT_IN_CHAIN);
+				this.context.addConnection(source.getId(), definition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 			}
 
 			source = definition;

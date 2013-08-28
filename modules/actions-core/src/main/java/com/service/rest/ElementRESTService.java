@@ -52,7 +52,7 @@ public class ElementRESTService {
 
 	@POST
 	@Path("/{contextId}/{elementId}/{nextInChainId}/connection/{connectionType}")
-	public Response setNextInChain(
+	public Response addConnection(
 			@PathParam("contextId") String contextId, 
 			@PathParam("elementId") String sourceId, 
 			@PathParam("nextInChainId") String targetId,
