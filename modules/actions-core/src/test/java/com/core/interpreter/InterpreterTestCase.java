@@ -45,10 +45,10 @@ public class InterpreterTestCase extends TestCase {
 		mapping.addMapping("WIRE_TAP_ROUTER", WireTapRouter.class);
 		mapping.addEvaluator("WIRE_TAP_ROUTER", new WireTapRouterEvaluator());
 
-		mapping.addMapping(ConnectionType.NEXT_IN_CHAIN.getElementName(), NextInChainConnection.class);
-		mapping.addMapping(ConnectionType.ALL.getElementName(), AllConnection.class);
-		mapping.addMapping(ConnectionType.CHOICE.getElementName(), ChoiceConnection.class);
-		mapping.addMapping(ConnectionType.WIRE_TAP.getElementName(), WireTapConnection.class);
+		mapping.addMapping(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName(), NextInChainConnection.class);
+		mapping.addMapping(ConnectionType.ALL_CONNECTION.getElementName(), AllConnection.class);
+		mapping.addMapping(ConnectionType.CHOICE_CONNECTION.getElementName(), ChoiceConnection.class);
+		mapping.addMapping(ConnectionType.WIRE_TAP_CONNECTION.getElementName(), WireTapConnection.class);
 
 		this.context = new ContextDefinition(mapping);
 	}
@@ -66,7 +66,7 @@ public class InterpreterTestCase extends TestCase {
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(target);
-		this.context.addConnection(source.getId(), target.getId(), ConnectionType.NEXT_IN_CHAIN);
+		this.context.addConnection(source.getId(), target.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
 		this.context.sync();
 		
@@ -91,9 +91,9 @@ public class InterpreterTestCase extends TestCase {
 		this.context.addDefinition(inc2);
 		this.context.addDefinition(inc3);
 
-		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN);
-		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.CHOICE);
-		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.CHOICE);
+		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.CHOICE_CONNECTION);
+		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.CHOICE_CONNECTION);
 		
 		
 		ObjectDefinition inc2Connection = this.context.getDefinition(inc2ConnectionId);
@@ -143,9 +143,9 @@ public class InterpreterTestCase extends TestCase {
 		this.context.addDefinition(inc2);
 		this.context.addDefinition(inc3);
 
-		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN);
-		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.ALL);
-		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.ALL);
+		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.ALL_CONNECTION);
+		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.ALL_CONNECTION);
 		
 		
 		ObjectDefinition inc2Connection = this.context.getDefinition(inc2ConnectionId);
@@ -177,9 +177,9 @@ public class InterpreterTestCase extends TestCase {
 		this.context.addDefinition(inc2);
 		this.context.addDefinition(listener);
 
-		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN);
-		this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.NEXT_IN_CHAIN);
-		this.context.addConnection(router.getId(), listener.getId(), ConnectionType.WIRE_TAP);
+		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		this.context.addConnection(router.getId(), listener.getId(), ConnectionType.WIRE_TAP_CONNECTION);
 
 		this.context.sync();
 		

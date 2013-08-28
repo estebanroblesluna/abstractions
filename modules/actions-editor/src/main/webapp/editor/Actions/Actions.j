@@ -18,22 +18,9 @@
 @import <AppKit/CPTextField.j>
 
 @import "Model/ElementModel.j"
-
-@import "Model/ChoiceModel.j" 
-@import "Model/ChoiceConnectionModel.j" 
-@import "Model/AllModel.j" 
-@import "Model/AllConnectionModel.j" 
-@import "Model/NextInChainConnectionModel.j" 
-@import "Model/WireTapModel.j" 
-@import "Model/WireTapConnectionModel.j" 
-
-
-@import "Model/GroovyModel.j" 
-@import "Model/HttpFetcherModel.j"
-@import "Model/HttpMessageSourceModel.j"
-@import "Model/FileReaderModel.j" 
-@import "Model/DustRendererModel.j" 
-@import "Model/LogModel.j" 
+@import "Model/DynamicElementModel.j"
+@import "Model/DynamicMessageSourceModel.j"
+@import "Model/DynamicModelGenerator.j"
 
 @import "Figure/Magnet.j"
 @import "Figure/MultiStateFigure.j"
@@ -44,25 +31,15 @@
 @import "Figure/MessageSourceFigure.j"
 @import "Figure/MessageSourceStateFigure.j"
 @import "Figure/DebugFigure.j"
-
-@import "Figure/AbstractConnection.j"
-@import "Figure/NextInChainConnection.j"
-@import "Figure/AllConnection.j"
-@import "Figure/ChoiceConnection.j"
-@import "Figure/WireTapConnection.j"
-
+@import "Figure/ElementConnection.j"
 
 @import "Window/NewMessagePanel.j"
 @import "Window/ViewMessagePanel.j"
 @import "Window/DebugWindow.j"
 
 @import "Tool/CreateProcessorTool.j"
-@import "Tool/CreateNextInChainTool.j"
-@import "Tool/CreateAllConnectionTool.j"
-@import "Tool/CreateChoiceConnectionTool.j"
+@import "Tool/CreateElementConnectionTool.j"
 @import "Tool/CreateMessageSourceTool.j"
-@import "Tool/CreateWireTapConnectionTool.j"
-
 
 @import "Command/LoadActionsCommand.j"
 @import "Command/SaveActionsCommand.j"
@@ -70,6 +47,7 @@
 @import "Server/ContextAPI.j"
 @import "Server/ElementAPI.j"
 @import "Server/InterpreterAPI.j"
+@import "Server/LibraryAPI.j"
 
 @import "ActionsDrawing.j"
 

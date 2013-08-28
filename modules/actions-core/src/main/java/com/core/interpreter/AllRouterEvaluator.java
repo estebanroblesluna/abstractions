@@ -23,7 +23,7 @@ public class AllRouterEvaluator implements RouterEvaluator {
 		Message currentMessage = thread.getCurrentMessage();
 		ExecutorService service = thread.getExecutorServiceFor(currentElement);
 		
-		String connections = currentElement.getProperty("__connections" + ConnectionType.ALL.getElementName());
+		String connections = currentElement.getProperty("__connections" + ConnectionType.ALL_CONNECTION.getElementName());
 		List<String> urns = BeanUtils.getUrnsFromList(connections);
 		CountDownLatch latch = new CountDownLatch(urns.size());
 		

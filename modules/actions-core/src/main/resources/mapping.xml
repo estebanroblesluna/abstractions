@@ -12,27 +12,6 @@
           ">
   
   <bean id="namesMapping" class="com.service.core.NamesMapping">
-    <property name="elementMapping">
-      <map>
-        <entry key="CHOICE"                       value="com.core.routing.ChoiceRouter" />
-        <entry key="ALL"                          value="com.core.routing.AllRouter" />
-        <entry key="WIRE_TAP"                     value="com.core.routing.WireTapRouter" />
-        
-        <entry key="NEXT_IN_CHAIN_CONNECTION"     value="com.core.impl.NextInChainConnection" />
-        <entry key="CHOICE_CONNECTION"            value="com.core.impl.ChoiceConnection" />
-        <entry key="ALL_CONNECTION"               value="com.core.impl.AllConnection" />
-        <entry key="WIRE_TAP_CONNECTION"          value="com.core.impl.WireTapConnection" />
-
-        <entry key="GROOVY"                       value="com.common.expression.ScriptingProcessor" />
-        <entry key="LOG"                          value="com.core.common.LogProcessor" />
-        <entry key="HTTP_FETCHER"                 value="com.modules.http.HttpFetcherProcessor" />
-        <entry key="FILE_READER"                  value="com.modules.file.FileReaderProcessor" />
-        <entry key="DUST_RENDERER"                value="com.modules.dust.DustRendererProcessor" />
-        
-        <entry key="HTTP_MESSAGE_SOURCE"          value="com.modules.http.HttpMessageSource" />
-      </map>
-    </property>
-
     <property name="languageMapping">
       <map>
         <entry key="groovy">
@@ -40,19 +19,9 @@
         </entry>
       </map>
     </property>
-
-    <property name="routerEvaluators">
-      <map>
-        <entry key="CHOICE">
-          <bean class="com.core.interpreter.ChoiceRouterEvaluator" />
-        </entry>
-        <entry key="ALL">
-          <bean class="com.core.interpreter.AllRouterEvaluator" />
-        </entry>
-        <entry key="WIRE_TAP">
-          <bean class="com.core.interpreter.WireTapRouterEvaluator" />
-        </entry>
-      </map>
-    </property>
+  </bean>
+  
+  <bean class="com.service.core.MappingInitializer" init-method="initializeMapping">
+    <property name="mapping" ref="namesMapping" />
   </bean>
 </beans>

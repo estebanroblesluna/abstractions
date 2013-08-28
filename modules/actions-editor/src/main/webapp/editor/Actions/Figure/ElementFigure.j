@@ -145,4 +145,17 @@ var ElementWireTapConnection     = @"WIRE_TAP";
 	
 	return false;
 }
+
+- (id) countConnectionsOfType: (id) anElementName
+{
+	var count = 0;
+	for (var i = 0; i < [_outConnections count]; i++) { 
+		var outConnection = [_outConnections objectAtIndex:i];
+		if ([[outConnection elementName] isEqual: anElementName]) {
+			count++;
+		}
+	}
+	
+	return count;
+}
 @end

@@ -168,7 +168,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 
 	public ObjectDefinition getNextInChainFor(String objectDefinitionId) {
 		ObjectDefinition definition = this.getDefinition(objectDefinitionId);
-		ObjectDefinition nextInChain = definition.getUniqueConnectionOfType(ConnectionType.NEXT_IN_CHAIN.getElementName(), this);
+		ObjectDefinition nextInChain = definition.getUniqueConnectionOfType(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName(), this);
 		if (nextInChain == null) {
 			return null;
 		}

@@ -22,7 +22,7 @@ public class WireTapRouterEvaluator implements RouterEvaluator {
 		service.execute(new Runnable() {
 			@Override
 			public void run() {
-				ObjectDefinition connection = wireTap.getUniqueConnectionOfType(ConnectionType.WIRE_TAP.getElementName(), context);
+				ObjectDefinition connection = wireTap.getUniqueConnectionOfType(ConnectionType.WIRE_TAP_CONNECTION.getElementName(), context);
 				ObjectDefinition target = context.resolve(connection.getProperty("target"));
 				Thread newThread = thread.getInterpreter().createThread(target, clonedMessage);
 				newThread.run();

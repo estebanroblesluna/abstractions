@@ -2619,7 +2619,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("name:value:"), functio
 },["Property","id","id","id","id"])]);
 }
 
-p;30;AbstractCreateConnectionTool.jt;4109;@STATIC;1.0;t;4090;{var the_class = objj_allocateClassPair(Tool, "AbstractCreateConnectionTool"),
+p;30;AbstractCreateConnectionTool.jt;4404;@STATIC;1.0;t;4385;{var the_class = objj_allocateClassPair(Tool, "AbstractCreateConnectionTool"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_connection"), new objj_ivar("_initialFigure"), new objj_ivar("_figureClass"), new objj_ivar("_validStartingConnection")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("figureClass:"), function $AbstractCreateConnectionTool__figureClass_(self, _cmd, aFigureClass)
@@ -2666,9 +2666,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("figureClass:"), functio
   CPLog.debug("[CreateConnectionTool] Mouse up figure: " + figure);
   var acceptsNewEndingConnection = objj_msgSend(self, "acceptsNewEndingConnection:",  figure);
   if (acceptsNewEndingConnection) {
-   var connectionFigure = objj_msgSend(_figureClass, "source:target:points:",  _initialFigure,  figure,  nil);
-   objj_msgSend(_drawing, "addFigure:",  connectionFigure);
-   objj_msgSend(self, "postConnectionCreated:",  connectionFigure);
+   objj_msgSend(self, "createFigureFrom:target:points:",  _initialFigure,  figure,  nil);
   } else {
    objj_msgSend(_connection, "foregroundColor:",  objj_msgSend(CPColor, "colorWithHexString:",  "CC0000"));
    objj_msgSend(_connection, "lineWidth:",  2);
@@ -2684,7 +2682,14 @@ class_addMethods(the_class, [new objj_method(sel_getUid("figureClass:"), functio
  _initialFigure = nil;
  objj_msgSend(self, "activateSelectionTool");
 }
-},["void","CPEvent"]), new objj_method(sel_getUid("postConnectionCreated:"), function $AbstractCreateConnectionTool__postConnectionCreated_(self, _cmd, aConnectionFigure)
+},["void","CPEvent"]), new objj_method(sel_getUid("createFigureFrom:target:points:"), function $AbstractCreateConnectionTool__createFigureFrom_target_points_(self, _cmd, source, target, points)
+{ with(self)
+{
+ var connectionFigure = objj_msgSend(_figureClass, "source:target:points:",  source,  target,  points);
+ objj_msgSend(_drawing, "addFigure:",  connectionFigure);
+ objj_msgSend(self, "postConnectionCreated:",  connectionFigure);
+}
+},["void","id","id","id"]), new objj_method(sel_getUid("postConnectionCreated:"), function $AbstractCreateConnectionTool__postConnectionCreated_(self, _cmd, aConnectionFigure)
 { with(self)
 {
 }

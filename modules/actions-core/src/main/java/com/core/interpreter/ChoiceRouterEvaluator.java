@@ -29,7 +29,7 @@ public class ChoiceRouterEvaluator implements RouterEvaluator {
 		//this is a choice processor so get the connections property
 		Message currentMessage = thread.getCurrentMessage();
 		
-		String connections = choiceRouter.getProperty("__connections" + ConnectionType.CHOICE.getElementName());
+		String connections = choiceRouter.getProperty("__connections" + ConnectionType.CHOICE_CONNECTION.getElementName());
 		List<String> urns = BeanUtils.getUrnsFromList(connections);
 		for (String urn : urns) {
 			ObjectDefinition connectionDefinition = thread.getInterpreter().getContext().resolve(urn);

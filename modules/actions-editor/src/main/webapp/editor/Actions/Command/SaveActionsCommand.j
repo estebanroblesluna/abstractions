@@ -33,7 +33,7 @@
 			var point = { "x" : frameOrigin.x, "y" : frameOrigin.y, "id" : id };
 			json.positions.push(point);
 		} else if ([figure isKindOfClass: [Connection class]]) {
-			var id = [figure id];
+			var id = [[figure model] elementId];
 			var sourceId = [[[figure source] model] elementId];
 			var connection = { "id" : id, "sourceId" : sourceId, points: []};
 			var points = [figure points];					
@@ -56,6 +56,5 @@
 	}).done(function( result ) {
 		CPLog.debug("Context saved " + contextId);
 	});
-
 }
 @end

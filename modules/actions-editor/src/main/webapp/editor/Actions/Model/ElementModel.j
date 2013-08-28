@@ -15,6 +15,9 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
+ 
+ELEMENT_FAKE_ID = @"FAKE_ID";
+
 @implementation ElementModel : Model
 {
 	id _elementAPI;
@@ -23,7 +26,12 @@
 
 + (id) contextId: (id) aContextId
 {
-	return [[super new] initialize: aContextId elementId: nil hasBreakpoint: nil];
+	return [[super new] initialize: aContextId];
+}
+
++ (id) contextId: (id) aContextId elementName: (id) anElementName
+{
+	return [[super new] initialize: aContextId elementName: anElementName];
 }
 
 + (id) contextId: (id) aContextId elementId: (id) anElementId hasBreakpoint: (id) hasBreakpoint
@@ -36,18 +44,33 @@
 	[super init];
 	
 	CPLog.debug("[ElementModel] Adding properties of ElementModel");
-	[self addProperty: @"name" displayName:@"Name" value: [self defaultNameValue]];
+	
+	return self;
+}
+
+- (id) initialize: (id) aContextId
+{
+	_elementAPI = [ElementAPI newIn: aContextId elementName: [self elementName]];
+	
+	CPLog.debug("[ElementModel] Setting delegate: " + self);
+	[_elementAPI delegate: self];
+	
+	return self;
+}
+
+- (id) initialize: (id) aContextId elementName: (id) anElementName
+{
+	_elementAPI = [ElementAPI newIn: aContextId elementName: anElementName];
+	
+	CPLog.debug("[ElementModel] Setting delegate: " + self);
+	[_elementAPI delegate: self];
 	
 	return self;
 }
 
 - (id) initialize: (id) aContextId elementId: (id) anElementId hasBreakpoint: (id) hasBreakpoint
 {
-	if (anElementId == nil) {
-		_elementAPI = [ElementAPI newIn: aContextId elementName: [self elementName]];
-	} else {
-		_elementAPI = [ElementAPI newIn: aContextId elementId: anElementId hasBreakpoint: hasBreakpoint];
-	}
+	_elementAPI = [ElementAPI newIn: aContextId elementId: anElementId hasBreakpoint: hasBreakpoint];
 	
 	CPLog.debug("[ElementModel] Setting delegate: " + self);
 	[_elementAPI delegate: self];
