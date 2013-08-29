@@ -10,48 +10,49 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.helper.Validate;
 
 import com.core.api.Context;
 import com.core.api.Startable;
 import com.core.api.Terminable;
 import com.core.impl.ConnectionType;
+import com.core.meta.ElementDefinition;
 import com.core.utils.IdGenerator;
 
 public class ObjectDefinition implements Startable, Terminable {
 
+	public static final String NAME = "name";
+	
 	private String id;
-	private String elementName;
 	private Map<String, String> properties;
+	private final ElementDefinition metaElementDefinition;
 	
 	private volatile Object object;
 	private volatile boolean dirty;
 	private volatile boolean hasBreakpoint;
 	
-	public ObjectDefinition(String elementName) {
+	public ObjectDefinition(ElementDefinition metaElementDefinition) {
+		Validate.notNull(metaElementDefinition);
+
 		this.id = IdGenerator.getNewId();
-		this.elementName = elementName;
 		this.dirty = false;
 		this.hasBreakpoint = false;
 		this.properties = new ConcurrentHashMap<String, String>();
+		this.metaElementDefinition = metaElementDefinition;
 	}
 
-	public ObjectDefinition(String id, String elementName) {
+	public ObjectDefinition(String id, ElementDefinition metaElementDefinition) {
+		Validate.notNull(metaElementDefinition);
+
 		this.id = id;
-		this.elementName = elementName;
 		this.dirty = false;
 		this.properties = new ConcurrentHashMap<String, String>();
+		this.metaElementDefinition = metaElementDefinition;
 	}
 
 	public synchronized Object instantiate(Context context, NamesMapping mapping) throws ServiceException {
 		try {
-			Class<?> theClass = mapping.getClassForElement(this.elementName);
-			this.object = theClass.newInstance();
-			
-			Map<String, String> initialProperties = mapping.getElementInitialProperties(this.elementName);
-			if (initialProperties != null) {
-				this.basicSetProperties(initialProperties, context, mapping);
-			}
-
+			this.object = this.metaElementDefinition.instantiate(context, mapping, this.properties);
 			return this.object;
 		} catch (InstantiationException e) {
 			throw new ServiceException("Error creating object");
@@ -60,30 +61,12 @@ public class ObjectDefinition implements Startable, Terminable {
 		}
 	}
 	
-	public void initialize(Context context, NamesMapping mapping) throws ServiceException 
-	{
+	public void initialize(Context context, NamesMapping mapping) throws ServiceException {
 		if (this.object == null) {
 			this.instantiate(context, mapping);
 		}
-		
-		this.basicSetProperties(this.properties, context, mapping);
-	}
-	
-	private void basicSetProperties(Map<String, String> properties, Context context, NamesMapping mapping) {
-		for (Map.Entry<String, String> entry : properties.entrySet())
-		{
-			String propertyName = entry.getKey();
-			String propertyValue = entry.getValue();
-			try 
-			{
-				BeanUtils.setProperty(this.object, propertyName, propertyValue, context, mapping);
-			} 
-			catch (ServiceException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
+		this.metaElementDefinition.basicSetProperties(this.object, this.properties, context, mapping);
 	}
 	
 	public String getId() {
@@ -95,11 +78,7 @@ public class ObjectDefinition implements Startable, Terminable {
 	}
 
 	public String getElementName() {
-		return elementName;
-	}
-
-	public void setElementName(String elementName) {
-		this.elementName = elementName;
+		return this.metaElementDefinition.getName();
 	}
 
 	public void setProperty(String propertyName, String propertyValue) {

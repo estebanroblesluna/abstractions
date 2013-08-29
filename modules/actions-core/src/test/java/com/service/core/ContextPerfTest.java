@@ -5,22 +5,27 @@ import junit.framework.TestCase;
 import com.core.api.Message;
 import com.core.common.NullProcessor;
 import com.core.impl.ConnectionType;
-import com.core.impl.NextInChainConnection;
 import com.core.interpreter.Interpreter;
+import com.core.meta.Library;
+import com.core.meta.Meta;
 
 public class ContextPerfTest extends TestCase {
 
 	private ContextDefinition context;
 	private String startId;
 	private NamesMapping mapping;
+	private Library common;
 	
 	public void testPerf() throws ServiceException {
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 
 		mapping = new NamesMapping();
-		mapping.addMapping("A", IncrementProcessor.class);
-		mapping.addMapping("B", NullProcessor.class);
-		mapping.addMapping("NEXT_IN_CHAIN_CONNECTION", NextInChainConnection.class);
+		
+		common = Meta.getCommonLibrary();
+		common.addBasicDefinitionForClass("A", IncrementProcessor.class);
+		common.addBasicDefinitionForClass("B", NullProcessor.class);
+		common.createMappings(mapping);
+		
 		long count = 10000;
 
 		this.context = new ContextDefinition(this.mapping);
@@ -77,7 +82,7 @@ public class ContextPerfTest extends TestCase {
 	private void buildChain(long count, String elementName) {
 		ObjectDefinition source = null;
 		for (int i = 0; i < count; i++) {
-			ObjectDefinition definition = new ObjectDefinition(elementName);
+			ObjectDefinition definition = new ObjectDefinition(common.getDefinition(elementName));
 			
 			this.context.addDefinition(definition);
 			

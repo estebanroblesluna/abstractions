@@ -7,7 +7,7 @@ import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.ObjectDefinition;
 
-public class WireTapRouterEvaluator implements RouterEvaluator {
+public class WireTapRouterEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(final Thread thread) {

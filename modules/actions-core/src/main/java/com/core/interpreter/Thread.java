@@ -12,10 +12,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.core.api.Element;
+import com.core.api.Evaluable;
 import com.core.api.Message;
 import com.core.api.Processor;
 import com.core.impl.AllConnection;
-import com.core.routing.Router;
 import com.service.core.ObjectDefinition;
 
 public class Thread {
@@ -47,12 +47,12 @@ public class Thread {
 	
 	protected void basicStep() {
 		ObjectDefinition definition = this.currentElement;
-		log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty("Name")));
+		log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectDefinition.NAME)));
 
 		Element element = this.getCurrentElement();
 
-		if (element instanceof Router) {
-			RouterEvaluator evaluator = this.getInterpreter().getContext().getMapping().getRouterEvaluators().get(this.currentElement.getElementName());
+		if (element instanceof Evaluable) {
+			Evaluator evaluator = this.getInterpreter().getContext().getMapping().getEvaluators().get(this.currentElement.getElementName());
 			evaluator.evaluate(this);
 		} else if (element instanceof Processor) {
 			this.currentMessage = ((Processor) element).process(this.currentMessage);
@@ -61,7 +61,7 @@ public class Thread {
 
 		this.hasNextProcessor.set(this.currentElement != null);
 
-		log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty("Name"))
+		log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectDefinition.NAME))
 				+ " HAS NEXT " + this.hasNextProcessor.get());
 	}
 	
@@ -74,7 +74,7 @@ public class Thread {
 		}
 		
 		if (this.hasNext()) {
-			log.info("[Thread" + this.id + "] " + "Stop on breakpoint in: " + StringUtils.defaultString(this.currentElement.getProperty("Name")));
+			log.info("[Thread" + this.id + "] " + "Stop on breakpoint in: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
 			
 			this.interpreter.getDelegate().stopInBreakPoint(
 					this.interpreter.getId(), 
@@ -118,7 +118,7 @@ public class Thread {
 	}
 
 	private ObjectDefinition computeNextInChainProcessor() {
-		log.info("[Thread" + this.id + "] " +"START Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty("Name")));
+		log.info("[Thread" + this.id + "] " +"START Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
 
 		ObjectDefinition nextInChain = this.interpreter.getContext().getNextInChainFor(this.currentElement);
 		while (nextInChain == null && !this.contexts.isEmpty()) {
@@ -132,8 +132,8 @@ public class Thread {
 			nextInChain = this.interpreter.getContext().getNextInChainFor(this.currentElement);
 		}
 
-		log.info("[Thread" + this.id + "] " +"END Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty("Name"))
-				+ " with result " + (nextInChain == null ? "null" : StringUtils.defaultString(nextInChain.getProperty("Name"))));
+		log.info("[Thread" + this.id + "] " +"END Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME))
+				+ " with result " + (nextInChain == null ? "null" : StringUtils.defaultString(nextInChain.getProperty(ObjectDefinition.NAME))));
 
 		return nextInChain;
 	}

@@ -1,23 +1,14 @@
 package com.core.interpreter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import com.common.expression.ScriptingLanguage;
 import com.core.api.Message;
 import com.core.common.ListenerProcessor;
-import com.core.impl.AllConnection;
-import com.core.impl.ChoiceConnection;
 import com.core.impl.ConnectionType;
-import com.core.impl.NextInChainConnection;
-import com.core.impl.WireTapConnection;
-import com.core.routing.AllRouter;
-import com.core.routing.ChoiceRouter;
-import com.core.routing.WireTapRouter;
+import com.core.meta.Library;
+import com.core.meta.Meta;
 import com.service.core.ContextDefinition;
-import com.service.core.IncrementProcessor;
 import com.service.core.NamesMapping;
 import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
@@ -25,44 +16,27 @@ import com.service.core.ServiceException;
 public class InterpreterTestCase extends TestCase {
 
 	private ContextDefinition context;
+	private Library common;
 
 	public void setUp() {
 		NamesMapping mapping = new NamesMapping();
-		
 		mapping.addLanguage("groovy", ScriptingLanguage.GROOVY);
 		
-		mapping.addMapping("INC", IncrementProcessor.class);
-		mapping.addMapping("INC2", IncrementProcessor.class, this.incrementMap(2l));
-		mapping.addMapping("INC3", IncrementProcessor.class, this.incrementMap(3l));
-		mapping.addMapping("LISTENER", ListenerProcessor.class);
+		this.common = Meta.getCommonLibrary();
+		this.common.addBasicDefinitionForClass("INC",  "message.payload = message.payload + 1");
+		this.common.addBasicDefinitionForClass("INC2", "message.payload = message.payload + 2");
+		this.common.addBasicDefinitionForClass("INC3", "message.payload = message.payload + 3");
+		this.common.addBasicDefinitionForClass("LISTENER", ListenerProcessor.class);
 
-		mapping.addMapping("CHOICE_ROUTER", ChoiceRouter.class);
-		mapping.addEvaluator("CHOICE_ROUTER", new ChoiceRouterEvaluator());
-
-		mapping.addMapping("ALL_ROUTER", AllRouter.class);
-		mapping.addEvaluator("ALL_ROUTER", new AllRouterEvaluator());
-
-		mapping.addMapping("WIRE_TAP_ROUTER", WireTapRouter.class);
-		mapping.addEvaluator("WIRE_TAP_ROUTER", new WireTapRouterEvaluator());
-
-		mapping.addMapping(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName(), NextInChainConnection.class);
-		mapping.addMapping(ConnectionType.ALL_CONNECTION.getElementName(), AllConnection.class);
-		mapping.addMapping(ConnectionType.CHOICE_CONNECTION.getElementName(), ChoiceConnection.class);
-		mapping.addMapping(ConnectionType.WIRE_TAP_CONNECTION.getElementName(), WireTapConnection.class);
-
+		this.common.createMappings(mapping);
+		
 		this.context = new ContextDefinition(mapping);
 	}
 	
 	
-	private Map<String, String> incrementMap(Long l) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("increment", l.toString());
-		return map;
-	}
-
 	public void testNextInChain() throws InterruptedException, ServiceException {
-		ObjectDefinition source = new ObjectDefinition("INC");
-		ObjectDefinition target = new ObjectDefinition("INC");
+		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectDefinition target = new ObjectDefinition(this.common.getDefinition("INC"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(target);
@@ -81,10 +55,10 @@ public class InterpreterTestCase extends TestCase {
 	}
 	
 	public void testChoiceRouter() throws ServiceException {
-		ObjectDefinition source = new ObjectDefinition("INC");
-		ObjectDefinition router = new ObjectDefinition("CHOICE_ROUTER");
-		ObjectDefinition inc2 = new ObjectDefinition("INC2");
-		ObjectDefinition inc3 = new ObjectDefinition("INC3");
+		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectDefinition router = new ObjectDefinition(this.common.getDefinition("CHOICE"));
+		ObjectDefinition inc2 = new ObjectDefinition(this.common.getDefinition("INC2"));
+		ObjectDefinition inc3 = new ObjectDefinition(this.common.getDefinition("INC3"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(router);
@@ -133,10 +107,10 @@ public class InterpreterTestCase extends TestCase {
 	}
 	
 	public void testAllRouter() throws ServiceException {
-		ObjectDefinition source = new ObjectDefinition("INC");
-		ObjectDefinition router = new ObjectDefinition("ALL_ROUTER");
-		ObjectDefinition inc2 = new ObjectDefinition("INC2");
-		ObjectDefinition inc3 = new ObjectDefinition("INC3");
+		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectDefinition router = new ObjectDefinition(this.common.getDefinition("ALL"));
+		ObjectDefinition inc2 = new ObjectDefinition(this.common.getDefinition("INC2"));
+		ObjectDefinition inc3 = new ObjectDefinition(this.common.getDefinition("INC3"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(router);
@@ -167,10 +141,10 @@ public class InterpreterTestCase extends TestCase {
 	}
 
 	public void testWireTapRouter() throws ServiceException, InterruptedException {
-		ObjectDefinition source = new ObjectDefinition("INC");
-		ObjectDefinition router = new ObjectDefinition("WIRE_TAP_ROUTER");
-		ObjectDefinition inc2 = new ObjectDefinition("INC2");
-		ObjectDefinition listener = new ObjectDefinition("LISTENER");
+		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectDefinition router = new ObjectDefinition(this.common.getDefinition("WIRE_TAP"));
+		ObjectDefinition inc2 = new ObjectDefinition(this.common.getDefinition("INC2"));
+		ObjectDefinition listener = new ObjectDefinition(this.common.getDefinition("LISTENER"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(router);

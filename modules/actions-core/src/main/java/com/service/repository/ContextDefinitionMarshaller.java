@@ -11,6 +11,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.core.meta.ElementDefinition;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ObjectDefinition;
@@ -112,7 +113,8 @@ public class ContextDefinitionMarshaller {
 		String id = object.getString("id");
 		String name = object.getString("name");
 
-		ObjectDefinition definition = new ObjectDefinition(id, name);
+		ElementDefinition elementDefinition = this.mapping.getDefinition(name);
+		ObjectDefinition definition = new ObjectDefinition(id, elementDefinition);
 		JSONObject propertiesAsJson = object.getJSONObject("properties");
 
 		Map<String, String> properties = this.parsePropertiesMap(propertiesAsJson);

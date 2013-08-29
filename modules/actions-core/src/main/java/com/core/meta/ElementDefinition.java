@@ -3,9 +3,23 @@ package com.core.meta;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.common.expression.ScriptingLanguage;
+import com.common.expression.ScriptingProcessor;
+import com.core.api.Context;
+import com.service.core.BeanUtils;
+import com.service.core.NamesMapping;
+import com.service.core.ServiceException;
 
 public abstract class ElementDefinition {
 
+	private static Log log = LogFactory.getLog(ElementDefinition.class);
+	
 	private String name;
 	private String displayName;
 	private String icon;
@@ -18,9 +32,9 @@ public abstract class ElementDefinition {
 		this.properties = new ArrayList<PropertyDefinition>();
 		this.isScript = false;
 	}
-	
+
 	public abstract Object accept(ElementDefinitionVisitor visitor);
-	
+
 	public void addProperty(PropertyDefinition property) {
 		this.properties.add(property);
 	}
@@ -46,7 +60,7 @@ public abstract class ElementDefinition {
 	}
 
 	public abstract ElementDefinitionType getType();
-	
+
 	public String getIcon() {
 		return icon;
 	}
@@ -59,6 +73,11 @@ public abstract class ElementDefinition {
 		this.implementation = aClassName;
 		this.isScript = false;
 	}
+	
+	public void setScript(String aScript) {
+		this.implementation = aScript;
+		this.isScript = true;
+	}
 
 	public String getImplementation() {
 		return implementation;
@@ -66,5 +85,38 @@ public abstract class ElementDefinition {
 
 	public boolean isScript() {
 		return isScript;
+	}
+
+	public Object instantiate(Context context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
+		Object object;
+		
+		if (this.isScript()) {
+			object = new ScriptingProcessor(ScriptingLanguage.GROOVY, this.implementation);
+		} else {
+			Class<?> theClass = mapping.getClassForElement(this.name);
+			object = theClass.newInstance();
+
+			Map<String, String> initialProperties = mapping.getElementInitialProperties(this.name);
+			this.basicSetProperties(object, initialProperties, context, mapping);
+			this.basicSetProperties(object, instanceProperties, context, mapping);
+		}
+
+		return object;
+	}
+
+	public void basicSetProperties(Object object, Map<String, String> properties, Context context, NamesMapping mapping) {
+		if (properties == null || properties.isEmpty()) {
+			return;
+		}
+		
+		for (Map.Entry<String, String> entry : properties.entrySet()) {
+			String propertyName = entry.getKey();
+			String propertyValue = entry.getValue();
+			try {
+				BeanUtils.setProperty(object, propertyName, propertyValue, context, mapping);
+			} catch (ServiceException e) {
+				log.warn("Error setting property " + StringUtils.defaultString(propertyName) + " with value " + StringUtils.defaultString(propertyValue));
+			}
+		}
 	}
 }

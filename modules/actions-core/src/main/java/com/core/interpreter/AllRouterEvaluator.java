@@ -13,7 +13,7 @@ import com.core.impl.ConnectionType;
 import com.service.core.BeanUtils;
 import com.service.core.ObjectDefinition;
 
-public class AllRouterEvaluator implements RouterEvaluator {
+public class AllRouterEvaluator implements Evaluator {
 
 	private static Log log = LogFactory.getLog(AllRouterEvaluator.class);
 
