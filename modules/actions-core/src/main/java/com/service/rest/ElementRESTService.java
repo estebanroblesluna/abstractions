@@ -35,7 +35,7 @@ public class ElementRESTService {
 	{
 		ContextDefinition context = this.holder.get(contextId);
 		
-		ObjectDefinition definition = new ObjectDefinition(elementName);
+		ObjectDefinition definition = new ObjectDefinition(this.mapping.getDefinition(elementName));
 		context.addDefinition(definition);
 		
 		return ResponseUtils.ok(new Attribute("id", definition.getId()));

@@ -22,6 +22,7 @@ import com.core.impl.ContextImpl;
 import com.core.interpreter.Interpreter;
 import com.core.messagesource.MessageSource;
 import com.core.messagesource.MessageSourceListener;
+import com.core.meta.ElementDefinition;
 import com.core.utils.IdGenerator;
 
 public class ContextDefinition implements Identificable, MessageSourceListener, Terminable, Startable {
@@ -130,7 +131,8 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 
 	public String addConnection(String sourceId, String targetId, ConnectionType type) {
 		String elementName = type.getElementName();
-		ObjectDefinition definition = new ObjectDefinition(elementName);
+		ElementDefinition elementDefinition = this.mapping.getDefinition(elementName);
+		ObjectDefinition definition = new ObjectDefinition(elementDefinition);
 		
 		definition.setProperty("source", "urn:" + sourceId);
 		definition.setProperty("target", "urn:" + targetId);

@@ -8,7 +8,7 @@ import com.core.impl.ConnectionType;
 import com.service.core.BeanUtils;
 import com.service.core.ObjectDefinition;
 
-public class ChoiceRouterEvaluator implements RouterEvaluator {
+public class ChoiceRouterEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(Thread thread) {

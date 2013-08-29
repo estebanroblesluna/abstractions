@@ -1,6 +1,6 @@
 package com.core.interpreter;
 
-public interface RouterEvaluator {
+public interface Evaluator {
 
 	void evaluate(Thread thread);
 	

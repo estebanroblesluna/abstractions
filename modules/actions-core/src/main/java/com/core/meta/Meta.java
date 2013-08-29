@@ -31,7 +31,7 @@ public class Meta {
 		return library;
 	}
 
-	private static ElementDefinition createChoiceRouter() {
+	public static ElementDefinition createChoiceRouter() {
 		RouterDefinition definition = new RouterDefinition("CHOICE");
 		definition.setDisplayName("Choice router");
 		definition.setIcon("Resources/groovy.gif");
@@ -44,7 +44,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createAllRouter() {
+	public static ElementDefinition createAllRouter() {
 		RouterDefinition definition = new RouterDefinition("ALL");
 		definition.setDisplayName("All router");
 		definition.setIcon("Resources/groovy.gif");
@@ -57,7 +57,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createWireTapRouter() {
+	public static ElementDefinition createWireTapRouter() {
 		RouterDefinition definition = new RouterDefinition("WIRE_TAP");
 		definition.setDisplayName("Wire tap router");
 		definition.setIcon("Resources/groovy.gif");
@@ -70,7 +70,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createNextInChainConnection() {
+	public static ElementDefinition createNextInChainConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("NEXT_IN_CHAIN_CONNECTION");
 		definition.setDisplayName("Next in chain connection");
 		definition.setIcon("Resources/nextInChainConnection.png");
@@ -88,7 +88,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createChoiceConnection() {
+	public static ElementDefinition createChoiceConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("CHOICE_CONNECTION");
 		definition.setDisplayName("Choice connection");
 		definition.setIcon("Resources/choiceConnection.png");
@@ -112,7 +112,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createAllConnection() {
+	public static ElementDefinition createAllConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("ALL_CONNECTION");
 		definition.setDisplayName("All connection");
 		definition.setIcon("Resources/allConnection.png");
@@ -136,7 +136,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createWireTapConnection() {
+	public static ElementDefinition createWireTapConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("WIRE_TAP_CONNECTION");
 		definition.setDisplayName("Wire tap connection");
 		definition.setIcon("Resources/allConnection.png");
@@ -154,7 +154,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createGroovyProcessor() {
+	public static ElementDefinition createGroovyProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("GROOVY");
 		definition.setDisplayName("Groovy");
 		definition.setIcon("Resources/groovy.gif");
@@ -168,7 +168,7 @@ public class Meta {
 
 
 
-	private static ElementDefinition createLogProcessor() {
+	public static ElementDefinition createLogProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("LOG");
 		definition.setDisplayName("Logger");
 		definition.setIcon("Resources/groovy.gif");
@@ -181,7 +181,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createHttpFetcherProcessor() {
+	public static ElementDefinition createHttpFetcherProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("HTTP_FETCHER");
 		definition.setDisplayName("Http fetcher");
 		definition.setIcon("Resources/groovy.gif");
@@ -195,7 +195,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createFileReaderProcessor() {
+	public static ElementDefinition createFileReaderProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("FILE_READER");
 		definition.setDisplayName("File reader");
 		definition.setIcon("Resources/groovy.gif");
@@ -208,7 +208,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createDustRendererProcessor() {
+	public static ElementDefinition createDustRendererProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("DUST_RENDERER");
 		definition.setDisplayName("Dust renderer");
 		definition.setIcon("Resources/groovy.gif");
@@ -221,7 +221,7 @@ public class Meta {
 		return definition;
 	}
 
-	private static ElementDefinition createHttpMessageSource() {
+	public static ElementDefinition createHttpMessageSource() {
 		ElementDefinition definition = new MessageSourceDefinition("HTTP_MESSAGE_SOURCE");
 		definition.setDisplayName("Http message source");
 		definition.setIcon("Resources/groovy.gif");
@@ -234,31 +234,31 @@ public class Meta {
 		return definition;
 	}
 	
-	private static PropertyDefinition createNameProperty(String defaultValue) {
+	public static PropertyDefinition createNameProperty(String defaultValue) {
 		return createStringProperty("name", "Name", defaultValue);
 	}
 
-	private static PropertyDefinition createEnumProperty(String name, String displayName, String defaultValue) {
+	public static PropertyDefinition createEnumProperty(String name, String displayName, String defaultValue) {
 		return createProperty(name, displayName, defaultValue, PropertyType.ENUM);
 	}
 
-	private static PropertyDefinition createBooleanProperty(String name, String displayName, String defaultValue) {
+	public static PropertyDefinition createBooleanProperty(String name, String displayName, String defaultValue) {
 		return createProperty(name, displayName, defaultValue, PropertyType.BOOLEAN);
 	}
 
-	private static PropertyDefinition createNumberProperty(String name, String displayName, String defaultValue) {
+	public static PropertyDefinition createNumberProperty(String name, String displayName, String defaultValue) {
 		return createProperty(name, displayName, defaultValue, PropertyType.NUMBER);
 	}
 
-	private static PropertyDefinition createExpressionProperty(String name, String displayName, String defaultValue) {
+	public static PropertyDefinition createExpressionProperty(String name, String displayName, String defaultValue) {
 		return createProperty(name, displayName, defaultValue, PropertyType.EXPRESSION);
 	}
 	
-	private static PropertyDefinition createStringProperty(String name, String displayName, String defaultValue) {
+	public static PropertyDefinition createStringProperty(String name, String displayName, String defaultValue) {
 		return createProperty(name, displayName, defaultValue, PropertyType.STRING);
 	}
 	
-	private static PropertyDefinition createProperty(String name, String displayName, String defaultValue, PropertyType type) {
+	public static PropertyDefinition createProperty(String name, String displayName, String defaultValue, PropertyType type) {
 		PropertyDefinition scriptProperty = new PropertyDefinition(name);
 		scriptProperty.setDisplayName(displayName);
 		scriptProperty.setType(type);

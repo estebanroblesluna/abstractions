@@ -5,5 +5,6 @@ public enum ElementDefinitionType {
 	PROCESSOR,
 	ROUTER,
 	CONNECTION,
-	MESSAGE_SOURCE
+	MESSAGE_SOURCE,
+	FLOW
 }

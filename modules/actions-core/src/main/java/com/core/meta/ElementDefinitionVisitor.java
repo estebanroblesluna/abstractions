@@ -10,5 +10,5 @@ public interface ElementDefinitionVisitor {
 
 	Object visitRouterDefinition(RouterDefinition routerDefinition);
 
-	Object visitScriptProcessorDefinition(ScriptProcessorDefinition scriptProcessorDefinition);
+	Object visitFlowDefinition(FlowDefinition flowDefinition);
 }
