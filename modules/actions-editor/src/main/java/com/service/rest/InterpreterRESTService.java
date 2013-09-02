@@ -84,7 +84,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 		}
 		
 		try {
-			interpreter.getContext().sync();
+			interpreter.sync();
 			interpreter.run(initialMessage);
 			return ResponseUtils.ok();
 		} catch (ServiceException e) {
@@ -103,7 +103,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 		}
 		
 		try {
-			interpreter.getContext().sync();
+			interpreter.sync();
 			interpreter.debug(initialMessage);
 			return ResponseUtils.ok();
 		} catch (ServiceException e) {

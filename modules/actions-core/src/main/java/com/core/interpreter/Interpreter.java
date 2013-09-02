@@ -14,6 +14,7 @@ import com.core.api.Message;
 import com.core.utils.IdGenerator;
 import com.service.core.ContextDefinition;
 import com.service.core.ObjectDefinition;
+import com.service.core.ServiceException;
 
 public class Interpreter implements Identificable, ThreadObserver {
 
@@ -55,7 +56,7 @@ public class Interpreter implements Identificable, ThreadObserver {
 		return id;
 	}
 
-	public ContextDefinition getContext() {
+	ContextDefinition getContext() {
 		return context;
 	}
 
@@ -93,5 +94,9 @@ public class Interpreter implements Identificable, ThreadObserver {
 	
 	ExecutorService getExecutorServiceFor(ObjectDefinition definition) {
 		return this.context.getExecutorServiceFor(definition);
+	}
+
+	public void sync() throws ServiceException {
+		this.context.sync();
 	}
 }

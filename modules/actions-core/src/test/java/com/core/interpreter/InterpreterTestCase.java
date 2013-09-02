@@ -5,7 +5,9 @@ import junit.framework.TestCase;
 import com.common.expression.ScriptingLanguage;
 import com.core.api.Message;
 import com.core.common.ListenerProcessor;
+import com.core.composition.FlowEvaluator;
 import com.core.impl.ConnectionType;
+import com.core.meta.FlowDefinition;
 import com.core.meta.Library;
 import com.core.meta.Meta;
 import com.service.core.ContextDefinition;
@@ -29,6 +31,8 @@ public class InterpreterTestCase extends TestCase {
 		this.common.addBasicDefinitionForClass("LISTENER", ListenerProcessor.class);
 
 		this.common.createMappings(mapping);
+		
+		mapping.addEvaluator("FLOW", new FlowEvaluator());
 		
 		this.context = new ContextDefinition(mapping);
 	}
@@ -172,5 +176,57 @@ public class InterpreterTestCase extends TestCase {
 		assertNotNull(((ListenerProcessor) listener.getInstance()).getLastMessage());
 
 		assertEquals(1l, ((ListenerProcessor) listener.getInstance()).getLastMessage().getPayload());
+	}
+	
+	public void testFlow() throws ServiceException {
+		FlowDefinition incBy2 = new FlowDefinition("INC_BY_2");
+
+		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectDefinition target = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectDefinition sourceTarget = this.context.createConnection(source, target, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		
+		incBy2.addDefinition(source);
+		incBy2.addDefinition(target);
+		incBy2.addDefinition(sourceTarget);
+		incBy2.setStartingDefinition(source);
+
+		
+		FlowDefinition incBy6 = new FlowDefinition("INC_BY_6");
+
+		ObjectDefinition by6_1 = new ObjectDefinition(incBy2);
+		ObjectDefinition by6_2 = new ObjectDefinition(incBy2);
+		ObjectDefinition by6_3 = new ObjectDefinition(incBy2);
+		ObjectDefinition by6_1_by6_2 = this.context.createConnection(by6_1, by6_2, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectDefinition by6_2_by6_3 = this.context.createConnection(by6_2, by6_3, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+
+		incBy6.addDefinition(by6_1);
+		incBy6.addDefinition(by6_2);
+		incBy6.addDefinition(by6_3);
+		incBy6.addDefinition(by6_1_by6_2);
+		incBy6.addDefinition(by6_2_by6_3);
+		incBy6.setStartingDefinition(by6_1);
+
+		
+		ObjectDefinition add6 = new ObjectDefinition(incBy6);
+		this.context.addDefinition(add6);
+		
+		ObjectDefinition inc3 = new ObjectDefinition(this.common.getDefinition("INC3"));
+		this.context.addDefinition(inc3);
+
+		ObjectDefinition add62 = new ObjectDefinition(incBy6);
+		this.context.addDefinition(add62);
+
+		this.context.addConnection(add6.getId(), inc3.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		this.context.addConnection(inc3.getId(), add62.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		
+		this.context.sync();
+		
+		Interpreter interpreter = new Interpreter(this.context, add6);
+
+		Message message = new Message();
+		message.setPayload(0l);
+
+		Thread thread = interpreter.run(message);
+		assertEquals(15l, thread.getCurrentMessage().getPayload());
 	}
 }

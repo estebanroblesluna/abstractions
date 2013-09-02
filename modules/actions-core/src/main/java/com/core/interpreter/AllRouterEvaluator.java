@@ -28,7 +28,7 @@ public class AllRouterEvaluator implements Evaluator {
 		CountDownLatch latch = new CountDownLatch(urns.size());
 		
 		for (String urn : urns) {
-			final ObjectDefinition connectionDefinition = thread.getInterpreter().getContext().resolve(urn);
+			final ObjectDefinition connectionDefinition = thread.getContext().resolve(urn);
 			Object connection = connectionDefinition.getInstance();
 			if (connection instanceof AllConnection) {
 				thread.startSubthread(service, currentMessage.clone(), currentMessage, connectionDefinition, latch);

@@ -12,7 +12,7 @@ public class WireTapRouterEvaluator implements Evaluator {
 	@Override
 	public void evaluate(final Thread thread) {
 		final Message clonedMessage = thread.getCurrentMessage().clone();
-		final ContextDefinition context = thread.getInterpreter().getContext();
+		final ContextDefinition context = thread.getContext();
 		final ObjectDefinition wireTap = thread.getCurrentObjectDefinition();
 		
 		thread.computeNextInChainProcessorAndSet();

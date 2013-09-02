@@ -78,7 +78,7 @@ public class ObjectDefinition implements Startable, Terminable {
 	}
 
 	public String getElementName() {
-		return this.metaElementDefinition.getName();
+		return this.metaElementDefinition.getClassName();
 	}
 
 	public void setProperty(String propertyName, String propertyValue) {
@@ -224,5 +224,9 @@ public class ObjectDefinition implements Startable, Terminable {
 		
 		String newUrns = StringUtils.join(oldValues, ',');
 		this.setProperty(propertyName, newUrns);
+	}
+
+	public ElementDefinition getMeta() {
+		return this.metaElementDefinition;
 	}
 }
