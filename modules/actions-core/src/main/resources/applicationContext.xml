@@ -40,10 +40,15 @@
       <property name="password" value="${jdbc.password}"/>
   </bean>
 	
+  <bean id="deploymentService" class="com.service.core.DeploymentService">
+    <constructor-arg index="0" ref="databaseRepository" />
+  </bean>
+  
   <bean id="contextHolder" class="com.service.core.ContextHolder">
     <constructor-arg index="0" value="10" />
     <constructor-arg index="1" value="MINUTES" />
   </bean>
+  
   <bean id="interpreterHolder" class="com.service.core.InterpreterHolder" />
 	
   <bean id="contextRest" class="com.service.rest.ContextRESTService">
@@ -51,6 +56,7 @@
     <constructor-arg index="1" ref="namesMapping" />
     <constructor-arg index="2" value="1" />
     <constructor-arg index="3" ref="databaseRepository" />
+    <constructor-arg index="4" ref="deploymentService" />
   </bean>
 
   <bean id="elementRest" class="com.service.rest.ElementRESTService">

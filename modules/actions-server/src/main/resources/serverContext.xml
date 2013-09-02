@@ -17,4 +17,9 @@
   <bean id="actionsServer" class="com.server.core.ActionsServer">
     <constructor-arg index="0" ref="namesMapping" />
   </bean>
+
+  <bean id="actionsRESTServer" class="com.server.rest.ActionsServerRest">
+    <constructor-arg index="0" ref="actionsServer" />
+  </bean>
+  
 </beans>

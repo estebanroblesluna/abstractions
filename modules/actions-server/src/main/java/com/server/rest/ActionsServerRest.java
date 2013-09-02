@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.jsoup.nodes.Attribute;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.server.core.ActionsServer;
 import com.service.rest.ResponseUtils;
@@ -16,8 +15,11 @@ import com.service.rest.ResponseUtils;
 @Path("server")
 public class ActionsServerRest {
 
-	@Autowired
 	ActionsServer server;
+	
+	public ActionsServerRest(ActionsServer server) {
+		this.server = server;
+	}
 	
 	@Path("/start")
 	@POST

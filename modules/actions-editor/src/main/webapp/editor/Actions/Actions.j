@@ -41,6 +41,7 @@
 @import "Tool/CreateElementConnectionTool.j"
 @import "Tool/CreateMessageSourceTool.j"
 
+@import "Command/DeployCommand.j"
 @import "Command/LoadActionsCommand.j"
 @import "Command/SaveActionsCommand.j"
 
