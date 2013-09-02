@@ -236,6 +236,21 @@
         <artifactId>actions-core</artifactId>
         <version>${version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.action</groupId>
+        <artifactId>actions-modules-http</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.actions</groupId>
+        <artifactId>actions-modules-dust</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.actions</groupId>
+        <artifactId>actions-modules-file</artifactId>
+        <version>${version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
