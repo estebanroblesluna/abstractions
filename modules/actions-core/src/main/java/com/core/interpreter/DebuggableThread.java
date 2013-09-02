@@ -40,7 +40,7 @@ public class DebuggableThread extends Thread {
 		this.interpreter.getDelegate().afterStep(
 				this.interpreter.getId(),
 				this.getId().toString(), 
-				this.interpreter.getContext().getId(), 
+				this.getContext().getId(), 
 				currentDefinition, 
 				this.currentMessage.clone());
 	}
@@ -50,7 +50,7 @@ public class DebuggableThread extends Thread {
 		this.interpreter.getDelegate().beforeStep(
 				this.interpreter.getId(),
 				this.getId().toString(), 
-				this.interpreter.getContext().getId(), 
+				this.getContext().getId(), 
 				currentDefinition, 
 				this.currentMessage.clone());
 		this.delayIfNecessary();

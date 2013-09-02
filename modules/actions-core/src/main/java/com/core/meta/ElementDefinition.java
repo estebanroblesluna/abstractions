@@ -46,6 +46,10 @@ public abstract class ElementDefinition {
 	public String getName() {
 		return name;
 	}
+	
+	public String getClassName() {
+		return this.name;
+	}
 
 	public void setName(String name) {
 		this.name = name;

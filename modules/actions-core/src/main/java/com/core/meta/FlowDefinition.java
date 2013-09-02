@@ -5,12 +5,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.core.api.Context;
+import com.core.composition.Flow;
+import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ObjectDefinition;
+import com.service.core.ServiceException;
 
 public class FlowDefinition extends ElementDefinition {
 
+	static final Log log = LogFactory.getLog(FlowDefinition.class);
+	
 	private List<ObjectDefinition> definitions;
 	private ObjectDefinition startingDefinition;
 	
@@ -24,9 +32,28 @@ public class FlowDefinition extends ElementDefinition {
 		this.addDefinitions(definitions);
 	}
 	
+	public String getClassName() {
+		return "FLOW";
+	}
+	
 	@Override
 	public Object instantiate(Context context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
-		return super.instantiate(context, mapping, instanceProperties);
+		Flow flow = new Flow();
+		this.basicSetProperties(flow, instanceProperties, context, mapping);
+
+		ContextDefinition subContextDefinition = new ContextDefinition(mapping);
+		subContextDefinition.addDefinitions(this.definitions);
+		
+		try {
+			subContextDefinition.sync();
+		} catch (ServiceException e) {
+			log.warn("Error starting subcontext", e);
+		}
+		
+		flow.setStarting(this.startingDefinition);
+		flow.setContext(subContextDefinition);
+		
+		return flow;
 	}
 
 	@Override

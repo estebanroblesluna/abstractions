@@ -16,6 +16,7 @@ import com.core.api.Evaluable;
 import com.core.api.Message;
 import com.core.api.Processor;
 import com.core.impl.AllConnection;
+import com.service.core.ContextDefinition;
 import com.service.core.ObjectDefinition;
 
 public class Thread {
@@ -26,7 +27,7 @@ public class Thread {
 	protected volatile Message currentMessage;
 	protected volatile ObjectDefinition currentElement;
 	protected volatile Interpreter interpreter;
-	protected volatile Stack<ThreadContext> contexts;
+	protected volatile Stack<ThreadContext> threadContexts;
 	private volatile List<ThreadObserver> observers;
 	
 	private final Long id;
@@ -37,14 +38,25 @@ public class Thread {
 		this.interpreter = interpreter;
 		this.currentMessage = message;
 		this.id = id;
-		this.contexts = new Stack<ThreadContext>();
+		this.threadContexts = new Stack<ThreadContext>();
 		this.observers = new CopyOnWriteArrayList<ThreadObserver>();
+		
+		ThreadContext rootContext = new ThreadContext(interpreter.getContext(), source, message);
+		this.threadContexts.push(rootContext);
 	}
 	
 	public void run() {
 		this.basicRun();
 	}
 	
+	public ContextDefinition getContext() {
+		return this.threadContexts.peek().getContext();
+	}
+
+	public ContextDefinition getRootContext() {
+		return this.interpreter.getContext();
+	}
+
 	protected void basicStep() {
 		ObjectDefinition definition = this.currentElement;
 		log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectDefinition.NAME)));
@@ -52,7 +64,7 @@ public class Thread {
 		Element element = this.getCurrentElement();
 
 		if (element instanceof Evaluable) {
-			Evaluator evaluator = this.getInterpreter().getContext().getMapping().getEvaluators().get(this.currentElement.getElementName());
+			Evaluator evaluator = this.getContext().getMapping().getEvaluators().get(this.currentElement.getElementName());
 			evaluator.evaluate(this);
 		} else if (element instanceof Processor) {
 			this.currentMessage = ((Processor) element).process(this.currentMessage);
@@ -79,7 +91,7 @@ public class Thread {
 			this.interpreter.getDelegate().stopInBreakPoint(
 					this.interpreter.getId(), 
 					this.getId().toString(), 
-					this.interpreter.getContext().getId(), 
+					this.getContext().getId(), 
 					this.currentElement, 
 					this.currentMessage.clone());
 		} else {
@@ -88,7 +100,7 @@ public class Thread {
 			this.interpreter.getDelegate().finishInterpretation(
 					this.interpreter.getId(), 
 					this.getId().toString(), 
-					this.interpreter.getContext().getId(), 
+					this.getRootContext().getId(), 
 					this.currentMessage.clone());
 			
 			this.notifyObserversOfTermination();
@@ -120,16 +132,22 @@ public class Thread {
 	private ObjectDefinition computeNextInChainProcessor() {
 		log.info("[Thread" + this.id + "] " +"START Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
 
-		ObjectDefinition nextInChain = this.interpreter.getContext().getNextInChainFor(this.currentElement);
-		while (nextInChain == null && !this.contexts.isEmpty()) {
+		ObjectDefinition nextInChain = this.getContext().getNextInChainFor(this.currentElement);
+		while (nextInChain == null && !this.threadContexts.isEmpty()) {
 			log.info("[Thread" + this.id + "] " +"Seems that we need to pop up from the context stack");
 			//save the message to be overriden
 			Message messageResult = this.currentMessage;
 			this.popCurrentContext();
 			//override message
 			this.currentMessage = messageResult;
+			
 			//compute next in chain again
-			nextInChain = this.interpreter.getContext().getNextInChainFor(this.currentElement);
+			if (this.threadContexts.isEmpty()) {
+				//we have reached the root context
+				nextInChain = null;
+			} else {
+				nextInChain = this.getContext().getNextInChainFor(this.currentElement);
+			}
 		}
 
 		log.info("[Thread" + this.id + "] " +"END Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME))
@@ -166,7 +184,7 @@ public class Thread {
 			public void run() {
 				//get the target object definition
 				String urnTarget = allConnectionDefinition.getProperty("target");
-				ObjectDefinition targetDefinition = interpreter.getContext().resolve(urnTarget);
+				ObjectDefinition targetDefinition = getContext().resolve(urnTarget);
 				
 				//create the subthread starting from the target and with the copy of the message
 				final Thread subthread = createSubthread(targetDefinition, newMessage);
@@ -209,16 +227,20 @@ public class Thread {
 		this.currentElement = element;
 	}
 	
-	void pushCurrentContext() {
-		ThreadContext context = new ThreadContext(this.currentElement, this.currentMessage);
-		synchronized (this.contexts) {
-			this.contexts.push(context);
+	public void pushCurrentContext() {
+		this.pushCurrentContext(this.getContext());
+	}
+	
+	public void pushCurrentContext(ContextDefinition context) {
+		ThreadContext threadContext = new ThreadContext(context, this.currentElement, this.currentMessage);
+		synchronized (this.threadContexts) {
+			this.threadContexts.push(threadContext);
 		}
 	}
 
 	void popCurrentContext() {
-		synchronized (this.contexts) {
-			ThreadContext context = this.contexts.pop();
+		synchronized (this.threadContexts) {
+			ThreadContext context = this.threadContexts.pop();
 			this.currentMessage = context.getMessage();
 			this.currentElement = context.getProcessor();
 		}

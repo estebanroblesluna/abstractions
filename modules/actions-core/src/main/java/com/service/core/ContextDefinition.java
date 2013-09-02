@@ -1,6 +1,7 @@
 package com.service.core;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -102,6 +103,14 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 			this.definitions.put(definition.getId(), definition);
 		}
 	}
+	
+	public void addDefinitions(List<ObjectDefinition> definitions) {
+		synchronized (this.definitions) {
+			for (ObjectDefinition definition : definitions) {
+				this.definitions.put(definition.getId(), definition);
+			}
+		}
+	}
 
 	public String getId() {
 		return id;
@@ -144,6 +153,20 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		sourceDefinition.addConnection(definition);
 		
 		return definition.getId();
+	}
+	
+	public ObjectDefinition createConnection(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition, ConnectionType type) {
+		String elementName = type.getElementName();
+		ElementDefinition elementDefinition = this.mapping.getDefinition(elementName);
+		ObjectDefinition definition = new ObjectDefinition(elementDefinition);
+		
+		definition.setProperty("source", "urn:" + sourceDefinition.getId());
+		definition.setProperty("target", "urn:" + targetDefinition.getId());
+		definition.setProperty("type", type.getElementName());
+		
+		sourceDefinition.addConnection(definition);
+		
+		return definition;
 	}
 	
 	public void deleteConnection(ObjectDefinition definition) {

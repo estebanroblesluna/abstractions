@@ -18,7 +18,7 @@ public class ChoiceRouterEvaluator implements Evaluator {
 		if (newDefinition != null) {
 			thread.pushCurrentContext();
 			String targetId = newDefinition.getProperty("target");
-			ObjectDefinition target = thread.getInterpreter().getContext().resolve(targetId);
+			ObjectDefinition target = thread.getContext().resolve(targetId);
 			thread.setCurrentElement(target);
 		} else {
 			thread.computeNextInChainProcessorAndSet();
@@ -32,7 +32,7 @@ public class ChoiceRouterEvaluator implements Evaluator {
 		String connections = choiceRouter.getProperty("__connections" + ConnectionType.CHOICE_CONNECTION.getElementName());
 		List<String> urns = BeanUtils.getUrnsFromList(connections);
 		for (String urn : urns) {
-			ObjectDefinition connectionDefinition = thread.getInterpreter().getContext().resolve(urn);
+			ObjectDefinition connectionDefinition = thread.getContext().resolve(urn);
 			//TODO this should NOT occur unless there is UI problem while deleting connections
 			if (connectionDefinition != null) {
 				Object connection = connectionDefinition.getInstance();
