@@ -160,6 +160,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-lgpl</artifactId>
+        <version>1.9.12</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-jersey</artifactId>
         <version>${atmosphere.version}</version>
