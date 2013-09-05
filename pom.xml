@@ -160,6 +160,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-lgpl</artifactId>
+        <version>1.9.12</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-jersey</artifactId>
         <version>${atmosphere.version}</version>
@@ -234,6 +240,11 @@
       <dependency>
         <groupId>com.action</groupId>
         <artifactId>actions-core</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.action</groupId>
+        <artifactId>actions-editor</artifactId>
         <version>${version}</version>
       </dependency>
       <dependency>
