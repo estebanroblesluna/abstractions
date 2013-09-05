@@ -59,7 +59,11 @@ public class DustConnector {
 		String fullJavascript = "var compiled = dust.compile(\"" + template.replaceAll("\"", "\\\\\"") +"\", \"" + name + "\");"
 				+ "\n"
 				+ "compiled";
-		return this.evaluate(fullJavascript).toString();
+		Object evaluationResult = this.evaluate(fullJavascript);
+		if (evaluationResult == null) {
+			return "";
+		}
+		return evaluationResult.toString();
 	}
 
 	public Object evaluate(String javascript) {
