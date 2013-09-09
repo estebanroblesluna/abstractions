@@ -56,7 +56,7 @@ public class DustConnector {
 	}
 
 	private String compile(String name, String template) {
-		String fullJavascript = "var compiled = dust.compile(\"" + template.replaceAll("\"", "\\\\\"") +"\", \"" + name + "\");"
+		String fullJavascript = "var compiled = dust.compile(\"" + prepareTemplate(template) +"\", \"" + name + "\");"
 				+ "\n"
 				+ "compiled";
 		Object evaluationResult = this.evaluate(fullJavascript);
@@ -64,6 +64,12 @@ public class DustConnector {
 			return "";
 		}
 		return evaluationResult.toString();
+	}
+
+	private String prepareTemplate(String template) {
+		return template
+				.replaceAll("\"", "\\\\\"")
+				.replaceAll("\n", "{~n}");
 	}
 
 	public Object evaluate(String javascript) {

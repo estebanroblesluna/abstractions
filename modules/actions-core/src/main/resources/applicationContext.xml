@@ -15,15 +15,9 @@
   <import resource="classpath://mapping.xml" />
 
   <tx:annotation-driven/>
+ 
+  <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="locations">
-      <list>
-        <value>classpath:app.properties</value>
-      </list>
-    </property>
-  </bean>
-  
   <bean id="inMemoryRepository" class="com.service.repository.InMemoryContextRepository">
     <constructor-arg index="0" ref="namesMapping" />
   </bean>
