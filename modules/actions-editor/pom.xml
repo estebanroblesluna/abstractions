@@ -54,6 +54,23 @@
       <artifactId>actions-modules-http</artifactId>
       <version>${version}</version>
     </dependency>
+  		<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-mapper-lgpl</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-web</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webmvc</artifactId>
+		<version>${spring.version}</version>
+	</dependency>
 
     <dependency>
       <groupId>org.atmosphere</groupId>

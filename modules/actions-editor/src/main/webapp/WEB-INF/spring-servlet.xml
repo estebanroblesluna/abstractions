@@ -14,8 +14,8 @@
   </bean>
   
   <bean class="com.modules.dust.web.HomeController">
-    <property name="serviceBase" value="${dustServiceBaseUrl}" />
-    <property name="resourcesBase" value="${resourcesBaseUrl}" />
+    <property name="serviceBase" value="${dust.serviceBaseUrl}" />
+    <property name="resourcesBase" value="${dust.resourcesBaseUrl}" />
   </bean>
   
   <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">

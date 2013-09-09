@@ -6,6 +6,18 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     
+    <context:component-scan base-package="com.modules.dust.service" />
+
+	<context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
+
+	<bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">
+		<constructor-arg index="0" ref="keyValueStore" />
+	</bean>
+
+	<bean id="keyValueStore" class="com.modules.dust.store.relational.TemplateSqlKeyValueStore">
+		<constructor-arg index="0" value="${dust.jdbc.url}" />
+		<constructor-arg index="1" value="${dust.jdbc.driver}"/>
+	</bean>
     
   <bean id="interpreterRest" class="com.service.rest.InterpreterRESTService">
     <constructor-arg index="0" ref="contextHolder" />
