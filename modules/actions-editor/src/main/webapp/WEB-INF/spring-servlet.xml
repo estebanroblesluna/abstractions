@@ -25,9 +25,12 @@
   
   <mvc:annotation-driven/>
   
-  <bean class="com.modules.dust.web.HomeController">
-    <property name="serviceBase" value="${dust.serviceBaseUrl}" />
-    <property name="resourcesBase" value="${dust.resourcesBaseUrl}" />
+  <bean id="dustServiceBaseUrl" class="java.lang.String">
+  	<constructor-arg index="0" value="${dust.serviceBaseUrl}" />
+  </bean>
+  
+    <bean id="dustResourcesBaseUrl" class="java.lang.String">
+  	<constructor-arg index="0" value="${dust.resourcesBaseUrl}" />
   </bean>
   
   <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
