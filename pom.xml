@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.actions</groupId>
@@ -11,7 +9,8 @@
   <description>Actions - Parent project</description>
 
   <properties>
-    <spring.version>3.0.5.RELEASE</spring.version>
+    <spring.version>3.2.4.RELEASE</spring.version>
+    <hibernate.version>4.2.5.Final</hibernate.version>
     <jersey.version>1.12</jersey.version>
     <jetty.version>8.1.9.v20130131</jetty.version>
     <atmosphere.version>1.0.13</atmosphere.version>
@@ -43,7 +42,7 @@
       <name>Java.net Repository for Maven</name>
       <url>http://download.java.net/maven/2/</url>
     </repository>
-    
+
     <repository>
       <id>opencv-repository</id>
       <name>OpenCV Repository for Maven</name>
@@ -204,6 +203,11 @@
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
         <artifactId>spring-context-support</artifactId>
         <version>${spring.version}</version>
       </dependency>
@@ -229,6 +233,12 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>5.1.6</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
       </dependency>
 
       <dependency>
