@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <jsp:include page="/WEB-INF/jsp/header.jsp">
   <jsp:param name="title" value="Applications" />
 </jsp:include>
@@ -17,60 +19,34 @@
 
   <div class="container">
     <div class="row">
-
-      <div class="col-lg-3">
-        <div class="thumbnail">
-          <img src="../static/pages/image.png" alt="...">
-          <div class="caption container" style="text-align: center;">
-            <a href="connectors.htm"><h3>Connectors</h3></a>
-          </div>
-        </div>
+      <div class="col-lg-6">
       </div>
-
-      <div class="col-lg-3">
-        <div class="thumbnail">
-          <img src="../static/pages/image.png" alt="...">
-          <div class="caption container" style="text-align: center;">
-            <a href="flows.htm"><h3>Flows</h3></a>
-          </div>
-        </div>
+      <div class="col-lg-6" style="text-align: right;">
+        <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger">Delete</a>
       </div>
-
-      <div class="col-lg-3">
-        <div class="thumbnail">
-          <img src="../static/pages/image.png" alt="...">
-          <div class="caption container" style="text-align: center;">
-            <a href="templates.htm"><h3>Templates</h3></a>
-          </div>
-        </div>
-      </div>
-
     </div>
+
     <div class="row">
-      <p>&nbsp;</p>
-    </div>
-    
-    <div class="row">
-
-      <div class="col-lg-3">
-        <div class="thumbnail">
-          <img src="../static/pages/image.png" alt="...">
-          <div class="caption container" style="text-align: center;">
-            <a href="properties.htm"><h3>Properties</h3></a>
-          </div>
-        </div>
+      <div class="col-lg-12">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Application name</th>
+            </tr>
+          </thead>
+          <tbody>
+          <c:forEach var="application" items='${applications}' varStatus="lp">
+            <tr>
+              <td>${lp.index + 1}</td>
+              <td>${application.name}</td>
+            </tr>
+          </c:forEach>
+          </tbody>
+        </table>
       </div>
-
-      <div class="col-lg-3">
-        <div class="thumbnail">
-          <img src="../static/pages/image.png" alt="...">
-          <div class="caption container" style="text-align: center;">
-            <a href="servers.htm"><h3>Servers</h3></a>
-          </div>
-        </div>
-      </div>
-      
     </div>
+
   </div>
 </body>
 </html>

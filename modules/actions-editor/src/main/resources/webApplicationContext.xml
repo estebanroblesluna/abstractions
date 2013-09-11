@@ -10,6 +10,15 @@
 
   <import resource="datasource.xml" />
   <import resource="hibernate.xml" />
+  <import resource="rest.xml" />
+  
+  <bean id="repository" class="com.abstractions.repository.GenericRepository">
+    <constructor-arg index="0" ref="sessionFactory" />
+  </bean>
+
+  <bean id="applicationService" class="com.abstractions.service.ApplicationService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
 
   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
     <property name="sessionFactory" ref="sessionFactory" />
@@ -24,8 +33,4 @@
     <constructor-arg index="1" value="${dust.jdbc.driver}" />
   </bean>
 
-  <bean id="interpreterRest" class="com.service.rest.InterpreterRESTService">
-    <constructor-arg index="0" ref="contextHolder" />
-    <constructor-arg index="1" ref="interpreterHolder" />
-  </bean>
 </beans>
