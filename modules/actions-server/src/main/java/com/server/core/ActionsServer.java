@@ -73,4 +73,36 @@ public class ActionsServer {
 		ContextDefinition definition = this.definitions.get(contextId);
 		return definition != null;
 	}
+
+	public void addProfiler(String contextId, String objectId) {
+		// TODO Auto-generated method stub
+	}
+
+	public void removeProfiler(String contextId, String objectId) {
+		// TODO Auto-generated method stub
+	}
+
+	public void getLoggerLines(String contextId, String objectId, String logName, Integer from, Integer to) {
+		// TODO Auto-generated method stub
+	}
+	
+	public void getLoggers(String contextId) {
+		// TODO Auto-generated method stub
+	}
+
+	public void addLogger(String contextId, String objectId, String logName, String logExpression) {
+		// TODO Auto-generated method stub
+	}
+	
+	public void removeLogger(String contextId, String objectId, String logName) {
+		// TODO Auto-generated method stub
+	}
+
+	public void getProfilingInfo(String contextId, String objectId) {
+		// TODO Auto-generated method stub
+	}
+
+	public void getProfilers(String contextId) {
+		// TODO Auto-generated method stub
+	}
 }

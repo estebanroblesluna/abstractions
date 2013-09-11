@@ -1,5 +1,6 @@
 package com.server.rest;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,5 +43,94 @@ public class ActionsServerRest {
 		
 		return ResponseUtils.ok(
 				new Attribute("isRunning", isRunning.toString()));
+	}
+	
+	@Path("/{contextId}/log")
+	@GET
+	public Response getLoggers(
+			@PathParam("contextId") String contextId) {
+		//TODO
+		this.server.getLoggers(contextId);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/log/{objectId}/")
+	@POST
+	public Response addLogger(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId,
+			@FormParam("logName") String logName,
+			@FormParam("logExpression") String logExpression) {
+		//TODO
+		this.server.addLogger(contextId, objectId, logName, logExpression);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/log/{objectId}/{logName}")
+	@DELETE
+	public Response removeLogger(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId,
+			@PathParam("logName") String logName) {
+		//TODO
+		this.server.removeLogger(contextId, objectId, logName);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/log/{objectId}/{logName}/{from}/{to}")
+	@GET
+	public Response getLogLines(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId,
+			@PathParam("logName") String logName,
+			@PathParam("from") Integer from,
+			@PathParam("to") Integer to) {
+		
+		//TODO
+		this.server.getLoggerLines(contextId, objectId, logName, from, to);
+		return ResponseUtils.ok();
+	}
+
+	@Path("/{contextId}/profile")
+	@GET
+	public Response getProfilers(
+			@PathParam("contextId") String contextId) {
+		
+		//TODO
+		this.server.getProfilers(contextId);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/profile/{objectId}/")
+	@POST
+	public Response addProfiler(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId) {
+		
+		//TODO
+		this.server.addProfiler(contextId, objectId);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/profile/{objectId}/")
+	@DELETE
+	public Response removeProfiler(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId) {
+		
+		//TODO
+		this.server.removeProfiler(contextId, objectId);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/profile/{objectId}/")
+	@GET
+	public Response getProfilingInfo(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId) {
+		
+		//TODO
+		this.server.getProfilingInfo(contextId, objectId);
+		return ResponseUtils.ok();
 	}
 }

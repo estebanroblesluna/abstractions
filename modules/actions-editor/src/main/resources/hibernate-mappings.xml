@@ -6,7 +6,7 @@
 <hibernate-mapping>
 
   <class name="com.abstractions.model.Application" table="application">
-    <id name="id" type="int" column="application_id" access="field">
+    <id name="id" type="long" column="application_id" access="field">
       <generator class="native" />
     </id>
 
@@ -32,14 +32,14 @@
 
 
   <class name="com.abstractions.model.ApplicationSnapshot" table="application_snapshot">
-    <id name="id" type="int" column="application_snapshot_id" access="field">
+    <id name="id" type="long" column="application_snapshot_id" access="field">
       <generator class="native" />
     </id>
   </class>
 
 
   <class name="com.abstractions.model.Build" table="build">
-    <id name="id" type="int" column="build_id" access="field">
+    <id name="id" type="long" column="build_id" access="field">
       <generator class="native" />
     </id>
 
@@ -55,7 +55,7 @@
 
 
   <class name="com.abstractions.model.Deployment" table="deployment">
-    <id name="id" type="int" column="deployment_id" access="field">
+    <id name="id" type="long" column="deployment_id" access="field">
       <generator class="native" />
     </id>
 
@@ -70,14 +70,14 @@
 
 
   <class name="com.abstractions.model.Environment" table="environment">
-    <id name="id" type="int" column="environment_id" access="field">
+    <id name="id" type="long" column="environment_id" access="field">
       <generator class="native" />
     </id>
     <property name="name" type="string" access="field"  />
   </class>  
   
   <class name="com.abstractions.model.Property" table="property">
-    <id name="id" type="int" column="property_id" access="field">
+    <id name="id" type="long" column="property_id" access="field">
       <generator class="native" />
     </id>
     <property name="name" type="string" />
@@ -87,7 +87,7 @@
 
     
   <class name="com.abstractions.model.Server" table="server">
-    <id name="id" type="int" column="server_id" access="field">
+    <id name="id" type="long" column="server_id" access="field">
       <generator class="native" />
     </id>
     <property name="name" type="string" />
@@ -97,7 +97,7 @@
 
 
   <class name="com.abstractions.model.ServerGroup" table="server_group">
-    <id name="id" type="int" column="server_group_id" access="field">
+    <id name="id" type="long" column="server_group_id" access="field">
       <generator class="native" />
     </id>
     <property name="name" type="string" access="field"/>
@@ -105,7 +105,7 @@
     
   
   <class name="com.abstractions.model.User" table="user">
-    <id name="id" type="int" column="user_id" access="field">
+    <id name="id" type="long" column="user_id" access="field">
       <generator class="native" />
     </id>
     <property name="firstName" column="first_name" type="string" />
