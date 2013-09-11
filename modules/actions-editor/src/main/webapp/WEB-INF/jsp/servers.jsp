@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <jsp:include page="/WEB-INF/jsp/header.jsp">
   <jsp:param name="title" value="Servers" />
 </jsp:include>
@@ -24,7 +26,7 @@
       </ol>
     </div>
       <div class="col-lg-6" style="text-align:right;">
-<a href="addServer.htm" class="btn btn-primary">Add</a>
+<a href="add" class="btn btn-primary">Add</a>
 <a href="button" class="btn btn-danger">Delete</a>
     </div>
     </div>
@@ -42,27 +44,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>QA server</td>
-            <td>QA</td>
-            <td>eca2.asdas.amazon.com</td>
-            <td><span class="label label-success">Running</span></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>PROD 1</td>
-            <td>PROD</td>
-            <td>eca33.asdas.amazon.com</td>
-            <td><span class="label label-success">Running</span></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>PROD 2</td>
-            <td>PROD</td>
-            <td>eca3443.asdas.amazon.com</td>
-            <td><span class="label label-danger">Stopped</span></td>
-          </tr>
+          <c:forEach var="server" items='${servers}' varStatus="lp">
+            <tr>
+              <td>${lp.index + 1}</td>
+              <td>${server.name}</td>
+              <td>QA TODO</td>
+              <td>${server.ipDNS}</td>
+              <td><span class="label label-success">Running</span> TODO</td>
+            </tr>
+          </c:forEach>
         </tbody>
       </table>
     </div>
