@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <jsp:include page="/WEB-INF/jsp/header.jsp">
   <jsp:param name="title" value="Properties" />
 </jsp:include>
@@ -33,7 +35,7 @@
             </select>
           </form>
         </div>
-        <a href="addProperty.htm" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger">Delete</a>
+        <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger">Delete</a>
       </div>
     </div>
 
@@ -48,16 +50,13 @@
             </tr>
           </thead>
           <tbody>
+          <c:forEach var="property" items='${properties}' varStatus="lp">
             <tr>
-              <td>1</td>
-              <td>db.username</td>
-              <td>root</td>
+              <td>${lp.index + 1}</td>
+              <td>${property.name}</td>
+              <td>${property.value}</td>
             </tr>
-            <tr>
-              <td>2</td>
-              <td>db.password</td>
-              <td></td>
-            </tr>
+          </c:forEach>
           </tbody>
         </table>
       </div>

@@ -8,6 +8,14 @@ public class Property {
 	private String value;
 	private Environment environment;
 
+	protected Property() { }
+
+	public Property(String name, String value, Environment environment) {
+		this.name = name;
+		this.value = value;
+		this.environment = environment;
+	}
+	
 	public Environment getEnvironment() {
 		return environment;
 	}
