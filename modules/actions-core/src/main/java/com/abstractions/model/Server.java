@@ -8,6 +8,13 @@ public class Server {
 	private ServerGroup group;
 	private String ipDNS;
 
+	protected Server() { }
+	
+	public Server(String name, String ipDNS) {
+		this.name = name;
+		this.ipDNS = ipDNS;
+	}
+	
 	public String getName() {
 		return name;
 	}

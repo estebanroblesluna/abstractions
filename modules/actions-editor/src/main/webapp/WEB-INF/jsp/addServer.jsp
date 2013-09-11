@@ -27,12 +27,12 @@
 
       <div class="row">
         <div class="col-lg-9">
-          <form class="form-horizontal" role="form">
+          <form class="form-horizontal" role="form" name="form" action="add" method="POST">
 
             <div class="form-group">
               <label for="inputServerName" class="col-lg-2 control-label">Server name</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputServerName" name="serverName" placeholder="Server name...">
+                <input type="text" class="form-control" id="inputServerName" name="name" placeholder="Server name...">
               </div>
             </div>
 
