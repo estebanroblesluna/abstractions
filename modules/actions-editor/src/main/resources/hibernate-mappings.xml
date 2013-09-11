@@ -6,17 +6,17 @@
 <hibernate-mapping>
 
   <class name="com.abstractions.model.Application" table="application">
-    <id name="id" type="int" column="application_id">
+    <id name="id" type="int" column="application_id" access="field">
       <generator class="native" />
     </id>
 
     <property name="name" type="string" />
 
-    <bag name="builtByUsers" lazy="true">
+    <bag name="builtByUsers" lazy="true" access="field">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.User" />
     </bag>
-    <bag name="builds" table="application_build" inverse="false" lazy="true" fetch="select" cascade="all">
+    <bag name="builds" table="application_build" inverse="false" lazy="true" fetch="select" cascade="all" access="field">
       <key>
         <column name="application_id" not-null="true" />
       </key>
@@ -24,7 +24,7 @@
         <column name="build_id" not-null="true" />
       </many-to-many>
     </bag>
-    <bag name="deploys" lazy="true">
+    <bag name="deploys" lazy="true" access="field">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Deployment" />
     </bag>
@@ -32,22 +32,22 @@
 
 
   <class name="com.abstractions.model.ApplicationSnapshot" table="application_snapshot">
-    <id name="id" type="int" column="application_snapshot_id">
+    <id name="id" type="int" column="application_snapshot_id" access="field">
       <generator class="native" />
     </id>
   </class>
 
 
   <class name="com.abstractions.model.Build" table="build">
-    <id name="id" type="int" column="build_id">
+    <id name="id" type="int" column="build_id" access="field">
       <generator class="native" />
     </id>
 
-    <property name="date" type="string" />
-    <many-to-one name="application" column="application_id" />
-    <many-to-one name="snapshot" column="application_snapshot_id" />
+    <property name="date" type="string"  access="field"/>
+    <many-to-one name="application" column="application_id"  access="field"/>
+    <many-to-one name="snapshot" column="application_snapshot_id"  access="field"/>
 
-    <bag name="properties" lazy="true">
+    <bag name="properties" lazy="true" access="field">
       <key column="build_id" />
       <one-to-many class="com.abstractions.model.Property" />
     </bag>
@@ -55,14 +55,14 @@
 
 
   <class name="com.abstractions.model.Deployment" table="deployment">
-    <id name="id" type="int" column="deployment_id">
+    <id name="id" type="int" column="deployment_id" access="field">
       <generator class="native" />
     </id>
 
-    <many-to-one name="triggerBy" column="trigger_by_user_id" />
-    <many-to-one name="build" column="build_id" />
+    <many-to-one name="triggerBy" column="trigger_by_user_id"  access="field"/>
+    <many-to-one name="build" column="build_id"  access="field"/>
 
-    <bag name="servers" lazy="true">
+    <bag name="servers" lazy="true" access="field">
       <key column="deployment_id" />
       <one-to-many class="com.abstractions.model.Server" />
     </bag>
@@ -70,14 +70,14 @@
 
 
   <class name="com.abstractions.model.Environment" table="environment">
-    <id name="id" type="int" column="environment_id">
+    <id name="id" type="int" column="environment_id" access="field">
       <generator class="native" />
     </id>
-    <property name="name" type="string" />
+    <property name="name" type="string" access="field"  />
   </class>  
   
   <class name="com.abstractions.model.Property" table="property">
-    <id name="id" type="int" column="property_id">
+    <id name="id" type="int" column="property_id" access="field">
       <generator class="native" />
     </id>
     <property name="name" type="string" />
@@ -87,7 +87,7 @@
 
     
   <class name="com.abstractions.model.Server" table="server">
-    <id name="id" type="int" column="server_id">
+    <id name="id" type="int" column="server_id" access="field">
       <generator class="native" />
     </id>
     <property name="name" type="string" />
@@ -97,15 +97,15 @@
 
 
   <class name="com.abstractions.model.ServerGroup" table="server_group">
-    <id name="id" type="int" column="server_group_id">
+    <id name="id" type="int" column="server_group_id" access="field">
       <generator class="native" />
     </id>
-    <property name="name" type="string" />
+    <property name="name" type="string" access="field"/>
   </class>
     
   
   <class name="com.abstractions.model.User" table="user">
-    <id name="id" type="int" column="user_id">
+    <id name="id" type="int" column="user_id" access="field">
       <generator class="native" />
     </id>
     <property name="firstName" column="first_name" type="string" />
