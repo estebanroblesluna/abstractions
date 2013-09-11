@@ -27,6 +27,7 @@
 			  mode:  "dust",
 			  lineNumbers: true
 			});
+			templateEditor.setSize(700, 500);
 			
 			var templatesById = {};
 			var nextTemporaryTemplateId = 0;
