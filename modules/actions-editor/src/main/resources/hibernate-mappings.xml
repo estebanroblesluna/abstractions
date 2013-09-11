@@ -68,13 +68,6 @@
     </bag>
   </class>
 
-
-  <class name="com.abstractions.model.Environment" table="environment">
-    <id name="id" type="long" column="environment_id" access="field">
-      <generator class="native" />
-    </id>
-    <property name="name" type="string" access="field"  />
-  </class>  
   
   <class name="com.abstractions.model.Property" table="property">
     <id name="id" type="long" column="property_id" access="field">
@@ -82,7 +75,7 @@
     </id>
     <property name="name" type="string" />
     <property name="value" type="string" />
-    <many-to-one name="environment" column="environment_id" />
+    <property name="environment" />
   </class>  
 
     

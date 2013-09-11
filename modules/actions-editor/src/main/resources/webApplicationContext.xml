@@ -23,6 +23,10 @@
   <bean id="serverService" class="com.abstractions.service.ServerService">
     <constructor-arg index="0" ref="repository" />
   </bean>
+  
+  <bean id="propertiesService" class="com.abstractions.service.PropertiesService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
 
   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
     <property name="sessionFactory" ref="sessionFactory" />

@@ -27,19 +27,19 @@
 
       <div class="row">
         <div class="col-lg-9">
-          <form class="form-horizontal" role="form">
+          <form class="form-horizontal" role="form" name="form" action="add" method="POST">
 
             <div class="form-group">
               <label for="inputName" class="col-lg-2 control-label">Property name</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputName" name="propertyName" placeholder="Property name...">
+                <input type="text" class="form-control" id="inputName" name="name" placeholder="Property name...">
               </div>
             </div>
 
             <div class="form-group">
               <label for="inputValue" class="col-lg-2 control-label">Property value</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputValue" name="propertyValue" placeholder="Property value...">
+                <input type="text" class="form-control" id="inputValue" name="value" placeholder="Property value...">
               </div>
             </div>
 
