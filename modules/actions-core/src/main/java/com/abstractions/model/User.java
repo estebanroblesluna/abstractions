@@ -10,16 +10,16 @@ public class User {
 	long id;
 	private String firstName;
 	private String lastName;
-	private List<Server> servers;
+	private List<Team> teams;
 	
 	public User() {
-		this.servers = new ArrayList<Server>();
+		this.teams = new ArrayList<Team>();
 	}
 	
-	public void addServer(Server server) {
-		Validate.notNull(server);
+	public void addTeam(Team team) {
+		Validate.notNull(team);
 		
-		this.servers.add(server);
+		this.teams.add(team);
 	}
 
 	public String getFirstName() {

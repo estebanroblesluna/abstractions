@@ -10,47 +10,48 @@ public class Application {
 
 	long id;
 	private String name;
-	private List<User>       builtByUsers;
-	private List<Build>      builds;
+	private List<Property> properties;
+	private List<ApplicationSnapshot> snapshots;
 	private List<Deployment> deploys;
-	
-	protected Application() { }
-	
+
+	protected Application() {
+	}
+
 	public Application(String name) {
 		this.name = name;
-		this.builtByUsers = new ArrayList<User>();
-		this.builds = new ArrayList<Build>();
+		this.snapshots = new ArrayList<ApplicationSnapshot>();
 		this.deploys = new ArrayList<Deployment>();
+		this.properties = new ArrayList<Property>();
 	}
-	
-	public void addUser(User user) {
-		Validate.notNull(user);
-		
-		this.builtByUsers.add(user);
+
+	public void addBuild(ApplicationSnapshot snapshot) {
+		Validate.notNull(snapshot);
+
+		this.snapshots.add(snapshot);
 	}
-	
-	public void addBuild(Build build) {
-		Validate.notNull(build);
-		
-		this.builds.add(build);
-	}
-	
+
 	public void addDeployment(Deployment deployment) {
 		Validate.notNull(deployment);
-		
+
 		this.deploys.add(deployment);
 	}
+	
+	public void addProperty(Property property) {
+		Validate.notNull(property);
 
-	public List<User> getBuiltByUsers() {
-		return Collections.unmodifiableList(builtByUsers);
+		this.properties.add(property);
 	}
 
-	public List<Build> getBuilds() {
-		return Collections.unmodifiableList(builds);
+	public List<ApplicationSnapshot> getSnapshots() {
+		return Collections.unmodifiableList(this.snapshots);
 	}
 
 	public List<Deployment> getDeploys() {
 		return Collections.unmodifiableList(deploys);
+	}
+	
+	public List<Property> getProperties() {
+		return Collections.unmodifiableList(properties);
 	}
 
 	public String getName() {
