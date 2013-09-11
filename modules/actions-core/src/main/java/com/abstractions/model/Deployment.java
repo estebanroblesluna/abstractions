@@ -11,16 +11,16 @@ public class Deployment {
 	long id;
 
 	private User triggerBy;
-	private Build build;
+	private ApplicationSnapshot snapshot;
 	private List<Server> servers;
 	
 	protected Deployment() { }
 
-	public Deployment(Build build, User user) {
-		Validate.notNull(build);
+	public Deployment(ApplicationSnapshot snapshot, User user) {
+		Validate.notNull(snapshot);
 		Validate.notNull(user);
 		
-		this.build = build;
+		this.snapshot = snapshot;
 		this.triggerBy = user;
 		this.servers = new ArrayList<Server>();
 	}
@@ -31,8 +31,8 @@ public class Deployment {
 		this.servers.add(server);
 	}
 
-	public Build getBuild() {
-		return build;
+	public ApplicationSnapshot getSnapshot() {
+		return this.snapshot;
 	}
 
 	public List<Server> getServers() {
