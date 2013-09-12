@@ -32,4 +32,10 @@ public class ApplicationSnapshot {
 	public Date getDate() {
 		return date;
 	}
+
+	public long getId() {
+		return id;
+	}
+	
+	
 }

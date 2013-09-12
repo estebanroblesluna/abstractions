@@ -33,7 +33,7 @@
       <generator class="native" />
     </id>
     
-    <property name="date" type="string" />
+    <property name="date" type="java.util.Date" />
     <bag name="properties" lazy="true" access="field">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Property" />
