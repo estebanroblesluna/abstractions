@@ -69,5 +69,8 @@ public class Application {
 	public long getId() {
 		return this.id;
 	}
-	
+
+	public Team getTeam() {
+		return team;
+	}
 }
