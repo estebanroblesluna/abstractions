@@ -8,7 +8,7 @@ import org.jsoup.helper.Validate;
 
 public class Application {
 
-	long id;
+	private long id;
 	private String name;
 	private List<Property> properties;
 	private List<ApplicationSnapshot> snapshots;
@@ -27,7 +27,7 @@ public class Application {
 		this.deploys = new ArrayList<Deployment>();
 		this.properties = new ArrayList<Property>();
 	}
-
+	
 	public void addBuild(ApplicationSnapshot snapshot) {
 		Validate.notNull(snapshot);
 
@@ -65,4 +65,9 @@ public class Application {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public long getId() {
+		return this.id;
+	}
+	
 }
