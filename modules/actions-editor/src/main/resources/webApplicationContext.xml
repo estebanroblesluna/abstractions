@@ -18,6 +18,7 @@
 
   <bean id="applicationService" class="com.abstractions.service.ApplicationService">
     <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" ref="teamService" />
   </bean>
   
   <bean id="serverService" class="com.abstractions.service.ServerService">

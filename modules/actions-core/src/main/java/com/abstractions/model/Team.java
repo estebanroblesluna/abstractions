@@ -62,4 +62,8 @@ public class Team {
 	public List<User> getUsers() {
 		return Collections.unmodifiableList(users);
 	}
+
+	public long getId() {
+		return id;
+	}
 }

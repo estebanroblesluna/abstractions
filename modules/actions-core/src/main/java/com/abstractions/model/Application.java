@@ -13,12 +13,16 @@ public class Application {
 	private List<Property> properties;
 	private List<ApplicationSnapshot> snapshots;
 	private List<Deployment> deploys;
+	private Team team;
 
 	protected Application() {
 	}
 
-	public Application(String name) {
+	public Application(String name, Team team) {
+		Validate.notNull(team);
+
 		this.name = name;
+		this.team = team;
 		this.snapshots = new ArrayList<ApplicationSnapshot>();
 		this.deploys = new ArrayList<Deployment>();
 		this.properties = new ArrayList<Property>();
