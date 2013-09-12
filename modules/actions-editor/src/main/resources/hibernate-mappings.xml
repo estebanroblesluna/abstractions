@@ -93,7 +93,7 @@
       <generator class="native" />
     </id>
     <property name="name" type="string" access="field"/>
-
+    <many-to-one name="owner" column="owner_id" />
     <bag name="applications" lazy="true" access="field">
       <key column="team_id" />
       <one-to-many class="com.abstractions.model.Application" />
@@ -116,7 +116,7 @@
     <property name="firstName" column="first_name" type="string" />
     <property name="lastName" column="last_name" type="string" />
 
-    <bag name="teams" table="user_team" inverse="false" lazy="true" fetch="select" cascade="all" access="field">
+    <bag name="teams" table="user_team" inverse="true" lazy="false" fetch="select" cascade="all" access="field">
       <key column="user_id" />
       <many-to-many class="com.abstractions.model.Team" column="team_id" />
     </bag>
