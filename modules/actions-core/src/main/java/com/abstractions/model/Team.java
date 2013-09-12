@@ -66,4 +66,8 @@ public class Team {
 	public long getId() {
 		return id;
 	}
+
+	public User getOwner() {
+		return owner;
+	}
 }

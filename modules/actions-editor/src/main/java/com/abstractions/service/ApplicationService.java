@@ -53,4 +53,8 @@ public class ApplicationService {
 	public void removeApplicationById(long id) {
 		this.repository.delete(Application.class, id);
 	}
+
+	public Application getApplication(long applicationId) {
+		return this.repository.get(Application.class, applicationId);
+	}
 }

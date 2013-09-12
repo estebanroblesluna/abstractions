@@ -38,16 +38,17 @@ public class ApplicationController {
 		return new ModelAndView("addApplication");
 	}
 
+	@RequestMapping(value = "/teams/{teamId}/applications/add", method = RequestMethod.POST)
 	public String addContact(@PathVariable("teamId") long teamId, @ModelAttribute("form") AddApplicationForm form) {
 		this.service.addApplication(teamId, form.getName());
 		return "redirect:/teams/" + teamId + "/applications/";
 	}
 	
-	@RequestMapping(value = "/remove", method = RequestMethod.POST)
-	public String removeApplication(@ModelAttribute("form") RemoveForm form) {
+	@RequestMapping(value = "/teams/{teamId}/applications/remove", method = RequestMethod.POST)
+	public String removeApplication(@PathVariable("teamId") long teamId, @ModelAttribute("form") RemoveForm form) {
 		for (long id : form.getIdsToRemove()) {
 			this.service.removeApplicationById(id);
 		}
-		return "redirect:/applications/";
+		return "redirect:/teams/" + teamId + "/applications/";
 	}
 }

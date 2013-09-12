@@ -5,6 +5,19 @@
 </jsp:include>
 
 <body>
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $("#deleteButton").click(function(e) {
+      var propertiesIds = "";
+      e.preventDefault();
+      $(".selectedProperties:checked").each(function(i, checkbox) {
+    	  propertiesIds = propertiesIds + (propertiesIds ? "," : "") + $(checkbox).val();
+      })
+      $("#objectsToRemove").val(propertiesIds);
+      $("#removePropertiesForm")[0].submit();
+    })
+  })
+  </script>
   <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       <ul class="nav navbar-nav">
@@ -35,7 +48,7 @@
             </select>
           </form>
         </div>
-        <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger">Delete</a>
+        <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
       </div>
     </div>
 
@@ -52,7 +65,7 @@
           <tbody>
           <c:forEach var="property" items='${properties}' varStatus="lp">
             <tr>
-              <td>${lp.index + 1}</td>
+              <td><input type="checkbox" class="selectedProperties" value="${property.id}" /></td>
               <td>${property.name}</td>
               <td>${property.value}</td>
             </tr>
@@ -63,5 +76,10 @@
     </div>
 
   </div>
+  
+  <form id="removePropertiesForm" class="form-horizontal" role="form" name="form" action="remove" method="POST" style="display:hidden">
+    <input type="hidden" name="objectsToRemove" id="objectsToRemove" />
+  </form>
+  
 </body>
 </html>

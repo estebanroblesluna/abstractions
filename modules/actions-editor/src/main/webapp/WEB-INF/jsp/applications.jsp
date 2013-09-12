@@ -46,6 +46,7 @@
             <tr>
               <th>#</th>
               <th>Application name</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -53,6 +54,7 @@
             <tr>
               <td><input type="checkbox" class="selectedApplications" value="${application.id}" /></td>
               <td>${application.name}</td>
+              <td><a href="/teams/${application.team.id}/applications/${application.id}/properties/">Properties</a></td>
             </tr>
           </c:forEach>
           </tbody>
