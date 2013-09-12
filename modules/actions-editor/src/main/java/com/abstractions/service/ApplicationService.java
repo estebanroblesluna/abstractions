@@ -48,4 +48,9 @@ public class ApplicationService {
 		applications.addAll(this.teamService.getTeam(teamId).getApplications());
 		return applications;
 	}
+
+	@Transactional
+	public void removeApplicationById(long id) {
+		this.repository.delete(Application.class, id);
+	}
 }

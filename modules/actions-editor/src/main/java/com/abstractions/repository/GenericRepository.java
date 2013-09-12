@@ -2,6 +2,7 @@ package com.abstractions.repository;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.jsoup.helper.Validate;
@@ -32,9 +33,17 @@ public class GenericRepository {
 			.addOrder(Order.asc(orderBy))
 			.list();
 	}
-
+	
+	public void delete(Class<?> theClass, long id) {
+		String query = "delete from :class where id = :id".replace(":class", theClass.getCanonicalName());
+	    Query q = this.sessionFactory.getCurrentSession().createQuery(query);
+        q.setLong("id", id);
+        q.executeUpdate();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<?> theClass, long id) {
 		return (T) this.sessionFactory.getCurrentSession().get(theClass, id);
 	}
+	
 }
