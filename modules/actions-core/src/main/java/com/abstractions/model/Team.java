@@ -11,17 +11,21 @@ public class Team {
 	long id;
 
 	private String name;
+	private User owner;
 	private List<ServerGroup> serverGroups;
 	private List<Application> applications;
 	private List<User> users;
 	
 	protected Team() {}
 	
-	public Team(String name) {
+	public Team(String name, User owner) {
+		Validate.notNull(owner);
 		this.name = name;
 		this.serverGroups = new ArrayList<ServerGroup>();
 		this.applications = new ArrayList<Application>();
 		this.users = new ArrayList<User>();
+		this.owner = owner;
+		this.addUser(owner);
 	}
 
 	public String getName() {

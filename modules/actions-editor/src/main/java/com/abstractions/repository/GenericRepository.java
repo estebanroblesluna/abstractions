@@ -33,4 +33,8 @@ public class GenericRepository {
 			.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T> T get(Class<?> theClass, long id) {
+		return (T) this.sessionFactory.getCurrentSession().get(theClass, id);
+	}
 }

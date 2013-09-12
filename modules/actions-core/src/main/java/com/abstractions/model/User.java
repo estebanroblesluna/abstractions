@@ -1,6 +1,7 @@
 package com.abstractions.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
@@ -36,5 +37,9 @@ public class User {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public List<Team> getTeams() {
+		return Collections.unmodifiableList(this.teams);
 	}
 }
