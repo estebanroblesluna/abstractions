@@ -32,4 +32,10 @@ public class ApplicationService {
 	public List<Application> getApplications() {
 		return this.repository.get(Application.class, "name");
 	}
+
+	@Transactional
+	public void removeApplicationById(long id) {
+		this.repository.delete(Application.class, id);
+	}
+	
 }

@@ -35,8 +35,16 @@ public class ApplicationController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public String addContact(@ModelAttribute("form") AddApplicationForm form) {
+	public String addApplication(@ModelAttribute("form") AddApplicationForm form) {
 		this.service.addApplication(form.getName());
+		return "redirect:/applications/";
+	}
+	
+	@RequestMapping(value = "/remove", method = RequestMethod.POST)
+	public String removeApplication(@ModelAttribute("form") RemoveForm form) {
+		for (long id : form.getIdsToRemove()) {
+			this.service.removeApplicationById(id);
+		}
 		return "redirect:/applications/";
 	}
 }
