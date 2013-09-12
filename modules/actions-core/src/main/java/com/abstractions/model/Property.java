@@ -1,6 +1,6 @@
 package com.abstractions.model;
 
-public class Property {
+public class Property implements Cloneable {
 
 	long id;
 
@@ -42,5 +42,11 @@ public class Property {
 
 	public long getId() {
 		return id;
+	}
+
+	@Override
+	public Property clone() throws CloneNotSupportedException {
+		Property property = new Property(name, value, environment);
+		return property;
 	}
 }

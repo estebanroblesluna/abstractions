@@ -28,7 +28,7 @@ public class Application {
 		this.properties = new ArrayList<Property>();
 	}
 	
-	public void addBuild(ApplicationSnapshot snapshot) {
+	public void addSnapshot(ApplicationSnapshot snapshot) {
 		Validate.notNull(snapshot);
 
 		this.snapshots.add(snapshot);
