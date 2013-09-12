@@ -21,8 +21,7 @@
     <div class="row">
       <div class="col-lg-6">
       <ol class="breadcrumb">
-        <li><a href="#">App 1</a></li>
-        <li class="active">Servers</li>
+        <li><a href="#">Teams</a></li>
       </ol>
     </div>
       <div class="col-lg-6" style="text-align:right;">
@@ -38,6 +37,7 @@
           <tr>
             <th>#</th>
             <th>Name</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -45,6 +45,7 @@
             <tr>
               <td>${lp.index + 1}</td>
               <td>${team.name}</td>
+              <td><a href="/teams/${team.id}/applications/">Apps</a></td>
             </tr>
           </c:forEach>
         </tbody>

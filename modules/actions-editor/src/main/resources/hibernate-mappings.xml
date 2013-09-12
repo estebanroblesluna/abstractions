@@ -11,6 +11,7 @@
     </id>
   
     <property name="name" type="string" />
+    <many-to-one name="team" column="team_id" />
 
     <bag name="properties" lazy="true" access="field">
       <key column="application_id" />

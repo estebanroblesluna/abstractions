@@ -42,4 +42,9 @@ public class TeamService {
 			return new ArrayList<Team>();
 		}
 	}
+
+	@Transactional
+	public Team getTeam(long teamId) {
+		return this.repository.get(Team.class, teamId);
+	}
 }
