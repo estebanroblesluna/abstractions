@@ -29,6 +29,11 @@
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
   </bean>
+  
+  <bean id="flowService" class="com.abstractions.service.FlowService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" ref="applicationService" />
+  </bean>
 
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />

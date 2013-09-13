@@ -13,6 +13,7 @@ public class Application {
 	private List<Property> properties;
 	private List<ApplicationSnapshot> snapshots;
 	private List<Deployment> deploys;
+	private List<Flow> flows;
 	private Team team;
 
 	protected Application() {
@@ -26,6 +27,7 @@ public class Application {
 		this.snapshots = new ArrayList<ApplicationSnapshot>();
 		this.deploys = new ArrayList<Deployment>();
 		this.properties = new ArrayList<Property>();
+		this.flows = new ArrayList<Flow>();
 	}
 	
 	public void addSnapshot(ApplicationSnapshot snapshot) {
@@ -45,6 +47,12 @@ public class Application {
 
 		this.properties.add(property);
 	}
+	
+	public void addFlow(Flow flow) {
+		Validate.notNull(flow);
+
+		this.flows.add(flow);
+	}
 
 	public List<ApplicationSnapshot> getSnapshots() {
 		return Collections.unmodifiableList(this.snapshots);
@@ -56,6 +64,10 @@ public class Application {
 	
 	public List<Property> getProperties() {
 		return Collections.unmodifiableList(properties);
+	}
+	
+	public List<Flow> getFlows() {
+		return Collections.unmodifiableList(flows);
 	}
 
 	public String getName() {

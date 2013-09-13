@@ -48,6 +48,7 @@
               <th>Application name</th>
               <th></th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -57,6 +58,7 @@
               <td>${application.name}</td>
               <td><a href="/teams/${application.team.id}/applications/${application.id}/properties/">Properties</a></td>
               <td><a href="/teams/${application.team.id}/applications/${application.id}/snapshots/">Snapshots</a></td>
+              <td><a href="/teams/${application.team.id}/applications/${application.id}/flows/">Flows</a></td>
             </tr>
           </c:forEach>
           </tbody>
