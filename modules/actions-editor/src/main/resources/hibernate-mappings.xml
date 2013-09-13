@@ -25,6 +25,10 @@
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Deployment" />
     </bag>
+    <bag name="flows" lazy="true" access="field">
+      <key column="application_id" />
+      <one-to-many class="com.abstractions.model.Flow" />
+    </bag>
   </class>
 
 
@@ -55,6 +59,13 @@
     </bag>
   </class>
 
+  <class name="com.abstractions.model.Flow" table="flows">
+    <id name="id" type="long" column="flow_id" access="field">
+      <generator class="native" />
+    </id>
+    <property name="name" type="string" column="name" />
+    <property name="json" type="string" column="json_representation" />
+  </class> 
   
   <class name="com.abstractions.model.Property" table="property">
     <id name="id" type="long" column="property_id" access="field">
