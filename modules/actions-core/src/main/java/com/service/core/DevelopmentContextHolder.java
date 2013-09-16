@@ -10,6 +10,7 @@ import com.google.common.cache.RemovalNotification;
 public class DevelopmentContextHolder {
 	
 	private Cache<String, ContextDefinition> definitions;
+	private KeyProvider keyProvider;
 	
 	public DevelopmentContextHolder(long duration, TimeUnit unit) {
 		this.definitions = CacheBuilder
@@ -23,13 +24,25 @@ public class DevelopmentContextHolder {
 						notification.getValue().terminate();
 					}
 		}).build();
+		
+		this.keyProvider = new NullKeyProvider();
 	}
 	
 	public ContextDefinition get(String id) {
-		return this.definitions.getIfPresent(id);
+		String key = this.keyProvider.apply(id);
+		return this.definitions.getIfPresent(key);
 	}
 	
 	public void put(ContextDefinition definition) {
-		this.definitions.put(definition.getId(), definition);
+		String key = this.keyProvider.apply(definition.getId());
+		this.definitions.put(key, definition);
+	}
+
+	public KeyProvider getKeyProvider() {
+		return keyProvider;
+	}
+
+	public void setKeyProvider(KeyProvider keyProvider) {
+		this.keyProvider = keyProvider;
 	}
 }
