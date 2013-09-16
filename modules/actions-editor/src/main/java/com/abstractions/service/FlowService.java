@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.model.Application;
 import com.abstractions.model.Flow;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.web.WebUserKeyProvider;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;
@@ -38,6 +39,8 @@ public class FlowService {
 		this.applicationService = applicationService;
 		this.marshaller = new ContextDefinitionMarshaller(mapping);
 		this.holder = holder;
+		
+		this.holder.setKeyProvider(new WebUserKeyProvider());
 	}
 	
 	@Transactional
