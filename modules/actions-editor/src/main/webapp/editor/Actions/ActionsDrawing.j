@@ -67,24 +67,34 @@
 		[self setupNotifications];
 	}
 	
-	_libraryAPI = [LibraryAPI new];
-	var callback = function(result) {
-		[self libraries: result];
-	}
-	[_libraryAPI libraries: callback];
+	//_libraryAPI = [LibraryAPI new];
+	//var callback = function(result) {
+	//	[self libraries: result];
+	//}
+	//[_libraryAPI libraries: callback];
 	
 	[_contextAPI delegate: self];
 	[[self model] propertyValue: @"showGrid" be: YES];
 	[[self model] propertyValue: @"gridSize" be: 25];
+	[self loadLibraries];
+	
 	
 	return self;
+}
+
+- (void) loadLibraries
+{
+	var libraries = [DataUtil var: @"libraries"];
+	[self libraries: libraries];
 }
 
 - (void) libraries: (id) aJSON
 {
 	CPLog.debug("Libraries received");
+	CPLog.debug(aJSON);
 	
-	var libraries = aJSON.libraries.libraries;
+	//var libraries = aJSON.libraries.libraries;
+	var libraries = aJSON.libraries;
 	var generator = [DynamicModelGenerator new];
 	_generator = generator;
 	
@@ -103,7 +113,7 @@
 	for (var i = 0; i < libraries.length; i++) {
 		var library = libraries[i];
 
-		var toolbox = [ToolboxFigure initializeWith: self at: CGPointMake(initialX, 40)];
+		var toolbox = [ToolboxFigure initializeWith: self at: CGPointMake(initialX, 25)];
 		[toolbox columns: 2];
 		var elements = library.elements;
 		

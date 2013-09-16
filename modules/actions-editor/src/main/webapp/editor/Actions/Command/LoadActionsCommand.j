@@ -21,17 +21,25 @@
 
 - (void) execute
 {
-	var contextId = [_drawing contextId];
-
-	CPLog.debug("Loading context " + contextId);
-	$.ajax({
-		type: "POST",
-		url: "../service/context/" + contextId + "/load"
-	}).done(function( result ) {
-		CPLog.debug("Context loaded " + contextId);
-		
-		[self processResult: result];
-	});
+	var diagramRepresentation = [DataUtil var: @"diagramRepresentation"];
+	if (diagramRepresentation != nil) {
+		CPLog.debug("[LoadActionsCommand] Diagram representation found!");
+		var contextDefinition = diagramRepresentation;
+		[self processObjectDefinitions: contextDefinition.definitions];
+	}
+	
+	return;
+	
+	//var contextId = [_drawing contextId];
+	//CPLog.debug("Loading context " + contextId);
+	//$.ajax({
+	//	type: "POST",
+	//	url: "../service/context/" + contextId + "/load"
+	//}).done(function( result ) {
+	//	CPLog.debug("Context loaded " + contextId);
+	//	
+	//	[self processResult: result];
+	//});
 }
 
 - (void) processResult: (id) aContextDefinitionRoot
@@ -43,14 +51,17 @@
 
 - (void) processObjectDefinitions: (id) definitions
 {
+	CPLog.debug("[LoadActionsCommand] Processing " + definitions.length + " definitions");
 	var connections = [CPMutableArray array];
 	
 	for (var i = 0; i < definitions.length; i++) {
 		var objectDefinition = definitions[i];
 		
 		var elementName = objectDefinition.name;
+		CPLog.debug("[LoadActionsCommand] Processing " + elementName);
 		
 		if ([elementName hasSuffix: "_CONNECTION"]) {
+			CPLog.debug("[LoadActionsCommand] Saving connection for later process");
 			[connections addObject: objectDefinition];
 		} else {
 			var elementId = objectDefinition.id;
@@ -61,13 +72,12 @@
 			y = y == nil ? 0 : [y intValue];
 			var properties = [CPDictionary dictionaryWithJSObject: objectDefinition.properties];
 			
-			CPLog.debug(properties);
-			CPLog.debug([properties allKeys]);
-			
 			var aPoint = CGPointMake(x, y);
 
 			var figure = nil;
 			if ([self isProcessor: elementName] || [self isRouter: elementName]) {
+				CPLog.debug("[LoadActionsCommand] Adding processor or router");
+
 				var tool = [CreateProcessorTool drawing: _drawing elementName: elementName generator: [_drawing generator]];
 				
 				figure = [CreateProcessorTool 
@@ -79,6 +89,8 @@
 					initialProperties: properties
 					tool: tool];
 			} else if ([self isMessageSource: elementName]) {
+				CPLog.debug("[LoadActionsCommand] Adding message source");
+				
 				var tool = [CreateMessageSourceTool drawing: _drawing elementName: elementName generator: [_drawing generator]];
 				figure = [CreateMessageSourceTool 
 					createFigureAt: aPoint 
@@ -99,6 +111,7 @@
 	}
 
 	for (var i = 0; i < connections.length; i++) {
+		CPLog.debug("[LoadActionsCommand] Post processing connection");
 		var connection = connections[i];
 		[self processConnection: connection];
 	}

@@ -17,6 +17,8 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPTextField.j>
 
+@import "Util/DataUtil.j"
+
 @import "Model/ElementModel.j"
 @import "Model/DynamicElementModel.j"
 @import "Model/DynamicMessageSourceModel.j"

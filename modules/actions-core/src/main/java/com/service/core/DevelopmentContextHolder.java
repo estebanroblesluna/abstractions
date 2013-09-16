@@ -7,10 +7,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
-public class ContextHolder {
+public class DevelopmentContextHolder {
+	
 	private Cache<String, ContextDefinition> definitions;
 	
-	public ContextHolder(long duration, TimeUnit unit) {
+	public DevelopmentContextHolder(long duration, TimeUnit unit) {
 		this.definitions = CacheBuilder
 				.newBuilder()
 				.concurrencyLevel(4)

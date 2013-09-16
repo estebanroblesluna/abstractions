@@ -1,4 +1,4 @@
-package com.service.rest;
+package com.abstractions.service.rest;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -27,22 +27,23 @@ import com.core.interpreter.DebuggableThread;
 import com.core.interpreter.Interpreter;
 import com.core.interpreter.InterpreterDelegate;
 import com.service.core.ContextDefinition;
-import com.service.core.ContextHolder;
+import com.service.core.DevelopmentContextHolder;
 import com.service.core.InterpreterHolder;
 import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
+import com.service.rest.ResponseUtils;
 
 @Path("/interpreter")
 public class InterpreterRESTService implements InterpreterDelegate {
 
 	private static Log log = LogFactory.getLog(InterpreterRESTService.class);
 
-	private ContextHolder contextHolder;
+	private DevelopmentContextHolder contextHolder;
 	private InterpreterHolder interpreterHolder;
 	
 	private ExecutorService executor;
 	
-	public InterpreterRESTService(ContextHolder contextHolder, InterpreterHolder interpreterHolder) {
+	public InterpreterRESTService(DevelopmentContextHolder contextHolder, InterpreterHolder interpreterHolder) {
 		this.executor = Executors.newFixedThreadPool(10);
 		
 		this.contextHolder = contextHolder;

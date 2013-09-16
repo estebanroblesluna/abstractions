@@ -1,4 +1,4 @@
-package com.service.rest;
+package com.abstractions.service.rest;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -13,18 +13,19 @@ import org.jsoup.nodes.Attribute;
 
 import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
-import com.service.core.ContextHolder;
+import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;
 import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
+import com.service.rest.ResponseUtils;
 
 @Path("/element")
 public class ElementRESTService {
 
-	private ContextHolder holder;
+	private DevelopmentContextHolder holder;
 	private NamesMapping mapping;
 	
-	public ElementRESTService(ContextHolder holder, NamesMapping mapping) {
+	public ElementRESTService(DevelopmentContextHolder holder, NamesMapping mapping) {
 		this.holder = holder;
 		this.mapping = mapping;
 	}
