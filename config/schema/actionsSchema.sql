@@ -146,3 +146,94 @@ CREATE TABLE flows (
   KEY `FK_ouwdmllkcrsympjv9o04i0hgr` (`application_id`),
   CONSTRAINT `FK_ouwdmllkcrsympjv9o04i0hgr` FOREIGN KEY (`application_id`) REFERENCES `application` (`application_id`)
 );
+
+
+DROP TABLE IF EXISTS `library`;
+
+CREATE TABLE library (
+  `library_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  name varchar(200) NOT NULL,
+  display_name varchar(200) NOT NULL,
+  primary key (library_id)
+);
+
+
+DROP TABLE IF EXISTS `element_definition`;
+CREATE TABLE element_definition (
+  `element_definition_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  name varchar(200) NOT NULL,
+  display_name varchar(200) NULL,
+  icon varchar(200) NULL,
+  implementation varchar(200) NULL,
+  `library_id` bigint(20) DEFAULT NULL,
+  is_script boolean NULL,
+  primary key (element_definition_id),
+  KEY `FK_ouwdmllmcrsympjv9o04i0hgr` (`library_id`),
+  CONSTRAINT `FK_ouwdmllmcrsympjv9o04i0hgr` FOREIGN KEY (`library_id`) REFERENCES `library` (`library_id`)
+);
+
+
+DROP TABLE IF EXISTS `connection_definition`;
+CREATE TABLE connection_definition (
+  `element_definition_id` bigint(20) NOT NULL,
+  color varchar(200) NOT NULL,
+  accepted_source_types varchar(2000) NULL,
+  accepted_target_types varchar(2000) NULL,
+  accepted_source_max int NULL,
+  accepted_target_max int NULL,
+  primary key (element_definition_id),
+  KEY `FK_ouwdmllmcrsympjv9o14i0hgr` (`element_definition_id`),
+  CONSTRAINT `FK_ouwdmllmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+);
+
+
+DROP TABLE IF EXISTS `flow_definition`;
+CREATE TABLE flow_definition (
+  `element_definition_id` bigint(20) NOT NULL,
+  primary key (element_definition_id),
+  KEY `FK_ouwdmlbmcrsympjv9o14i0hgr` (`element_definition_id`),
+  CONSTRAINT `FK_ouwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+);
+
+
+DROP TABLE IF EXISTS `message_source_definition`;
+CREATE TABLE message_source_definition (
+  `element_definition_id` bigint(20) NOT NULL,
+  primary key (element_definition_id),
+  KEY `FK_auwdmlbmcrsympjv9o14i0hgr` (`element_definition_id`),
+  CONSTRAINT `FK_auwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+);
+    
+
+DROP TABLE IF EXISTS `processor_definition`;
+CREATE TABLE processor_definition (
+  `element_definition_id` bigint(20) NOT NULL,
+  primary key (element_definition_id),
+  KEY `FK_auwdmlbmdrsympjv9o14i0hgr` (`element_definition_id`),
+  CONSTRAINT `FK_auwdmlbmdrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+);
+
+
+DROP TABLE IF EXISTS `router_definition`;
+CREATE TABLE router_definition (
+  `element_definition_id` bigint(20) NOT NULL,
+  router_evaluator_implementation varchar(200) NOT NULL,
+  is_router_evaluator_script boolean NOT NULL,
+  primary key (element_definition_id),
+  KEY `FK_auwdmlbmdrszmpjv9o14i0hgr` (`element_definition_id`),
+  CONSTRAINT `FK_auwdmlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+);
+
+
+DROP TABLE IF EXISTS `property_definition`;
+CREATE TABLE property_definition (
+  `property_definition_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `element_definition_id` bigint(20) NOT NULL,
+  name varchar(200) NOT NULL,
+  display_name varchar(200) NULL,
+  property_type varchar(200) NULL,
+  default_value varchar(200) NULL,
+  primary key (property_definition_id),
+  KEY `FK_auwamlbmdrszmpjv9o14i0hgr` (`element_definition_id`),
+  CONSTRAINT `FK_auwamlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+);

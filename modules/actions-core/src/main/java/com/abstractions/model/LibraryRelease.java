@@ -1,11 +1,12 @@
-package com.core.meta;
+package com.abstractions.model;
 
-public class Release {
+
+public class LibraryRelease {
 
 	private Library library;
 	private String version;
 
-	public Release(Library library, String version) {
+	public LibraryRelease(Library library, String version) {
 		this.library = library;
 		this.version = version;
 	}

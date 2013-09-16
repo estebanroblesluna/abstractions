@@ -1,6 +1,6 @@
 package com.service.core;
 
-import com.core.meta.Library;
+import com.abstractions.model.Library;
 import com.core.meta.Meta;
 
 public class MappingInitializer {
