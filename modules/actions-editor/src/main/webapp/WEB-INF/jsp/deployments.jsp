@@ -36,14 +36,12 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Servers</th>
             </tr>
           </thead>
           <tbody>
           <c:forEach var="deployment" items='${deployments}' varStatus="lp">
             <tr>
               <td>${deployment.id}</td>
-              <td>${deployment.serverList}</td>
             </tr>
           </c:forEach>
           </tbody>
