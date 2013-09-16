@@ -8,6 +8,8 @@ public class ConnectionDefinition extends ElementDefinition {
 	private String acceptedTargetTypes;
 	private int acceptedTargetMax;
 	
+	protected ConnectionDefinition() { }
+
 	public ConnectionDefinition(String name) {
 		super(name);
 		this.acceptedSourceTypes = "";

@@ -143,7 +143,7 @@
     <property name="name" type="string" column="name" />
     <property name="displayName" type="string" column="display_name" />
 
-    <bag name="definitions" lazy="true">
+    <bag name="definitions" lazy="false" cascade="all">
       <key column="library_id" />
       <one-to-many class="com.abstractions.model.ElementDefinition" />
     </bag>
@@ -160,7 +160,7 @@
     <property name="implementation" column="implementation" />
     <property name="isScript" column="is_script" />
 
-    <bag name="definitions" lazy="false">
+    <bag name="properties" lazy="false" cascade="all">
       <key column="element_definition_id" />
       <one-to-many class="com.abstractions.model.PropertyDefinition" />
     </bag>
@@ -195,14 +195,18 @@
     </joined-subclass>
   </class>  
 
-  <class name="com.abstractions.model.PropertyDefinition" table="property_definition">
+  <class name="com.abstractions.model.PropertyDefinition" table="element_property_definition">
     <id name="id" type="long" column="property_definition_id" access="field">
       <generator class="native" />
     </id>
     
     <property name="name" column="name" />
     <property name="displayName" column="display_name" />
-    <property name="type" column="property_type" />
+    <property name="type" column="property_type">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.PropertyType</param>
+       </type>
+    </property>
     <property name="defaultValue" column="default_value" />
   </class>  
 

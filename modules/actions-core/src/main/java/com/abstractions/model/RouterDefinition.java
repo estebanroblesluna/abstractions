@@ -6,6 +6,8 @@ public class RouterDefinition extends ElementDefinition {
 	private String routerEvaluatorImplementation;
 	private boolean isRouterEvaluatorScript;
 
+	protected RouterDefinition() { }
+
 	public RouterDefinition(String name) {
 		super(name);
 	}

@@ -20,12 +20,15 @@ public abstract class ElementDefinition {
 
 	private static Log log = LogFactory.getLog(ElementDefinition.class);
 	
+	long id;
 	private String name;
 	private String displayName;
 	private String icon;
 	private List<PropertyDefinition> properties;
 	private String implementation;
 	private boolean isScript;
+
+	protected ElementDefinition() { }
 
 	protected ElementDefinition(String name) {
 		this.name = name;
