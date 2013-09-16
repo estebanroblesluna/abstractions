@@ -51,6 +51,7 @@
             <tr>
               <th>#</th>
               <th>Flow name</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -58,6 +59,7 @@
             <tr>
               <td><input type="checkbox" class="selectedObjects" value="${flow.id}" /></td>
               <td>${flow.name}</td>
+              <td><a href="edit/${flow.id}" class="btn btn-primary">Edit</a> </td>
             </tr>
           </c:forEach>
           </tbody>
