@@ -3,6 +3,9 @@ package com.core.meta;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.abstractions.model.Library;
+import com.abstractions.model.LibraryRelease;
+
 public class LibraryRepository {
 
 	public List<Library> getLibraries() {
@@ -12,9 +15,9 @@ public class LibraryRepository {
 		return libraries;
 	}
 	
-	public List<Release> getReleasesOfLibrary(String libraryName) {
+	public List<LibraryRelease> getReleasesOfLibrary(String libraryName) {
 		//TODO
-		return new ArrayList<Release>();
+		return new ArrayList<LibraryRelease>();
 	}
 	
 }

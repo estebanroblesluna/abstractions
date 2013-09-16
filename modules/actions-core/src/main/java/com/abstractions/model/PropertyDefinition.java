@@ -1,4 +1,4 @@
-package com.core.meta;
+package com.abstractions.model;
 
 public class PropertyDefinition {
 

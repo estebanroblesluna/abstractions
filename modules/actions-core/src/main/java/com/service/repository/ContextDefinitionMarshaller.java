@@ -11,7 +11,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.core.meta.ElementDefinition;
+import com.abstractions.model.ElementDefinition;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ObjectDefinition;
