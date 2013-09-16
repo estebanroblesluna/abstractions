@@ -182,7 +182,6 @@ CREATE TABLE connection_definition (
   accepted_source_max int NULL,
   accepted_target_max int NULL,
   primary key (element_definition_id),
-  KEY `FK_ouwdmllmcrsympjv9o14i0hgr` (`element_definition_id`),
   CONSTRAINT `FK_ouwdmllmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
 
@@ -191,7 +190,6 @@ DROP TABLE IF EXISTS `flow_definition`;
 CREATE TABLE flow_definition (
   `element_definition_id` bigint(20) NOT NULL,
   primary key (element_definition_id),
-  KEY `FK_ouwdmlbmcrsympjv9o14i0hgr` (`element_definition_id`),
   CONSTRAINT `FK_ouwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
 
@@ -200,7 +198,6 @@ DROP TABLE IF EXISTS `message_source_definition`;
 CREATE TABLE message_source_definition (
   `element_definition_id` bigint(20) NOT NULL,
   primary key (element_definition_id),
-  KEY `FK_auwdmlbmcrsympjv9o14i0hgr` (`element_definition_id`),
   CONSTRAINT `FK_auwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
     
@@ -209,7 +206,6 @@ DROP TABLE IF EXISTS `processor_definition`;
 CREATE TABLE processor_definition (
   `element_definition_id` bigint(20) NOT NULL,
   primary key (element_definition_id),
-  KEY `FK_auwdmlbmdrsympjv9o14i0hgr` (`element_definition_id`),
   CONSTRAINT `FK_auwdmlbmdrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
 
@@ -220,20 +216,18 @@ CREATE TABLE router_definition (
   router_evaluator_implementation varchar(200) NOT NULL,
   is_router_evaluator_script boolean NOT NULL,
   primary key (element_definition_id),
-  KEY `FK_auwdmlbmdrszmpjv9o14i0hgr` (`element_definition_id`),
   CONSTRAINT `FK_auwdmlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
 
 
-DROP TABLE IF EXISTS `property_definition`;
-CREATE TABLE property_definition (
+DROP TABLE IF EXISTS `element_property_definition`;
+CREATE TABLE element_property_definition (
   `property_definition_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `element_definition_id` bigint(20) NOT NULL,
+  `element_definition_id` bigint(20) NULL,
   name varchar(200) NOT NULL,
   display_name varchar(200) NULL,
   property_type varchar(200) NULL,
   default_value varchar(200) NULL,
   primary key (property_definition_id),
-  KEY `FK_auwamlbmdrszmpjv9o14i0hgr` (`element_definition_id`),
   CONSTRAINT `FK_auwamlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );

@@ -20,8 +20,4 @@
       </map>
     </property>
   </bean>
-  
-  <bean class="com.service.core.MappingInitializer" init-method="initializeMapping">
-    <property name="mapping" ref="namesMapping" />
-  </bean>
 </beans>

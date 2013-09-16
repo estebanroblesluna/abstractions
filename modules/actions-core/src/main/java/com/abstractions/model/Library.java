@@ -13,11 +13,14 @@ import com.service.core.NamesMapping;
 
 public class Library {
 
+	long id;
 	private String name;
 	private String displayName;
 
 	private List<ElementDefinition> definitions;
 	private Map<String, ElementDefinition> definitionsByName;
+
+	protected Library() { }
 
 	public Library(String name) {
 		this.name = name;

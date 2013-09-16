@@ -36,6 +36,10 @@
     <constructor-arg index="2" ref="namesMapping" />
     <constructor-arg index="3" ref="contextHolder" />
   </bean>
+  
+  <bean id="libraryService" class="com.abstractions.service.LibraryService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
 
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
@@ -51,6 +55,11 @@
   </bean>
 
 
+  <bean class="com.abstractions.service.MappingInitializer" init-method="initializeMapping">
+    <property name="mapping" ref="namesMapping" />
+    <property name="libraryService" ref="libraryService" />
+  </bean>
+  
   <context:component-scan base-package="com.modules.dust.service" />
 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">

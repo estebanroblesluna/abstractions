@@ -20,7 +20,7 @@ import com.abstractions.model.Flow;
 import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
 import com.abstractions.service.FlowService;
-import com.core.meta.Meta;
+import com.abstractions.service.LibraryService;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.ObjectDefinition;
@@ -34,6 +34,9 @@ public class FlowController {
 	
 	@Autowired
 	DevelopmentContextHolder holder;
+	
+	@Autowired
+	LibraryService libraryService;
 
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows", method = RequestMethod.GET)
@@ -229,8 +232,9 @@ public class FlowController {
 		JSONArray libraries = new JSONArray();
 
 		try {
-			libraries.put(this.asJSON(Meta.getCommonLibrary()));
-			libraries.put(this.asJSON(Meta.getModulesLibrary()));
+			for (Library library : this.libraryService.getCommonLibraries()) {
+				libraries.put(this.asJSON(library));
+			}
 			json.put("libraries", libraries);
 			
 			return json.toString();
