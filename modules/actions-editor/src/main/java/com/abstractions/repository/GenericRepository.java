@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +45,15 @@ public class GenericRepository {
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<?> theClass, long id) {
 		return (T) this.sessionFactory.getCurrentSession().get(theClass, id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> get(Class<T> theClass, String assocProperty, long applicationSnapshotId) {
+		return (List<T>) this.sessionFactory.getCurrentSession()
+			.createCriteria(theClass)
+			.createAlias(assocProperty, "a")
+			.add(Restrictions.eq("a.id", applicationSnapshotId))
+			.list();
 	}
 	
 }

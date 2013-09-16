@@ -1,5 +1,5 @@
 <jsp:include page="/WEB-INF/jsp/header.jsp">
-  <jsp:param name="title" value="Add server"/>
+  <jsp:param name="title" value="Add team"/>
 </jsp:include>
 
 <body>
@@ -19,30 +19,20 @@
     <div class="row">
       <div class="col-lg-6">
         <ol class="breadcrumb">
-          <li><a href="#">App 1</a></li>
-          <li><a href="servers.htm">Servers</a></li>
-          <li class="active">Add server</li>
+          <li><a href="/teams">Teams</a></li>
+          <li class="active">Add server group</li>
         </ol>
       </div>
 
       <div class="row">
         <div class="col-lg-9">
           <form class="form-horizontal" role="form" name="form" action="add" method="POST">
-
             <div class="form-group">
-              <label for="inputServerName" class="col-lg-2 control-label">Server name</label>
+              <label for="inputServerGroupName" class="col-lg-2 control-label">Server group name</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputServerName" name="name" placeholder="Server name...">
+                <input type="text" class="form-control" id="inputServerGroupName" name="name" placeholder="">
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="inputIPDNS" class="col-lg-2 control-label">IP/DNS</label>
-              <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputIPDNS" name="ipDNS" placeholder="IP/DNS...">
-              </div>
-            </div>
-
 
             <div class="form-group">
               <div class="col-lg-offset-2 col-lg-10">
@@ -52,7 +42,7 @@
           </form>
         </div>
       </div>
-
+    </div>
     </div>
 </body>
 </html>

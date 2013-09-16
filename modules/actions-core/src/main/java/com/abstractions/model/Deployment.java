@@ -42,4 +42,20 @@ public class Deployment {
 	public User getTriggerBy() {
 		return triggerBy;
 	}
+	
+	public long getId() {
+		return this.id;
+	}
+	
+	public String getServerList() {
+		String list = "";
+		for (Server server : this.getServers()) {
+			if (!list.isEmpty()) {
+				list = list + ", ";
+			}
+			list = list + server.getName();
+		}
+		return list;
+	}
+	
 }

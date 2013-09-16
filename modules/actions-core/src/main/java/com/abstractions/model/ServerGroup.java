@@ -12,13 +12,15 @@ public class ServerGroup {
 	private String name;
 	private Environment environment;
 	private List<Server> servers;
+	private Team team;
 	
 	protected ServerGroup() { }
 
-	public ServerGroup(String name) {
+	public ServerGroup(String name, Team team) {
 		this.name = name;
 		this.environment = Environment.DEV;
 		this.servers = new ArrayList<Server>();
+		this.team = team;
 	}
 
 	public String getName() {
@@ -42,4 +44,13 @@ public class ServerGroup {
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
 	}
+	
+	public Team getTeam() {
+		return this.team;
+	}
+	
+	public long getId() {
+		return this.id;
+	}
+	
 }

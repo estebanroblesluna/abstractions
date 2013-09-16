@@ -38,6 +38,7 @@
             <th>#</th>
             <th>Name</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -46,6 +47,7 @@
               <td>${lp.index + 1}</td>
               <td>${team.name}</td>
               <td><a href="/teams/${team.id}/applications/">Apps</a></td>
+              <td><a href="/teams/${team.id}/serverGroups/">Server Groups</a></td>
             </tr>
           </c:forEach>
         </tbody>

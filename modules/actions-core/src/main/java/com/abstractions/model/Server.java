@@ -2,7 +2,7 @@ package com.abstractions.model;
 
 public class Server {
 
-	long id;
+	private long id;
 
 	private String name;
 	private String ipDNS;
@@ -29,4 +29,9 @@ public class Server {
 	public void setIpDNS(String ipDNS) {
 		this.ipDNS = ipDNS;
 	}
+
+	public long getId() {
+		return id;
+	}
+
 }

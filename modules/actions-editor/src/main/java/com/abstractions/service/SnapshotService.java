@@ -58,4 +58,8 @@ public class SnapshotService {
 		snapshots.addAll(application.getSnapshots());
 		return snapshots;
 	}
+
+	public ApplicationSnapshot getSnapshot(long snapshotId) {
+		return this.repository.get(ApplicationSnapshot.class, snapshotId);
+	}
 }

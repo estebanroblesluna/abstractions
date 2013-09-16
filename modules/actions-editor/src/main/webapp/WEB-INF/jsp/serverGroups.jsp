@@ -22,7 +22,7 @@
       <div class="col-lg-6">
       <ol class="breadcrumb">
         <li><a href="#">App 1</a></li>
-        <li class="active">Servers</li>
+        <li class="active">Server groups</li>
       </ol>
     </div>
       <div class="col-lg-6" style="text-align:right;">
@@ -37,18 +37,18 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Server name</th>
-            <th>IP/DNS</th>
-            <th>Status</th>
+            <th>Server group name</th>
+            <th>Environment</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <c:forEach var="server" items='${servers}' varStatus="lp">
+          <c:forEach var="serverGroup" items='${serverGroups}' varStatus="lp">
             <tr>
               <td>${lp.index + 1}</td>
-              <td>${server.name}</td>
-              <td>${server.ipDNS}</td>
-              <td><span class="label label-success">Running</span> TODO</td>
+              <td>${serverGroup.name}</td>
+              <td>${serverGroup.environment}</td>
+              <td><a href="/teams/${teamId}/serverGroups/${serverGroup.id}/servers/">Servers</a>
             </tr>
           </c:forEach>
         </tbody>
