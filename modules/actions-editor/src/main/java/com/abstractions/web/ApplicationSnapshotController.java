@@ -24,7 +24,8 @@ public class ApplicationSnapshotController {
 		
 		List<ApplicationSnapshot> snapshots = this.service.getSnapshots(applicationId);
 		mv.addObject("snapshots", snapshots);
-
+		mv.addObject("teamId", teamId);
+		mv.addObject("applicationId", applicationId);
 		return mv;
 	}
 	

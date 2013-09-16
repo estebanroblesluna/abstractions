@@ -27,7 +27,6 @@
     </bag>
   </class>
 
-
   <class name="com.abstractions.model.ApplicationSnapshot" table="application_snapshot">
     <id name="id" type="long" column="application_snapshot_id" access="field">
       <generator class="native" />

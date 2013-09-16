@@ -11,7 +11,7 @@
   <import resource="datasource.xml" />
   <import resource="hibernate.xml" />
   <import resource="rest.xml" />
-  
+
   <bean id="repository" class="com.abstractions.repository.GenericRepository">
     <constructor-arg index="0" ref="sessionFactory" />
   </bean>
@@ -20,16 +20,17 @@
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="teamService" />
   </bean>
-  
+
   <bean id="serverService" class="com.abstractions.service.ServerService">
     <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" ref="serverGroupService" />
   </bean>
-  
+
   <bean id="propertiesService" class="com.abstractions.service.PropertiesService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
   </bean>
-
+  <!-- <bean id="flowService" class="com.abstractions.service.FlowService"> <constructor-arg index="0" ref="repository" /> <constructor-arg index="1" ref="applicationService" /> </bean> -->
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
@@ -37,6 +38,22 @@
 
   <bean id="teamService" class="com.abstractions.service.TeamService">
     <constructor-arg index="0" ref="repository" />
+  </bean>
+
+  <bean id="serverGroupService" class="com.abstractions.service.ServerGroupService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" ref="teamService" />
+  </bean>
+
+  <bean id="userService" class="com.abstractions.service.UserService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
+
+  <bean id="abstractionsDeploymentService" class="com.abstractions.service.DeploymentService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" ref="snapshotService" />
+    <constructor-arg index="2" ref="userService" />
+    <constructor-arg index="3" ref="serverService" />
   </bean>
 
   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
