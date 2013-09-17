@@ -12,10 +12,12 @@ public class ApplicationSnapshot {
 	long id;
 	
 	private Date date;
+	private List<Flow> flows;
 	private List<Property> properties;
 
 	public ApplicationSnapshot() {
 		this.date = new Date();
+		this.flows = new ArrayList<Flow>();
 		this.properties = new ArrayList<Property>();
 	}
 
@@ -26,7 +28,17 @@ public class ApplicationSnapshot {
 	}
 
 	public List<Property> getProperties() {
-		return Collections.unmodifiableList(properties);
+		return Collections.unmodifiableList(this.properties);
+	}
+	
+	public void addFlow(Flow flow) {
+		Validate.notNull(flow);
+
+		this.flows.add(flow);
+	}
+	
+	public List<Flow> getFlows() {
+		return Collections.unmodifiableList(this.flows);
 	}
 
 	public Date getDate() {
@@ -36,6 +48,4 @@ public class ApplicationSnapshot {
 	public long getId() {
 		return id;
 	}
-	
-	
 }

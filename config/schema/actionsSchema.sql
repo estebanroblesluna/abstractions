@@ -112,9 +112,12 @@ CREATE TABLE `property` (
   `value` varchar(255) DEFAULT NULL,
   `environment` tinyblob,
   `application_id` bigint(20) DEFAULT NULL,
+  `application_snapshot_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`property_id`),
   KEY `FK_ouwdmllkcrsympjv9o04i0igr` (`application_id`),
-  CONSTRAINT `FK_ouwdmllkcrsympjv9o04i0igr` FOREIGN KEY (`application_id`) REFERENCES `application` (`application_id`)
+  CONSTRAINT `FK_ouwdmllkcrsympjv9o04i0igr` FOREIGN KEY (`application_id`) REFERENCES `application` (`application_id`),
+  KEY `FK_ouwdmllkcrsympjv4o04i0igr` (`application_snapshot_id`),
+  CONSTRAINT `FK_ouwdmllkcrsympjv4o04i0igr` FOREIGN KEY (`application_snapshot_id`) REFERENCES `application_snapshot` (`application_snapshot_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -139,9 +142,12 @@ CREATE TABLE flows (
   name varchar(50) NOT NULL,
   json_representation TEXT,
   `application_id` bigint(20) DEFAULT NULL,
+  `application_snapshot_id` bigint(20) DEFAULT NULL,
   primary key (flow_id),
   KEY `FK_ouwdmllkcrsympjv9o04i0hgr` (`application_id`),
-  CONSTRAINT `FK_ouwdmllkcrsympjv9o04i0hgr` FOREIGN KEY (`application_id`) REFERENCES `application` (`application_id`)
+  CONSTRAINT `FK_ouwdmllkcrsympjv9o04i0hgr` FOREIGN KEY (`application_id`) REFERENCES `application` (`application_id`),
+  KEY `FK_ouwdmllkcrsympjv3o04i0igr` (`application_snapshot_id`),
+  CONSTRAINT `FK_ouwdmllkcrsympjv3o04i0igr` FOREIGN KEY (`application_snapshot_id`) REFERENCES `application_snapshot` (`application_snapshot_id`)
 );
 
 
