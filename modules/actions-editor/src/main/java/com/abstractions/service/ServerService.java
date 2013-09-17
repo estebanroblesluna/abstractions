@@ -29,9 +29,10 @@ public class ServerService {
 	}
 
 	@Transactional
-	public void addServer(long serverGroupId, String name, String ipDNS) {
+	public void addServer(long serverGroupId, String name, String ipDNS, int port) {
 		ServerGroup serverGroup = this.serverGroupService.getServerGroup(serverGroupId);
 		Server server = new Server(name, ipDNS);
+		server.setPort(port);
 		
 		serverGroup.addServer(server);
 		this.repository.save(server);
