@@ -64,6 +64,12 @@
     <many-to-one name="triggerBy" column="trigger_by_user_id" access="field" />
     <many-to-one name="snapshot" column="application_snapshot_id" access="field" />
 
+    <property name="state" column="deployment_state">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.DeploymentState</param>
+       </type>
+    </property>
+
     <bag name="servers" table="deployment_server" lazy="true" fetch="select">
       <key>
         <column name="deployment_id" not-null="true" />

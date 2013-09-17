@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Deployment;
+import com.abstractions.model.DeploymentState;
 import com.abstractions.model.Server;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
@@ -43,7 +46,8 @@ public class DeploymentService {
 	private SnapshotService snapshotService;
 	private UserService userService;
 	private ServerService serverService;
-
+	private AsyncDeployer deployer;
+	
 	public DeploymentService() {
 		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
 		HttpParams params = new BasicHttpParams();
@@ -58,13 +62,17 @@ public class DeploymentService {
 				ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 	}
 
-	public DeploymentService(GenericRepository repository, SnapshotService snapshotService, UserService userService, ServerService serverService) {
+	public DeploymentService(
+			GenericRepository repository, 
+			SnapshotService snapshotService, 
+			UserService userService, 
+			ServerService serverService) {
 		this();
 		Validate.notNull(repository);
 		Validate.notNull(snapshotService);
 		Validate.notNull(userService);
 		Validate.notNull(serverService);
-		
+
 		this.repository = repository;
 		this.snapshotService = snapshotService;
 		this.userService = userService;
@@ -75,13 +83,14 @@ public class DeploymentService {
 	public void addDeployment(long snapshotId, long userId, Collection<Long> servers) {
 		ApplicationSnapshot applicationSnapshot = this.snapshotService.getSnapshot(snapshotId);
 		User user = this.userService.getUser(userId);
-		Deployment deployment = new Deployment(applicationSnapshot, user);
+		final Deployment deployment = new Deployment(applicationSnapshot, user);
 
 		for (long serverId : servers) {
 			deployment.addServer(this.serverService.getServer(serverId));
 		}
 
 		this.repository.save(deployment);
+		this.deployer.deploy(deployment.getId());
 	}
 
 	@Transactional
@@ -89,10 +98,25 @@ public class DeploymentService {
 		return this.repository.get(Deployment.class, "snapshot", applicationSnapshotId);
 	}
 
-	public void deploy(Deployment deployment) {
-		for (Server server : deployment.getServers()) {
-			this.basicDeploy(deployment, server);
+	@Transactional
+	public void deploy(long deploymentId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		try {
+			boolean deployed = true;
+			for (Server server : deployment.getServers()) {
+				deployed = deployed && this.basicDeploy(deployment, server);
+			}
+			
+			if (deployed) {
+				deployment.setState(DeploymentState.FINISH_SUCCESSFULLY);
+			} else {
+				deployment.setState(DeploymentState.FINISH_WITH_ERRORS);
+			}
+		} catch (Exception e) {
+			deployment.setState(DeploymentState.FINISH_WITH_ERRORS);
 		}
+		
+		this.repository.save(deployment);
 	}
 
 	private boolean basicDeploy(Deployment deployment, Server server) {
@@ -101,7 +125,7 @@ public class DeploymentService {
 		}
 		
 		String contextJSON = deployment.getSnapshot().getFlows().get(0).getJson();
-		String url = "http://" + server.getIpDNS()
+		String url = "http://" + server.getIpDNS() + ":" + server.getPort()
 				+ "/service/server/start";
 
 		HttpPost post = new HttpPost(url);
@@ -126,5 +150,13 @@ public class DeploymentService {
 			log.error("Error deploying context", e);
 		}
 		return false;		
+	}
+
+	public AsyncDeployer getDeployer() {
+		return deployer;
+	}
+
+	public void setDeployer(AsyncDeployer deployer) {
+		this.deployer = deployer;
 	}
 }

@@ -62,6 +62,7 @@ CREATE TABLE `deployment` (
   `trigger_by_user_id` bigint(20) DEFAULT NULL,
   `application_snapshot_id` bigint(20) DEFAULT NULL,
   `application_id` bigint(20) DEFAULT NULL,
+  `deployment_state` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`deployment_id`),
   KEY `FK_6r71apk88qrvikactmjollkhu` (`trigger_by_user_id`),
   KEY `FK_l28mht8yc24ch5p7e1red2ony` (`application_snapshot_id`),
