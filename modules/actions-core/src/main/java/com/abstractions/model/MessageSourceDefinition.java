@@ -1,6 +1,9 @@
-package com.core.meta;
+package com.abstractions.model;
+
 
 public class MessageSourceDefinition extends ElementDefinition {
+
+	protected MessageSourceDefinition() { }
 
 	public MessageSourceDefinition(String name) {
 		super(name);

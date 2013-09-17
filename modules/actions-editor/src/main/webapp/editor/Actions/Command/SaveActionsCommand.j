@@ -47,12 +47,13 @@
 	}
 	
 	var jsonAsString = JSON.stringify(json);
+	var saveUrl = $.url().param('saveUrl');
 	
 	CPLog.debug("Saving context " + contextId);
 	$.ajax({
 		type: "POST",
-		url: "../service/context/" + contextId + "/save",
-		data: { "data" : jsonAsString }
+		url: saveUrl,
+		data: { "name": contextId, "json" : jsonAsString }
 	}).done(function( result ) {
 		CPLog.debug("Context saved " + contextId);
 	});

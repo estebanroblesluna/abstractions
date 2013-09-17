@@ -7,7 +7,7 @@
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:applicationContext.xml,classpath:webApplicationContext.xml</param-value>
+    <param-value>classpath:webApplicationContext.xml</param-value>
   </context-param>
 
   <listener>
@@ -19,7 +19,7 @@
     <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>com.service.rest</param-value>
+      <param-value>com.abstractions.service.rest</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -49,7 +49,7 @@
     <async-supported>true</async-supported>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>com.web.atmosphere</param-value>
+      <param-value>com.abstractions.web.atmosphere</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>

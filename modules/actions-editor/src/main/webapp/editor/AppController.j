@@ -45,7 +45,7 @@
 
 	drawing = [ActionsDrawing frame: [contentView bounds] contextId: contextId];
 
-	var commonToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(800,70)];
+	var commonToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(800, 25)];
 	[commonToolbox columns: 2];
 
 	[commonToolbox addTool: [SelectionTool drawing: drawing] withTitle: @"Selection" image: @"Resources/Selection.png"];
@@ -65,7 +65,7 @@
 
 	[commonToolbox addSeparator];
 
-	var alignToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(800,310)];
+	var alignToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(880, 25)];
 	[alignToolbox columns: 3];
 
 	[alignToolbox addCommand: [AlignLeftCommand class] withTitle: @"Align left" image: @"Resources/AlignLeft.gif"];
@@ -76,7 +76,7 @@
 	[alignToolbox addCommand: [AlignBottomCommand class] withTitle: @"Align bottom" image: @"Resources/AlignBottom.gif"];
 	
 	
-	var properties = [PropertiesFigure newAt: CGPointMake(20,520) drawing: drawing];
+	var properties = [PropertiesFigure newAt: CGPointMake(20, 420) drawing: drawing];
 	
 	[drawing setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
 
@@ -87,8 +87,12 @@
 	[drawing properties: properties];
 
     if (contextId != nil) {
+    	CPLog.debug("[AppController] Context id found!");
+    	CPLog.debug("[AppController] " + contextId);
         var command = [LoadActionsCommand drawing: drawing];
         [command execute];
+	} else {
+	    CPLog.debug("[AppController] Context id NOT found!");
 	}
 }
 

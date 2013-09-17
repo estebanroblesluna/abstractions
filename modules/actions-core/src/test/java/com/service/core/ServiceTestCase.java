@@ -2,10 +2,10 @@ package com.service.core;
 
 import junit.framework.TestCase;
 
+import com.abstractions.model.Library;
 import com.core.api.Context;
 import com.core.common.AddPropertyProcessor;
 import com.core.common.ToStringProcessor;
-import com.core.meta.Library;
 import com.core.meta.Meta;
 
 public class ServiceTestCase extends TestCase {

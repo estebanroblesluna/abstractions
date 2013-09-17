@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.model.ElementDefinition;
 import com.core.api.Context;
 import com.core.api.Identificable;
 import com.core.api.IdentificableMutable;
@@ -23,7 +24,6 @@ import com.core.impl.ContextImpl;
 import com.core.interpreter.Interpreter;
 import com.core.messagesource.MessageSource;
 import com.core.messagesource.MessageSourceListener;
-import com.core.meta.ElementDefinition;
 import com.core.utils.IdGenerator;
 
 public class ContextDefinition implements Identificable, MessageSourceListener, Terminable, Startable {

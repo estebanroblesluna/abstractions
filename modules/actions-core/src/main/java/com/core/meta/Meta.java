@@ -1,5 +1,14 @@
 package com.core.meta;
 
+import com.abstractions.model.ConnectionDefinition;
+import com.abstractions.model.ElementDefinition;
+import com.abstractions.model.Library;
+import com.abstractions.model.MessageSourceDefinition;
+import com.abstractions.model.ProcessorDefinition;
+import com.abstractions.model.PropertyDefinition;
+import com.abstractions.model.PropertyType;
+import com.abstractions.model.RouterDefinition;
+
 public class Meta {
 
 	public static Library getCommonLibrary() {

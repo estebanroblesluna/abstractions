@@ -1,11 +1,14 @@
-package com.core.meta;
+package com.abstractions.model;
 
 public class PropertyDefinition {
 
+	long id;
 	private String name;
 	private String displayName;
 	private PropertyType type;
 	private String defaultValue;
+
+	protected PropertyDefinition() { }
 
 	public PropertyDefinition(String name) {
 		this.name = name;
