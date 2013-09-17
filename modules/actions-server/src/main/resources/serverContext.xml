@@ -14,6 +14,10 @@
 
   <import resource="classpath:/mapping.xml" />
 
+  <bean class="com.service.core.BasicMappingInitializer" init-method="basicSetupInitialLibraries">
+    <property name="mapping" ref="namesMapping" />
+  </bean>
+
   <bean id="actionsServer" class="com.server.core.ActionsServer">
     <constructor-arg index="0" ref="namesMapping" />
   </bean>

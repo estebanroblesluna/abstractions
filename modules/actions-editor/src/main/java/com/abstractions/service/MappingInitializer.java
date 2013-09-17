@@ -26,7 +26,15 @@ public class MappingInitializer {
 		this.libraryService.add(common);
 		this.libraryService.add(modules);
 	}
-	
+
+	public void oldSetupInitialLibraries() {
+		Library common = Meta.getCommonLibrary();
+		Library modules = Meta.getModulesLibrary();
+		
+		common.createMappings(mapping);
+		modules.createMappings(mapping);
+	}
+
 	public NamesMapping getMapping() {
 		return mapping;
 	}
