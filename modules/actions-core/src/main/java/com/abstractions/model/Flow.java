@@ -1,6 +1,6 @@
 package com.abstractions.model;
 
-public class Flow {
+public class Flow implements Cloneable {
 
 	long id;
 	String name;
@@ -26,5 +26,12 @@ public class Flow {
 
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public Flow clone() throws CloneNotSupportedException {
+		Flow flow = new Flow(name);
+		flow.setJson(this.json);
+		return flow;
 	}
 }
