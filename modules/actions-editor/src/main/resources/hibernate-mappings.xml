@@ -25,7 +25,7 @@
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Deployment" />
     </bag>
-    <bag name="flows" lazy="true">
+    <bag name="flows" lazy="true" access="field">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Flow" />
     </bag>
@@ -88,6 +88,7 @@
     <property name="value" type="string" />
     <property name="environment" />
   </class>
+
 
   <class name="com.abstractions.model.Server" table="server">
     <id name="id" type="long" column="server_id" access="field">

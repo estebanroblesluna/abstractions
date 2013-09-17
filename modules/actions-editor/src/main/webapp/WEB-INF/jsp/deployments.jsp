@@ -37,6 +37,7 @@
             <tr>
               <th>#</th>
               <th>State</th>
+              <th>Servers</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +62,7 @@
                   </c:otherwise>
               	</c:choose>
               </td>
+              <td>${deployment.serverList}</td>
             </tr>
           </c:forEach>
           </tbody>
