@@ -1,19 +1,43 @@
 package com.abstractions.service;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Deployment;
+import com.abstractions.model.Server;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
 
 @Service
 public class DeploymentService {
+
+	private static final Log log = LogFactory.getLog(DeploymentService.class);
+	
+	private HttpClient client;
 
 	private GenericRepository repository;
 	private SnapshotService snapshotService;
@@ -21,9 +45,21 @@ public class DeploymentService {
 	private ServerService serverService;
 
 	public DeploymentService() {
+		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(params, 3000);
+		HttpConnectionParams.setSoTimeout(params, 3000);
+
+		connManager.setMaxTotal(100);
+		connManager.setDefaultMaxPerRoute(10);
+
+		this.client = new DefaultHttpClient(connManager, params);
+		this.client.getParams().setParameter(
+				ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 	}
 
 	public DeploymentService(GenericRepository repository, SnapshotService snapshotService, UserService userService, ServerService serverService) {
+		this();
 		Validate.notNull(repository);
 		Validate.notNull(snapshotService);
 		Validate.notNull(userService);
@@ -53,4 +89,42 @@ public class DeploymentService {
 		return this.repository.get(Deployment.class, "snapshot", applicationSnapshotId);
 	}
 
+	public void deploy(Deployment deployment) {
+		for (Server server : deployment.getServers()) {
+			this.basicDeploy(deployment, server);
+		}
+	}
+
+	private boolean basicDeploy(Deployment deployment, Server server) {
+		if (deployment.getSnapshot().getFlows().isEmpty()) {
+			return false;
+		}
+		
+		String contextJSON = deployment.getSnapshot().getFlows().get(0).getJson();
+		String url = "http://" + server.getIpDNS()
+				+ "/service/server/start";
+
+		HttpPost post = new HttpPost(url);
+		try {
+			
+			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+			urlParameters.add(new BasicNameValuePair("contextDefinition", contextJSON));
+			post.setEntity(new UrlEncodedFormEntity(urlParameters));
+			
+			HttpResponse response = this.client.execute(post);
+			int statusCode = response.getStatusLine().getStatusCode();
+
+			if (statusCode >= 200 && statusCode < 300) {
+				InputStream is = response.getEntity().getContent();
+				JSONObject json = new JSONObject(IOUtils.toString(is));
+				return json.has("result") 
+						&& StringUtils.equalsIgnoreCase(json.getString("result"), "success");
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			log.error("Error deploying context", e);
+		}
+		return false;		
+	}
 }
