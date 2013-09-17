@@ -17,6 +17,10 @@ public class Application {
 	private Team team;
 
 	protected Application() {
+		this.snapshots = new ArrayList<ApplicationSnapshot>();
+		this.deploys = new ArrayList<Deployment>();
+		this.properties = new ArrayList<Property>();
+		this.flows = new ArrayList<Flow>();
 	}
 
 	public Application(String name, Team team) {

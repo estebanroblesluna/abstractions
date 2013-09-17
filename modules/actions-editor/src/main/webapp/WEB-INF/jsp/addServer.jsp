@@ -43,6 +43,13 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label for="inputPort" class="col-lg-2 control-label">Port</label>
+              <div class="col-lg-10">
+                <input type="text" class="form-control" id="inputPort" name="port" placeholder="80">
+              </div>
+            </div>
+
 
             <div class="form-group">
               <div class="col-lg-offset-2 col-lg-10">

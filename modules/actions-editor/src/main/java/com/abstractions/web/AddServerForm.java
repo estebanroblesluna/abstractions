@@ -4,6 +4,7 @@ public class AddServerForm {
 
 	private String name;
 	private String ipDNS;
+	private int port;
 
 	public String getName() {
 		return name;
@@ -19,5 +20,13 @@ public class AddServerForm {
 
 	public void setIpDNS(String ipDNS) {
 		this.ipDNS = ipDNS;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }
