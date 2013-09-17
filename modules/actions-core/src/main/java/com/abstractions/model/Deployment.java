@@ -13,10 +13,14 @@ public class Deployment {
 	private User triggerBy;
 	private ApplicationSnapshot snapshot;
 	private List<Server> servers;
+	private DeploymentState state;
 	
-	protected Deployment() { }
+	protected Deployment() {
+		this.state = DeploymentState.PENDING;
+	}
 
 	public Deployment(ApplicationSnapshot snapshot, User user) {
+		this();
 		Validate.notNull(snapshot);
 		Validate.notNull(user);
 		
@@ -57,5 +61,12 @@ public class Deployment {
 		}
 		return list;
 	}
-	
+
+	public DeploymentState getState() {
+		return state;
+	}
+
+	public void setState(DeploymentState state) {
+		this.state = state;
+	}
 }

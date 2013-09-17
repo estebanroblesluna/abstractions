@@ -36,12 +36,31 @@
           <thead>
             <tr>
               <th>#</th>
+              <th>State</th>
             </tr>
           </thead>
           <tbody>
           <c:forEach var="deployment" items='${deployments}' varStatus="lp">
             <tr>
               <td>${deployment.id}</td>
+              <td>
+              <c:choose>
+                  <c:when test="${deployment.getState().toString() == 'PENDING'}">
+                      <a href="#" class="btn btn-sm btn-primary">Pending</a>
+                  </c:when>
+                  <c:when test="${deployment.getState().toString() == 'STARTED'}">
+                      <a href="#" class="btn btn-sm btn-info">Started</a>
+                  </c:when>
+                  <c:when test="${deployment.getState().toString() == 'FINISH_SUCCESSFULLY'}">
+                      <a href="#" class="btn btn-sm btn-success">Finish successfully</a>
+                  </c:when>
+                  <c:when test="${deployment.getState().toString() == 'FINISH_WITH_ERRORS'}">
+                      <a href="#" class="btn btn-sm btn-danger">Finish with errors</a>
+                  </c:when>
+                  <c:otherwise>
+                  </c:otherwise>
+              	</c:choose>
+              </td>
             </tr>
           </c:forEach>
           </tbody>

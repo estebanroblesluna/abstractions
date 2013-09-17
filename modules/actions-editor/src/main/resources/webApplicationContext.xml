@@ -65,6 +65,11 @@
     <constructor-arg index="1" ref="snapshotService" />
     <constructor-arg index="2" ref="userService" />
     <constructor-arg index="3" ref="serverService" />
+    <property name="deployer" ref="asyncDeployer" />
+  </bean>
+
+  <bean id="asyncDeployer" class="com.abstractions.service.AsyncDeployer">
+    <constructor-arg index="0" ref="abstractionsDeploymentService" />
   </bean>
 
   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
