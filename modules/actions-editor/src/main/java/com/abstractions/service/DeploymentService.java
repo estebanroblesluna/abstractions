@@ -50,7 +50,11 @@ public class DeploymentService {
 
 	@Transactional
 	public List<Deployment> getDeployments(long applicationSnapshotId) {
-		return this.repository.get(Deployment.class, "snapshot", applicationSnapshotId);
+		List<Deployment> deployments = this.repository.get(Deployment.class, "snapshot", applicationSnapshotId);
+		for (Deployment deployment : deployments) {
+			deployment.getServerList();
+		}
+		return deployments;
 	}
 
 }

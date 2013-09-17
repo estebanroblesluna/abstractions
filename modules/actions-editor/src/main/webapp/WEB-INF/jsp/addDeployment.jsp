@@ -5,6 +5,21 @@
 </jsp:include>
 
 <body>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $("#saveButton").click(function(e) {
+      var ids = "";
+      e.preventDefault();
+      $(".serverCheckbox:checked").each(function(i, checkbox) {
+    	  ids = ids + (ids ? "," : "") + $(checkbox).val();
+      })
+      $("#selectedServers").val(ids);
+      $("form")[0].submit();
+    })
+  })
+  </script>
+  
   <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       <ul class="nav navbar-nav">
@@ -40,17 +55,19 @@
               <tbody>
                 <c:forEach var="server" items='${servers}' varStatus="lp">
                   <tr>
-                    <td><input type="checkbox" name="server" value="${server.id}" /></td>
+                    <td><input type="checkbox" class="serverCheckbox" name="server" value="${server.id}" /></td>
                     <td>${server.name}</td>
                   </tr>
                 </c:forEach>
               </tbody>
             </table>
           </div>
-
+          
+          <input type="hidden" name="servers" value="" id="selectedServers" />
+          
           <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10">
-              <button type="submit" class="btn btn-primary">Save</button>
+              <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
             </div>
           </div>
 

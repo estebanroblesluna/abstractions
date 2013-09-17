@@ -67,6 +67,7 @@
     <property name="environment" />
   </class>
 
+
   <class name="com.abstractions.model.Server" table="server">
     <id name="id" type="long" column="server_id" access="field">
       <generator class="native" />
