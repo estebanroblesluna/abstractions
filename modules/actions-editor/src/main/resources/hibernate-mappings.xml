@@ -25,7 +25,7 @@
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Deployment" />
     </bag>
-    <bag name="flows" lazy="true">
+    <bag name="flows" lazy="true" access="field">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Flow" />
     </bag>
