@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
 import com.abstractions.repository.GenericRepository;
 
@@ -37,11 +38,26 @@ public class SnapshotService {
 		Application application = this.applicationService.getApplication(applicationId);
 
 		ApplicationSnapshot snapshot = new ApplicationSnapshot();
+		
+		//clone all properties
 		for (Property property : application.getProperties()) {
 			try {
-				snapshot.addProperty(property.clone());
+				Property clonedProperty = property.clone();
+				this.repository.save(clonedProperty);
+				snapshot.addProperty(clonedProperty);
 			} catch (CloneNotSupportedException e) {
 				log.warn("Error clonning property", e);
+			}
+		}
+		
+		//clone all flows
+		for (Flow flow : application.getFlows()) {
+			try {
+				Flow clonedFlow = flow.clone();
+				this.repository.save(clonedFlow);
+				snapshot.addFlow(clonedFlow);
+			} catch (CloneNotSupportedException e) {
+				log.warn("Error clonning flow", e);
 			}
 		}
 		

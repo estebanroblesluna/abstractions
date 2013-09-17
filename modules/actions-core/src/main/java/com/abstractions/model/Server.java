@@ -6,10 +6,14 @@ public class Server {
 
 	private String name;
 	private String ipDNS;
+	private int port;
 
-	protected Server() { }
+	protected Server() {
+		this.port = -1;
+	}
 	
 	public Server(String name, String ipDNS) {
+		this();
 		this.name = name;
 		this.ipDNS = ipDNS;
 	}
@@ -34,4 +38,11 @@ public class Server {
 		return id;
 	}
 
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
 }

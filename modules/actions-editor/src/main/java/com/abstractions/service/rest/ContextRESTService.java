@@ -8,7 +8,6 @@ import javax.ws.rs.core.Response;
 import org.jsoup.nodes.Attribute;
 
 import com.service.core.ContextDefinition;
-import com.service.core.DeploymentService;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;
@@ -22,14 +21,12 @@ public class ContextRESTService {
 	private NamesMapping mapping;
 	private ContextRepository repository;
 	private String serverId;
-	private DeploymentService deploymentService;
 	
-	public ContextRESTService(DevelopmentContextHolder holder, NamesMapping mapping, String serverId, ContextRepository repository, DeploymentService deploymentService) {
+	public ContextRESTService(DevelopmentContextHolder holder, NamesMapping mapping, String serverId, ContextRepository repository) {
 		this.holder = holder;
 		this.mapping = mapping;
 		this.serverId = serverId;
 		this.repository = repository;
-		this.deploymentService = deploymentService;
 	}
 	
 	@POST
@@ -61,17 +58,4 @@ public class ContextRESTService {
 			return ResponseUtils.fail("Error syncing context");
 		}
 	}
-
-	@POST
-	@Path("/{id}/deploy/{serverHost}/{serverPort}")
-	public Response deploy(
-			@PathParam("id") String contextId, 
-			@PathParam("serverHost") String serverHost,
-			@PathParam("serverPort") String serverPort
-			) {
-		
-		this.deploymentService.deploy(contextId, serverHost, serverPort);
-		return ResponseUtils.ok();
-	}
-
 }

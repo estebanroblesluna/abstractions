@@ -31,13 +31,12 @@ public class ServerController {
 	
 	@RequestMapping(value = "/teams/{teamId}/serverGroups/{serverGroupId}/servers/add", method = RequestMethod.GET)
 	public ModelAndView add() {
-		
 		return new ModelAndView("addServer");
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/serverGroups/{serverGroupId}/servers/add", method = RequestMethod.POST)
-	public String addContact(@ModelAttribute("form") AddServerForm form, @PathVariable("teamId") long teamId, @PathVariable("serverGroupId") long serverGroupId) {
-		this.service.addServer(serverGroupId, form.getName(), form.getIpDNS());
-		return "redirect:/servers/";
+	public String addServer(@ModelAttribute("form") AddServerForm form, @PathVariable("teamId") long teamId, @PathVariable("serverGroupId") long serverGroupId) {
+		this.service.addServer(serverGroupId, form.getName(), form.getIpDNS(), form.getPort());
+		return "redirect:/teams/" + teamId + "/serverGroups/" + serverGroupId + "/servers/";
 	}
 }

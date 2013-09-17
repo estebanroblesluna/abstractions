@@ -13,17 +13,21 @@
     <property name="name" type="string" />
     <many-to-one name="team" column="team_id" />
 
-    <bag name="properties" lazy="true" access="field">
+    <bag name="properties" lazy="true">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Property" />
     </bag>
-    <bag name="snapshots" lazy="true" access="field">
+    <bag name="snapshots" lazy="true">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.ApplicationSnapshot" />
     </bag>
-    <bag name="deploys" lazy="true" access="field">
+    <bag name="deploys" lazy="true">
       <key column="application_id" />
       <one-to-many class="com.abstractions.model.Deployment" />
+    </bag>
+    <bag name="flows" lazy="true">
+      <key column="application_id" />
+      <one-to-many class="com.abstractions.model.Flow" />
     </bag>
   </class>
 
@@ -33,13 +37,25 @@
     </id>
 
     <property name="date" type="java.util.Date" />
-    <bag name="properties" lazy="true" access="field">
-      <key column="application_id" />
+    
+    <bag name="properties" lazy="false" cascade="all">
+      <key column="application_snapshot_id" />
       <one-to-many class="com.abstractions.model.Property" />
+    </bag>
+    <bag name="flows" lazy="false" cascade="all">
+      <key column="application_snapshot_id" />
+      <one-to-many class="com.abstractions.model.Flow" />
     </bag>
   </class>
 
-
+  <class name="com.abstractions.model.Flow" table="flows">
+    <id name="id" type="long" column="flow_id" access="field">
+      <generator class="native" />
+    </id>
+    <property name="name" type="string" column="name" />
+    <property name="json" type="string" column="json_representation" />
+  </class> 
+  
   <class name="com.abstractions.model.Deployment" table="deployment">
     <id name="id" type="long" column="deployment_id" access="field">
       <generator class="native" />
@@ -74,6 +90,7 @@
     </id>
     <property name="name" type="string" />
     <property name="ipDNS" type="string" />
+    <property name="port" />
   </class>
 
 
