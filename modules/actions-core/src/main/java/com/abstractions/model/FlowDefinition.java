@@ -1,4 +1,4 @@
-package com.core.meta;
+package com.abstractions.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +22,8 @@ public class FlowDefinition extends ElementDefinition {
 	private List<ObjectDefinition> definitions;
 	private ObjectDefinition startingDefinition;
 	
+	protected FlowDefinition() { }
+
 	public FlowDefinition(String name) {
 		super(name);
 		this.definitions = new ArrayList<ObjectDefinition>();

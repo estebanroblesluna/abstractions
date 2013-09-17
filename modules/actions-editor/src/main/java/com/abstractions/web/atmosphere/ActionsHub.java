@@ -1,4 +1,4 @@
-package com.web.atmosphere;
+package com.abstractions.web.atmosphere;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,9 +29,9 @@ public class ActionsHub {
 	@GET
 	@Path("/{contextId}")
 	@Produces("text/html;charset=ISO-8859-1")
-	public SuspendResponse subscribe(@PathParam("contextId") Broadcaster contextIdBroadcaster) {
+	public SuspendResponse<Broadcaster> subscribe(@PathParam("contextId") Broadcaster contextIdBroadcaster) {
 		return new SuspendResponse
-			.SuspendResponseBuilder()
+			.SuspendResponseBuilder<Broadcaster>()
 			.broadcaster(contextIdBroadcaster)
 			.outputComments(true)
 			.build();

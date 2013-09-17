@@ -28,7 +28,7 @@ public class TeamService {
 	public void addTeam(String name, long ownerID) {
 		User user = this.repository.get(User.class, ownerID);
 		if (user != null) {
-			Team team = new Team(name, user);
+			new Team(name, user);
 			this.repository.save(user);
 		}
 	}

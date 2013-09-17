@@ -1,21 +1,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="/WEB-INF/jsp/header.jsp">
-  <jsp:param name="title" value="Applications" />
+  <jsp:param name="title" value="Flows" />
 </jsp:include>
 
 <body>
   <script type="text/javascript">
   $(document).ready(function() {
-	  $("#deleteButton").click(function(e) {
-		  var applicationsIds = "";
-		  e.preventDefault();
-		  $(".selectedApplications:checked").each(function(i, checkbox) {
-			  applicationsIds = applicationsIds + (applicationsIds ? "," : "") + $(checkbox).val();
-		  })
-		  $("#objectsToRemove").val(applicationsIds);
-		  $("#removeApplicationsForm")[0].submit();
-	  })
+    $("#deleteButton").click(function(e) {
+      var propertiesIds = "";
+      e.preventDefault();
+      $(".selectedObjects:checked").each(function(i, checkbox) {
+    	  propertiesIds = propertiesIds + (propertiesIds ? "," : "") + $(checkbox).val();
+      })
+      $("#objectsToRemove").val(propertiesIds);
+      $("#removeObjectsForm")[0].submit();
+    })
   })
   </script>
   <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
@@ -33,9 +33,14 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-6">
+        <ol class="breadcrumb">
+          <li><a href="#">App 1</a></li>
+          <li class="active">Flows</li>
+        </ol>
       </div>
       <div class="col-lg-6" style="text-align: right;">
-        <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
+        <a href="add" class="btn btn-primary">Add</a> 
+        <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
       </div>
     </div>
 
@@ -45,20 +50,16 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Application name</th>
-              <th></th>
-              <th></th>
+              <th>Flow name</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-          <c:forEach var="application" items='${applications}' varStatus="lp">
+          <c:forEach var="flow" items='${flows}' varStatus="lp">
             <tr>
-              <td><input type="checkbox" class="selectedApplications" value="${application.id}" /></td>
-              <td>${application.name}</td>
-              <td><a href="/teams/${application.team.id}/applications/${application.id}/properties/">Properties</a></td>
-              <td><a href="/teams/${application.team.id}/applications/${application.id}/snapshots/">Snapshots</a></td>
-              <td><a href="/teams/${application.team.id}/applications/${application.id}/flows/">Flows</a></td>
+              <td><input type="checkbox" class="selectedObjects" value="${flow.id}" /></td>
+              <td>${flow.name}</td>
+              <td><a href="edit/${flow.id}" class="btn btn-primary">Edit</a> </td>
             </tr>
           </c:forEach>
           </tbody>
@@ -67,8 +68,10 @@
     </div>
 
   </div>
-  <form id="removeApplicationsForm" class="form-horizontal" role="form" name="form" action="remove" method="POST" style="display:hidden">
+  
+  <form id="removeObjectsForm" class="form-horizontal" role="form" name="form" action="remove" method="POST" style="display:hidden">
     <input type="hidden" name="objectsToRemove" id="objectsToRemove" />
   </form>
+  
 </body>
 </html>

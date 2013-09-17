@@ -58,7 +58,6 @@
     </bag>
   </class>
 
-
   <class name="com.abstractions.model.Property" table="property">
     <id name="id" type="long" column="property_id" access="field">
       <generator class="native" />
@@ -67,7 +66,6 @@
     <property name="value" type="string" />
     <property name="environment" />
   </class>
-
 
   <class name="com.abstractions.model.Server" table="server">
     <id name="id" type="long" column="server_id" access="field">
@@ -125,5 +123,81 @@
       <many-to-many class="com.abstractions.model.Team" column="team_id" />
     </bag>
   </class>
+  
+  
+  
+  <class name="com.abstractions.model.Library" table="library">
+    <id name="id" type="long" column="library_id" access="field">
+      <generator class="native" />
+    </id>
+    <property name="name" type="string" column="name" />
+    <property name="displayName" type="string" column="display_name" />
+
+    <bag name="definitions" lazy="false" cascade="all">
+      <key column="library_id" />
+      <one-to-many class="com.abstractions.model.ElementDefinition" />
+    </bag>
+  </class>
+
+  <class name="com.abstractions.model.ElementDefinition" table="element_definition">
+    <id name="id" type="long" column="element_definition_id" access="field">
+      <generator class="native" />
+    </id>
+
+    <property name="name" column="name" />
+    <property name="displayName" column="display_name" />
+    <property name="icon" column="icon" />
+    <property name="implementation" column="implementation" />
+    <property name="isScript" column="is_script" />
+
+    <bag name="properties" lazy="false" cascade="all">
+      <key column="element_definition_id" />
+      <one-to-many class="com.abstractions.model.PropertyDefinition" />
+    </bag>
+    
+    
+    <joined-subclass name="com.abstractions.model.ConnectionDefinition" table="connection_definition">
+      <key column="element_definition_id"/>
+      <property name="color" column="color"/>
+      <property name="acceptedSourceTypes" column="accepted_source_types"/>
+      <property name="acceptedSourceMax" column="accepted_source_max"/>
+      <property name="acceptedTargetTypes" column="accepted_target_types"/>
+      <property name="acceptedTargetMax" column="accepted_target_max"/>
+    </joined-subclass>
+
+    <joined-subclass name="com.abstractions.model.FlowDefinition" table="flow_definition">
+      <key column="element_definition_id"/>
+      <!-- TODO -->
+    </joined-subclass>
+
+    <joined-subclass name="com.abstractions.model.MessageSourceDefinition" table="message_source_definition">
+      <key column="element_definition_id"/>
+    </joined-subclass>
+
+    <joined-subclass name="com.abstractions.model.ProcessorDefinition" table="processor_definition">
+      <key column="element_definition_id"/>
+    </joined-subclass>
+
+    <joined-subclass name="com.abstractions.model.RouterDefinition" table="router_definition">
+      <key column="element_definition_id"/>
+      <property name="routerEvaluatorImplementation" column="router_evaluator_implementation"/>
+      <property name="isRouterEvaluatorScript" column="is_router_evaluator_script"/>
+    </joined-subclass>
+  </class>  
+
+  <class name="com.abstractions.model.PropertyDefinition" table="element_property_definition">
+    <id name="id" type="long" column="property_definition_id" access="field">
+      <generator class="native" />
+    </id>
+    
+    <property name="name" column="name" />
+    <property name="displayName" column="display_name" />
+    <property name="type" column="property_type">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.PropertyType</param>
+       </type>
+    </property>
+    <property name="defaultValue" column="default_value" />
+  </class>  
 
 </hibernate-mapping>
