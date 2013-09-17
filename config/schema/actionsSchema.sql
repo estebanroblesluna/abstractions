@@ -95,6 +95,7 @@ CREATE TABLE `server` (
   `server_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `ipDNS` varchar(255) DEFAULT NULL,
+  `port` int DEFAULT -1,
   `server_group_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`server_id`),
   KEY `FK_pqtufjlc2ppjsc9rnt5qade2u` (`server_group_id`),

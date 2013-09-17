@@ -89,6 +89,7 @@
     </id>
     <property name="name" type="string" />
     <property name="ipDNS" type="string" />
+    <property name="port" />
   </class>
 
 
