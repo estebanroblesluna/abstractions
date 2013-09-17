@@ -95,13 +95,10 @@ CREATE TABLE `server` (
   `server_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `ipDNS` varchar(255) DEFAULT NULL,
-  `deployment_id` bigint(20) DEFAULT NULL,
   `server_group_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`server_id`),
-  KEY `FK_eo9q7kit1fq595i1nqylkyte7` (`deployment_id`),
   KEY `FK_pqtufjlc2ppjsc9rnt5qade2u` (`server_group_id`),
-  CONSTRAINT `FK_pqtufjlc2ppjsc9rnt5qade2u` FOREIGN KEY (`server_group_id`) REFERENCES `server_group` (`server_group_id`),
-  CONSTRAINT `FK_eo9q7kit1fq595i1nqylkyte7` FOREIGN KEY (`deployment_id`) REFERENCES `deployment` (`deployment_id`)
+  CONSTRAINT `FK_pqtufjlc2ppjsc9rnt5qade2u` FOREIGN KEY (`server_group_id`) REFERENCES `server_group` (`server_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -231,3 +228,9 @@ CREATE TABLE element_property_definition (
   primary key (property_definition_id),
   CONSTRAINT `FK_auwamlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
+
+DROP TABLE IF EXISTS  `actions`.`deployment_server`;
+CREATE TABLE `actions`.`deployment_server` (
+  `deployment_id` INT NOT NULL,
+  `server_id` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`deployment_id`, `server_id`));
