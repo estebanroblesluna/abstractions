@@ -80,7 +80,8 @@
 
 	[self addFigure: aProcessorFigure];
 	[aProcessorFigure delegate: self];
-	[aProcessorFigure initializeBreakpoint];
+	
+	[[Actions mode] postAddProcessor: aProcessorFigure];
 	
 	_dirty = true;
 }

@@ -25,15 +25,7 @@
 
 - (void) beforeDeleteMenu: (CPMenu) contextMenu
 {
-    var startMenu = [[CPMenuItem alloc] initWithTitle:@"Start" action: @selector(start:) keyEquivalent:@""]; 
-    [startMenu setTarget: self]; 
-    [startMenu setEnabled: YES]; 
-    [contextMenu addItem: startMenu]; 
-
-    var stopMenu = [[CPMenuItem alloc] initWithTitle:@"Stop" action: @selector(stop:) keyEquivalent:@""]; 
-    [stopMenu setTarget: self]; 
-    [stopMenu setEnabled: YES]; 
-    [contextMenu addItem: stopMenu]; 
+	[[Actions mode]	createMessageSourceFigureMenu: self menu: contextMenu];
 }
 
 - (void) start: (id) sender 

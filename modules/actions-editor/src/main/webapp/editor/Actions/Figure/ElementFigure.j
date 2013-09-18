@@ -29,18 +29,8 @@ var ElementWireTapConnection     = @"WIRE_TAP";
 {
 	[super initWithFrame: aFrame iconUrl: iconUrl];
 
-    var contextMenu = [[CPMenu alloc] init]; 
-    [contextMenu setDelegate: self]; 
+	[[Actions mode]	createElementFigureMenu: self];
 
-	[self beforeDeleteMenu: contextMenu];
-	
-    var deleteMenu = [[CPMenuItem alloc] initWithTitle:@"Delete" action: @selector(deleteFromServer) keyEquivalent:@""]; 
-    [deleteMenu setTarget: self]; 
-    [deleteMenu setEnabled: YES]; 
-    [contextMenu addItem: deleteMenu]; 
-    
-	[self setMenu: contextMenu];
-	
 	return self;
 }
 

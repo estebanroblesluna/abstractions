@@ -19,6 +19,84 @@
 {
 }
 
+- (void) postAddProcessor: (id) aProcessorFigure
+{
+	var topRight = [aProcessorFigure topRight];
+	_breakpointFigure = [ImageFigure initializeWithImage: @"Resources/stop.gif" x: topRight.x y: topRight.y];
+	var hasBreakpoint = [[aProcessorFigure model] hasBreakpoint];
+	[_breakpointFigure setHidden: !hasBreakpoint];
+    var magnet = [Magnet newWithSource: aProcessorFigure target: _breakpointFigure selector: @selector(topRight)];
+
+	var drawing = [aProcessorFigure drawing];
+	
+	[drawing addFigure:	_breakpointFigure];
+}
+
+- (void) createMessageSourceStateFigure: (id) aMessageSourceFigure drawing: (id) aDrawing point: (id) aPoint
+{
+	var messageSourceStateFigure = [MessageSourceStateFigure newAt: aPoint model: [aMessageSourceFigure model]];
+    var messageSourceMagnet = [Magnet newWithSource: aMessageSourceFigure target: messageSourceStateFigure selector: @selector(topRight)];
+	[aDrawing addFigure: messageSourceStateFigure];
+	[messageSourceStateFigure updateStateFigure];
+	[messageSourceStateFigure setFrameSize: CGSizeMake(16, 16)];
+	[messageSourceMagnet updateLocation: nil];
+}
+
+- (void) createMessageSourceFigureMenu: (id) aMessageSourceFigure menu: (CPMenu) contextMenu
+{
+    var startMenu = [[CPMenuItem alloc] initWithTitle:@"Start" action: @selector(start:) keyEquivalent:@""]; 
+    [startMenu setTarget: aMessageSourceFigure]; 
+    [startMenu setEnabled: YES]; 
+    [contextMenu addItem: startMenu]; 
+
+    var stopMenu = [[CPMenuItem alloc] initWithTitle:@"Stop" action: @selector(stop:) keyEquivalent:@""]; 
+    [stopMenu setTarget: aMessageSourceFigure]; 
+    [stopMenu setEnabled: YES]; 
+    [contextMenu addItem: stopMenu]; 
+}
+
+- (void) createProcessorFigureMenu: (id) aProcessorFigure menu: (CPMenu) contextMenu
+{
+    var sendMessageMenu = [[CPMenuItem alloc] initWithTitle:@"Send message" action: @selector(sendMessage:) keyEquivalent:@""]; 
+    [sendMessageMenu setTarget: aProcessorFigure]; 
+    [sendMessageMenu setEnabled: YES]; 
+    [contextMenu addItem: sendMessageMenu]; 
+
+    var setBreakpointMenu = [[CPMenuItem alloc] initWithTitle:@"Set breakpoint" action: @selector(setBreakpoint:) keyEquivalent:@""]; 
+    [setBreakpointMenu setTarget: aProcessorFigure]; 
+    [setBreakpointMenu setEnabled: YES]; 
+    [contextMenu addItem: setBreakpointMenu]; 
+}
+
+- (void) createElementFigureMenu: (id) anElementFigure
+{
+    var contextMenu = [[CPMenu alloc] init]; 
+    [contextMenu setDelegate: anElementFigure]; 
+
+	[anElementFigure beforeDeleteMenu: contextMenu];
+	
+    var deleteMenu = [[CPMenuItem alloc] initWithTitle:@"Delete" action: @selector(deleteFromServer) keyEquivalent:@""]; 
+    [deleteMenu setTarget: anElementFigure]; 
+    [deleteMenu setEnabled: YES]; 
+    [contextMenu addItem: deleteMenu]; 
+    
+	[anElementFigure setMenu: contextMenu];
+}
+
+- (void) createElementConnectionMenu: (id) anElementConnection
+{
+	var contextMenu = [[CPMenu alloc] init]; 
+    [contextMenu setDelegate: anElementConnection]; 
+
+    var deleteMenu = [[CPMenuItem alloc] initWithTitle: @"Delete" action: @selector(deleteFromServer) keyEquivalent:@""]; 
+    [deleteMenu setTarget: anElementConnection]; 
+    [deleteMenu setEnabled: YES]; 
+    [contextMenu addItem: deleteMenu]; 
+    
+	[anElementConnection setMenu: contextMenu];
+
+}
+
 - (void) load: (id) aDrawing
 {
 	[self loadCommonToolbars: aDrawing];

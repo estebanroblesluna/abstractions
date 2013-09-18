@@ -56,22 +56,17 @@
 		initialProperties: properties
 		hasBreakpoint: false];
     
-	var messageSourceStateFigure = [MessageSourceStateFigure newAt: aPoint model: newModel];
-    var messageSourceMagnet = [Magnet newWithSource: newFigure target: messageSourceStateFigure selector: @selector(topRight)];
-
     [newFigure model: newModel];
     [newFigure checkModelFeature: @"name"];
     
 	[aDrawing addMessageSource: newFigure];
-	[aDrawing addFigure: messageSourceStateFigure];
 	
 	[aTool activateSelectionTool];
 	if (activateEdit && aTool != nil) {
 		[newFigure switchToEditMode];
 	}
 	
-	[messageSourceStateFigure updateStateFigure];
-	[messageSourceStateFigure setFrameSize: CGSizeMake(16, 16)];
+	[[Actions mode] createMessageSourceStateFigure: newFigure drawing: aDrawing point: aPoint];
 
 	return newFigure;
 }

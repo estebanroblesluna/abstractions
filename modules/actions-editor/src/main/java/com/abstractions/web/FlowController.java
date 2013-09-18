@@ -221,6 +221,17 @@ public class FlowController {
 		return mv;
 	}
 
+	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/deployment/{flowId}", method = RequestMethod.GET)
+	public ModelAndView viewDeployment(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId) {
+		ModelAndView mv = new ModelAndView("viewFlowDeployment");
+		
+		Flow flow = this.service.loadFlow(teamId, applicationId, flowId);
+		mv.addObject("flow", flow);
+		mv.addObject("libraries", this.getLibraries());
+		
+		return mv;
+	}
+
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/remove", method = RequestMethod.POST)
 	public String removeFlow(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @ModelAttribute("form") RemoveForm form) {
 		this.service.removeFlowsByIds(applicationId, form.getIdsToRemove());
