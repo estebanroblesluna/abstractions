@@ -67,100 +67,11 @@
 		[self setupNotifications];
 	}
 	
-	//_libraryAPI = [LibraryAPI new];
-	//var callback = function(result) {
-	//	[self libraries: result];
-	//}
-	//[_libraryAPI libraries: callback];
-	
 	[_contextAPI delegate: self];
 	[[self model] propertyValue: @"showGrid" be: YES];
 	[[self model] propertyValue: @"gridSize" be: 25];
-	[self loadLibraries];
-	
 	
 	return self;
-}
-
-- (void) loadLibraries
-{
-	var libraries = [DataUtil var: @"libraries"];
-	[self libraries: libraries];
-}
-
-- (void) libraries: (id) aJSON
-{
-	CPLog.debug("Libraries received");
-	CPLog.debug(aJSON);
-	
-	//var libraries = aJSON.libraries.libraries;
-	var libraries = aJSON.libraries;
-	var generator = [DynamicModelGenerator new];
-	_generator = generator;
-	
-	//INITIALIZE MODEL GENERATOR
-	for (var i = 0; i < libraries.length; i++) {
-		var library = libraries[i];
-		var elements = library.elements;
-
-		CPLog.debug("Processing library " + library.name);
-
-		[generator addDefinitions: elements];
-	}
-	
-	//CREATE THE TOOLBOXES
-	var initialX = 20;
-	for (var i = 0; i < libraries.length; i++) {
-		var library = libraries[i];
-
-		var toolbox = [ToolboxFigure initializeWith: self at: CGPointMake(initialX, 25)];
-		[toolbox columns: 2];
-		var elements = library.elements;
-		
-		for (var j = 0; j < elements.length; j++) {
-			var element = elements[j];
-			if (element.type == "PROCESSOR" || element.type == "ROUTER") {
-				[toolbox 
-					addTool: [CreateProcessorTool drawing: self elementName: element.name generator: generator] 
-					withTitle: element.displayName
-					image: element.icon];
-			} else if (element.type == "MESSAGE_SOURCE") {
-				[toolbox 
-					addTool: [CreateMessageSourceTool drawing: self elementName: element.name generator: generator] 
-					withTitle: element.displayName
-					image: element.icon];
-			} else if (element.type == "CONNECTION") {
-
-				var acceptedSourceTypes = nil;
-				var acceptedSourceMax = element.acceptedSourceMax;
-				var acceptedTargetTypes = nil;
-				var acceptedTargetMax = element.acceptedSourceMax;
-
-				if (element.acceptedSourceTypes != "*") {
-					var types = element.acceptedSourceTypes.split(',');
-					acceptedSourceTypes = [CPSet setWithArray: types];
-				}
-				if (element.acceptedTargetTypes != "*") {
-					var types = element.acceptedTargetTypes.split(',');
-					acceptedTargetTypes = [CPSet setWithArray: types];
-				}
-				
-				[toolbox 
-					addTool: [CreateElementConnectionTool				
-						drawing: self
-						acceptedSourceTypes: acceptedSourceTypes
-						acceptedSourceMax: acceptedSourceMax 
-						acceptedTargetTypes: acceptedTargetTypes
-						acceptedTargetMax: acceptedTargetMax 
-						elementName: element.name]
-					withTitle: element.displayName
-					image: element.icon];
-			}
-		}
-		
-		[self addFigure: toolbox];
-		initialX = initialX + 80;
-	}
 }
 
 - (void) addProcessor: (id) aProcessorFigure
@@ -298,6 +209,11 @@
 - (id) generator
 {
 	return _generator;
+}
+
+- (id) generator: (id) aGenerator
+{
+	_generator = aGenerator;
 }
 
 - (void) registerDebug: (id) aDebugFigure for: (id) anInterpreterIdAndThreadId

@@ -53,6 +53,11 @@
 @import "Server/LibraryAPI.j"
 
 @import "ActionsDrawing.j"
+@import "EditionMode.j"
+@import "DeploymentMode.j"
+
+
+var _actionsDrawingMode = [EditionMode new];
 
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
@@ -64,5 +69,31 @@
 + (id) isDevelopment
 {
 	return false;
+}
+
++ (void) mode: (id) aMode
+{
+	_actionsDrawingMode = aMode;
+}
+
++ (void) load: (id) aDrawing
+{
+	[_actionsDrawingMode load: aDrawing];
+}
+
++ (id) contextId
+{
+	var sharedApplication = [CPApplication sharedApplication];
+    var namedArguments = [sharedApplication namedArguments];
+	var contextId = [namedArguments objectForKey: "contextId"];
+	return contextId;
+}
+
++ (id) modeParam
+{
+	var sharedApplication = [CPApplication sharedApplication];
+    var namedArguments = [sharedApplication namedArguments];
+	var mode = [namedArguments objectForKey: "mode"];
+	return mode;
 }
 @end
