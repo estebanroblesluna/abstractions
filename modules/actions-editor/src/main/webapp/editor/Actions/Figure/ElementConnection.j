@@ -22,6 +22,7 @@
 
 - (id) initWithSource: (Figure) aSourceFigure target: (Figure) aTargetFigure points: (id) anArrayOfPoints
 { 
+	CPLog.debug("[ElementConnection] " + JSON.stringify(anArrayOfPoints));
 	self = [super initWithSource: aSourceFigure target: aTargetFigure points: anArrayOfPoints];
 	
 	var contextMenu = [[CPMenu alloc] init]; 

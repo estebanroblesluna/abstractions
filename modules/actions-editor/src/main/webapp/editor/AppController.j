@@ -37,63 +37,19 @@
 
 }
 
-- (void)initializeDrawing:(id) contentView window: (id) theWindow
+- (void) initializeDrawing:(id) contentView window: (id) theWindow
 {
-	var sharedApplication = [CPApplication sharedApplication];
-    var namedArguments = [sharedApplication namedArguments];
-	var contextId = [namedArguments objectForKey: "contextId"];
-
+	var contextId = [Actions contextId];
 	drawing = [ActionsDrawing frame: [contentView bounds] contextId: contextId];
-
-	var commonToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(800, 25)];
-	[commonToolbox columns: 2];
-
-	[commonToolbox addTool: [SelectionTool drawing: drawing] withTitle: @"Selection" image: @"Resources/Selection.png"];
-	[commonToolbox addCommand: [SaveActionsCommand class] withTitle: @"Save" image: @"Resources/Save.gif"];
-	[commonToolbox addCommand: [DeployCommand class] withTitle: @"Deploy" image: @"Resources/Save.gif"];
-
-    [commonToolbox addCommand: [GroupCommand class] withTitle: @"Group" image: @"Resources/Group.gif"];
-    [commonToolbox addCommand: [UngroupCommand class] withTitle: @"Ungroup" image: @"Resources/Ungroup.gif"];
-
-    [commonToolbox addCommand: [LockCommand class] withTitle: @"Lock" image: @"Resources/Lock.gif"];
-    [commonToolbox addCommand: [UnlockCommand class] withTitle: @"Unlock" image: @"Resources/Unlock.gif"];
-
-    [commonToolbox addCommand: [BringToFrontCommand class] withTitle: @"Bring to front" image: @"Resources/BringToFront.gif"];
-    [commonToolbox addCommand: [SendToBackCommand class] withTitle: @"Send to back" image: @"Resources/SendToBack.gif"];
-    [commonToolbox addCommand: [BringForwardCommand class] withTitle: @"Bring forward" image: @"Resources/BringForward.gif"];
-    [commonToolbox addCommand: [SendBackwardCommand class] withTitle: @"Send backward" image: @"Resources/SendBackward.gif"];
-
-	[commonToolbox addSeparator];
-
-	var alignToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(880, 25)];
-	[alignToolbox columns: 3];
-
-	[alignToolbox addCommand: [AlignLeftCommand class] withTitle: @"Align left" image: @"Resources/AlignLeft.gif"];
-	[alignToolbox addCommand: [AlignCenterCommand class] withTitle: @"Align center" image: @"Resources/AlignCenter.gif"];
-	[alignToolbox addCommand: [AlignRightCommand class] withTitle: @"Align right" image: @"Resources/AlignRight.gif"];
-	[alignToolbox addCommand: [AlignTopCommand class] withTitle: @"Align top" image: @"Resources/AlignTop.gif"];
-	[alignToolbox addCommand: [AlignMiddleCommand class] withTitle: @"Align middle" image: @"Resources/AlignMiddle.gif"];
-	[alignToolbox addCommand: [AlignBottomCommand class] withTitle: @"Align bottom" image: @"Resources/AlignBottom.gif"];
-	
-	
-	var properties = [PropertiesFigure newAt: CGPointMake(20, 420) drawing: drawing];
-	
 	[drawing setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-
 	[contentView addSubview: drawing];
 	
-	[drawing toolbox: commonToolbox];
-	[drawing addFigure: alignToolbox];
-	[drawing properties: properties];
-
-    if (contextId != nil) {
-    	CPLog.debug("[AppController] Context id found!");
-    	CPLog.debug("[AppController] " + contextId);
-        var command = [LoadActionsCommand drawing: drawing];
-        [command execute];
-	} else {
-	    CPLog.debug("[AppController] Context id NOT found!");
+	var mode = [Actions modeParam];
+	if (mode != nil && [mode isEqual: @"deployment"]) {
+		[Actions mode: [DeploymentMode new]];
 	}
+	
+	[Actions load: drawing];
 }
 
 @end
