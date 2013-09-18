@@ -34,5 +34,4 @@ public class ApplicationSnapshotController {
 		this.service.generateSnapshot(applicationId);
 		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/snapshots/";
 	}
-	
 }

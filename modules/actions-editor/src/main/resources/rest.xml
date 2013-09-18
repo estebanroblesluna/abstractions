@@ -13,11 +13,12 @@
     <constructor-arg index="0" ref="contextHolder" />
     <constructor-arg index="1" ref="namesMapping" />
     <constructor-arg index="2" value="1" />
-    <constructor-arg index="3" ref="databaseRepository" />
+    <constructor-arg index="3" ref="deploymentService" />
   </bean>
 
   <bean id="elementRest" class="com.abstractions.service.rest.ElementRESTService">
     <constructor-arg index="0" ref="contextHolder" />
     <constructor-arg index="1" ref="namesMapping" />
+    <constructor-arg index="2" ref="deploymentService" />
   </bean>
 </beans>

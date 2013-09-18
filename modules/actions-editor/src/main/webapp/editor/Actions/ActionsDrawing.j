@@ -129,6 +129,30 @@
 	[self setupNotifications];	
 }
 
+- (void) updateProfilingInfo 
+{
+	[_contextAPI profilingInfo];
+}
+
+- (void) profilingInfo: (id) aProfilingInfo
+{
+	var servers = aProfilingInfo.profilingInfo.servers;
+	for (var i = 0; i < servers.length; i++) {
+		var serverInfo = servers[i];
+		var serverProfilingInfo = serverInfo.profilingInfo.averages;
+		
+		for (var key in serverProfilingInfo) {
+			//it's an element id
+			var value = serverProfilingInfo[key].toFixed(3);
+			var processorFigure = [self processorFor: key];
+			if (processorFigure != nil) {
+				var dataFigure = [processorFigure dataFigure];
+				[dataFigure setText: value + "ms"];
+			}
+		}
+	}
+}
+
 - (void) setStatus: (id) aMessage
 {
 	[_statusFigure setText: aMessage];

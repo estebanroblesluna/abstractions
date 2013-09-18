@@ -22,7 +22,8 @@
 - (void) postAddProcessor: (id) aProcessorFigure
 {
 	var topRight = [aProcessorFigure topRight];
-	_breakpointFigure = [ImageFigure initializeWithImage: @"Resources/stop.gif" x: topRight.x y: topRight.y];
+	var _breakpointFigure = [ImageFigure initializeWithImage: @"Resources/stop.gif" x: topRight.x y: topRight.y];
+	[aProcessorFigure setBreakpointFigure: _breakpointFigure]; 
 	var hasBreakpoint = [[aProcessorFigure model] hasBreakpoint];
 	[_breakpointFigure setHidden: !hasBreakpoint];
     var magnet = [Magnet newWithSource: aProcessorFigure target: _breakpointFigure selector: @selector(topRight)];

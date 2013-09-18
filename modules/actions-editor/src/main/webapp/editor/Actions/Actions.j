@@ -101,4 +101,11 @@ var _actionsDrawingMode = [EditionMode new];
 	var mode = [namedArguments objectForKey: "mode"];
 	return mode;
 }
+
++ (id) deploymentId
+{
+	var deploymentId = window.top.location.href;
+	deploymentId = deploymentId.substring(deploymentId.lastIndexOf('/') + 1);
+	return deploymentId;
+}
 @end

@@ -14,6 +14,7 @@ public class ApplicationSnapshot {
 	private Date date;
 	private List<Flow> flows;
 	private List<Property> properties;
+	private Application application;
 
 	public ApplicationSnapshot() {
 		this.date = new Date();
@@ -47,5 +48,9 @@ public class ApplicationSnapshot {
 
 	public long getId() {
 		return id;
+	}
+
+	public Application getApplication() {
+		return application;
 	}
 }

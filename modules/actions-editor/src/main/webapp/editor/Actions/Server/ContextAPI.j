@@ -86,4 +86,17 @@
 	return self;
 }
 
+- (id) profilingInfo
+{
+	CPLog.debug("Getting profiling info for context " + _contextId);
+	$.ajax({
+		type: "GET",
+		url: "../service/context/" + _contextId + "/profilingInfo/" + [Actions deploymentId]
+	}).done(function( result ) {
+		[_delegate profilingInfo: result];
+		CPLog.debug("Profiling info obtained for " + _contextId);
+	});
+
+	return self;
+}
 @end

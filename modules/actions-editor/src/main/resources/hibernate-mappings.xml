@@ -37,6 +37,7 @@
     </id>
 
     <property name="date" type="java.util.Date" />
+    <many-to-one name="application" column="application_id" />
     
     <bag name="properties" lazy="false" cascade="all">
       <key column="application_snapshot_id" />

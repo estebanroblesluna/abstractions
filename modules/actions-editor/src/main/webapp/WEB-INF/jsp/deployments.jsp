@@ -38,6 +38,7 @@
               <th>#</th>
               <th>State</th>
               <th>Servers</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -63,6 +64,7 @@
               	</c:choose>
               </td>
               <td>${deployment.serverList}</td>
+              <td><a href="${deployment.id}" class="btn btn-primary">View deployment</a> </td>
             </tr>
           </c:forEach>
           </tbody>

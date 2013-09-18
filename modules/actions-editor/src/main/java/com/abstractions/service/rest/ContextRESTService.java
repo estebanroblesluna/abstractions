@@ -1,17 +1,19 @@
 package com.abstractions.service.rest;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.service.DeploymentService;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;
-import com.service.repository.ContextRepository;
 import com.service.rest.ResponseUtils;
 
 @Path("/context")
@@ -19,14 +21,14 @@ public class ContextRESTService {
 
 	private DevelopmentContextHolder holder;
 	private NamesMapping mapping;
-	private ContextRepository repository;
 	private String serverId;
+	private DeploymentService deploymentService;
 	
-	public ContextRESTService(DevelopmentContextHolder holder, NamesMapping mapping, String serverId, ContextRepository repository) {
+	public ContextRESTService(DevelopmentContextHolder holder, NamesMapping mapping, String serverId, DeploymentService deploymentService) {
 		this.holder = holder;
 		this.mapping = mapping;
 		this.serverId = serverId;
-		this.repository = repository;
+		this.deploymentService = deploymentService;
 	}
 	
 	@POST
@@ -58,4 +60,12 @@ public class ContextRESTService {
 			return ResponseUtils.fail("Error syncing context");
 		}
 	}
+	
+	@GET
+	@Path("/{contextId}/profilingInfo/{deploymentId}")
+	public Response profilingInfo(@PathParam("contextId") String contextId, @PathParam("deploymentId") long deploymentId) {
+		JSONObject profilingInfo = this.deploymentService.getProfilingInfo(deploymentId, contextId);
+		return ResponseUtils.ok("profilingInfo", profilingInfo);
+	}
+
 }
