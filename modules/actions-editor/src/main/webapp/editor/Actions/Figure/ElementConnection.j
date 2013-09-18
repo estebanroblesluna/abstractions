@@ -25,15 +25,7 @@
 	CPLog.debug("[ElementConnection] " + JSON.stringify(anArrayOfPoints));
 	self = [super initWithSource: aSourceFigure target: aTargetFigure points: anArrayOfPoints];
 	
-	var contextMenu = [[CPMenu alloc] init]; 
-    [contextMenu setDelegate: self]; 
-
-    var deleteMenu = [[CPMenuItem alloc] initWithTitle:@"Delete" action: @selector(deleteFromServer) keyEquivalent:@""]; 
-    [deleteMenu setTarget: self]; 
-    [deleteMenu setEnabled: YES]; 
-    [contextMenu addItem: deleteMenu]; 
-    
-	[self setMenu: contextMenu];
+	[[Actions mode]	createElementConnectionMenu: self];
 	
 	return self;
 }

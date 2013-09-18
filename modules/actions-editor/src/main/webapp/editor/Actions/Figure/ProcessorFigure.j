@@ -22,28 +22,7 @@
 
 - (void) beforeDeleteMenu: (CPMenu) contextMenu
 {
-    var sendMessageMenu = [[CPMenuItem alloc] initWithTitle:@"Send message" action: @selector(sendMessage:) keyEquivalent:@""]; 
-    [sendMessageMenu setTarget: self]; 
-    [sendMessageMenu setEnabled: YES]; 
-    [contextMenu addItem: sendMessageMenu]; 
-
-    var setBreakpointMenu = [[CPMenuItem alloc] initWithTitle:@"Set breakpoint" action: @selector(setBreakpoint:) keyEquivalent:@""]; 
-    [setBreakpointMenu setTarget: self]; 
-    [setBreakpointMenu setEnabled: YES]; 
-    [contextMenu addItem: setBreakpointMenu]; 
-}
-
-- (void) initializeBreakpoint
-{
-	var topRight = [self topRight];
-	_breakpointFigure = [ImageFigure initializeWithImage: @"Resources/stop.gif" x: topRight.x y: topRight.y];
-	var hasBreakpoint = [[self model] hasBreakpoint];
-	[_breakpointFigure setHidden: !hasBreakpoint];
-    var magnet = [Magnet newWithSource: self target: _breakpointFigure selector: @selector(topRight)];
-
-	var drawing = [self drawing];
-	
-	[drawing addFigure:	_breakpointFigure];
+	[[Actions mode]	createProcessorFigureMenu: self menu: contextMenu];
 }
 
 - (void) setBreakpoint:(id) sender 

@@ -52,6 +52,7 @@
               <th>#</th>
               <th>Flow name</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -60,6 +61,7 @@
               <td><input type="checkbox" class="selectedObjects" value="${flow.id}" /></td>
               <td>${flow.name}</td>
               <td><a href="edit/${flow.id}" class="btn btn-primary">Edit</a> </td>
+              <td><a href="deployment/${flow.id}" class="btn btn-primary">View deployment</a> </td>
             </tr>
           </c:forEach>
           </tbody>

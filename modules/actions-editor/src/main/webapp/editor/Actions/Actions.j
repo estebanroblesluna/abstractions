@@ -76,6 +76,11 @@ var _actionsDrawingMode = [EditionMode new];
 	_actionsDrawingMode = aMode;
 }
 
++ (id) mode
+{
+	return _actionsDrawingMode;
+}
+
 + (void) load: (id) aDrawing
 {
 	[_actionsDrawingMode load: aDrawing];

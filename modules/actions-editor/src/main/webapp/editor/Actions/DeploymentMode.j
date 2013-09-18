@@ -19,6 +19,30 @@
 {
 }
 
+- (void) postAddProcessor: (id) aProcessorFigure
+{
+}
+
+- (void) createMessageSourceStateFigure: (id) aMessageSourceFigure drawing: (id) aDrawing point: (id) aPoint
+{
+}
+
+- (void) createMessageSourceFigureMenu: (id) aMessageSourceFigure menu: (CPMenu) contextMenu
+{
+}
+
+- (void) createProcessorFigureMenu: (id) aProcessorFigure menu: (CPMenu) contextMenu
+{
+}
+
+- (void) createElementFigureMenu: (id) anElementFigure
+{
+}
+
+- (void) createElementConnectionMenu: (id) anElementConnection
+{
+}
+
 - (void) load: (id) aDrawing
 {
 	[self loadGenerator: aDrawing];
