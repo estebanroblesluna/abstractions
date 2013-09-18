@@ -1,11 +1,10 @@
 package com.abstractions.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -13,9 +12,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -23,6 +27,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
@@ -31,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Deployment;
 import com.abstractions.model.DeploymentState;
+import com.abstractions.model.Flow;
 import com.abstractions.model.Server;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
@@ -79,6 +86,13 @@ public class DeploymentService {
 		this.serverService = serverService;
 	}
 
+	@Transactional
+	public Flow getFirstFlowOf(long deploymentId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		List<Flow> flows = deployment.getSnapshot().getFlows();
+		return flows.isEmpty() ? null : flows.get(0);
+	}
+	
 	@Transactional
 	public void addDeployment(long snapshotId, long userId, Collection<Long> servers) {
 		ApplicationSnapshot applicationSnapshot = this.snapshotService.getSnapshot(snapshotId);
@@ -133,17 +147,18 @@ public class DeploymentService {
 				+ "/service/server/start";
 
 		HttpPost post = new HttpPost(url);
+		InputStream is = null;
 		try {
-			
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			urlParameters.add(new BasicNameValuePair("contextDefinition", contextJSON));
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
 			
-			HttpResponse response = this.client.execute(post);
+			HttpResponse response = this.execute(post);
 			int statusCode = response.getStatusLine().getStatusCode();
-
+			
+			
 			if (statusCode >= 200 && statusCode < 300) {
-				InputStream is = response.getEntity().getContent();
+				is = response.getEntity().getContent();
 				JSONObject json = new JSONObject(IOUtils.toString(is));
 				return json.has("result") 
 						&& StringUtils.equalsIgnoreCase(json.getString("result"), "success");
@@ -152,8 +167,83 @@ public class DeploymentService {
 			}
 		} catch (Exception e) {
 			log.error("Error deploying context", e);
+		} finally {
+			IOUtils.closeQuietly(is);
 		}
 		return false;		
+	}
+
+	@Transactional
+	public void addProfiler(long deploymentId, String contextId, String elementId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + contextId + "/profile/" + elementId;
+			HttpPut method = new HttpPut(url);
+			try {
+				this.execute(method);
+			} catch (Exception e) {
+				log.warn("Error removing profiler", e);
+			}
+		}
+	}
+
+	@Transactional
+	public void removeProfiler(long deploymentId, String contextId, String elementId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/start/" + contextId + "/profile/" + elementId;
+			HttpDelete method = new HttpDelete(url);
+			try {
+				this.execute(method);
+			} catch (Exception e) {
+				log.warn("Error removing profiler", e);
+			}
+		}
+	}
+	
+	@Transactional
+	public JSONObject getProfilingInfo(long deploymentId, String contextId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		
+		JSONArray partialResults = new JSONArray();
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + contextId + "/profilingInfo";
+			
+			HttpGet method = new HttpGet(url);
+			InputStream is = null;
+			try {
+				HttpResponse response = this.execute(method);
+				int statusCode = response.getStatusLine().getStatusCode();
+				is = response.getEntity().getContent();
+				if (statusCode >= 200 && statusCode < 300) {
+					JSONObject json = new JSONObject(IOUtils.toString(is));
+					partialResults.put(json);
+				}
+			} catch (Exception e) {
+				log.warn("Error removing profiler", e);
+			} finally {
+				IOUtils.closeQuietly(is);
+			}
+		}
+		
+		JSONObject result = new JSONObject();
+		try {
+			result.put("servers", partialResults);
+		} catch (JSONException e) {
+			log.warn("Error writing json", e);
+		}
+		
+		return result;
+	}
+	
+	private HttpResponse execute(HttpUriRequest method) throws ClientProtocolException, IOException {
+		return this.client.execute(method);
 	}
 
 	public AsyncDeployer getDeployer() {

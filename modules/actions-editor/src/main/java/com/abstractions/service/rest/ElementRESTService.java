@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.service.DeploymentService;
 import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
@@ -24,10 +25,12 @@ public class ElementRESTService {
 
 	private DevelopmentContextHolder holder;
 	private NamesMapping mapping;
+	private DeploymentService deploymentService;
 	
-	public ElementRESTService(DevelopmentContextHolder holder, NamesMapping mapping) {
+	public ElementRESTService(DevelopmentContextHolder holder, NamesMapping mapping, DeploymentService deploymentService) {
 		this.holder = holder;
 		this.mapping = mapping;
+		this.deploymentService = deploymentService;
 	}
 	
 	@POST
@@ -50,6 +53,23 @@ public class ElementRESTService {
 		context.deleteDefinition(elementId);
 		return ResponseUtils.ok();
 	}
+
+	@PUT
+	@Path("/{contextId}/{elementId}/profiler/{deploymentId}")
+	public Response addProfiler(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
+	{
+		this.deploymentService.addProfiler(deploymentId, contextId, elementId);
+		return ResponseUtils.ok();
+	}
+
+	@DELETE
+	@Path("/{contextId}/{elementId}/profiler/{deploymentId}")
+	public Response removeProfiler(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
+	{
+		this.deploymentService.removeProfiler(deploymentId, contextId, elementId);
+		return ResponseUtils.ok();
+	}
+	
 
 	@POST
 	@Path("/{contextId}/{elementId}/{nextInChainId}/connection/{connectionType}")

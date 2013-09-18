@@ -101,6 +101,35 @@
 	return self;
 }
 
+- (id) addProfiler
+{
+	CPLog.debug("Adding profiler to element " + _elementId);
+	_state = @"NOT_IN_SYNC";
+	
+	$.ajax({
+		type: "PUT",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/profiler/" + [Actions deploymentId]
+	}).done(function( result ) {
+		_state = @"SYNCED";
+		[self changed];
+		CPLog.debug("Profiler added to " + _elementId);
+	});
+}
+
+- (id) removeProfiler
+{
+	CPLog.debug("Removing profiler to element " + _elementId);
+	_state = @"NOT_IN_SYNC";
+	$.ajax({
+		type: "DELETE",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/profiler/" + [Actions deploymentId]
+	}).done(function( result ) {
+		_state = @"SYNCED";
+		[self changed];
+		CPLog.debug("Profiler deleted to " + _elementId);
+	});
+}
+
 - (id) delete
 {
 	CPLog.debug("Deleting element " + _elementId);

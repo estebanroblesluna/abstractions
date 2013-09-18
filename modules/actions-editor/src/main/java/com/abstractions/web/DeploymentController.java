@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.model.Deployment;
+import com.abstractions.model.Flow;
 import com.abstractions.service.DeploymentService;
+import com.abstractions.service.LibraryService;
 import com.abstractions.service.ServerService;
 
 @Controller
@@ -23,6 +25,9 @@ public class DeploymentController {
 	
 	@Autowired
 	ServerService serverService;
+	
+	@Autowired
+	LibraryService libraryService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("snapshotId") long snapshotId) {
@@ -45,4 +50,14 @@ public class DeploymentController {
 		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/snapshots/" + snapshotId + "/deployments/";
 	}
 	
+	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments/{deploymentId}", method = RequestMethod.GET)
+	public ModelAndView viewDeployment(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("deploymentId") long deploymentId) {
+		ModelAndView mv = new ModelAndView("viewFlowDeployment");
+		
+		Flow flow = this.deploymentService.getFirstFlowOf(deploymentId);
+		mv.addObject("flow", flow);
+		mv.addObject("libraries", FlowController.getLibraries(libraryService));
+		
+		return mv;
+	}
 }

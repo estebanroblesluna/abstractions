@@ -54,7 +54,7 @@ public class FlowController {
 		ModelAndView mv = new ModelAndView("addFlow");
 		mv.addObject("teamId", teamId);
 		mv.addObject("applicationId", applicationId);
-		mv.addObject("libraries", this.getLibraries());
+		mv.addObject("libraries", getLibraries(libraryService));
 		return mv;
 	}
 
@@ -216,18 +216,7 @@ public class FlowController {
 		
 		Flow flow = this.service.loadFlow(teamId, applicationId, flowId);
 		mv.addObject("flow", flow);
-		mv.addObject("libraries", this.getLibraries());
-		
-		return mv;
-	}
-
-	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/deployment/{flowId}", method = RequestMethod.GET)
-	public ModelAndView viewDeployment(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId) {
-		ModelAndView mv = new ModelAndView("viewFlowDeployment");
-		
-		Flow flow = this.service.loadFlow(teamId, applicationId, flowId);
-		mv.addObject("flow", flow);
-		mv.addObject("libraries", this.getLibraries());
+		mv.addObject("libraries", getLibraries(libraryService));
 		
 		return mv;
 	}
@@ -238,13 +227,13 @@ public class FlowController {
 		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/flows/";
 	}
 	
-	private String getLibraries() {
+	public static String getLibraries(LibraryService libraryService) {
 		JSONObject json = new JSONObject();
 		JSONArray libraries = new JSONArray();
 
 		try {
-			for (Library library : this.libraryService.getCommonLibraries()) {
-				libraries.put(this.asJSON(library));
+			for (Library library : libraryService.getCommonLibraries()) {
+				libraries.put(asJSON(library));
 			}
 			json.put("libraries", libraries);
 			
@@ -254,7 +243,7 @@ public class FlowController {
 		}
 	}
 	
-	private JSONObject asJSON(Library library) throws JSONException {
+	private static JSONObject asJSON(Library library) throws JSONException {
 		JSONObject libraryJSON = new JSONObject();
 
 		libraryJSON.put("name", library.getName());

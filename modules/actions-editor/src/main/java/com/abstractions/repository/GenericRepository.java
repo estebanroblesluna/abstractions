@@ -9,6 +9,8 @@ import org.hibernate.criterion.Restrictions;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Repository;
 
+import com.abstractions.model.Deployment;
+
 @Repository
 public class GenericRepository {
 
@@ -55,5 +57,4 @@ public class GenericRepository {
 			.add(Restrictions.eq("a.id", applicationSnapshotId))
 			.list();
 	}
-	
 }

@@ -17,10 +17,40 @@
  */
 @implementation DeploymentMode : CPObject
 {
+	id _timer;
+	id _drawing;
+}
+
+- (id) init
+{
+	_timer = [CPTimer 
+				scheduledTimerWithTimeInterval: 5 
+				target:self 
+				selector: @selector(updateProfilingInfo:) 
+				userInfo: nil 
+				repeats: YES];
+				
+	return self;
+}
+
+- (void) updateProfilingInfo: (id) sender
+{
+	if (_drawing != nil) {
+		[_drawing updateProfilingInfo];
+	}
 }
 
 - (void) postAddProcessor: (id) aProcessorFigure
 {
+	var bottomRight = [aProcessorFigure bottomRight];
+	var performanceLabel = [LabelFigure initializeWithText: @"" at: bottomRight];
+    var magnet = [Magnet newWithSource: aProcessorFigure target: performanceLabel selector: @selector(bottomRight)];
+
+	var drawing = [aProcessorFigure drawing];
+	
+	[aProcessorFigure setDataFigure: performanceLabel];
+	
+	[drawing addFigure:	performanceLabel];
 }
 
 - (void) createMessageSourceStateFigure: (id) aMessageSourceFigure drawing: (id) aDrawing point: (id) aPoint
@@ -33,10 +63,24 @@
 
 - (void) createProcessorFigureMenu: (id) aProcessorFigure menu: (CPMenu) contextMenu
 {
+    var addProfilerMenu = [[CPMenuItem alloc] initWithTitle:@"Add profiler" action: @selector(addProfiler:) keyEquivalent:@""]; 
+    [addProfilerMenu setTarget: aProcessorFigure]; 
+    [addProfilerMenu setEnabled: YES]; 
+    [contextMenu addItem: addProfilerMenu]; 
+
+    var removeProfilerMenu = [[CPMenuItem alloc] initWithTitle:@"Remove profiler" action: @selector(removeProfiler:) keyEquivalent:@""]; 
+    [removeProfilerMenu setTarget: aProcessorFigure]; 
+    [removeProfilerMenu setEnabled: YES]; 
+    [contextMenu addItem: removeProfilerMenu]; 
 }
 
 - (void) createElementFigureMenu: (id) anElementFigure
 {
+    var contextMenu = [[CPMenu alloc] init]; 
+    [contextMenu setDelegate: anElementFigure]; 
+
+	[anElementFigure beforeDeleteMenu: contextMenu];
+	[anElementFigure setMenu: contextMenu];
 }
 
 - (void) createElementConnectionMenu: (id) anElementConnection
@@ -45,6 +89,7 @@
 
 - (void) load: (id) aDrawing
 {
+	_drawing = aDrawing;
 	[self loadGenerator: aDrawing];
 	[self loadDiagramElements: aDrawing]
 }

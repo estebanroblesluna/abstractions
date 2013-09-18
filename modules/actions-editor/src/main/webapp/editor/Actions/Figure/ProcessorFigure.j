@@ -18,11 +18,27 @@
 @implementation ProcessorFigure : ElementFigure 
 { 
 	id _breakpointFigure;
+	id _dataFigure;
 } 
 
 - (void) beforeDeleteMenu: (CPMenu) contextMenu
 {
 	[[Actions mode]	createProcessorFigureMenu: self menu: contextMenu];
+}
+
+- (void) setBreakpointFigure: (id) aBreakpointFigure 
+{
+	_breakpointFigure = aBreakpointFigure;
+}
+
+- (id) dataFigure
+{
+	return _dataFigure;
+}
+
+- (void) setDataFigure: (id) aLabel 
+{
+	_dataFigure = aLabel;
 }
 
 - (void) setBreakpoint:(id) sender 
@@ -36,7 +52,17 @@
 - (void) sendMessage:(id) sender 
 { 
     [[self drawing] initiateMessageSendFrom: self];
-} 
+}
+
+- (void) addProfiler: (id) sender
+{
+	[[[self model] api] addProfiler];
+}
+
+- (void) removeProfiler: (id) sender
+{
+	[[[self model] api] removeProfiler];
+}
 
 - (id) acceptsNewStartingChain
 {

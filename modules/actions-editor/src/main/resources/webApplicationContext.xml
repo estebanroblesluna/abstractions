@@ -60,7 +60,7 @@
     <constructor-arg index="0" ref="repository" />
   </bean>
 
-  <bean id="abstractionsDeploymentService" class="com.abstractions.service.DeploymentService">
+  <bean id="deploymentService" class="com.abstractions.service.DeploymentService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="snapshotService" />
     <constructor-arg index="2" ref="userService" />
@@ -69,7 +69,7 @@
   </bean>
 
   <bean id="asyncDeployer" class="com.abstractions.service.AsyncDeployer">
-    <constructor-arg index="0" ref="abstractionsDeploymentService" />
+    <constructor-arg index="0" ref="deploymentService" />
   </bean>
 
   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">

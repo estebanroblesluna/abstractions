@@ -229,4 +229,14 @@ public class ObjectDefinition implements Startable, Terminable {
 	public ElementDefinition getMeta() {
 		return this.metaElementDefinition;
 	}
+
+	/**
+	 * Overrides the current instance
+	 * USE it with caution as changing the properties may not reflect those changes.
+	 * 
+	 * @param newInstance
+	 */
+	public void overrideObject(Object newInstance) {
+		this.object = newInstance;
+	}
 }
