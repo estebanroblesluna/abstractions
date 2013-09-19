@@ -248,6 +248,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+        <version>1.5</version>
+      </dependency>
+
+
+      <dependency>
         <groupId>com.action</groupId>
         <artifactId>actions-core</artifactId>
         <version>${version}</version>
@@ -284,7 +291,7 @@
         <artifactId>cglib</artifactId>
         <version>2.2</version>
       </dependency>
-    
+
     </dependencies>
   </dependencyManagement>
 
