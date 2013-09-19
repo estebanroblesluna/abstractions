@@ -39,13 +39,6 @@
 
 - (id) initWith: (id) aContextId
 {
-	_timer = [CPTimer 
-				scheduledTimerWithTimeInterval: 5 
-				target:self 
-				selector: @selector(update:) 
-				userInfo: nil 
-				repeats: YES];
-	
 	_dirty = false;
 	_debugFigures = [CPDictionary dictionary];
 	_processorFigures = [CPDictionary dictionary];
@@ -72,6 +65,11 @@
 	[[self model] propertyValue: @"gridSize" be: 25];
 	
 	return self;
+}
+
+- (void) timer: (id) aTimer
+{
+	_timer = aTimer;
 }
 
 - (void) addProcessor: (id) aProcessorFigure
