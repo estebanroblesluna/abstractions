@@ -143,11 +143,12 @@
 		
 		for (var key in serverProfilingInfo) {
 			//it's an element id
-			var value = serverProfilingInfo[key].toFixed(3);
+			var value = serverProfilingInfo[key].toFixed(2);
 			var processorFigure = [self processorFor: key];
 			if (processorFigure != nil) {
 				var dataFigure = [processorFigure dataFigure];
-				[dataFigure setText: value + "ms"];
+				[dataFigure setText: value + " ms"];
+				[dataFigure setHidden: NO];
 			}
 		}
 	}

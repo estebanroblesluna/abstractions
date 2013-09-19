@@ -1902,7 +1902,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("initializeWithImage:x:
 },["ImageFigure","id","id","id","id"])]);
 }
 
-p;13;LabelFigure.jt;2610;@STATIC;1.0;t;2591;{var the_class = objj_allocateClassPair(Figure, "LabelFigure"),
+p;13;LabelFigure.jt;3648;@STATIC;1.0;t;3629;{var the_class = objj_allocateClassPair(Figure, "LabelFigure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_textField")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:textField:"), function $LabelFigure__initWithFrame_textField_(self, _cmd, aFrame, aTextField)
@@ -1910,6 +1910,8 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:textField
 {
  objj_msgSendSuper({ receiver:self, super_class:objj_getClass("LabelFigure").super_class }, "initWithFrame:",  aFrame);
  _textField = aTextField;
+ _backgroundColor = objj_msgSend(CPColor, "whiteColor");
+ _foregroundColor = objj_msgSend(CPColor, "blackColor");
  objj_msgSend(self, "addSubview:",  _textField);
  return self;
 }
@@ -1930,7 +1932,25 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:textField
  objj_msgSend(_textField, "sizeToFit");
  objj_msgSend(self, "setFrameSize:",  objj_msgSend(_textField, "frameSize"));
 }
-},["void","id"]), new objj_method(sel_getUid("isSelectable"), function $LabelFigure__isSelectable(self, _cmd)
+},["void","id"]), new objj_method(sel_getUid("backgroundColor:"), function $LabelFigure__backgroundColor_(self, _cmd, aColor)
+{ with(self)
+{
+ objj_msgSendSuper({ receiver:self, super_class:objj_getClass("LabelFigure").super_class }, "backgroundColor:",  aColor);
+ objj_msgSend(self, "invalidate");
+}
+},["void","CPColor"]), new objj_method(sel_getUid("foregroundColor:"), function $LabelFigure__foregroundColor_(self, _cmd, aColor)
+{ with(self)
+{
+ objj_msgSendSuper({ receiver:self, super_class:objj_getClass("LabelFigure").super_class }, "foregroundColor:",  aColor);
+ objj_msgSend(_textField, "setTextColor:",  aColor);
+}
+},["void","CPColor"]), new objj_method(sel_getUid("drawRect:on:"), function $LabelFigure__drawRect_on_(self, _cmd, rect, context)
+{ with(self)
+{
+        CGContextSetFillColor(context, objj_msgSend(self, "backgroundColor"));
+        CGContextFillRect(context, objj_msgSend(self, "bounds"));
+}
+},["void","CGRect","id"]), new objj_method(sel_getUid("isSelectable"), function $LabelFigure__isSelectable(self, _cmd)
 { with(self)
 {
  return true;

@@ -44,6 +44,10 @@
 {
 	var bottomRight = [aProcessorFigure bottomRight];
 	var performanceLabel = [LabelFigure initializeWithText: @"" at: bottomRight];
+	[performanceLabel backgroundColor: [CPColor blueColor]];
+	[performanceLabel foregroundColor: [CPColor whiteColor]];
+	[performanceLabel setHidden: YES];
+	
     var magnet = [Magnet newWithSource: aProcessorFigure target: performanceLabel selector: @selector(bottomRight)];
 
 	var drawing = [aProcessorFigure drawing];
@@ -91,7 +95,15 @@
 {
 	_drawing = aDrawing;
 	[self loadGenerator: aDrawing];
-	[self loadDiagramElements: aDrawing]
+	[self loadDiagramElements: aDrawing];
+	
+	var performanceLabelPoint = CGPointMake(10, 10);
+	var performanceLabel = [LabelFigure initializeWithText: @"Performance in ms" at: performanceLabelPoint];
+	[performanceLabel backgroundColor: [CPColor blueColor]];
+	[performanceLabel foregroundColor: [CPColor whiteColor]];
+	
+	[_drawing addFigure: performanceLabel];
+	
 }
 
 - (void) loadDiagramElements: (id) drawing
