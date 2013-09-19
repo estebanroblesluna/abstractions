@@ -103,6 +103,15 @@
 	[self loadCommonToolbars: aDrawing];
 	[self loadLibraries: aDrawing];
 	[self loadDiagramElements: aDrawing]
+	
+	var timer = [CPTimer 
+				scheduledTimerWithTimeInterval: 5 
+				target: aDrawing 
+				selector: @selector(update:) 
+				userInfo: nil 
+				repeats: YES];
+
+	[aDrawing timer: timer];
 }
 
 - (void) loadDiagramElements: (id) drawing
