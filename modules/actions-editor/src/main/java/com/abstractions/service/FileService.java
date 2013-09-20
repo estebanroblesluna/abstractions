@@ -14,19 +14,23 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.util.Unzipper;
+
 public class FileService {
 
 	private static final String ENCODED_PATH_SEPARATOR = "___";
 	private String rootPath;
 	private File rootDir;
-	
+	private Unzipper unzipper;
+
 	public FileService(String rootPath) {
 		Validate.notNull(rootPath);
-		
+
 		this.setRootPath(rootPath);
+		this.unzipper = new Unzipper();
 		this.initializeDirectory();
 	}
-	
+
 	private void initializeDirectory() {
 		try {
 			this.setRootDir(new File(this.getRootPath()));
@@ -34,7 +38,7 @@ public class FileService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public FileService() {
@@ -51,11 +55,11 @@ public class FileService {
 	private String encodePathPath(String path) {
 		return path.replaceAll("/", ENCODED_PATH_SEPARATOR);
 	}
-	
+
 	private String decodePath(String path) {
 		return path.replaceAll(ENCODED_PATH_SEPARATOR, "/");
 	}
-	
+
 	public InputStream getContentsOfFile(String path) {
 		try {
 			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.getRootPath() + "/" + this.encodePathPath(path))));
@@ -64,33 +68,20 @@ public class FileService {
 		}
 		return null;
 	}
-	
+
 	public List<String> listFiles() {
 		List<String> files = new ArrayList<String>();
 		for (Object file : FileUtils.listFiles(this.getRootDir(), FileFilterUtils.fileFileFilter(), FileFilterUtils.trueFileFilter())) {
-			String absolutePath = ((File)file).getAbsolutePath();
+			String absolutePath = ((File) file).getAbsolutePath();
 			String currentPath = this.getRootDir().getAbsolutePath().substring(0, this.getRootDir().getAbsolutePath().indexOf(this.getRootPath()));
 			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length()));
 			files.add(filename);
 		}
 		return files;
 	}
-	
+
 	public void uncompressFile(InputStream stream) {
-		try {
-			ZipArchiveInputStream zipStream = new ZipArchiveInputStream(stream);
-			ZipArchiveEntry entry;
-			int offset = 0;
-			for (entry = zipStream.getNextZipEntry(); entry != null; entry = zipStream.getNextZipEntry()) {
-				byte [] content = new byte[(int) entry.getSize()];
-				zipStream.read(content, offset, (int) entry.getSize());
-				this.storeFile(entry.getName(), new ByteArrayInputStream(content));
-				offset += entry.getSize();
-			}
-			zipStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.unzipper.unzip(stream, this.getRootDir());
 	}
 
 	public String getRootPath() {
@@ -108,5 +99,5 @@ public class FileService {
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
 	}
-	
+
 }
