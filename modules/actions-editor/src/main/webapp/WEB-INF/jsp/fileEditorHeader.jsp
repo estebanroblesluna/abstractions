@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Dust Template Editor</title>
-<script src="${resourcesBase}js/codemirror.js"></script>
-<script src="${resourcesBase}js/codemirror/modes/javascript.js"></script>
-<script src="${resourcesBase}js/codemirror/modes/dust.js"></script>
-<script src="${resourcesBase}js/jquery.min.js"></script>
-<script src="${resourcesBase}js/bootstrap.min.js"></script>
-<script src="${resourcesBase}js/alert.js"></script>
-<link rel="stylesheet" href="${resourcesBase}css/codemirror.css">
-<link rel="stylesheet" href="${resourcesBase}css/bootstrap.min.css">
+<script src="${staticResourcesUrl}js/codemirror.js"></script>
+<script src="${staticResourcesUrl}js/codemirror/modes/javascript.js"></script>
+<script src="${staticResourcesUrl}js/codemirror/modes/dust.js"></script>
+<script src="${staticResourcesUrl}js/jquery.min.js"></script>
+<script src="${staticResourcesUrl}js/bootstrap.min.js"></script>
+<script src="${staticResourcesUrl}js/alert.js"></script>
+<link rel="stylesheet" href="${staticResourcesUrl}css/codemirror.css">
+<link rel="stylesheet" href="${staticResourcesUrl}css/bootstrap.min.css">
 <style>
 	#alerts {
 		height: 63px;
