@@ -2,32 +2,29 @@ package com.abstractions.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.jsoup.helper.Validate;
-
-import com.abstractions.util.Unzipper;
 
 public class FileService {
 
 	private static final String ENCODED_PATH_SEPARATOR = "___";
 	private String rootPath;
 	private File rootDir;
-	private Unzipper unzipper;
 
 	public FileService(String rootPath) {
 		Validate.notNull(rootPath);
 
 		this.setRootPath(rootPath);
-		this.unzipper = new Unzipper();
 		this.initializeDirectory();
 	}
 
@@ -81,7 +78,27 @@ public class FileService {
 	}
 
 	public void uncompressFile(InputStream stream) {
-		this.unzipper.unzip(stream, this.getRootDir());
+		try {
+			ZipInputStream zipInputStream = new ZipInputStream(stream);
+			ZipEntry zipEntry = zipInputStream.getNextEntry();
+			while (zipEntry != null) {
+				if (zipEntry.getSize() == -1) {
+					zipInputStream.closeEntry();
+					zipEntry = zipInputStream.getNextEntry();
+					continue;
+				}
+				byte[] buffer = new byte[(int) zipEntry.getSize()];
+				zipInputStream.read(buffer);
+				this.storeFile(zipEntry.getName().replace("./",  "/"), new ByteArrayInputStream(buffer));
+				zipInputStream.closeEntry();
+				zipEntry = zipInputStream.getNextEntry();
+			}
+			zipInputStream.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String getRootPath() {
