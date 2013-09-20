@@ -3,6 +3,7 @@ package com.abstractions.web;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +17,10 @@ import com.abstractions.service.FileService;
 @RequestMapping("/fileEditor")
 public class FileEditorController {
 
+	
+	@Autowired @Qualifier("staticResourcesBaseUrl")
+	private String staticResourcesUrl;
+	
 	@Autowired
 	private FileService fileService;
 
@@ -29,12 +34,14 @@ public class FileEditorController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView home() {
 		ModelAndView mv = new ModelAndView("fileEditor");
+		mv.addObject("staticResourcesUrl", this.staticResourcesUrl);
 		return mv;
 	}
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public ModelAndView uploadFile(FileUploadForm fileUploadForm, BindingResult result) {
 		ModelAndView mv = new ModelAndView("fileEditor");
+		mv.addObject("staticResourcesUrl", this.staticResourcesUrl);
 		try {
 			this.fileService.uncompressFile(fileUploadForm.getFile().getInputStream());
 		} catch (IOException e) {
