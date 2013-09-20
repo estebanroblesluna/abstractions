@@ -24,9 +24,9 @@ public class FileRESTService {
 
 	public FileRESTService() {
 	}
-	
+
 	@GET
-	@Path("/")
+	@Path("/files/")
 	public Response getAllFiles() {
 		try {
 			JsonBuilder builder = JsonBuilder.newWithArray("files");
@@ -42,32 +42,26 @@ public class FileRESTService {
 	}
 
 	@GET
-	@Path("/{filePath:.+}")
+	@Path("/files/{filePath:.+}")
 	public Response getFile(@PathParam("filePath") String path) {
-		if (!path.isEmpty()) {
-			InputStream result = this.fileService.getContentsOfFile(path);
-			if (result == null) {
-				return Response.status(404).entity("File not found").build();
-			}
-		} else {
-			try {
-				JsonBuilder builder = JsonBuilder.newWithArray("files");
-				for (String filename : this.fileService.listFiles()) {
-					builder.string(filename);
-				}
-				builder.endArray();
-				return Response.ok(builder.getContent()).build();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		InputStream result = this.fileService.getContentsOfFile(path);
+		if (result == null) {
+			return Response.status(404).entity("File not found").build();
 		}
-		return null;
+		return Response.ok(result).build();
 	}
 
 	@PUT
-	@Path("/{filePath:.+}")
+	@Path("/files/{filePath:.+}")
 	public Response putFile(@PathParam("filePath") String path, @RequestBody InputStream stream) {
 		this.fileService.storeFile(path, stream);
 		return Response.ok("File stored").build();
+	}
+
+	@PUT
+	@Path("/files/compressed")
+	public Response postCompressedFiles(@RequestBody InputStream stream) {
+		this.fileService.uncompressFile(stream);
+		return Response.ok("Files uncompressed").build();
 	}
 }
