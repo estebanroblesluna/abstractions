@@ -43,23 +43,23 @@ public class FileService {
 
 	public void storeFile(String path, InputStream stream) {
 		try {
-			FileUtils.writeByteArrayToFile(new File(this.getRootPath() + "/" + this.encodePathPath(path)), IOUtils.toByteArray(stream));
+			FileUtils.writeByteArrayToFile(new File(this.getRootPath() + File.separator + this.encodePath(path)), IOUtils.toByteArray(stream));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String encodePathPath(String path) {
-		return path.replaceAll("/", ENCODED_PATH_SEPARATOR);
+	private String encodePath(String path) {
+		return path.replaceAll(File.separator, ENCODED_PATH_SEPARATOR);
 	}
 
 	private String decodePath(String path) {
-		return path.replaceAll(ENCODED_PATH_SEPARATOR, "/");
+		return path.replaceAll(ENCODED_PATH_SEPARATOR, File.separator);
 	}
 
 	public InputStream getContentsOfFile(String path) {
 		try {
-			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.getRootPath() + "/" + this.encodePathPath(path))));
+			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.getRootPath() + File.separator + this.encodePath(path))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -72,7 +72,7 @@ public class FileService {
 			String absolutePath = ((File) file).getAbsolutePath();
 			String currentPath = this.getRootDir().getAbsolutePath().substring(0, this.getRootDir().getAbsolutePath().indexOf(this.getRootPath()));
 			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length()));
-			files.add(filename.replace("./", "/"));
+			files.add(filename.replace("." + File.separator, File.separator));
 		}
 		return files;
 	}
@@ -87,9 +87,7 @@ public class FileService {
 					zipEntry = zipInputStream.getNextEntry();
 					continue;
 				}
-				byte[] buffer = new byte[(int) zipEntry.getSize()];
-				zipInputStream.read(buffer);
-				this.storeFile(zipEntry.getName().replace("./",  "/"), new ByteArrayInputStream(buffer));
+				this.storeFile(zipEntry.getName().replace("." + File.separator,  File.separator), zipInputStream);
 				zipInputStream.closeEntry();
 				zipEntry = zipInputStream.getNextEntry();
 			}
@@ -115,6 +113,10 @@ public class FileService {
 
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
+	}
+
+	public void deleteFile(String path) {
+		new File(this.getRootPath() + File.separator + this.encodePath(path)).delete();
 	}
 
 }
