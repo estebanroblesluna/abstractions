@@ -6,6 +6,9 @@
 <script src="${staticResourcesUrl}js/codemirror.js"></script>
 <script src="${staticResourcesUrl}js/codemirror/modes/javascript.js"></script>
 <script src="${staticResourcesUrl}js/codemirror/modes/dust.js"></script>
+<script src="${staticResourcesUrl}js/codemirror/modes/xml.js"></script>
+<script src="${staticResourcesUrl}js/codemirror/modes/css.js"></script>
+<script src="${staticResourcesUrl}js/codemirror/modes/htmlmixed.js"></script>
 <script src="${staticResourcesUrl}js/jquery.min.js"></script>
 <script src="${staticResourcesUrl}js/bootstrap.min.js"></script>
 <script src="${staticResourcesUrl}js/alert.js"></script>
@@ -20,9 +23,10 @@
 
 
 		var TemplateStore = function() {}
+		var templateEditor;
 
 		$(document).ready(function() {
-			var templateEditor = CodeMirror($("#editor")[0], {
+			templateEditor = CodeMirror($("#editor")[0], {
 			  value: "Hello world, {name}",
 			  mode:  "dust",
 			  lineNumbers: true
@@ -168,9 +172,6 @@
 					});
 			})
 			
-			templateEditor.on('change', function() {
-				getCurrentTemplate().content = templateEditor.getValue();
-			})
 		})
 		
 	</script>

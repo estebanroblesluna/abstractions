@@ -72,7 +72,7 @@ public class FileService {
 			String absolutePath = ((File) file).getAbsolutePath();
 			String currentPath = this.getRootDir().getAbsolutePath().substring(0, this.getRootDir().getAbsolutePath().indexOf(this.getRootPath()));
 			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length()));
-			files.add(filename);
+			files.add(filename.replace("./", "/"));
 		}
 		return files;
 	}
