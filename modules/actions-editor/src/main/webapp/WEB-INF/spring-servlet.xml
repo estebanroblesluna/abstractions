@@ -34,6 +34,10 @@
     <constructor-arg index="0" value="${staticResourcesBaseUrl}" />
   </bean>
 
+  <bean id="fileStorageServiceBaseUrl" class="java.lang.String">
+    <constructor-arg index="0" value="${fileStorageServiceBaseUrl}" />
+  </bean>
+
   <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
     <property name="prefix" value="/WEB-INF/jsp/" />
