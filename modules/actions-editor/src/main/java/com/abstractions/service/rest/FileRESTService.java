@@ -2,6 +2,7 @@ package com.abstractions.service.rest;
 
 import java.io.InputStream;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -49,6 +50,13 @@ public class FileRESTService {
 			return Response.status(404).entity("File not found").build();
 		}
 		return Response.ok(result).build();
+	}
+	
+	@DELETE
+	@Path("/files/{filePath:.+}")
+	public Response deleteFile(@PathParam("filePath") String path) {
+		this.fileService.deleteFile(path);
+		return Response.ok("File deleted").build();
 	}
 
 	@PUT
