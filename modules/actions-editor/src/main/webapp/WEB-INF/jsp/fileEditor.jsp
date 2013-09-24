@@ -15,6 +15,7 @@
     var templateEditor;
     var currentFilename = null;
     var newFile = false;
+    var applicationId = ${applicationId};
     
     var extensionModeMappings = {
     	js: "javascript",
@@ -70,14 +71,14 @@
         jHtml.find('a.fileLink').click(function(e) {
             var self = this;
             e.preventDefault();   
-            $.ajax({url: "${fileStorageServiceBaseUrl}files/" + filename, type: "GET", success: function(response) {
+            $.ajax({url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + filename, type: "GET", success: function(response) {
               fileSelected(filename, response)
              }});
         });
         jHtml.find('button.deleteFile').click(function(e) {
             var self = this;
             e.preventDefault();
-            $.ajax({url: "${fileStorageServiceBaseUrl}files/" + $(self).attr('href'), type: "DELETE", success: function(response) {
+            $.ajax({url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + $(self).attr('href'), type: "DELETE", success: function(response) {
               $(self).parent().hide(500, function() {$(self).parent().remove()});
             }});
         });
@@ -93,7 +94,7 @@
         });
         templateEditor.setSize(700, 500);
     	
-    	  $.ajax({url: "${fileStorageServiceBaseUrl}files/" + $(self).text(), type: "GET", dataType: 'json', success: function(response) {
+    	  $.ajax({url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + $(self).text(), type: "GET", dataType: 'json', success: function(response) {
             $.each(response.files, function(_, filename) {
             	 addFileToList(filename);
             });
@@ -102,7 +103,7 @@
         $("#saveButton").click(function(e) {
             var self = this;
             e.preventDefault();   
-            $.ajax({url: "${fileStorageServiceBaseUrl}files/" + currentFilename, type: "PUT", data: templateEditor.getValue(), success: function(response) {
+            $.ajax({url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + currentFilename, type: "PUT", data: templateEditor.getValue(), success: function(response) {
               fileSaved(currentFilename, templateEditor.getValue());
              }});
         });

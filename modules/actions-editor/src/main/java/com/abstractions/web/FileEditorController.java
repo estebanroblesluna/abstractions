@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.abstractions.service.FileService;
 
 @Controller
-@RequestMapping("/fileEditor")
+@RequestMapping("/")
 public class FileEditorController {
 
 	@Autowired
@@ -37,10 +37,10 @@ public class FileEditorController {
 		this.fileService = fileService;
 	}
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public ModelAndView home() {
+	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/", method = RequestMethod.GET)
+	public ModelAndView home(@PathVariable("applicationId") String applicationId) {
 		ModelAndView mv = new ModelAndView("fileEditor");
-		this.addCommonObjects(mv);
+		this.addCommonObjects(mv, applicationId);
 		return mv;
 	}
 
@@ -48,31 +48,32 @@ public class FileEditorController {
 		return filename.endsWith(".css") || filename.endsWith(".js") || filename.endsWith(".tl") || filename.endsWith(".xml") || filename.endsWith(".html") ||  filename.endsWith(".htm");
 	}
 
-	@RequestMapping(value = "/file/{filename}", method = RequestMethod.GET)
-	public ModelAndView fileSelected(@PathVariable("filename") String filename) {
+	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/{filename}", method = RequestMethod.GET)
+	public ModelAndView fileSelected(@PathVariable("applicationId") String applicationId, @PathVariable("filename") String filename) {
 		ModelAndView mv = new ModelAndView("fileEditor");
-		this.addCommonObjects(mv);
+		this.addCommonObjects(mv, applicationId);
 		return mv;
 	}
 
-	private void addCommonObjects(ModelAndView mv) {
+	private void addCommonObjects(ModelAndView mv, String applicationId) {
 		mv.addObject("staticResourcesUrl", this.staticResourcesUrl);
 		mv.addObject("fileStorageServiceBaseUrl", this.fileStorageServiceBaseUrl);
+		mv.addObject("applicationId", applicationId);
 		List<File> files = new ArrayList<File>();
-		for (String filename : this.fileService.listFiles()) {
+		for (String filename : this.fileService.listFiles(applicationId)) {
 			files.add(new File(filename.substring(1), this.isEditable(filename)));
 		}
 		mv.addObject("files", files);
 	}
 
-	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String uploadFile(FileUploadForm fileUploadForm, BindingResult result) {
+	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/upload", method = RequestMethod.POST)
+	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") String applicationId, FileUploadForm fileUploadForm, BindingResult result) {
 		try {
-			this.fileService.uncompressFile(fileUploadForm.getFile().getInputStream());
+			this.fileService.uncompressFile(applicationId, fileUploadForm.getFile().getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "redirect:/fileEditor/";
+		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/files/";
 	}
 
 }

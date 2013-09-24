@@ -55,7 +55,7 @@ public class DustConnector {
 		return this.templates.get(name);
 	}
 
-	private String compile(String name, String template) {
+	public String compile(String name, String template) {
 		String fullJavascript = "var compiled = dust.compile(\"" + prepareTemplate(template) +"\", \"" + name + "\");"
 				+ "\n"
 				+ "compiled";

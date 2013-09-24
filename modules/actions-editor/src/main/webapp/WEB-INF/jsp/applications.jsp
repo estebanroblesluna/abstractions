@@ -49,6 +49,7 @@
               <th></th>
               <th></th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -59,6 +60,7 @@
               <td><a href="/teams/${application.team.id}/applications/${application.id}/properties/">Properties</a></td>
               <td><a href="/teams/${application.team.id}/applications/${application.id}/snapshots/">Snapshots</a></td>
               <td><a href="/teams/${application.team.id}/applications/${application.id}/flows/">Flows</a></td>
+              <td><a href="/teams/${application.team.id}/applications/${application.id}/files/">Files</a></td>
             </tr>
           </c:forEach>
           </tbody>

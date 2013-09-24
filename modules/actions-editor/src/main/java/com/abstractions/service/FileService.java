@@ -41,9 +41,9 @@ public class FileService {
 	public FileService() {
 	}
 
-	public void storeFile(String path, InputStream stream) {
+	public void storeFile(String applicationId, String path, InputStream stream) {
 		try {
-			FileUtils.writeByteArrayToFile(new File(this.getRootPath() + File.separator + this.encodePath(path)), IOUtils.toByteArray(stream));
+			FileUtils.writeByteArrayToFile(new File(this.buildPath(applicationId, path)), IOUtils.toByteArray(stream));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -57,27 +57,31 @@ public class FileService {
 		return path.replaceAll(ENCODED_PATH_SEPARATOR, File.separator);
 	}
 
-	public InputStream getContentsOfFile(String path) {
+	public InputStream getContentsOfFile(String applicationId, String path) {
 		try {
-			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.getRootPath() + File.separator + this.encodePath(path))));
+			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.buildPath(applicationId, path))));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public List<String> listFiles() {
+	public List<String> listFiles(String applicationId) {
 		List<String> files = new ArrayList<String>();
-		for (Object file : FileUtils.listFiles(this.getRootDir(), FileFilterUtils.fileFileFilter(), FileFilterUtils.trueFileFilter())) {
+		File directory = new File(this.getRootPath() + File.separator + applicationId);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		for (Object file : FileUtils.listFiles(directory, FileFilterUtils.fileFileFilter(), FileFilterUtils.trueFileFilter())) {
 			String absolutePath = ((File) file).getAbsolutePath();
 			String currentPath = this.getRootDir().getAbsolutePath().substring(0, this.getRootDir().getAbsolutePath().indexOf(this.getRootPath()));
-			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length()));
+			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length() + 1 + applicationId.length()));
 			files.add(filename.replace("." + File.separator, File.separator));
 		}
 		return files;
 	}
 
-	public void uncompressFile(InputStream stream) {
+	public void uncompressFile(String applicationId, InputStream stream) {
 		try {
 			ZipInputStream zipInputStream = new ZipInputStream(stream);
 			ZipEntry zipEntry = zipInputStream.getNextEntry();
@@ -87,7 +91,7 @@ public class FileService {
 					zipEntry = zipInputStream.getNextEntry();
 					continue;
 				}
-				this.storeFile(zipEntry.getName().replace("." + File.separator,  File.separator), zipInputStream);
+				this.storeFile(applicationId, zipEntry.getName().replace("." + File.separator,  File.separator), zipInputStream);
 				zipInputStream.closeEntry();
 				zipEntry = zipInputStream.getNextEntry();
 			}
@@ -115,8 +119,12 @@ public class FileService {
 		this.rootDir = rootDir;
 	}
 
-	public void deleteFile(String path) {
-		new File(this.getRootPath() + File.separator + this.encodePath(path)).delete();
+	public void deleteFile(String applicationId, String path) {
+		new File(this.buildPath(applicationId, path)).delete();
+	}
+
+	private String buildPath(String applicationId, String path) {
+		return this.getRootPath() + File.separator + applicationId + File.separator + this.encodePath(path);
 	}
 
 }

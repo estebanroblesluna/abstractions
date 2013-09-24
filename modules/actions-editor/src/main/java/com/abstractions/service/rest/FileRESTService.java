@@ -27,11 +27,11 @@ public class FileRESTService {
 	}
 
 	@GET
-	@Path("/files/")
-	public Response getAllFiles() {
+	@Path("{applicationId}/files/")
+	public Response getAllFiles(@PathParam("applicationId") String applicationId) {
 		try {
 			JsonBuilder builder = JsonBuilder.newWithArray("files");
-			for (String filename : this.fileService.listFiles()) {
+			for (String filename : this.fileService.listFiles(applicationId)) {
 				builder.string(filename);
 			}
 			builder.endArray();
@@ -43,9 +43,9 @@ public class FileRESTService {
 	}
 
 	@GET
-	@Path("/files/{filePath:.+}")
-	public Response getFile(@PathParam("filePath") String path) {
-		InputStream result = this.fileService.getContentsOfFile(path);
+	@Path("{applicationId}/files/{filePath:.+}")
+	public Response getFile(@PathParam("applicationId") String applicationId, @PathParam("filePath") String path) {
+		InputStream result = this.fileService.getContentsOfFile(applicationId, path);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
@@ -53,23 +53,23 @@ public class FileRESTService {
 	}
 	
 	@DELETE
-	@Path("/files/{filePath:.+}")
-	public Response deleteFile(@PathParam("filePath") String path) {
-		this.fileService.deleteFile(path);
+	@Path("{applicationId}/files/{filePath:.+}")
+	public Response deleteFile(@PathParam("applicationId") String applicationId, @PathParam("filePath") String path) {
+		this.fileService.deleteFile(applicationId, path);
 		return Response.ok("File deleted").build();
 	}
 
 	@PUT
-	@Path("/files/{filePath:.+}")
-	public Response putFile(@PathParam("filePath") String path, @RequestBody InputStream stream) {
-		this.fileService.storeFile(path, stream);
+	@Path("{applicationId}/files/{filePath:.+}")
+	public Response putFile(@PathParam("applicationId") String applicationId, @PathParam("filePath") String path, @RequestBody InputStream stream) {
+		this.fileService.storeFile(applicationId, path, stream);
 		return Response.ok("File stored").build();
 	}
 
 	@PUT
-	@Path("/files/compressed")
-	public Response postCompressedFiles(@RequestBody InputStream stream) {
-		this.fileService.uncompressFile(stream);
+	@Path("{applicationId}/files/compressed")
+	public Response postCompressedFiles(@PathParam("applicationId") String applicationId, @RequestBody InputStream stream) {
+		this.fileService.uncompressFile(applicationId, stream);
 		return Response.ok("Files uncompressed").build();
 	}
 }
