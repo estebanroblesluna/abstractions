@@ -60,12 +60,12 @@
         var html = "<li>";
         filename = filename[0] == '/' ? filename.substring(1) : filename;
         var extension = extractExtension(filename);
+        html = html + '<button class="btn btn-xs deleteFile" href="[filename]">Del</button>'.replace(/\[filename\]/g, filename);
         if (extensionModeMappings[extension]) {
           html = html + '<a href="file/[filename]" class="fileLink">[filename]</a>'.replace(/\[filename\]/g, filename);
         } else {
           html = html + filename;
         }
-        html = html + '<button class="btn btn-xs deleteFile" href="[filename]">Del</button>'.replace(/\[filename\]/g, filename);
         html = html + "</li>";
         var jHtml = $(html);
         jHtml.find('a.fileLink').click(function(e) {

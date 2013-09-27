@@ -69,7 +69,7 @@ public class FileEditorController {
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/upload", method = RequestMethod.POST)
 	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") String applicationId, FileUploadForm fileUploadForm, BindingResult result) {
 		try {
-			this.fileService.uncompressFile(applicationId, fileUploadForm.getFile().getInputStream());
+			this.fileService.uncompressContent(applicationId, fileUploadForm.getFile().getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -47,6 +47,7 @@
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
+    <constructor-arg index="2" ref="fileService" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">

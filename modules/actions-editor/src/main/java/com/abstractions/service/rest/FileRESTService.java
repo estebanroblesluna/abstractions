@@ -69,7 +69,17 @@ public class FileRESTService {
 	@PUT
 	@Path("{applicationId}/files/compressed")
 	public Response postCompressedFiles(@PathParam("applicationId") String applicationId, @RequestBody InputStream stream) {
-		this.fileService.uncompressFile(applicationId, stream);
+		this.fileService.uncompressContent(applicationId, stream);
 		return Response.ok("Files uncompressed").build();
+	}
+	
+	@GET
+	@Path("{applicationId}/snapshots/{snapshotId}")
+	public Response getSnapshot(@PathParam("applicationId") String applicationId, @PathParam("snapshotId") String snapshotId) {
+		InputStream result = this.fileService.getContentsOfSnapshot(applicationId, snapshotId);
+		if (result == null) {
+			return Response.status(404).entity("File not found").build();
+		}
+		return Response.ok(result).build();
 	}
 }
