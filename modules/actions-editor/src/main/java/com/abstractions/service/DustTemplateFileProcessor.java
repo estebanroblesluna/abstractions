@@ -14,27 +14,32 @@ public class DustTemplateFileProcessor implements FileProcessor {
 	private FileService fileService;
 	private DustConnector dustConnector;
 
-	/* (non-Javadoc)
+	public DustTemplateFileProcessor(FileService fileService, DustConnector dustConnector) {
+		this.fileService = fileService;
+		this.dustConnector = dustConnector;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.abstractions.service.FileProcessor#process()
 	 */
 	@Override
-	public void process(String applicationId) {
-		for (String filename : this.fileService.listFiles(applicationId)) {
-			InputStream inputStream = this.fileService.getContentsOfFile(filename, applicationId);
-			if (filename.endsWith(".tl")) {
-				ByteArrayOutputStream output = new ByteArrayOutputStream();
-				
-				try {
-					IOUtils.copy(inputStream, output);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				String compiledTemplate = this.dustConnector.compile(filename, new String(output.toByteArray()));
-				this.fileService.storeFile(applicationId, filename, new ByteArrayInputStream(compiledTemplate.getBytes()));
-			}			
+	public InputStream process(String filename, InputStream inputStream) {
+		if (filename.endsWith(".tl")) {
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+			try {
+				IOUtils.copy(inputStream, output);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String compiledTemplate = this.dustConnector.compile(filename, new String(output.toByteArray()));
+			return new ByteArrayInputStream(compiledTemplate.getBytes());
 		}
+		return inputStream;
 	}
-	
+
 	public FileService getFileService() {
 		return fileService;
 	}
@@ -50,8 +55,5 @@ public class DustTemplateFileProcessor implements FileProcessor {
 	public void setDustConnector(DustConnector dustConnector) {
 		this.dustConnector = dustConnector;
 	}
-	
-	
-	
-	
+
 }
