@@ -1,7 +1,9 @@
 package com.abstractions.service;
 
+import java.io.InputStream;
+
 public interface FileProcessor {
 
-	public abstract void process(String applicationId);
+	public abstract InputStream process(String filename, InputStream inputStream);
 
 }

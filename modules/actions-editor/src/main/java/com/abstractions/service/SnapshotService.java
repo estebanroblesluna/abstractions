@@ -28,17 +28,20 @@ public class SnapshotService {
 	private GenericRepository repository;
 	private ApplicationService applicationService;
 	private FileService fileService;
+	private FileProcessor fileProcessor;
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, FileService fileService) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, FileService fileService, FileProcessor fileProcessor) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
 		Validate.notNull(fileService);
+		Validate.notNull(fileProcessor);
 		
 		this.repository = repository;
 		this.applicationService = applicationService;
 		this.fileService = fileService;
+		this.fileProcessor = fileProcessor;
 	}
 	
 	@Transactional
@@ -81,6 +84,10 @@ public class SnapshotService {
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.fileService.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
 			for (String filename : this.fileService.listFiles(new Long(application.getId()).toString())) {
 				InputStream inputStream = this.fileService.getContentsOfFile(new Long(application.getId()).toString(), filename);
+				inputStream = this.fileProcessor.process(filename, inputStream);
+				if (inputStream == null) {
+					continue;
+				}
 				zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
 				IOUtils.copy(inputStream, zipOutputStream);
 				inputStream.close();
