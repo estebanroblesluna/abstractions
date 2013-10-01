@@ -1,11 +1,17 @@
-package com.server.core;
+package com.abstractions.server.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
@@ -14,7 +20,6 @@ import com.core.api.Processor;
 import com.core.common.LogProcessorWrapper;
 import com.core.common.PerformanceProcessor;
 import com.core.common.ProcessorWrapper;
-import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ObjectDefinition;
@@ -36,15 +41,20 @@ public class ActionsServer {
 	
 	private final NamesMapping mapping;
 	
-	public ActionsServer(NamesMapping mapping) {
+	private final String applicationDirectory;
+	
+	public ActionsServer(String applicationDirectory, NamesMapping mapping) {
 		Validate.notNull(mapping);
+		Validate.notNull(applicationDirectory);
+
+		this.mapping = mapping;
+		this.applicationDirectory = applicationDirectory;
 		
 		this.marshaller = new ContextDefinitionMarshaller(mapping);
 		this.definitions = new ConcurrentHashMap<String, ContextDefinition>();
 		this.profilers = new ConcurrentHashMap<String, List<PerformanceProcessor>>();
 		this.objectIdLogs = new ConcurrentHashMap<String, LogProcessorWrapper>();
 		this.logs = new ConcurrentHashMap<String, List<LogProcessorWrapper>>();
-		this.mapping = mapping;
 		this.wrapperToObjectIdMapping = new ConcurrentHashMap<Object, String>();
  	}
 
@@ -57,7 +67,7 @@ public class ActionsServer {
 	 * 
 	 * @param contextDefinition
 	 */
-	public void start(String contextDefinition) {
+	private void start(String contextDefinition) {
 		try {
 			ContextDefinition definition = marshaller.unmarshall(contextDefinition);
 			definition.sync();
@@ -70,7 +80,65 @@ public class ActionsServer {
 			log.error("Error syncing definition", e);
 		}
 	}
-	
+
+	public void start(String applicationId, InputStream applicationZip) {
+		ZipInputStream zipInputStream = new ZipInputStream(applicationZip);
+		
+		this.cleanUpApplication(applicationId);
+		
+		try {
+			ZipEntry zipEntry = zipInputStream.getNextEntry();
+			while (zipEntry != null) {
+				this.saveFile(applicationId, zipEntry, zipInputStream);
+				zipInputStream.closeEntry();
+				zipEntry = zipInputStream.getNextEntry();
+			}
+			zipInputStream.close();
+		} catch (IOException e) {
+			log.error("Error deploying application", e);
+		} finally {
+			IOUtils.closeQuietly(applicationZip);
+			IOUtils.closeQuietly(zipInputStream);
+		}
+		
+		this.startFromFiles(applicationId);
+	}
+
+	private void saveFile(String applicationId, ZipEntry zipEntry, ZipInputStream zipInputStream) throws IOException {
+		File file = new File(this.applicationDirectory + "/" + applicationId + "/" + zipEntry.getName());
+		FileUtils.writeByteArrayToFile(file, IOUtils.toByteArray(zipInputStream));
+	}
+
+	private void startFromFiles(String applicationId) {
+		File applicationDirectory = new File(this.applicationDirectory + "/" + applicationId);
+		if (applicationDirectory.exists()) {
+			File flowDirectory = new File(applicationDirectory, "flows");
+			for (File flowFile : flowDirectory.listFiles()) {
+				this.startFlow(flowFile);
+			}
+		}
+	}
+
+	private void startFlow(File flowFile) {
+		try {
+			String flowDefinition = FileUtils.readFileToString(flowFile);
+			this.start(flowDefinition);
+		} catch (IOException e) {
+			log.warn("Error reading flow (ignoring for now) " + flowFile.getAbsolutePath(), e);
+		}
+	}
+
+	private void cleanUpApplication(String applicationId) {
+		File applicationDirectory = new File(this.applicationDirectory + "/" + applicationId);
+		if (applicationDirectory.exists()) {
+			try {
+				FileUtils.deleteDirectory(applicationDirectory);
+			} catch (IOException e) {
+				log.warn("Error deleting application " + applicationId, e);
+			}
+		}
+	}
+
 	/**
 	 * Stops the context definition under contextId if it has been started
 	 * 
@@ -216,60 +284,11 @@ public class ActionsServer {
 			String cacheExpressions,
 			int ttl) {
 
-		//OBTAIN THE CONNECTION DEFINITION
 		ContextDefinition context = this.definitions.get(contextId);
-		ObjectDefinition connectionDefinition = context.getDefinition(objectId);
+		LazyComputedCacheTransformation transformation = new LazyComputedCacheTransformation(
+				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
 		
-		//SAVE THE PREVIOUS TARGET ID
-		String previousTargetId = connectionDefinition.getProperty("target");
-		
-		//CREATE CACHE, CHOICE AND CHAIN
-		ObjectDefinition getCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("GET_MEMCACHED"));
-		ObjectDefinition choiceDefinition = new ObjectDefinition(this.mapping.getDefinition("CHOICE"));
-		ObjectDefinition chainDefinition = new ObjectDefinition(this.mapping.getDefinition("CHAIN"));
-		context.addDefinition(getCacheDefinition);
-		context.addDefinition(choiceDefinition);
-		context.addDefinition(chainDefinition);
-		
-		//SET THE EXPRESSION TO GET FROM MEMCACHED
-		String adaptedKeyExpression = "'__CACHED_" + getCacheDefinition.getId() + "_' + " + keyExpression;
-		getCacheDefinition.setProperty("expression", adaptedKeyExpression);
-		
-		//CACHE -> CHOICE
-		context.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-
-		//CHOICE -> CHAIN
-		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
-		//IF CACHE IS NULL
-		ObjectDefinition choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
-		choiceConnectionDefinition.setProperty("expression", "message.payload == null");
-
-		//POINT TO THE PREVIOUS COMPUTATION
-		context.addConnection(chainDefinition.getId(), previousTargetId.substring(4), ConnectionType.CHAIN_CONNECTION);
-		
-		//ADD PUT OPERATION
-		String[] putExpressions = StringUtils.split(cacheExpressions, ';');
-		if (putExpressions != null && putExpressions.length >= 1) {
-			ObjectDefinition nullProcessorDefinition = new ObjectDefinition(this.mapping.getDefinition("NULL"));
-			
-			ObjectDefinition putCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("PUT_MEMCACHED"));
-			putCacheDefinition.setProperty("keyExpression", adaptedKeyExpression);
-			putCacheDefinition.setProperty("valueExpression", putExpressions[0]);
-
-			context.addDefinition(nullProcessorDefinition);
-			context.addDefinition(putCacheDefinition);
-			context.addConnection(chainDefinition.getId(), nullProcessorDefinition.getId(), ConnectionType.CHAIN_CONNECTION);
-			context.addConnection(nullProcessorDefinition.getId(), putCacheDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		}
-		
-		//FINALLY CHANGE THE CONNECTION TO POINT TO THE GET FROM CACHE
-		connectionDefinition.setProperty("target", "urn:" + getCacheDefinition.getId());
-		
-		try {
-			context.sync();
-		} catch (ServiceException e) {
-			log.warn("Error syncing context", e);
-		}
+		transformation.transform(context);
 	}
 	
 	public void addLazyAutorefreshableCache(
@@ -280,93 +299,11 @@ public class ActionsServer {
 			String cacheExpressions,
 			int ttl) {
 
-		//OBTAIN THE CONNECTION DEFINITION
 		ContextDefinition context = this.definitions.get(contextId);
-		ObjectDefinition connectionDefinition = context.getDefinition(objectId);
+		LazyAutorefreshableCacheTransformation transformation = new LazyAutorefreshableCacheTransformation(
+				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
 		
-		//SAVE THE PREVIOUS TARGET ID
-		String previousTargetId = connectionDefinition.getProperty("target");
-		
-		//CREATE CACHE, CHOICE, CHAIN, WIRE_TAP
-		ObjectDefinition getCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("GET_MEMCACHED"));
-		ObjectDefinition choiceDefinition = new ObjectDefinition(this.mapping.getDefinition("CHOICE"));
-		ObjectDefinition chainDefinition = new ObjectDefinition(this.mapping.getDefinition("CHAIN"));
-		ObjectDefinition wireTapDefinition = new ObjectDefinition(this.mapping.getDefinition("WIRE_TAP"));
-		context.addDefinition(getCacheDefinition);
-		context.addDefinition(choiceDefinition);
-		context.addDefinition(chainDefinition);
-		context.addDefinition(wireTapDefinition);
-		
-		//SET THE EXPRESSION TO GET FROM MEMCACHED
-		String adaptedKeyExpression = "'__CACHED_" + getCacheDefinition.getId() + "_' + " + keyExpression;
-		String adaptedTimeKeyExpression = "'__CACHED_" + getCacheDefinition.getId() + "_time_' + " + keyExpression;
-		getCacheDefinition.setProperty("expression", adaptedKeyExpression);
-		
-		//CACHE -> CHOICE
-		context.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		transformation.transform(context);
 
-		//CHOICE -> CHAIN
-		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
-		//IF CACHE IS NULL
-		ObjectDefinition choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
-		choiceConnectionDefinition.setProperty("expression", "message.payload == null");
-
-		//CHOICE -> WIRE_TAP
-		String choiceWireTapConnectionId = context.addConnection(choiceDefinition.getId(), wireTapDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
-		ObjectDefinition choiceWireTapConnectionDefinition = context.getDefinition(choiceWireTapConnectionId);
-		choiceWireTapConnectionDefinition.setProperty("expression", "message.payload != null");
-
-		//POINT TO THE PREVIOUS COMPUTATION
-		context.addConnection(chainDefinition.getId(), previousTargetId.substring(4), ConnectionType.CHAIN_CONNECTION);
-		
-		//ADD PUT OPERATION
-		String[] putExpressions = StringUtils.split(cacheExpressions, ';');
-		if (putExpressions != null && putExpressions.length >= 1) {
-			ObjectDefinition nullProcessorDefinition = new ObjectDefinition(this.mapping.getDefinition("NULL"));
-			
-			ObjectDefinition putCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("PUT_MEMCACHED"));
-			putCacheDefinition.setProperty("keyExpression", adaptedKeyExpression);
-			putCacheDefinition.setProperty("valueExpression", putExpressions[0]);
-
-			ObjectDefinition putCacheTimeDefinition = new ObjectDefinition(this.mapping.getDefinition("PUT_MEMCACHED"));
-			putCacheTimeDefinition.setProperty("keyExpression", adaptedTimeKeyExpression);
-			putCacheTimeDefinition.setProperty("valueExpression", "new java.util.Date().getTime()");
-
-			context.addDefinition(nullProcessorDefinition);
-			context.addDefinition(putCacheDefinition);
-			context.addDefinition(putCacheTimeDefinition);
-			
-			context.addConnection(chainDefinition.getId(), nullProcessorDefinition.getId(), ConnectionType.CHAIN_CONNECTION);
-			context.addConnection(nullProcessorDefinition.getId(), putCacheDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-			context.addConnection(putCacheDefinition.getId(), putCacheTimeDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		}
-		
-		//ADD WIRE TAP PART
-		ObjectDefinition getTimeFromCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("GET_MEMCACHED"));
-		ObjectDefinition timeChoiceDefinition = new ObjectDefinition(this.mapping.getDefinition("CHOICE"));
-		context.addDefinition(getTimeFromCacheDefinition);
-		context.addDefinition(timeChoiceDefinition);
-		getTimeFromCacheDefinition.setProperty("expression", adaptedTimeKeyExpression);
-
-		//WIRE_TAP -> CACHE
-		context.addConnection(wireTapDefinition.getId(), getTimeFromCacheDefinition.getId(), ConnectionType.WIRE_TAP_CONNECTION);
-		//CACHE -> CHOICE
-		context.addConnection(getTimeFromCacheDefinition.getId(), timeChoiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		//CHOICE -> CHAIN
-		String timeChoiceId = context.addConnection(timeChoiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
-		
-		//TIME CHOICE CONDITION
-		ObjectDefinition timeChoiceConnectionDefinition = context.getDefinition(timeChoiceId);
-		timeChoiceConnectionDefinition.setProperty("expression", "(message.payload != null) && ((new java.util.Date().getTime() - message.payload) > 3000)");
-	
-		
-		//FINALLY CHANGE THE CONNECTION TO POINT TO THE GET FROM CACHE
-		connectionDefinition.setProperty("target", "urn:" + getCacheDefinition.getId());
-		
-		try {
-			context.sync();
-		} catch (ServiceException e) {
-			log.warn("Error syncing context", e);
-		}
 	}
 }

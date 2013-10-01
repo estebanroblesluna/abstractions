@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.ws.rs.FormParam;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -23,6 +21,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -144,27 +144,28 @@ public class DeploymentService {
 	}
 
 	private boolean basicDeploy(Deployment deployment, Server server) {
-		Validate.notNull(this.fileService.getContentsOfSnapshot(new Long(deployment.getSnapshot().getApplication().getId()).toString(), new Long(deployment.getSnapshot().getId()).toString()));
-		if (deployment.getSnapshot().getFlows().isEmpty()) {
+		String applicationId = Long.valueOf(deployment.getSnapshot().getApplication().getId()).toString();
+		String snapshotId = Long.valueOf(deployment.getSnapshot().getId()).toString();
+		
+		InputStream snapshotFileIS = this.fileService.getContentsOfSnapshot(applicationId, snapshotId);
+
+		if (snapshotFileIS == null) {
 			return false;
 		}
 		
-		String contextJSON = deployment.getSnapshot().getFlows().get(0).getJson();
 		String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-				+ "/service/server/start";
+				+ "/service/server/" + applicationId + "/start";
 		
-		Validate.notNull(this.fileService.getContentsOfSnapshot(new Long(deployment.getSnapshot().getApplication().getId()).toString(), new Long(deployment.getSnapshot().getId()).toString()));
-
 		HttpPost post = new HttpPost(url);
 		InputStream is = null;
+		
 		try {
-			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("contextDefinition", contextJSON));
-			post.setEntity(new UrlEncodedFormEntity(urlParameters));
+			MultipartEntity entity = new MultipartEntity();
+			entity.addPart("applicationZip", new InputStreamBody(snapshotFileIS, "application"));
+			post.setEntity(entity);
 			
 			HttpResponse response = this.execute(post);
 			int statusCode = response.getStatusLine().getStatusCode();
-			
 			
 			if (statusCode >= 200 && statusCode < 300) {
 				is = response.getEntity().getContent();

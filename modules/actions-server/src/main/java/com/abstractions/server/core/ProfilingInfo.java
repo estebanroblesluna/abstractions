@@ -1,4 +1,4 @@
-package com.server.core;
+package com.abstractions.server.core;
 
 import java.util.Date;
 import java.util.HashMap;

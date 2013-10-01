@@ -171,7 +171,4 @@ public class FileService {
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
 	}
-
-
-
 }

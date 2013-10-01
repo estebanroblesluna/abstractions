@@ -1,8 +1,10 @@
-package com.server.rest;
+package com.abstractions.server.rest;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -10,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.Log;
@@ -18,9 +21,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
-import com.server.core.ActionsServer;
-import com.server.core.ProfilingInfo;
+import com.abstractions.server.core.ActionsServer;
+import com.abstractions.server.core.ProfilingInfo;
 import com.service.rest.ResponseUtils;
+import com.sun.jersey.multipart.FormDataParam;
 
 @Path("server")
 public class ActionsServerRest {
@@ -33,10 +37,13 @@ public class ActionsServerRest {
 		this.server = server;
 	}
 	
-	@Path("/start")
+	@Path("/{applicationId}/start")
 	@POST
-	public Response start(@FormParam("contextDefinition") String contextDefinition) {
-		this.server.start(contextDefinition);
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response start(
+			@PathParam("applicationId") String applicationId,
+			@FormDataParam("applicationZip") InputStream uploadedApplicationIS) {
+		this.server.start(applicationId, uploadedApplicationIS);
 		return ResponseUtils.ok();
 	}
 	
