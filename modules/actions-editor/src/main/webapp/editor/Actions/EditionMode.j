@@ -95,7 +95,6 @@
     [contextMenu addItem: deleteMenu]; 
     
 	[anElementConnection setMenu: contextMenu];
-
 }
 
 - (void) load: (id) aDrawing

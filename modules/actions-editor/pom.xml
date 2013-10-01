@@ -53,6 +53,16 @@
       <version>${version}</version>
     </dependency>
     <dependency>
+      <groupId>com.actions</groupId>
+      <artifactId>actions-modules-sql</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.actions</groupId>
+      <artifactId>actions-common-service</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-lgpl</artifactId>
     </dependency>
@@ -100,6 +110,11 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
     </dependency>
 
   </dependencies>

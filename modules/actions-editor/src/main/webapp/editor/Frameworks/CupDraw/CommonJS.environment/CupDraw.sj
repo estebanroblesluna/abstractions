@@ -2056,7 +2056,7 @@ var _12=objj_msgSend(objj_msgSend(_f,"new"),"initWithFrame:",_11);
 return _12;
 }
 })]);
-p;15;ToolboxFigure.jt;3540;@STATIC;1.0;t;3521;
+p;15;ToolboxFigure.jt;3584;@STATIC;1.0;t;3565;
 var _1=objj_allocateClassPair(Figure,"ToolboxFigure"),_2=_1.isa;
 class_addIvars(_1,[new objj_ivar("_drawing"),new objj_ivar("_buttonsMapping"),new objj_ivar("_currentColumn"),new objj_ivar("_maxColumn"),new objj_ivar("_currentY")]);
 objj_registerClassPair(_1);
@@ -2122,6 +2122,7 @@ objj_msgSend(_26,"setBezelStyle:",CPRegularSquareBezelStyle);
 objj_msgSend(_26,"setFrameSize:",CGSizeMake(_24,_25));
 objj_msgSend(_26,"setTarget:",_20);
 objj_msgSend(_26,"setAction:",_23);
+objj_msgSend(_26,"setAlternateTitle:",_22);
 objj_msgSend(_20,"addSubview:",_26);
 var _29=CGSizeMake(_24*_maxColumn,_currentY+_25);
 objj_msgSend(_20,"setFrameSize:",_29);

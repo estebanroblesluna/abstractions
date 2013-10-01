@@ -9,6 +9,8 @@ public interface RouterVisitor {
 
 	Object visitWireTapRouter(WireTapRouter wireTapRouter);
 
+	Object visitChainRouter(ChainRouter chainRouter);
+
 	//split
 	//join
 }

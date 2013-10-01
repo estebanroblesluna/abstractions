@@ -1,10 +1,15 @@
 package com.modules.sql;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.common.expression.ScriptingExpression;
+import com.common.expression.ScriptingLanguage;
 import com.core.api.Expression;
 import com.core.api.Message;
 import com.core.api.Processor;
@@ -15,6 +20,7 @@ public class SelectProcessor implements Processor {
 	
 	private SQLConnector connector;
 	private Expression selectExpression;
+	private List<Expression> parameterExpressions;
 
 	/**
 	 * {@inheritDoc}
@@ -24,7 +30,8 @@ public class SelectProcessor implements Processor {
 		String sql = (String) this.selectExpression.evaluate(message);
 
 		try {
-			Object[] values = this.connector.select(sql);
+			Object[] parameters = this.getParameters(message);
+			List<Object[]> values = this.getConnector().select(sql, parameters);
 			message.setPayload(values);
 		} catch (SQLException e) {
 			log.warn("Error executing SQL", e);
@@ -33,7 +40,22 @@ public class SelectProcessor implements Processor {
 		return message;
 	}
 
+	private Object[] getParameters(Message message) {
+		int size = this.parameterExpressions == null ? 0 : this.parameterExpressions.size();
+		Object[] params = new Object[size];
+		int i = 0;
+		for (Expression expression : this.parameterExpressions) {
+			Object param = expression.evaluate(message);
+			params[i] = param;
+			i++;
+		}
+		return params;
+	}
+
 	public SQLConnector getConnector() {
+		if (this.connector == null) {
+			this.connector = new SQLConnector();
+		}
 		return connector;
 	}
 
@@ -47,5 +69,22 @@ public class SelectProcessor implements Processor {
 
 	public void setSelectExpression(Expression selectExpression) {
 		this.selectExpression = selectExpression;
+	}
+
+	public void setParameterExpressions(String parameterExpressions) {
+		if (StringUtils.isBlank(parameterExpressions)) {
+			return;
+		}
+		
+		String[] paramsAsString = StringUtils.split(parameterExpressions, ';');
+		List<Expression> expressions = new ArrayList<Expression>();
+		for (String paramAsString : paramsAsString) {
+			if (!StringUtils.isBlank(paramAsString)) {
+				Expression expression = new ScriptingExpression(ScriptingLanguage.GROOVY, paramAsString);
+				expressions.add(expression);
+			}
+		}
+		
+		this.parameterExpressions = expressions;
 	}
 }

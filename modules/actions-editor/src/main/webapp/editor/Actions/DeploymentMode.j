@@ -76,6 +76,23 @@
     [removeProfilerMenu setTarget: aProcessorFigure]; 
     [removeProfilerMenu setEnabled: YES]; 
     [contextMenu addItem: removeProfilerMenu]; 
+    
+    [contextMenu addItem: [CPMenuItem separatorItem]]; 
+
+    var addLoggerMenu = [[CPMenuItem alloc] initWithTitle:@"Add logger" action: @selector(addLogger:) keyEquivalent:@""]; 
+    [addLoggerMenu setTarget: aProcessorFigure]; 
+    [addLoggerMenu setEnabled: YES]; 
+    [contextMenu addItem: addLoggerMenu]; 
+
+    var removeLoggerMenu = [[CPMenuItem alloc] initWithTitle:@"Remove logger" action: @selector(removeLogger:) keyEquivalent:@""]; 
+    [removeLoggerMenu setTarget: aProcessorFigure]; 
+    [removeLoggerMenu setEnabled: YES]; 
+    [contextMenu addItem: removeLoggerMenu]; 
+
+    var viewLogMenu = [[CPMenuItem alloc] initWithTitle:@"View log" action: @selector(viewLog:) keyEquivalent:@""]; 
+    [viewLogMenu setTarget: aProcessorFigure]; 
+    [viewLogMenu setEnabled: YES]; 
+    [contextMenu addItem: viewLogMenu]; 
 }
 
 - (void) createElementFigureMenu: (id) anElementFigure
@@ -89,6 +106,30 @@
 
 - (void) createElementConnectionMenu: (id) anElementConnection
 {
+	var contextMenu = [[CPMenu alloc] init]; 
+    [contextMenu setDelegate: anElementConnection]; 
+
+    var cacheMenu = [[CPMenuItem alloc] initWithTitle: @"Add cache (lazy compute)" action: @selector(addCache) keyEquivalent:@""]; 
+    [cacheMenu setTarget: anElementConnection]; 
+    [cacheMenu setEnabled: YES]; 
+    [contextMenu addItem: cacheMenu]; 
+    
+    var cache2Menu = [[CPMenuItem alloc] initWithTitle: @"Add cache (async lazy compute)" action: @selector(addCache) keyEquivalent:@""]; 
+    [cache2Menu setTarget: anElementConnection]; 
+    [cache2Menu setEnabled: YES]; 
+    [contextMenu addItem: cache2Menu]; 
+
+    var asyncMenu = [[CPMenuItem alloc] initWithTitle: @"Add async operation" action: @selector(addCache) keyEquivalent:@""]; 
+    [asyncMenu setTarget: anElementConnection]; 
+    [asyncMenu setEnabled: YES]; 
+    [contextMenu addItem: asyncMenu]; 
+
+    var trackingMenu = [[CPMenuItem alloc] initWithTitle: @"Add tracking" action: @selector(addCache) keyEquivalent:@""]; 
+    [trackingMenu setTarget: anElementConnection]; 
+    [trackingMenu setEnabled: YES]; 
+    [contextMenu addItem: trackingMenu]; 
+    
+	[anElementConnection setMenu: contextMenu];
 }
 
 - (void) load: (id) aDrawing

@@ -1,7 +1,10 @@
-package com.server.rest;
+package com.abstractions.server.rest;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -9,6 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.Log;
@@ -17,9 +21,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
-import com.server.core.ActionsServer;
-import com.server.core.ProfilingInfo;
+import com.abstractions.server.core.ActionsServer;
+import com.abstractions.server.core.ProfilingInfo;
 import com.service.rest.ResponseUtils;
+import com.sun.jersey.multipart.FormDataParam;
 
 @Path("server")
 public class ActionsServerRest {
@@ -32,10 +37,13 @@ public class ActionsServerRest {
 		this.server = server;
 	}
 	
-	@Path("/start")
+	@Path("/{applicationId}/start")
 	@POST
-	public Response start(@FormParam("contextDefinition") String contextDefinition) {
-		this.server.start(contextDefinition);
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response start(
+			@PathParam("applicationId") String applicationId,
+			@FormDataParam("applicationZip") InputStream uploadedApplicationIS) {
+		this.server.start(applicationId, uploadedApplicationIS);
 		return ResponseUtils.ok();
 	}
 	
@@ -55,13 +63,22 @@ public class ActionsServerRest {
 				new Attribute("isRunning", isRunning.toString()));
 	}
 	
-	@Path("/{contextId}/log")
+	@Path("/{contextId}/log/{objectId}/")
 	@GET
 	public Response getLoggers(
-			@PathParam("contextId") String contextId) {
-		//TODO
-		this.server.getLoggers(contextId);
-		return ResponseUtils.ok();
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId) {
+
+		List<String> lines = this.server.getLogLines(contextId, objectId);
+		
+		JSONObject result = new JSONObject();
+		try {
+			result.put(objectId, lines);
+		} catch (JSONException e) {
+			log.warn("Error generating json", e);
+		}
+		
+		return ResponseUtils.ok("logger", result);
 	}
 	
 	@Path("/{contextId}/log/{objectId}/")
@@ -69,38 +86,22 @@ public class ActionsServerRest {
 	public Response addLogger(
 			@PathParam("contextId") String contextId,
 			@PathParam("objectId") String objectId,
-			@FormParam("logName") String logName,
-			@FormParam("logExpression") String logExpression) {
-		//TODO
-		this.server.addLogger(contextId, objectId, logName, logExpression);
+			@FormParam("beforeExpression") String beforeExpression,
+			@FormParam("afterExpression") String afterExpression) {
+
+		this.server.addLogger(contextId, objectId, beforeExpression, afterExpression);
 		return ResponseUtils.ok();
 	}
 	
-	@Path("/{contextId}/log/{objectId}/{logName}")
+	@Path("/{contextId}/log/{objectId}")
 	@DELETE
 	public Response removeLogger(
 			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@PathParam("logName") String logName) {
-		//TODO
-		this.server.removeLogger(contextId, objectId, logName);
-		return ResponseUtils.ok();
-	}
-	
-	@Path("/{contextId}/log/{objectId}/{logName}/{from}/{to}")
-	@GET
-	public Response getLogLines(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@PathParam("logName") String logName,
-			@PathParam("from") Integer from,
-			@PathParam("to") Integer to) {
+			@PathParam("objectId") String objectId) {
 		
-		//TODO
-		this.server.getLoggerLines(contextId, objectId, logName, from, to);
+		this.server.removeLogger(contextId, objectId);
 		return ResponseUtils.ok();
 	}
-
 	
 	
 	@Path("/{contextId}/profilingInfo")
@@ -142,6 +143,20 @@ public class ActionsServerRest {
 			@PathParam("objectId") String objectId) {
 		
 		this.server.removeProfiler(contextId, objectId);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/cache/{objectId}/")
+	@POST
+	public Response addCache(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId,
+			@FormParam("memcachedURL") String memcachedURL,
+			@FormParam("keyExpression") String keyExpression,
+			@FormParam("cacheExpressions") String cacheExpressions,
+			@FormParam("ttl") int ttl) {
+		
+		this.server.addLazyAutorefreshableCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, ttl);
 		return ResponseUtils.ok();
 	}
 }

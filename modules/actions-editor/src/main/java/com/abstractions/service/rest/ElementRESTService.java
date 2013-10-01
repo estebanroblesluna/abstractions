@@ -2,6 +2,7 @@ package com.abstractions.service.rest;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -9,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
 import com.abstractions.service.DeploymentService;
@@ -55,6 +57,14 @@ public class ElementRESTService {
 	}
 
 	@PUT
+	@Path("/{contextId}/{elementId}/cache/{deploymentId}")
+	public Response addCache(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
+	{
+		this.deploymentService.addCache(deploymentId, contextId, elementId);
+		return ResponseUtils.ok();
+	}
+	
+	@PUT
 	@Path("/{contextId}/{elementId}/profiler/{deploymentId}")
 	public Response addProfiler(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
 	{
@@ -69,8 +79,36 @@ public class ElementRESTService {
 		this.deploymentService.removeProfiler(deploymentId, contextId, elementId);
 		return ResponseUtils.ok();
 	}
-	
 
+	@POST
+	@Path("/{contextId}/{elementId}/logger/{deploymentId}")
+	public Response addLogger(
+			@PathParam("contextId") String contextId, 
+			@PathParam("elementId") String elementId,
+			@PathParam("deploymentId") long deploymentId,
+			@FormParam("beforeExpression") String beforeExpression,
+			@FormParam("afterExpression") String afterExpression)
+	{
+		this.deploymentService.addLogger(deploymentId, contextId, elementId, beforeExpression, afterExpression);
+		return ResponseUtils.ok();
+	}
+	
+	@DELETE
+	@Path("/{contextId}/{elementId}/logger/{deploymentId}")
+	public Response removeLogger(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
+	{
+		this.deploymentService.removeLogger(deploymentId, contextId, elementId);
+		return ResponseUtils.ok();
+	}
+	
+	@GET
+	@Path("/{contextId}/{elementId}/logger/{deploymentId}")
+	public Response getLogger(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
+	{
+		JSONObject result = this.deploymentService.getLogger(deploymentId, contextId, elementId);
+		return ResponseUtils.ok("logger", result);
+	}
+	
 	@POST
 	@Path("/{contextId}/{elementId}/{nextInChainId}/connection/{connectionType}")
 	public Response addConnection(
