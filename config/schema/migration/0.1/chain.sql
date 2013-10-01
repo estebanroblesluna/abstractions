@@ -1,3 +1,5 @@
+USE `actions`;
+
 INSERT INTO `element_definition` (`element_definition_id`, `name`, `display_name`, `icon`, `implementation`, `library_id`, `is_script`) 
 VALUES (17,'CHAIN','Chain router','Resources/chain.gif','com.core.routing.ChainRouter',1,0);
 INSERT INTO `router_definition` (`element_definition_id`, `router_evaluator_implementation`, `is_router_evaluator_script`) 
