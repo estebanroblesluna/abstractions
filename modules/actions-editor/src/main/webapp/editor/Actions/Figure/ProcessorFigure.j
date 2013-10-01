@@ -19,6 +19,7 @@
 { 
 	id _breakpointFigure;
 	id _dataFigure;
+	id _loggerWindow;
 } 
 
 - (void) beforeDeleteMenu: (CPMenu) contextMenu
@@ -62,6 +63,39 @@
 - (void) removeProfiler: (id) sender
 {
 	[[[self model] api] removeProfiler];
+}
+
+- (void) addLogger: (id) sender
+{
+	var addLoggerWindow = [AddLoggerWindow
+						newAt: [self frameOrigin]
+						elementAPI: [[self model] api]];
+						
+	[addLoggerWindow orderFront:self];
+}
+
+- (void) removeLogger: (id) sender
+{
+	[[[self model] api] removeLogger];
+}
+
+- (void) viewLog: (id) sender
+{
+	[[[self model] api] getLogger];
+}
+
+- (void) loggerLines: (id) loggerInfo
+{
+	if (_loggerWindow == nil) {
+		_loggerWindow = [ViewLoggerWindow
+						newAt: [self frameOrigin]];
+	}
+						
+	//TODO do something with all servers
+	var elementId = [self elementId];
+	var lines = loggerInfo.logger.servers[0].logger[elementId];
+	[_loggerWindow orderFront: self];
+	[_loggerWindow loggerInfo: lines];
 }
 
 - (id) acceptsNewStartingChain

@@ -241,7 +241,7 @@ public class Thread {
 	void popCurrentContext() {
 		synchronized (this.threadContexts) {
 			ThreadContext context = this.threadContexts.pop();
-			this.currentMessage = context.getMessage();
+			//this.currentMessage = context.getMessage();
 			this.currentElement = context.getProcessor();
 		}
 	}

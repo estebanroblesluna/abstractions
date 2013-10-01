@@ -1902,7 +1902,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("initializeWithImage:x:
 },["ImageFigure","id","id","id","id"])]);
 }
 
-p;13;LabelFigure.jt;3648;@STATIC;1.0;t;3629;{var the_class = objj_allocateClassPair(Figure, "LabelFigure"),
+p;13;LabelFigure.jt;3634;@STATIC;1.0;t;3615;{var the_class = objj_allocateClassPair(Figure, "LabelFigure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_textField")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:textField:"), function $LabelFigure__initWithFrame_textField_(self, _cmd, aFrame, aTextField)
@@ -1947,8 +1947,8 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:textField
 },["void","CPColor"]), new objj_method(sel_getUid("drawRect:on:"), function $LabelFigure__drawRect_on_(self, _cmd, rect, context)
 { with(self)
 {
-        CGContextSetFillColor(context, objj_msgSend(self, "backgroundColor"));
-        CGContextFillRect(context, objj_msgSend(self, "bounds"));
+ CGContextSetFillColor(context, objj_msgSend(self, "backgroundColor"));
+ CGContextFillRect(context, objj_msgSend(self, "bounds"));
 }
 },["void","CGRect","id"]), new objj_method(sel_getUid("isSelectable"), function $LabelFigure__isSelectable(self, _cmd)
 { with(self)
@@ -2322,7 +2322,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("newAt:"), function $Re
 },["RectangleFigure","id"])]);
 }
 
-p;15;ToolboxFigure.jt;4975;@STATIC;1.0;t;4956;{var the_class = objj_allocateClassPair(Figure, "ToolboxFigure"),
+p;15;ToolboxFigure.jt;5029;@STATIC;1.0;t;5010;{var the_class = objj_allocateClassPair(Figure, "ToolboxFigure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_drawing"), new objj_ivar("_buttonsMapping"), new objj_ivar("_currentColumn"), new objj_ivar("_maxColumn"), new objj_ivar("_currentY")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initializeWith:at:"), function $ToolboxFigure__initializeWith_at_(self, _cmd, aDrawing, aPoint)
@@ -2395,6 +2395,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initializeWith:at:"), f
  objj_msgSend(button, "setFrameSize:",  CGSizeMake(buttonWidth, buttonHeight));
  objj_msgSend(button, "setTarget:",  self);
  objj_msgSend(button, "setAction:",  aSelector);
+ objj_msgSend(button, "setAlternateTitle:",  aTitle);
  objj_msgSend(self, "addSubview:",  button);
  var newSize = CGSizeMake(buttonWidth * _maxColumn, _currentY + buttonHeight);
  objj_msgSend(self, "setFrameSize:",  newSize);
