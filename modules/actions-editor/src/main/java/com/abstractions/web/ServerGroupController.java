@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.model.ServerGroup;
+import com.abstractions.model.Team;
 import com.abstractions.service.ServerGroupService;
+import com.abstractions.service.TeamService;
 
 @Controller
 public class ServerGroupController {
@@ -19,13 +21,19 @@ public class ServerGroupController {
 	@Autowired
 	ServerGroupService service;
 	
+	@Autowired
+	TeamService teamService;
+	
 	@RequestMapping(value = "/teams/{teamId}/serverGroups", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId) {
 		ModelAndView mv = new ModelAndView("serverGroups");
 
 		List<ServerGroup> apps = this.service.getServerGroupsOf(teamId);
+		Team team = this.teamService.getTeam(teamId);
+		
 		mv.addObject("serverGroups", apps);
 		mv.addObject("teamId", teamId);
+		mv.addObject("team", team);
 
 		return mv;
 	}

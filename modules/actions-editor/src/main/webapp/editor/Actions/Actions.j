@@ -38,6 +38,8 @@
 @import "Window/NewMessagePanel.j"
 @import "Window/ViewMessagePanel.j"
 @import "Window/DebugWindow.j"
+@import "Window/AddLoggerWindow.j"
+@import "Window/ViewLoggerWindow.j"
 
 @import "Tool/CreateProcessorTool.j"
 @import "Tool/CreateElementConnectionTool.j"

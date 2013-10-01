@@ -25,16 +25,27 @@ public class AllRouterEvaluator implements Evaluator {
 		
 		String connections = currentElement.getProperty("__connections" + ConnectionType.ALL_CONNECTION.getElementName());
 		List<String> urns = BeanUtils.getUrnsFromList(connections);
-		CountDownLatch latch = new CountDownLatch(urns.size());
 		
+		int count = 0;
 		for (String urn : urns) {
 			final ObjectDefinition connectionDefinition = thread.getContext().resolve(urn);
-			Object connection = connectionDefinition.getInstance();
-			if (connection instanceof AllConnection) {
-				thread.startSubthread(service, currentMessage.clone(), currentMessage, connectionDefinition, latch);
+			if (connectionDefinition != null) {
+				count++;
 			}
 		}
 
+		CountDownLatch latch = new CountDownLatch(count);
+		
+		for (String urn : urns) {
+			final ObjectDefinition connectionDefinition = thread.getContext().resolve(urn);
+			if (connectionDefinition != null) {
+				Object connection = connectionDefinition.getInstance();
+				if (connection instanceof AllConnection) {
+					thread.startSubthread(service, currentMessage.clone(), currentMessage, connectionDefinition, latch);
+				}
+			}
+		}
+		
 	    try {
 			latch.await();
 			thread.computeNextInChainProcessorAndSet();

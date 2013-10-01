@@ -12,11 +12,11 @@
           "
 >
 
-  <import resource="classpath:/mapping.xml" />
-
-  <bean class="com.service.core.BasicMappingInitializer" init-method="basicSetupInitialLibraries">
-    <property name="mapping" ref="namesMapping" />
-  </bean>
+  <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
+  <import resource="classpath:common.xml" />
+  <import resource="classpath:datasource.xml" />
+  <import resource="classpath:hibernate.xml" />
+  <import resource="classpath:applicationContext.xml" />
 
   <bean id="actionsServer" class="com.server.core.ActionsServer">
     <constructor-arg index="0" ref="namesMapping" />

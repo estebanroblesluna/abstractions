@@ -1,5 +1,6 @@
 package com.server.rest;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.DELETE;
@@ -55,13 +56,22 @@ public class ActionsServerRest {
 				new Attribute("isRunning", isRunning.toString()));
 	}
 	
-	@Path("/{contextId}/log")
+	@Path("/{contextId}/log/{objectId}/")
 	@GET
 	public Response getLoggers(
-			@PathParam("contextId") String contextId) {
-		//TODO
-		this.server.getLoggers(contextId);
-		return ResponseUtils.ok();
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId) {
+
+		List<String> lines = this.server.getLogLines(contextId, objectId);
+		
+		JSONObject result = new JSONObject();
+		try {
+			result.put(objectId, lines);
+		} catch (JSONException e) {
+			log.warn("Error generating json", e);
+		}
+		
+		return ResponseUtils.ok("logger", result);
 	}
 	
 	@Path("/{contextId}/log/{objectId}/")
@@ -69,38 +79,22 @@ public class ActionsServerRest {
 	public Response addLogger(
 			@PathParam("contextId") String contextId,
 			@PathParam("objectId") String objectId,
-			@FormParam("logName") String logName,
-			@FormParam("logExpression") String logExpression) {
-		//TODO
-		this.server.addLogger(contextId, objectId, logName, logExpression);
+			@FormParam("beforeExpression") String beforeExpression,
+			@FormParam("afterExpression") String afterExpression) {
+
+		this.server.addLogger(contextId, objectId, beforeExpression, afterExpression);
 		return ResponseUtils.ok();
 	}
 	
-	@Path("/{contextId}/log/{objectId}/{logName}")
+	@Path("/{contextId}/log/{objectId}")
 	@DELETE
 	public Response removeLogger(
 			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@PathParam("logName") String logName) {
-		//TODO
-		this.server.removeLogger(contextId, objectId, logName);
-		return ResponseUtils.ok();
-	}
-	
-	@Path("/{contextId}/log/{objectId}/{logName}/{from}/{to}")
-	@GET
-	public Response getLogLines(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@PathParam("logName") String logName,
-			@PathParam("from") Integer from,
-			@PathParam("to") Integer to) {
+			@PathParam("objectId") String objectId) {
 		
-		//TODO
-		this.server.getLoggerLines(contextId, objectId, logName, from, to);
+		this.server.removeLogger(contextId, objectId);
 		return ResponseUtils.ok();
 	}
-
 	
 	
 	@Path("/{contextId}/profilingInfo")
@@ -142,6 +136,20 @@ public class ActionsServerRest {
 			@PathParam("objectId") String objectId) {
 		
 		this.server.removeProfiler(contextId, objectId);
+		return ResponseUtils.ok();
+	}
+	
+	@Path("/{contextId}/cache/{objectId}/")
+	@POST
+	public Response addCache(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId,
+			@FormParam("memcachedURL") String memcachedURL,
+			@FormParam("keyExpression") String keyExpression,
+			@FormParam("cacheExpressions") String cacheExpressions,
+			@FormParam("ttl") int ttl) {
+		
+		this.server.addLazyAutorefreshableCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, ttl);
 		return ResponseUtils.ok();
 	}
 }

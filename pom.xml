@@ -272,24 +272,47 @@
         <artifactId>actions-modules-file</artifactId>
         <version>${version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>com.actions</groupId>
+        <artifactId>actions-modules-sql</artifactId>
+        <version>${version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.actions</groupId>
+        <artifactId>actions-common-service</artifactId>
+        <version>${version}</version>
+      </dependency>
+      
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
         <artifactId>quartz</artifactId>
         <version>2.2.0</version>
       </dependency>
+      <dependency>
+        <groupId>c3p0</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.1.1</version>
+      </dependency>
+            
 
       <dependency>
         <groupId>cglib</groupId>
         <artifactId>cglib</artifactId>
         <version>2.2</version>
       </dependency>
-    
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.16</version>
+      </dependency>
+                
     </dependencies>
   </dependencyManagement>
 
   <modules>
     <module>modules/actions-rest-utils</module>
+
+    <module>modules/actions-common-service</module>
 
     <module>modules/actions-core</module>
 

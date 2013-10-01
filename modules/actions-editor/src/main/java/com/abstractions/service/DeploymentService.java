@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ws.rs.FormParam;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -174,6 +176,31 @@ public class DeploymentService {
 	}
 
 	@Transactional
+	public void addCache(long deploymentId, String contextId, String elementId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + contextId + "/cache/" + elementId;
+			HttpPost method = new HttpPost(url);
+			
+			try {
+				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+				//TODO set the parameters
+				urlParameters.add(new BasicNameValuePair("memcachedURL", "127.0.0.1:11211"));
+				urlParameters.add(new BasicNameValuePair("keyExpression", "message.properties['actions.http.productId']"));
+				urlParameters.add(new BasicNameValuePair("cacheExpressions", "message.payload"));
+				urlParameters.add(new BasicNameValuePair("ttl", "30"));
+				method.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+				this.execute(method);
+			} catch (Exception e) {
+				log.warn("Error removing profiler", e);
+			}
+		}
+	}
+	
+	@Transactional
 	public void addProfiler(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
 		
@@ -195,7 +222,7 @@ public class DeploymentService {
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/start/" + contextId + "/profile/" + elementId;
+					+ "/service/server/" + contextId + "/profile/" + elementId;
 			HttpDelete method = new HttpDelete(url);
 			try {
 				this.execute(method);
@@ -226,7 +253,87 @@ public class DeploymentService {
 					partialResults.put(json);
 				}
 			} catch (Exception e) {
-				log.warn("Error removing profiler", e);
+				log.warn("Error getting profiler", e);
+			} finally {
+				IOUtils.closeQuietly(is);
+			}
+		}
+		
+		JSONObject result = new JSONObject();
+		try {
+			result.put("servers", partialResults);
+		} catch (JSONException e) {
+			log.warn("Error writing json", e);
+		}
+		
+		return result;
+	}
+	
+	@Transactional
+	public void addLogger(
+			long deploymentId, 
+			String contextId,
+			String elementId, 
+			String beforeExpression, 
+			String afterExpression) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + contextId + "/log/" + elementId;
+			HttpPost method = new HttpPost(url);
+			
+			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+			urlParameters.add(new BasicNameValuePair("beforeExpression", beforeExpression));
+			urlParameters.add(new BasicNameValuePair("afterExpression", afterExpression));
+
+			try {
+				method.setEntity(new UrlEncodedFormEntity(urlParameters));
+				this.execute(method);
+			} catch (Exception e) {
+				log.warn("Error adding logger", e);
+			}
+		}
+	}
+
+	@Transactional
+	public void removeLogger(long deploymentId, String contextId, String elementId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + contextId + "/log/" + elementId;
+			HttpDelete method = new HttpDelete(url);
+			try {
+				this.execute(method);
+			} catch (Exception e) {
+				log.warn("Error removing logger", e);
+			}
+		}		
+	}
+
+	@Transactional
+	public JSONObject getLogger(long deploymentId, String contextId, String elementId) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		
+		JSONArray partialResults = new JSONArray();
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + contextId + "/log/" + elementId;
+			
+			HttpGet method = new HttpGet(url);
+			InputStream is = null;
+			try {
+				HttpResponse response = this.execute(method);
+				int statusCode = response.getStatusLine().getStatusCode();
+				is = response.getEntity().getContent();
+				if (statusCode >= 200 && statusCode < 300) {
+					JSONObject json = new JSONObject(IOUtils.toString(is));
+					partialResults.put(json);
+				}
+			} catch (Exception e) {
+				log.warn("Error getting logger", e);
 			} finally {
 				IOUtils.closeQuietly(is);
 			}

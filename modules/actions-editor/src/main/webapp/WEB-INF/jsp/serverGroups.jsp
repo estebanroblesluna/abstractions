@@ -21,7 +21,8 @@
     <div class="row">
       <div class="col-lg-6">
       <ol class="breadcrumb">
-        <li><a href="#">App 1</a></li>
+        <li><a href="/teams/">Teams</a></li>
+        <li class="active">${team.name}</li>
         <li class="active">Server groups</li>
       </ol>
     </div>

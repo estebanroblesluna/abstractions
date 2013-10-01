@@ -40,4 +40,9 @@
 	[[self model] deleteFromServer];
 	[self removeFromSuperview];
 }
+
+- (void) addCache
+{
+	[[self model] addCache];
+}
 @end
