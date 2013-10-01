@@ -56,6 +56,7 @@ public class DeploymentService {
 	private UserService userService;
 	private ServerService serverService;
 	private AsyncDeployer deployer;
+	private FileService fileService;
 	
 	public DeploymentService() {
 		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
@@ -75,17 +76,20 @@ public class DeploymentService {
 			GenericRepository repository, 
 			SnapshotService snapshotService, 
 			UserService userService, 
-			ServerService serverService) {
+			ServerService serverService,
+			FileService fileService) {
 		this();
 		Validate.notNull(repository);
 		Validate.notNull(snapshotService);
 		Validate.notNull(userService);
 		Validate.notNull(serverService);
+		Validate.notNull(fileService);
 
 		this.repository = repository;
 		this.snapshotService = snapshotService;
 		this.userService = userService;
 		this.serverService = serverService;
+		this.fileService = fileService;
 	}
 
 	@Transactional
@@ -140,6 +144,7 @@ public class DeploymentService {
 	}
 
 	private boolean basicDeploy(Deployment deployment, Server server) {
+		Validate.notNull(this.fileService.getContentsOfSnapshot(new Long(deployment.getSnapshot().getApplication().getId()).toString(), new Long(deployment.getSnapshot().getId()).toString()));
 		if (deployment.getSnapshot().getFlows().isEmpty()) {
 			return false;
 		}
@@ -147,6 +152,8 @@ public class DeploymentService {
 		String contextJSON = deployment.getSnapshot().getFlows().get(0).getJson();
 		String url = "http://" + server.getIpDNS() + ":" + server.getPort()
 				+ "/service/server/start";
+		
+		Validate.notNull(this.fileService.getContentsOfSnapshot(new Long(deployment.getSnapshot().getApplication().getId()).toString(), new Long(deployment.getSnapshot().getId()).toString()));
 
 		HttpPost post = new HttpPost(url);
 		InputStream is = null;

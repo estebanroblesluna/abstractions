@@ -5,9 +5,15 @@
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
+<<<<<<< HEAD
   <import resource="classpath:common.xml" />
   <import resource="classpath:datasource.xml" />
   <import resource="classpath:hibernate.xml" />
+=======
+
+  <context:component-scan base-package="com.abstractions.service.rest.FileRESTService" />
+
+>>>>>>> branch 'master' of ssh://git@git.cloudbees.com/esteban-roblesluna/abstractions.git
   <import resource="classpath:applicationContext.xml" />
 
   <import resource="rest.xml" />
@@ -26,17 +32,27 @@
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
   </bean>
-    
+
   <bean id="flowService" class="com.abstractions.service.FlowService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
     <constructor-arg index="2" ref="namesMapping" />
     <constructor-arg index="3" ref="contextHolder" />
   </bean>
+<<<<<<< HEAD
   
+=======
+
+  <bean id="libraryService" class="com.abstractions.service.LibraryService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
+
+>>>>>>> branch 'master' of ssh://git@git.cloudbees.com/esteban-roblesluna/abstractions.git
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
+    <constructor-arg index="2" ref="fileService" />
+    <constructor-arg index="3" ref="dustTemplateFileProcessor" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">
@@ -57,14 +73,39 @@
     <constructor-arg index="1" ref="snapshotService" />
     <constructor-arg index="2" ref="userService" />
     <constructor-arg index="3" ref="serverService" />
+    <constructor-arg index="4" ref="fileService" />
     <property name="deployer" ref="asyncDeployer" />
+  </bean>
+
+  <bean id="fileService" class="com.abstractions.service.FileService">
+    <constructor-arg index="0" value="./files" />
   </bean>
 
   <bean id="asyncDeployer" class="com.abstractions.service.AsyncDeployer">
     <constructor-arg index="0" ref="deploymentService" />
   </bean>
 
+<<<<<<< HEAD
   <context:component-scan base-package="com.modules.dust.service" />
+=======
+  <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+
+  <bean class="com.abstractions.service.MappingInitializer" init-method="initializeMapping">
+    <property name="mapping" ref="namesMapping" />
+    <property name="libraryService" ref="libraryService" />
+  </bean>
+
+  <context:component-scan base-package="com.abstractions.service.rest" />
+
+  <bean id="dustTemplateFileProcessor" class="com.abstractions.service.DustTemplateFileProcessor">
+    <constructor-arg index="0" ref="fileService" />
+    <constructor-arg index="1">
+      <bean class="com.modules.dust.DustConnector" />
+    </constructor-arg>
+  </bean>
+>>>>>>> branch 'master' of ssh://git@git.cloudbees.com/esteban-roblesluna/abstractions.git
 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">
     <constructor-arg index="0" ref="keyValueStore" />

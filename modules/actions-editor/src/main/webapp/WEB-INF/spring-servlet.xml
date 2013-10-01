@@ -27,7 +27,15 @@
   </bean>
 
   <bean id="dustResourcesBaseUrl" class="java.lang.String">
-    <constructor-arg index="0" value="${dust.resourcesBaseUrl}" />
+    <constructor-arg index="0" value="${staticResourcesBaseUrl}" />
+  </bean>
+
+  <bean id="staticResourcesBaseUrl" class="java.lang.String">
+    <constructor-arg index="0" value="${staticResourcesBaseUrl}" />
+  </bean>
+
+  <bean id="fileStorageServiceBaseUrl" class="java.lang.String">
+    <constructor-arg index="0" value="${fileStorageServiceBaseUrl}" />
   </bean>
 
   <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
@@ -36,4 +44,6 @@
     <property name="suffix" value=".jsp" />
     <property name="contentType" value="text/html;charset=UTF-8" />
   </bean>
+
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 </beans>
