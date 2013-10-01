@@ -1,3 +1,5 @@
+USE `actions`;
+
 UPDATE `element_definition` 
 SET `icon` = 'Resources/dust.gif'
 WHERE element_definition_id = 12;

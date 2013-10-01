@@ -71,7 +71,7 @@ public class SQLConnector {
 					try {
 						ds.setDriverClass(this.driver);
 					} catch (PropertyVetoException e) {
-						//log
+						//TODO log
 					}
 					ds.setJdbcUrl(this.url);
 					ds.setUser(this.username);

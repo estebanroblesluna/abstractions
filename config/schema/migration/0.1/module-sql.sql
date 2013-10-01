@@ -1,3 +1,5 @@
+USE `actions`;
+
 INSERT INTO `element_definition` (`element_definition_id`, `name`, `display_name`, `icon`, `implementation`, `library_id`, `is_script`) 
 VALUES (14,'SQL_SELECT','SQL Select','Resources/selectSql.png','com.modules.sql.SelectProcessor', 2, 0);
 
