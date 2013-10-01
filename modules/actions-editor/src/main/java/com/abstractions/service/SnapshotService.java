@@ -1,8 +1,13 @@
 package com.abstractions.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
@@ -22,21 +27,27 @@ public class SnapshotService {
 	
 	private GenericRepository repository;
 	private ApplicationService applicationService;
+	private FileService fileService;
+	private FileProcessor fileProcessor;
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, FileService fileService, FileProcessor fileProcessor) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
+		Validate.notNull(fileService);
+		Validate.notNull(fileProcessor);
 		
 		this.repository = repository;
 		this.applicationService = applicationService;
+		this.fileService = fileService;
+		this.fileProcessor = fileProcessor;
 	}
 	
 	@Transactional
 	public void generateSnapshot(long applicationId) {
 		Application application = this.applicationService.getApplication(applicationId);
-
+		
 		ApplicationSnapshot snapshot = new ApplicationSnapshot();
 		
 		//clone all properties
@@ -64,6 +75,31 @@ public class SnapshotService {
 		application.addSnapshot(snapshot);
 		this.repository.save(snapshot);
 		this.repository.save(application);
+		
+		this.persistSnapshot(application, snapshot);
+	}
+
+	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) {
+		try {
+			ZipOutputStream zipOutputStream = new ZipOutputStream(this.fileService.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
+			for (String filename : this.fileService.listFiles(new Long(application.getId()).toString())) {
+				InputStream inputStream = this.fileService.getContentsOfFile(new Long(application.getId()).toString(), filename);
+				inputStream = this.fileProcessor.process(filename, inputStream);
+				if (inputStream == null) {
+					continue;
+				}
+				zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
+				IOUtils.copy(inputStream, zipOutputStream);
+				inputStream.close();
+			}
+			for (Flow flow : application.getFlows()) {
+				zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
+				IOUtils.write(flow.getJson(), zipOutputStream);
+			}
+			zipOutputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Transactional
