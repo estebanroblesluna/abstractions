@@ -98,7 +98,7 @@ public class SnapshotService {
 			}
 			zipOutputStream.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Error persisting snapshot", e);
 		}
 	}
 	

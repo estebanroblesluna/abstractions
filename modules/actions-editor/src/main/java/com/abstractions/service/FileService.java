@@ -16,10 +16,14 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
 public class FileService {
 
+	private static Log log = LogFactory.getLog(FileService.class);
+	
 	private static final String ENCODED_PATH_SEPARATOR = "___";
 	private static final String FILES_DIRECTORY = "files";
 	private static final String SNAPSHOTS_DIRECTORY = "snapshots";
@@ -38,7 +42,7 @@ public class FileService {
 			this.setRootDir(new File(this.getRootPath()));
 			FileUtils.forceMkdir(this.getRootDir());
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Error intializing root directory", e);
 		}
 	}
 
@@ -49,7 +53,7 @@ public class FileService {
 		try {
 			FileUtils.writeByteArrayToFile(new File(this.buildFilesPath(applicationId, path)), IOUtils.toByteArray(stream));
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Error storing file", e);
 		}
 	}
 
@@ -65,7 +69,7 @@ public class FileService {
 		try {
 			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.buildFilesPath(applicationId, path))));
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Error getting contents of file", e);
 		}
 		return null;
 	}
@@ -100,10 +104,8 @@ public class FileService {
 				zipEntry = zipInputStream.getNextEntry();
 			}
 			zipInputStream.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("Error uncompressing content", e);
 		}
 	}
 
@@ -149,10 +151,8 @@ public class FileService {
 	public void storeSnapshot(String applicationId, String snapshotId, InputStream content) {
 		try {
 			IOUtils.copy(content, new FileOutputStream(this.buildSnapshotPath(applicationId, snapshotId)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("Error storing snapshot", e);
 		}
 	}
 	
@@ -171,7 +171,5 @@ public class FileService {
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
 	}
-
-
 
 }
