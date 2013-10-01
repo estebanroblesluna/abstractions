@@ -40,10 +40,29 @@
     </dependency>
     <dependency>
       <groupId>com.actions</groupId>
+      <artifactId>actions-modules-sql</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.actions</groupId>
+      <artifactId>actions-modules-cache</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.actions</groupId>
+      <artifactId>actions-common-service</artifactId>
+      <version>${version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.actions</groupId>
       <artifactId>actions-rest-utils</artifactId>
       <version>${version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
     <!-- Spring 3 dependencies -->
     <dependency>
       <groupId>org.springframework</groupId>

@@ -7,7 +7,7 @@ import com.core.api.Processor;
 
 public class ProcessorWrapper implements Processor {
 
-	protected final Processor processor;
+	protected volatile Processor processor;
 	
 	protected ProcessorWrapper(Processor processor) {
 		Validate.notNull(processor);
@@ -25,4 +25,35 @@ public class ProcessorWrapper implements Processor {
 	public Processor getInstance() {
 		return this.processor;
 	}
+	
+	public Processor unwrap(Class<?> theClass) {
+		Processor processor = this.processor;
+		
+		if (processor instanceof ProcessorWrapper) {
+			ProcessorWrapper wrapper = (ProcessorWrapper) processor;
+			processor = wrapper.unwrap(theClass);
+		}
+		
+		this.processor = processor;
+		
+		if (theClass.isAssignableFrom(this.getClass())) {
+			return processor;
+		} else {
+			return this;
+		}
+	}
+	
+	public boolean isWrapWith(Class<?> theClass) {
+		boolean isWrap = false;
+		
+		if (this.processor instanceof ProcessorWrapper) {
+			ProcessorWrapper wrapper = (ProcessorWrapper) this.processor;
+			isWrap = isWrap || wrapper.isWrapWith(theClass);
+		}
+		
+		isWrap = isWrap || theClass.isAssignableFrom(this.getClass());
+		
+		return isWrap;
+	}
+
 }

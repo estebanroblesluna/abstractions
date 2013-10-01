@@ -5,16 +5,12 @@
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
-
+  <import resource="classpath:common.xml" />
+  <import resource="classpath:datasource.xml" />
+  <import resource="classpath:hibernate.xml" />
   <import resource="classpath:applicationContext.xml" />
-  <import resource="datasource.xml" />
-  <import resource="hibernate.xml" />
+
   <import resource="rest.xml" />
-
-  <bean id="repository" class="com.abstractions.repository.GenericRepository">
-    <constructor-arg index="0" ref="sessionFactory" />
-  </bean>
-
 
   <bean id="applicationService" class="com.abstractions.service.ApplicationService">
     <constructor-arg index="0" ref="repository" />
@@ -38,10 +34,6 @@
     <constructor-arg index="3" ref="contextHolder" />
   </bean>
   
-  <bean id="libraryService" class="com.abstractions.service.LibraryService">
-    <constructor-arg index="0" ref="repository" />
-  </bean>
-
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
@@ -72,16 +64,6 @@
     <constructor-arg index="0" ref="deploymentService" />
   </bean>
 
-  <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-    <property name="sessionFactory" ref="sessionFactory" />
-  </bean>
-
-
-  <bean class="com.abstractions.service.MappingInitializer" init-method="initializeMapping">
-    <property name="mapping" ref="namesMapping" />
-    <property name="libraryService" ref="libraryService" />
-  </bean>
-  
   <context:component-scan base-package="com.modules.dust.service" />
 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">

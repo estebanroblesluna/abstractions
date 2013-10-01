@@ -116,6 +116,11 @@ ELEMENT_FAKE_ID = @"FAKE_ID";
 	[_elementAPI delete];
 }
 
+- (void) addCache
+{
+	[_elementAPI addCache];
+}
+
 - (id) elementId
 {
 	return [_elementAPI elementId];
@@ -127,6 +132,13 @@ ELEMENT_FAKE_ID = @"FAKE_ID";
    
    if ([_delegate != nil]) {
      [_delegate elementId: anElementId];
+   }
+}
+
+- (void) loggerLines: (id) loggerInfo
+{
+   if ([_delegate != nil]) {
+     [_delegate loggerLines: loggerInfo];
    }
 }
 

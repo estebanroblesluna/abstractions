@@ -74,6 +74,7 @@ public class HttpUtils
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".remoteUser", request.getRemoteUser());
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".requestedSessionId", request.getRequestedSessionId());
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".requestURI", request.getRequestURI());
+    message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".requestURL", request.getRequestURL().toString());
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".scheme", request.getScheme());
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".serverName", request.getServerName());
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".serverPort", request.getServerPort());

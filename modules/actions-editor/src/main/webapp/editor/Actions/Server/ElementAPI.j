@@ -116,6 +116,22 @@
 	});
 }
 
+- (id) addCache
+{
+	CPLog.debug("Adding cache to element " + _elementId);
+	_state = @"NOT_IN_SYNC";
+	
+	$.ajax({
+		type: "PUT",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/cache/" + [Actions deploymentId]
+	}).done(function( result ) {
+		_state = @"SYNCED";
+		[self changed];
+		CPLog.debug("Cache added to " + _elementId);
+	});
+}
+
+
 - (id) removeProfiler
 {
 	CPLog.debug("Removing profiler to element " + _elementId);
@@ -127,6 +143,47 @@
 		_state = @"SYNCED";
 		[self changed];
 		CPLog.debug("Profiler deleted to " + _elementId);
+	});
+}
+
+- (id) addLogger: (id) beforeExpression afterExpression: (id) afterExpression
+{
+	CPLog.debug("Adding logger to element " + _elementId);
+	_state = @"NOT_IN_SYNC";
+	$.ajax({
+		type: "POST",
+		data: {"beforeExpression" : beforeExpression, "afterExpression": afterExpression},
+		url: "../service/element/" + _contextId + "/" + _elementId + "/logger/" + [Actions deploymentId]
+	}).done(function( result ) {
+		_state = @"SYNCED";
+		[self changed];
+		CPLog.debug("Logger added to " + _elementId);
+	});
+}
+
+- (id) removeLogger
+{
+	CPLog.debug("Removing logger of element " + _elementId);
+	_state = @"NOT_IN_SYNC";
+	$.ajax({
+		type: "DELETE",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/logger/" + [Actions deploymentId]
+	}).done(function( result ) {
+		_state = @"SYNCED";
+		[self changed];
+		CPLog.debug("Logger removed to " + _elementId);
+	});
+}
+
+- (id) getLogger
+{
+	CPLog.debug("Getting logger of element " + _elementId);
+	$.ajax({
+		type: "GET",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/logger/" + [Actions deploymentId]
+	}).done(function( result ) {
+		[_delegate loggerLines: result];
+		CPLog.debug("Logger removed to " + _elementId);
 	});
 }
 
