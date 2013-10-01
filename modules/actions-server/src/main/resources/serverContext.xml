@@ -13,16 +13,19 @@
 >
 
   <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
+  <context:property-placeholder location="classpath:server.properties" ignore-unresolvable="true" />
+  
   <import resource="classpath:common.xml" />
   <import resource="classpath:datasource.xml" />
   <import resource="classpath:hibernate.xml" />
   <import resource="classpath:applicationContext.xml" />
 
-  <bean id="actionsServer" class="com.server.core.ActionsServer">
-    <constructor-arg index="0" ref="namesMapping" />
+  <bean id="actionsServer" class="com.abstractions.server.core.ActionsServer">
+    <constructor-arg value="${server.apps.directory}" />
+    <constructor-arg ref="namesMapping" />
   </bean>
 
-  <bean id="actionsRESTServer" class="com.server.rest.ActionsServerRest">
+  <bean id="actionsRESTServer" class="com.abstractions.server.rest.ActionsServerRest">
     <constructor-arg index="0" ref="actionsServer" />
   </bean>
   
