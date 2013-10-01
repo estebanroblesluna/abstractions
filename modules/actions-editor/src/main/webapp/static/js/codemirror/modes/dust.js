@@ -7,7 +7,7 @@ CodeMirror.defineMode("dust", function() {
 		},
 		token : function(stream, state) {
 			if (!state.inTag) {
-				if (stream.match(/^\{[a-zA-Z]/)) {
+				if (stream.match(/^\{[a-zA-Z\#\?\/]/)) {
 					state.inTag = true;
 				} else {
 					stream.match(/^\{/);

@@ -9,10 +9,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.abstractions.service.DustTemplateFileProcessor;
 import com.abstractions.service.FileService;
 import com.modules.dust.JsonBuilder;
 
@@ -20,6 +23,8 @@ import com.modules.dust.JsonBuilder;
 @Path("/fileStore")
 public class FileRESTService {
 
+	private static Log log = LogFactory.getLog(FileRESTService.class);
+	
 	@Autowired
 	private FileService fileService;
 
@@ -37,7 +42,7 @@ public class FileRESTService {
 			builder.endArray();
 			return Response.ok(builder.getContent()).build();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error building file list", e);
 		}
 		return Response.status(404).entity("Files not found").build();
 	}
