@@ -1,5 +1,7 @@
 package com.abstractions.model;
 
+import com.service.core.ObjectDefinition;
+
 public class ConnectionDefinition extends ElementDefinition {
 
 	private String color;
@@ -66,5 +68,26 @@ public class ConnectionDefinition extends ElementDefinition {
 	@Override
 	public Object accept(ElementDefinitionVisitor visitor) {
 		return visitor.visitConnectionDefinition(this);
+	}
+
+	public ObjectDefinition createInstance(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition) {
+		ObjectDefinition definition = new ObjectDefinition(this);
+		
+		definition.setProperty("source", "urn:" + sourceDefinition.getId());
+		definition.setProperty("target", "urn:" + targetDefinition.getId());
+		definition.setProperty("type", this.getName());
+		
+		this.addOutgoingConnection(sourceDefinition, definition);
+		this.addIncomingConnection(targetDefinition, definition);
+		
+		return definition;
+	}
+
+	public void addOutgoingConnection(ObjectDefinition sourceDefinition, ObjectDefinition definition) {
+		sourceDefinition.addConnection(definition);
+	}
+
+	public void addIncomingConnection(ObjectDefinition targetDefinition, ObjectDefinition definition) {
+		targetDefinition.addIncomingConnection(definition);
 	}
 }

@@ -1053,7 +1053,7 @@ with(_30){
 return objj_msgSend(objj_msgSend(_30,"new"),"initWithSource:target:points:",_32,_33,_34);
 }
 })]);
-p;8;Figure.jt;11915;@STATIC;1.0;t;11895;
+p;8;Figure.jt;12174;@STATIC;1.0;t;12154;
 var _1=objj_allocateClassPair(CPView,"Figure"),_2=_1.isa;
 class_addIvars(_1,[new objj_ivar("handles"),new objj_ivar("_inConnections"),new objj_ivar("_outConnections"),new objj_ivar("_backgroundColor"),new objj_ivar("_foregroundColor"),new objj_ivar("_selectable"),new objj_ivar("_moveable"),new objj_ivar("_editable"),new objj_ivar("_model"),new objj_ivar("_selected")]);
 objj_registerClassPair(_1);
@@ -1072,321 +1072,329 @@ _selected=false;
 objj_msgSend(_3,"setPostsFrameChangedNotifications:",YES);
 return _3;
 }
-}),new objj_method(sel_getUid("figureAt:"),function(_5,_6,_7){
+}),new objj_method(sel_getUid("removeMyself"),function(_5,_6){
 with(_5){
-var _8=objj_msgSend(_5,"primSubfiguresAt:",_7);
-if(_8!=nil){
-return _8;
+for(var i=0;i<objj_msgSend(handles,"count");i++){
+var _7=objj_msgSend(handles,"objectAtIndex:",i);
+objj_msgSend(_7,"removeMyself");
 }
-return objj_msgSend(_5,"primFigureAt:",_7);
+objj_msgSend(_5,"removeFromSuperview");
 }
-}),new objj_method(sel_getUid("primSubfiguresAt:"),function(_9,_a,_b){
-with(_9){
-var _c=objj_msgSend(_9,"subviews");
-var _d=objj_msgSend(_9,"frameOrigin");
-var _e=CGPointMake(_b.x-_d.x,_b.y-_d.y);
-for(var i=objj_msgSend(_c,"count")-1;i>=0;i--){
-var _f=objj_msgSend(_c,"objectAtIndex:",i);
-var _10;
-if(objj_msgSend(_f,"respondsToSelector:",sel_getUid("figureAt:"))){
-_10=objj_msgSend(_f,"figureAt:",_e);
+}),new objj_method(sel_getUid("figureAt:"),function(_8,_9,_a){
+with(_8){
+var _b=objj_msgSend(_8,"primSubfiguresAt:",_a);
+if(_b!=nil){
+return _b;
+}
+return objj_msgSend(_8,"primFigureAt:",_a);
+}
+}),new objj_method(sel_getUid("primSubfiguresAt:"),function(_c,_d,_e){
+with(_c){
+var _f=objj_msgSend(_c,"subviews");
+var _10=objj_msgSend(_c,"frameOrigin");
+var _11=CGPointMake(_e.x-_10.x,_e.y-_10.y);
+for(var i=objj_msgSend(_f,"count")-1;i>=0;i--){
+var _12=objj_msgSend(_f,"objectAtIndex:",i);
+var _13;
+if(objj_msgSend(_12,"respondsToSelector:",sel_getUid("figureAt:"))){
+_13=objj_msgSend(_12,"figureAt:",_11);
 }else{
-if(CPRectContainsPoint(objj_msgSend(_f,"frame"),_e)){
-_10=_9;
+if(CPRectContainsPoint(objj_msgSend(_12,"frame"),_11)){
+_13=_c;
 }else{
-_10=nil;
+_13=nil;
 }
 }
-if(_10!=nil){
-return _10;
+if(_13!=nil){
+return _13;
 }
 }
 }
-}),new objj_method(sel_getUid("primFigureAt:"),function(_11,_12,_13){
-with(_11){
-var _14=objj_msgSend(_11,"frame");
-if(CPRectContainsPoint(_14,_13)){
-return _11;
+}),new objj_method(sel_getUid("primFigureAt:"),function(_14,_15,_16){
+with(_14){
+var _17=objj_msgSend(_14,"frame");
+if(CPRectContainsPoint(_17,_16)){
+return _14;
 }else{
 return nil;
 }
 }
-}),new objj_method(sel_getUid("globalToLocal:"),function(_15,_16,_17){
-with(_15){
-var _18=_15;
-var _19=CGPointMake(0,0);
-while(_18!=nil&&!objj_msgSend(_18,"isKindOfClass:",objj_msgSend(Drawing,"class"))){
-var _1a=objj_msgSend(_18,"frameOrigin");
-_19=CGPointMake(_19.x-_1a.x,_19.y-_1a.y);
-_18=objj_msgSend(_18,"superview");
+}),new objj_method(sel_getUid("globalToLocal:"),function(_18,_19,_1a){
+with(_18){
+var _1b=_18;
+var _1c=CGPointMake(0,0);
+while(_1b!=nil&&!objj_msgSend(_1b,"isKindOfClass:",objj_msgSend(Drawing,"class"))){
+var _1d=objj_msgSend(_1b,"frameOrigin");
+_1c=CGPointMake(_1c.x-_1d.x,_1c.y-_1d.y);
+_1b=objj_msgSend(_1b,"superview");
 }
-var _1b=CGPointMake(_17.x+_19.x,_17.y+_19.y);
-return _1b;
+var _1e=CGPointMake(_1a.x+_1c.x,_1a.y+_1c.y);
+return _1e;
 }
-}),new objj_method(sel_getUid("addInConnection:"),function(_1c,_1d,_1e){
-with(_1c){
-objj_msgSend(_inConnections,"addObject:",_1e);
-}
-}),new objj_method(sel_getUid("addOutConnection:"),function(_1f,_20,_21){
+}),new objj_method(sel_getUid("addInConnection:"),function(_1f,_20,_21){
 with(_1f){
-objj_msgSend(_outConnections,"addObject:",_21);
+objj_msgSend(_inConnections,"addObject:",_21);
 }
-}),new objj_method(sel_getUid("moveTo:"),function(_22,_23,_24){
+}),new objj_method(sel_getUid("addOutConnection:"),function(_22,_23,_24){
 with(_22){
-if(_moveable){
-objj_msgSend(_22,"setFrameOrigin:",_24);
+objj_msgSend(_outConnections,"addObject:",_24);
 }
-}
-}),new objj_method(sel_getUid("translateBy:"),function(_25,_26,_27){
+}),new objj_method(sel_getUid("moveTo:"),function(_25,_26,_27){
 with(_25){
 if(_moveable){
-var _28=objj_msgSend(_25,"frameOrigin");
-var _29=CGPointMake(_28.x+_27.x,_28.y+_27.y);
-objj_msgSend(_25,"setFrameOrigin:",_29);
+objj_msgSend(_25,"setFrameOrigin:",_27);
 }
 }
-}),new objj_method(sel_getUid("handleAt:"),function(_2a,_2b,_2c){
-with(_2a){
-return objj_msgSend(handles,"objectAtIndex:",_2c);
+}),new objj_method(sel_getUid("translateBy:"),function(_28,_29,_2a){
+with(_28){
+if(_moveable){
+var _2b=objj_msgSend(_28,"frameOrigin");
+var _2c=CGPointMake(_2b.x+_2a.x,_2b.y+_2a.y);
+objj_msgSend(_28,"setFrameOrigin:",_2c);
 }
-}),new objj_method(sel_getUid("borderColor"),function(_2d,_2e){
+}
+}),new objj_method(sel_getUid("handleAt:"),function(_2d,_2e,_2f){
 with(_2d){
+return objj_msgSend(handles,"objectAtIndex:",_2f);
+}
+}),new objj_method(sel_getUid("borderColor"),function(_30,_31){
+with(_30){
 return objj_msgSend(CPColor,"blackColor");
 }
-}),new objj_method(sel_getUid("handleColor"),function(_2f,_30){
-with(_2f){
-return objj_msgSend(_2f,"borderColor");
+}),new objj_method(sel_getUid("handleColor"),function(_32,_33){
+with(_32){
+return objj_msgSend(_32,"borderColor");
 }
-}),new objj_method(sel_getUid("isSelectable"),function(_31,_32){
-with(_31){
+}),new objj_method(sel_getUid("isSelectable"),function(_34,_35){
+with(_34){
 return _selectable;
 }
-}),new objj_method(sel_getUid("isMoveable"),function(_33,_34){
-with(_33){
+}),new objj_method(sel_getUid("isMoveable"),function(_36,_37){
+with(_36){
 return _moveable;
 }
-}),new objj_method(sel_getUid("isEditable"),function(_35,_36){
-with(_35){
+}),new objj_method(sel_getUid("isEditable"),function(_38,_39){
+with(_38){
 return _editable;
 }
-}),new objj_method(sel_getUid("selectable:"),function(_37,_38,_39){
-with(_37){
-_selectable=_39;
-}
-}),new objj_method(sel_getUid("moveable:"),function(_3a,_3b,_3c){
+}),new objj_method(sel_getUid("selectable:"),function(_3a,_3b,_3c){
 with(_3a){
-_moveable=_3c;
+_selectable=_3c;
 }
-}),new objj_method(sel_getUid("editable:"),function(_3d,_3e,_3f){
+}),new objj_method(sel_getUid("moveable:"),function(_3d,_3e,_3f){
 with(_3d){
-_editable=_3f;
+_moveable=_3f;
 }
-}),new objj_method(sel_getUid("isHandle"),function(_40,_41){
+}),new objj_method(sel_getUid("editable:"),function(_40,_41,_42){
 with(_40){
+_editable=_42;
+}
+}),new objj_method(sel_getUid("isHandle"),function(_43,_44){
+with(_43){
 return false;
 }
-}),new objj_method(sel_getUid("invalidate"),function(_42,_43){
-with(_42){
-objj_msgSend(_42,"setNeedsDisplay:",YES);
+}),new objj_method(sel_getUid("invalidate"),function(_45,_46){
+with(_45){
+objj_msgSend(_45,"setNeedsDisplay:",YES);
 }
-}),new objj_method(sel_getUid("switchToEditMode"),function(_44,_45){
-with(_44){
+}),new objj_method(sel_getUid("switchToEditMode"),function(_47,_48){
+with(_47){
 }
-}),new objj_method(sel_getUid("update"),function(_46,_47){
-with(_46){
+}),new objj_method(sel_getUid("update"),function(_49,_4a){
+with(_49){
 }
-}),new objj_method(sel_getUid("select"),function(_48,_49){
-with(_48){
+}),new objj_method(sel_getUid("select"),function(_4b,_4c){
+with(_4b){
 _selected=true;
-var _4a=objj_msgSend(_48,"superview");
-for(var i=0;i<objj_msgSend(handles,"count");i++){
-var _4b=objj_msgSend(handles,"objectAtIndex:",i);
-objj_msgSend(_4a,"addFigure:",_4b);
-}
-}
-}),new objj_method(sel_getUid("unselect"),function(_4c,_4d){
-with(_4c){
-_selected=false;
+var _4d=objj_msgSend(_4b,"superview");
 for(var i=0;i<objj_msgSend(handles,"count");i++){
 var _4e=objj_msgSend(handles,"objectAtIndex:",i);
-objj_msgSend(_4e,"removeFromSuperview");
+objj_msgSend(_4d,"addFigure:",_4e);
 }
 }
-}),new objj_method(sel_getUid("drawing"),function(_4f,_50){
+}),new objj_method(sel_getUid("unselect"),function(_4f,_50){
 with(_4f){
-return objj_msgSend(objj_msgSend(_4f,"superview"),"drawing");
+_selected=false;
+for(var i=0;i<objj_msgSend(handles,"count");i++){
+var _51=objj_msgSend(handles,"objectAtIndex:",i);
+objj_msgSend(_51,"removeFromSuperview");
 }
-}),new objj_method(sel_getUid("handles"),function(_51,_52){
-with(_51){
+}
+}),new objj_method(sel_getUid("drawing"),function(_52,_53){
+with(_52){
+return objj_msgSend(objj_msgSend(_52,"superview"),"drawing");
+}
+}),new objj_method(sel_getUid("handles"),function(_54,_55){
+with(_54){
 return handles;
 }
-}),new objj_method(sel_getUid("drawRect:"),function(_53,_54,_55){
-with(_53){
-var _56=objj_msgSend(objj_msgSend(CPGraphicsContext,"currentContext"),"graphicsPort");
-objj_msgSend(_53,"drawRect:on:",_55,_56);
+}),new objj_method(sel_getUid("drawRect:"),function(_56,_57,_58){
+with(_56){
+var _59=objj_msgSend(objj_msgSend(CPGraphicsContext,"currentContext"),"graphicsPort");
+objj_msgSend(_56,"drawRect:on:",_58,_59);
 }
-}),new objj_method(sel_getUid("drawRect:on:"),function(_57,_58,_59,_5a){
-with(_57){
+}),new objj_method(sel_getUid("drawRect:on:"),function(_5a,_5b,_5c,_5d){
+with(_5a){
 }
-}),new objj_method(sel_getUid("topLeft"),function(_5b,_5c){
-with(_5b){
-return CGPointMake(objj_msgSend(_5b,"frame").origin.x,objj_msgSend(_5b,"frame").origin.y);
+}),new objj_method(sel_getUid("topLeft"),function(_5e,_5f){
+with(_5e){
+return CGPointMake(objj_msgSend(_5e,"frame").origin.x,objj_msgSend(_5e,"frame").origin.y);
 }
-}),new objj_method(sel_getUid("topLeft:"),function(_5d,_5e,_5f){
-with(_5d){
-var _60=objj_msgSend(_5d,"frame");
-var _61=_60.origin.x-_5f.x;
-var _62=_60.origin.y-_5f.y;
-var _63=CGRectMake(_5f.x,_5f.y,_60.size.width+_61,_60.size.height+_62);
-objj_msgSend(_5d,"setFrame:",_63);
+}),new objj_method(sel_getUid("topLeft:"),function(_60,_61,_62){
+with(_60){
+var _63=objj_msgSend(_60,"frame");
+var _64=_63.origin.x-_62.x;
+var _65=_63.origin.y-_62.y;
+var _66=CGRectMake(_62.x,_62.y,_63.size.width+_64,_63.size.height+_65);
+objj_msgSend(_60,"setFrame:",_66);
 }
-}),new objj_method(sel_getUid("topMiddle"),function(_64,_65){
-with(_64){
-return CGPointMake(objj_msgSend(_64,"frame").origin.x+(objj_msgSend(_64,"frame").size.width/2),objj_msgSend(_64,"frame").origin.y);
+}),new objj_method(sel_getUid("topMiddle"),function(_67,_68){
+with(_67){
+return CGPointMake(objj_msgSend(_67,"frame").origin.x+(objj_msgSend(_67,"frame").size.width/2),objj_msgSend(_67,"frame").origin.y);
 }
-}),new objj_method(sel_getUid("topMiddle:"),function(_66,_67,_68){
-with(_66){
-var _69=objj_msgSend(_66,"frame");
-var _6a=0;
-var _6b=_68.y-_69.origin.y;
-var _6c=CGRectMake(_69.origin.x,_69.origin.y+_6b,_69.size.width+_6a,_69.size.height-_6b);
-objj_msgSend(_66,"setFrame:",_6c);
+}),new objj_method(sel_getUid("topMiddle:"),function(_69,_6a,_6b){
+with(_69){
+var _6c=objj_msgSend(_69,"frame");
+var _6d=0;
+var _6e=_6b.y-_6c.origin.y;
+var _6f=CGRectMake(_6c.origin.x,_6c.origin.y+_6e,_6c.size.width+_6d,_6c.size.height-_6e);
+objj_msgSend(_69,"setFrame:",_6f);
 }
-}),new objj_method(sel_getUid("topRight"),function(_6d,_6e){
-with(_6d){
-return CGPointMake(objj_msgSend(_6d,"frame").origin.x+objj_msgSend(_6d,"frame").size.width,objj_msgSend(_6d,"frame").origin.y);
+}),new objj_method(sel_getUid("topRight"),function(_70,_71){
+with(_70){
+return CGPointMake(objj_msgSend(_70,"frame").origin.x+objj_msgSend(_70,"frame").size.width,objj_msgSend(_70,"frame").origin.y);
 }
-}),new objj_method(sel_getUid("topRight:"),function(_6f,_70,_71){
-with(_6f){
-var _72=objj_msgSend(_6f,"frame");
-var _73=_71.x-(_72.origin.x+_72.size.width);
-var _74=_71.y-_72.origin.y;
-var _75=CGRectMake(_72.origin.x,_72.origin.y+_74,_72.size.width+_73,_72.size.height-_74);
-objj_msgSend(_6f,"setFrame:",_75);
+}),new objj_method(sel_getUid("topRight:"),function(_72,_73,_74){
+with(_72){
+var _75=objj_msgSend(_72,"frame");
+var _76=_74.x-(_75.origin.x+_75.size.width);
+var _77=_74.y-_75.origin.y;
+var _78=CGRectMake(_75.origin.x,_75.origin.y+_77,_75.size.width+_76,_75.size.height-_77);
+objj_msgSend(_72,"setFrame:",_78);
 }
-}),new objj_method(sel_getUid("middleLeft"),function(_76,_77){
-with(_76){
-return CGPointMake(objj_msgSend(_76,"frame").origin.x,objj_msgSend(_76,"frame").origin.y+(objj_msgSend(_76,"frame").size.height/2));
+}),new objj_method(sel_getUid("middleLeft"),function(_79,_7a){
+with(_79){
+return CGPointMake(objj_msgSend(_79,"frame").origin.x,objj_msgSend(_79,"frame").origin.y+(objj_msgSend(_79,"frame").size.height/2));
 }
-}),new objj_method(sel_getUid("middleLeft:"),function(_78,_79,_7a){
-with(_78){
-var _7b=objj_msgSend(_78,"frame");
-var _7c=_7b.origin.x-_7a.x;
-var _7d=0;
-var _7e=CGRectMake(_7a.x,_7b.origin.y,_7b.size.width+_7c,_7b.size.height+_7d);
-objj_msgSend(_78,"setFrame:",_7e);
+}),new objj_method(sel_getUid("middleLeft:"),function(_7b,_7c,_7d){
+with(_7b){
+var _7e=objj_msgSend(_7b,"frame");
+var _7f=_7e.origin.x-_7d.x;
+var _80=0;
+var _81=CGRectMake(_7d.x,_7e.origin.y,_7e.size.width+_7f,_7e.size.height+_80);
+objj_msgSend(_7b,"setFrame:",_81);
 }
-}),new objj_method(sel_getUid("center"),function(_7f,_80){
-with(_7f){
-return CGPointMake(objj_msgSend(_7f,"frame").origin.x+(objj_msgSend(_7f,"frame").size.width/2),objj_msgSend(_7f,"frame").origin.y+(objj_msgSend(_7f,"frame").size.height/2));
+}),new objj_method(sel_getUid("center"),function(_82,_83){
+with(_82){
+return CGPointMake(objj_msgSend(_82,"frame").origin.x+(objj_msgSend(_82,"frame").size.width/2),objj_msgSend(_82,"frame").origin.y+(objj_msgSend(_82,"frame").size.height/2));
 }
-}),new objj_method(sel_getUid("middleRight"),function(_81,_82){
-with(_81){
-return CGPointMake(objj_msgSend(_81,"frame").origin.x+objj_msgSend(_81,"frame").size.width,objj_msgSend(_81,"frame").origin.y+(objj_msgSend(_81,"frame").size.height/2));
+}),new objj_method(sel_getUid("middleRight"),function(_84,_85){
+with(_84){
+return CGPointMake(objj_msgSend(_84,"frame").origin.x+objj_msgSend(_84,"frame").size.width,objj_msgSend(_84,"frame").origin.y+(objj_msgSend(_84,"frame").size.height/2));
 }
-}),new objj_method(sel_getUid("middleRight:"),function(_83,_84,_85){
-with(_83){
-var _86=objj_msgSend(_83,"frame");
-var _87=_85.x-(_86.origin.x+_86.size.width);
-var _88=0;
-var _89=CGRectMake(_86.origin.x,_86.origin.y,_86.size.width+_87,_86.size.height+_88);
-objj_msgSend(_83,"setFrame:",_89);
+}),new objj_method(sel_getUid("middleRight:"),function(_86,_87,_88){
+with(_86){
+var _89=objj_msgSend(_86,"frame");
+var _8a=_88.x-(_89.origin.x+_89.size.width);
+var _8b=0;
+var _8c=CGRectMake(_89.origin.x,_89.origin.y,_89.size.width+_8a,_89.size.height+_8b);
+objj_msgSend(_86,"setFrame:",_8c);
 }
-}),new objj_method(sel_getUid("bottomLeft"),function(_8a,_8b){
-with(_8a){
-return CGPointMake(objj_msgSend(_8a,"frame").origin.x,objj_msgSend(_8a,"frame").origin.y+objj_msgSend(_8a,"frame").size.height);
+}),new objj_method(sel_getUid("bottomLeft"),function(_8d,_8e){
+with(_8d){
+return CGPointMake(objj_msgSend(_8d,"frame").origin.x,objj_msgSend(_8d,"frame").origin.y+objj_msgSend(_8d,"frame").size.height);
 }
-}),new objj_method(sel_getUid("bottomLeft:"),function(_8c,_8d,_8e){
-with(_8c){
-var _8f=objj_msgSend(_8c,"frame");
-var _90=_8f.origin.x-_8e.x;
-var _91=_8e.y-(_8f.origin.y+_8f.size.height);
-var _92=CGRectMake(_8e.x,_8f.origin.y,_8f.size.width+_90,_8f.size.height+_91);
-objj_msgSend(_8c,"setFrame:",_92);
+}),new objj_method(sel_getUid("bottomLeft:"),function(_8f,_90,_91){
+with(_8f){
+var _92=objj_msgSend(_8f,"frame");
+var _93=_92.origin.x-_91.x;
+var _94=_91.y-(_92.origin.y+_92.size.height);
+var _95=CGRectMake(_91.x,_92.origin.y,_92.size.width+_93,_92.size.height+_94);
+objj_msgSend(_8f,"setFrame:",_95);
 }
-}),new objj_method(sel_getUid("bottomMiddle"),function(_93,_94){
-with(_93){
-return CGPointMake(objj_msgSend(_93,"frame").origin.x+(objj_msgSend(_93,"frame").size.width/2),objj_msgSend(_93,"frame").origin.y+objj_msgSend(_93,"frame").size.height);
+}),new objj_method(sel_getUid("bottomMiddle"),function(_96,_97){
+with(_96){
+return CGPointMake(objj_msgSend(_96,"frame").origin.x+(objj_msgSend(_96,"frame").size.width/2),objj_msgSend(_96,"frame").origin.y+objj_msgSend(_96,"frame").size.height);
 }
-}),new objj_method(sel_getUid("bottomMiddle:"),function(_95,_96,_97){
-with(_95){
-var _98=objj_msgSend(_95,"frame");
-var _99=0;
-var _9a=_97.y-(_98.origin.y+_98.size.height);
-var _9b=CGRectMake(_98.origin.x,_98.origin.y,_98.size.width+_99,_98.size.height+_9a);
-objj_msgSend(_95,"setFrame:",_9b);
+}),new objj_method(sel_getUid("bottomMiddle:"),function(_98,_99,_9a){
+with(_98){
+var _9b=objj_msgSend(_98,"frame");
+var _9c=0;
+var _9d=_9a.y-(_9b.origin.y+_9b.size.height);
+var _9e=CGRectMake(_9b.origin.x,_9b.origin.y,_9b.size.width+_9c,_9b.size.height+_9d);
+objj_msgSend(_98,"setFrame:",_9e);
 }
-}),new objj_method(sel_getUid("bottomRight"),function(_9c,_9d){
-with(_9c){
-return CGPointMake(objj_msgSend(_9c,"frame").origin.x+objj_msgSend(_9c,"frame").size.width,objj_msgSend(_9c,"frame").origin.y+objj_msgSend(_9c,"frame").size.height);
+}),new objj_method(sel_getUid("bottomRight"),function(_9f,_a0){
+with(_9f){
+return CGPointMake(objj_msgSend(_9f,"frame").origin.x+objj_msgSend(_9f,"frame").size.width,objj_msgSend(_9f,"frame").origin.y+objj_msgSend(_9f,"frame").size.height);
 }
-}),new objj_method(sel_getUid("bottomRight:"),function(_9e,_9f,_a0){
-with(_9e){
-var _a1=objj_msgSend(_9e,"frame");
-var _a2=_a0.x-(_a1.origin.x+_a1.size.width);
-var _a3=_a0.y-(_a1.origin.y+_a1.size.height);
-var _a4=CGRectMake(_a1.origin.x,_a1.origin.y,_a1.size.width+_a2,_a1.size.height+_a3);
-objj_msgSend(_9e,"setFrame:",_a4);
+}),new objj_method(sel_getUid("bottomRight:"),function(_a1,_a2,_a3){
+with(_a1){
+var _a4=objj_msgSend(_a1,"frame");
+var _a5=_a3.x-(_a4.origin.x+_a4.size.width);
+var _a6=_a3.y-(_a4.origin.y+_a4.size.height);
+var _a7=CGRectMake(_a4.origin.x,_a4.origin.y,_a4.size.width+_a5,_a4.size.height+_a6);
+objj_msgSend(_a1,"setFrame:",_a7);
 }
-}),new objj_method(sel_getUid("backgroundColor"),function(_a5,_a6){
-with(_a5){
+}),new objj_method(sel_getUid("backgroundColor"),function(_a8,_a9){
+with(_a8){
 return _backgroundColor;
 }
-}),new objj_method(sel_getUid("backgroundColor:"),function(_a7,_a8,_a9){
-with(_a7){
-_backgroundColor=_a9;
-}
-}),new objj_method(sel_getUid("foregroundColor"),function(_aa,_ab){
+}),new objj_method(sel_getUid("backgroundColor:"),function(_aa,_ab,_ac){
 with(_aa){
+_backgroundColor=_ac;
+}
+}),new objj_method(sel_getUid("foregroundColor"),function(_ad,_ae){
+with(_ad){
 return _foregroundColor;
 }
-}),new objj_method(sel_getUid("foregroundColor:"),function(_ac,_ad,_ae){
-with(_ac){
-_foregroundColor=_ae;
-}
-}),new objj_method(sel_getUid("model"),function(_af,_b0){
+}),new objj_method(sel_getUid("foregroundColor:"),function(_af,_b0,_b1){
 with(_af){
+_foregroundColor=_b1;
+}
+}),new objj_method(sel_getUid("model"),function(_b2,_b3){
+with(_b2){
 return _model;
 }
-}),new objj_method(sel_getUid("model:"),function(_b1,_b2,_b3){
-with(_b1){
-if(_model!=nil){
-objj_msgSend(objj_msgSend(CPNotificationCenter,"defaultCenter"),"removeObserver:name:object:",_b1,ModelPropertyChangedNotification,_model);
-}
-_model=_b3;
-if(_model!=nil){
-objj_msgSend(objj_msgSend(CPNotificationCenter,"defaultCenter"),"addObserver:selector:name:object:",_b1,sel_getUid("modelChanged"),ModelPropertyChangedNotification,_model);
-}
-}
-}),new objj_method(sel_getUid("modelChanged"),function(_b4,_b5){
+}),new objj_method(sel_getUid("model:"),function(_b4,_b5,_b6){
 with(_b4){
+if(_model!=nil){
+objj_msgSend(objj_msgSend(CPNotificationCenter,"defaultCenter"),"removeObserver:name:object:",_b4,ModelPropertyChangedNotification,_model);
 }
-}),new objj_method(sel_getUid("fadeIn"),function(_b6,_b7){
-with(_b6){
-var _b8=objj_msgSend(_b6,"frame");
-var _b9=objj_msgSend(CPDictionary,"dictionaryWithObjects:forKeys:",[_b6,_b8,_b8,CPViewAnimationFadeInEffect],[CPViewAnimationTargetKey,CPViewAnimationStartFrameKey,CPViewAnimationEndFrameKey,CPViewAnimationEffectKey]);
-var _ba=objj_msgSend(objj_msgSend(CPViewAnimation,"alloc"),"initWithViewAnimations:",objj_msgSend(CPArray,"arrayWithObject:",_b9));
-objj_msgSend(_ba,"startAnimation");
+_model=_b6;
+if(_model!=nil){
+objj_msgSend(objj_msgSend(CPNotificationCenter,"defaultCenter"),"addObserver:selector:name:object:",_b4,sel_getUid("modelChanged"),ModelPropertyChangedNotification,_model);
 }
-}),new objj_method(sel_getUid("fadeOut"),function(_bb,_bc){
-with(_bb){
-var _bd=objj_msgSend(_bb,"frame");
-var _be=objj_msgSend(CPDictionary,"dictionaryWithObjects:forKeys:",[_bb,_bd,_bd,CPViewAnimationFadeOutEffect],[CPViewAnimationTargetKey,CPViewAnimationStartFrameKey,CPViewAnimationEndFrameKey,CPViewAnimationEffectKey]);
-var _bf=objj_msgSend(objj_msgSend(CPViewAnimation,"alloc"),"initWithViewAnimations:",objj_msgSend(CPArray,"arrayWithObject:",_be));
-objj_msgSend(_bf,"startAnimation");
+}
+}),new objj_method(sel_getUid("modelChanged"),function(_b7,_b8){
+with(_b7){
+}
+}),new objj_method(sel_getUid("fadeIn"),function(_b9,_ba){
+with(_b9){
+var _bb=objj_msgSend(_b9,"frame");
+var _bc=objj_msgSend(CPDictionary,"dictionaryWithObjects:forKeys:",[_b9,_bb,_bb,CPViewAnimationFadeInEffect],[CPViewAnimationTargetKey,CPViewAnimationStartFrameKey,CPViewAnimationEndFrameKey,CPViewAnimationEffectKey]);
+var _bd=objj_msgSend(objj_msgSend(CPViewAnimation,"alloc"),"initWithViewAnimations:",objj_msgSend(CPArray,"arrayWithObject:",_bc));
+objj_msgSend(_bd,"startAnimation");
+}
+}),new objj_method(sel_getUid("fadeOut"),function(_be,_bf){
+with(_be){
+var _c0=objj_msgSend(_be,"frame");
+var _c1=objj_msgSend(CPDictionary,"dictionaryWithObjects:forKeys:",[_be,_c0,_c0,CPViewAnimationFadeOutEffect],[CPViewAnimationTargetKey,CPViewAnimationStartFrameKey,CPViewAnimationEndFrameKey,CPViewAnimationEffectKey]);
+var _c2=objj_msgSend(objj_msgSend(CPViewAnimation,"alloc"),"initWithViewAnimations:",objj_msgSend(CPArray,"arrayWithObject:",_c1));
+objj_msgSend(_c2,"startAnimation");
 }
 })]);
-class_addMethods(_2,[new objj_method(sel_getUid("frame:"),function(_c0,_c1,_c2){
-with(_c0){
-var _c3=objj_msgSend(_c0,"new");
-objj_msgSend(_c3,"initWithFrame:",_c2);
-return _c3;
+class_addMethods(_2,[new objj_method(sel_getUid("frame:"),function(_c3,_c4,_c5){
+with(_c3){
+var _c6=objj_msgSend(_c3,"new");
+objj_msgSend(_c6,"initWithFrame:",_c5);
+return _c6;
 }
-}),new objj_method(sel_getUid("newAt:"),function(_c4,_c5,_c6){
-with(_c4){
-var _c7=CGRectMake(_c6.x,_c6.y,20,20);
-var _c8=objj_msgSend(_c4,"frame:",_c7);
-return _c8;
+}),new objj_method(sel_getUid("newAt:"),function(_c7,_c8,_c9){
+with(_c7){
+var _ca=CGRectMake(_c9.x,_c9.y,20,20);
+var _cb=objj_msgSend(_c7,"frame:",_ca);
+return _cb;
 }
 })]);
 p;13;GroupFigure.jt;1647;@STATIC;1.0;t;1628;

@@ -41,6 +41,7 @@
 {
 	var contextId = [Actions contextId];
 	drawing = [ActionsDrawing frame: [contentView bounds] contextId: contextId];
+	[Actions drawing: drawing];
 	[drawing setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
 	[contentView addSubview: drawing];
 	

@@ -181,5 +181,9 @@
 	var connectionFigure = [ElementConnection source: source target: target points: points];
 	[_drawing addFigure: connectionFigure];
 	[connectionTool postConnectionCreated: connectionFigure figureId: elementId properties: properties];
+	
+	if (connectionFigure != nil) {
+		[_drawing registerElement: connectionFigure for: elementId];
+	}
 }
 @end

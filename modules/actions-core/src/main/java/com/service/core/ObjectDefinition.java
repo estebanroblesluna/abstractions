@@ -12,6 +12,7 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.model.ConnectionDefinition;
 import com.abstractions.model.ElementDefinition;
 import com.core.api.Context;
 import com.core.api.Startable;
@@ -150,8 +151,10 @@ public class ObjectDefinition implements Startable, Terminable {
 	}
 	
 	public void addConnection(ObjectDefinition definition) {
-		if (definition.getElementName().endsWith("_CONNECTION")) {
-			String type = definition.getProperty("type");
+		if (definition.getMeta() instanceof ConnectionDefinition) {
+			ConnectionDefinition meta = (ConnectionDefinition)definition.getMeta();
+			String type = meta.getName();
+			this.addToUrns("__connections", "urn:" + definition.getId());
 			this.addToUrns("__connections" + type, "urn:" + definition.getId());
 			
 			if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
@@ -161,11 +164,10 @@ public class ObjectDefinition implements Startable, Terminable {
 	}
 	
 	public void removeConnection(ObjectDefinition definition) {
-		if (definition.getElementName().endsWith("_CONNECTION")) {
-			String type = definition.getProperty("type");
-			if (type == null) {
-				type = definition.getElementName();
-			}
+		if (definition.getMeta() instanceof ConnectionDefinition) {
+			ConnectionDefinition meta = (ConnectionDefinition)definition.getMeta();
+			String type = meta.getName();
+			this.removeToUrns("__connections", "urn:" + definition.getId());
 			this.removeToUrns("__connections" + type, "urn:" + definition.getId());
 
 			if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
@@ -174,6 +176,20 @@ public class ObjectDefinition implements Startable, Terminable {
 		}
 	}
 	
+	public void addIncomingConnection(ObjectDefinition definition) {
+		if (definition.getMeta() instanceof ConnectionDefinition) {
+			this.addToUrns("__incoming_connections", "urn:" + definition.getId());
+		}
+	}
+	
+	public List<String> getIncomingConnections() {
+		return BeanUtils.getUrnsFromList(this.getProperty("__incoming_connections"));
+	}
+	
+	public List<String> getOutgoingConnections() {
+		return BeanUtils.getUrnsFromList(this.getProperty("__connections"));
+	}
+
 	public ObjectDefinition getUniqueConnectionOfType(String type, ContextDefinition context) {
 		if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
 			String urn = this.properties.get("__next_in_chain");
@@ -210,16 +226,19 @@ public class ObjectDefinition implements Startable, Terminable {
 		
 		if (this.getProperty(propertyName) == null) {
 			newValue = "list(" + newUrn + ")";
+			this.setProperty(propertyName, newValue);		
 		} else {
-			String oldValues = BeanUtils.getUrnsFromListAsString(this.getProperty(propertyName));
-			newValue = "list(" + oldValues + "," + newUrn +")";
+			List<String> oldValues = BeanUtils.getUrnsFromList(this.getProperty(propertyName));
+			if (!oldValues.contains(newUrn)) {
+				newValue = "list(" + StringUtils.join(oldValues, ',') + "," + newUrn +")";
+				this.setProperty(propertyName, newValue);		
+			}
 		}
 		
-		this.setProperty(propertyName, newValue);		
 	}
 	
 	private void removeToUrns(String propertyName, String urn) {
-		List<String> oldValues = BeanUtils.getUrnsFromList(this.getProperty(propertyName));
+		List<String> oldValues = new ArrayList<String>(BeanUtils.getUrnsFromList(this.getProperty(propertyName)));
 		oldValues.remove(urn);
 		
 		String newUrns = StringUtils.join(oldValues, ',');

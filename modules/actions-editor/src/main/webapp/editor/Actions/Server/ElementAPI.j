@@ -195,8 +195,10 @@
 		type: "DELETE",
 		url: "../service/element/" + _contextId + "/" + _elementId
 	}).done(function( result ) {
-		_state = @"SYNCED";
+		_state = @"DELETED";
 		[self changed];
+		[_delegate deleted];
+		[[Actions drawing] removeFigures: result.deleted.deleted];
 		CPLog.debug("Element deleted " + _elementId);
 	});
 	

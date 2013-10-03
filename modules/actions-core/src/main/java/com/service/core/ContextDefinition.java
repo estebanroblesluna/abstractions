@@ -1,5 +1,6 @@
 package com.service.core;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.model.ConnectionDefinition;
 import com.abstractions.model.ElementDefinition;
 import com.core.api.Context;
 import com.core.api.Identificable;
@@ -101,6 +103,10 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	public void addDefinition(ObjectDefinition definition) {
 		synchronized (this.definitions) {
 			this.definitions.put(definition.getId(), definition);
+			
+			if (this.isConnection(definition)) {
+				this.bindConnection(definition);
+			}
 		}
 	}
 	
@@ -108,6 +114,9 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		synchronized (this.definitions) {
 			for (ObjectDefinition definition : definitions) {
 				this.definitions.put(definition.getId(), definition);
+				if (this.isConnection(definition)) {
+					this.bindConnection(definition);
+				}
 			}
 		}
 	}
@@ -137,58 +146,88 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	public Context getContext() {
 		return context;
 	}
+	
+	public void bindConnection(ObjectDefinition definition) {
+		if (this.isConnection(definition)) {
+			ObjectDefinition sourceDefinition = this.resolve(definition.getProperty("source"));
+			ObjectDefinition targetDefinition = this.resolve(definition.getProperty("target"));
+			((ConnectionDefinition) definition.getMeta()).addOutgoingConnection(sourceDefinition, definition);
+			((ConnectionDefinition) definition.getMeta()).addIncomingConnection(targetDefinition, definition);
+		}
+	}
 
 	public String addConnection(String sourceId, String targetId, ConnectionType type) {
-		String elementName = type.getElementName();
-		ElementDefinition elementDefinition = this.mapping.getDefinition(elementName);
-		ObjectDefinition definition = new ObjectDefinition(elementDefinition);
-		
-		definition.setProperty("source", "urn:" + sourceId);
-		definition.setProperty("target", "urn:" + targetId);
-		definition.setProperty("type", type.getElementName());
-		
-		this.addDefinition(definition);
-		
 		ObjectDefinition sourceDefinition = this.getDefinition(sourceId);
-		sourceDefinition.addConnection(definition);
-		
-		return definition.getId();
+		ObjectDefinition targetDefinition = this.getDefinition(targetId);
+
+		if (sourceDefinition != null && targetDefinition != null) {
+			ObjectDefinition connectionDefinition = this.createConnection(sourceDefinition, targetDefinition, type);
+			this.addDefinition(connectionDefinition);
+			return connectionDefinition.getId();
+		} else {
+			return null;
+		}
 	}
 	
 	public ObjectDefinition createConnection(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition, ConnectionType type) {
 		String elementName = type.getElementName();
 		ElementDefinition elementDefinition = this.mapping.getDefinition(elementName);
-		ObjectDefinition definition = new ObjectDefinition(elementDefinition);
-		
-		definition.setProperty("source", "urn:" + sourceDefinition.getId());
-		definition.setProperty("target", "urn:" + targetDefinition.getId());
-		definition.setProperty("type", type.getElementName());
-		
-		sourceDefinition.addConnection(definition);
-		
-		return definition;
+		if (elementDefinition instanceof ConnectionDefinition) {
+			ObjectDefinition definition = ((ConnectionDefinition) elementDefinition).createInstance(
+					sourceDefinition,
+					targetDefinition);
+			return definition;
+		} else {
+			return null;
+		}
 	}
 	
 	public void deleteConnection(ObjectDefinition definition) {
 		String urn = definition.getProperty("source");
 		ObjectDefinition sourceDefinition = this.resolve(urn);
-
-		sourceDefinition.removeConnection(definition);
-	}
-	
-	public void deleteDefinition(String elementId) {
-		synchronized (this.definitions) {
-			ObjectDefinition definition = this.definitions.remove(elementId);
-			
-			if (this.isConnection(definition)) {
-				this.deleteConnection(definition);
-			}
-			definition.terminate();
+		if (sourceDefinition != null) {
+			sourceDefinition.removeConnection(definition);
 		}
 	}
 	
+	public List<String> deleteDefinition(String elementId) {
+		List<String> deletedEntities = new ArrayList<String>();
+		if (elementId == null) {
+			return deletedEntities;
+		}
+		
+		synchronized (this.definitions) {
+			ObjectDefinition definition = this.definitions.remove(elementId);
+			
+			if (definition != null) {
+				if (this.isConnection(definition)) {
+					this.deleteConnection(definition);
+				} else {
+					List<String> urns = definition.getIncomingConnections();
+					for (String urn : urns) {
+						String id = this.resolveId(urn);
+						this.deleteDefinition(id);
+						deletedEntities.add(id);
+					}
+
+					urns = definition.getOutgoingConnections();
+					for (String urn : urns) {
+						String id = this.resolveId(urn);
+						this.deleteDefinition(id);
+						deletedEntities.add(id);
+					}
+				}
+
+				deletedEntities.add(definition.getId());
+				definition.terminate();
+			}
+		}
+		
+		return deletedEntities;
+	}
+	
 	private boolean isConnection(ObjectDefinition definition) {
-		return definition.getElementName().endsWith("_CONNECTION");
+		return definition.getMeta() instanceof ConnectionDefinition;
 	}
 
 	public ObjectDefinition getNextInChainFor(String objectDefinitionId) {
@@ -210,8 +249,17 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 			return null;
 		}
 		
-		String id = urn.substring("urn:".length());
+		String id = this.resolveId(urn);
 		return this.getDefinition(id);
+	}
+	
+	public String resolveId(String urn) {
+		if (StringUtils.isEmpty(urn) || !urn.startsWith("urn:")) {
+			return null;
+		}
+		
+		String id = urn.substring("urn:".length());
+		return id;
 	}
 
 	public ObjectDefinition getNextInChainFor(ObjectDefinition objectDefinition) {

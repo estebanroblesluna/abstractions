@@ -104,6 +104,7 @@
 	}
 	
 	[aConnectionFigure model: newModel];
+	[newModel delegate: aConnectionFigure];
 	[aConnectionFigure foregroundColor: [CPColor colorWithHexString: color]];
 }
 

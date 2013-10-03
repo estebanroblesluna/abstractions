@@ -1176,7 +1176,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("connect:with:"), funct
 },["Connection","Figure","Figure","id"])]);
 }
 
-p;8;Figure.jt;16478;@STATIC;1.0;t;16458;{var the_class = objj_allocateClassPair(CPView, "Figure"),
+p;8;Figure.jt;16807;@STATIC;1.0;t;16787;{var the_class = objj_allocateClassPair(CPView, "Figure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("handles"), new objj_ivar("_inConnections"), new objj_ivar("_outConnections"), new objj_ivar("_backgroundColor"), new objj_ivar("_foregroundColor"), new objj_ivar("_selectable"), new objj_ivar("_moveable"), new objj_ivar("_editable"), new objj_ivar("_model"), new objj_ivar("_selected")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $Figure__init(self, _cmd)
@@ -1195,7 +1195,16 @@ class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $Figur
  objj_msgSend(self, "setPostsFrameChangedNotifications:",  YES);
  return self;
 }
-},["id"]), new objj_method(sel_getUid("figureAt:"), function $Figure__figureAt_(self, _cmd, aPoint)
+},["id"]), new objj_method(sel_getUid("removeMyself"), function $Figure__removeMyself(self, _cmd)
+{ with(self)
+{
+ for (var i = 0; i < objj_msgSend(handles, "count"); i++) {
+     var handle = objj_msgSend(handles, "objectAtIndex:", i);
+     objj_msgSend(handle, "removeMyself");
+ }
+ objj_msgSend(self, "removeFromSuperview");
+}
+},["void"]), new objj_method(sel_getUid("figureAt:"), function $Figure__figureAt_(self, _cmd, aPoint)
 { with(self)
 {
  var figureInSubfigures = objj_msgSend(self, "primSubfiguresAt:",  aPoint);
