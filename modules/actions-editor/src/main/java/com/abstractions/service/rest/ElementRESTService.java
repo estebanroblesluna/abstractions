@@ -1,5 +1,7 @@
 package com.abstractions.service.rest;
 
+import java.util.List;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -10,6 +12,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
@@ -25,6 +31,8 @@ import com.service.rest.ResponseUtils;
 @Path("/element")
 public class ElementRESTService {
 
+	private static final Log log = LogFactory.getLog(ElementRESTService.class);
+	
 	private DevelopmentContextHolder holder;
 	private NamesMapping mapping;
 	private DeploymentService deploymentService;
@@ -52,8 +60,18 @@ public class ElementRESTService {
 	public Response deleteElement(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId)
 	{
 		ContextDefinition context = this.holder.get(contextId);
-		context.deleteDefinition(elementId);
-		return ResponseUtils.ok();
+		List<String> ids = context.deleteDefinition(elementId);
+		JSONObject deleted = new JSONObject();
+		JSONArray array = new JSONArray();
+		for (String id : ids) {
+			array.put(id);
+		}
+		try {
+			deleted.put("deleted", array);
+		} catch (JSONException e) {
+			log.warn("Error writing json", e);
+		}
+		return ResponseUtils.ok("deleted", deleted);
 	}
 
 	@PUT

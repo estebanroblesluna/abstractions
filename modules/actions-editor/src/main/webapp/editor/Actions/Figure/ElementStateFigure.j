@@ -72,6 +72,15 @@
 			[self switchToState: @"SYNCED"];
 			[self fadeOut];
 		}
+
+		if ([state isEqualToString: @"DELETED"]) {
+   			[self removeMyself];
+		}
 	}
+}
+
+- (id) elementId
+{
+	return [[self model] elementId];
 }
 @end

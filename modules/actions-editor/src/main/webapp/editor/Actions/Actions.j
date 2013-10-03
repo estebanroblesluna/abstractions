@@ -60,6 +60,7 @@
 
 
 var _actionsDrawingMode = [EditionMode new];
+var _drawing;
 
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
@@ -76,6 +77,16 @@ var _actionsDrawingMode = [EditionMode new];
 + (void) mode: (id) aMode
 {
 	_actionsDrawingMode = aMode;
+}
+
++ (id) drawing
+{
+	return _drawing;
+}
+
++ (void) drawing: (id) aDrawing
+{
+	_drawing = aDrawing;
 }
 
 + (id) mode

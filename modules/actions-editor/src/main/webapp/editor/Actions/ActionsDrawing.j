@@ -72,6 +72,21 @@
 	_timer = aTimer;
 }
 
+- (void) removeFigures: aListOfIds
+{
+	var figures = [self figures];
+	
+	for (var i = [figures count] -1; i >= 0 ; i--) { 
+	    var figure = [figures objectAtIndex:i];
+		if ([figure respondsToSelector: @selector(elementId)]) {
+			var elementId = [figure elementId];
+			if ($.inArray(elementId, aListOfIds) != -1) {
+				[figure removeMyself];
+			}
+		}
+	}
+}
+
 - (void) addProcessor: (id) aProcessorFigure
 {
 	CPLog.debug("Adding processor");
