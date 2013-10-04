@@ -19,6 +19,7 @@ import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
 import com.abstractions.repository.GenericRepository;
+import com.service.core.FileService;
 
 @Service
 public class SnapshotService {

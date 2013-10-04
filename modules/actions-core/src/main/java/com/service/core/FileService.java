@@ -1,4 +1,4 @@
-package com.abstractions.service;
+package com.service.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
