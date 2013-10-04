@@ -1,12 +1,16 @@
 package com.modules.dust;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.commons.io.IOUtils;
 
 import com.core.api.Expression;
 import com.core.api.Message;
 import com.core.api.Processor;
 import com.core.utils.ExpressionUtils;
 import com.core.utils.IdGenerator;
+import com.service.core.FileService;
 
 public class DustRendererProcessor implements Processor {
 
@@ -14,6 +18,11 @@ public class DustRendererProcessor implements Processor {
 	 * The name of the template
 	 */
 	private Expression template;
+	
+	/**
+	 * Path to get the template
+	 */
+	private String templatePath;
 	
 	/**
 	 * The data to be passed into the template
@@ -24,6 +33,8 @@ public class DustRendererProcessor implements Processor {
 	 * The holder of the templates
 	 */
 	private DustConnector connector;
+	
+	private FileService fileService;
 	
 	private final String name;
 	private final AtomicBoolean dirty;
@@ -38,6 +49,7 @@ public class DustRendererProcessor implements Processor {
 	 */
 	@Override
 	public Message process(Message message) {
+		/*
 		String compiledTemplate = this.getConnector().getCompiledTemplate(this.name);
 		
 		if (compiledTemplate == null || this.dirty.get()) {
@@ -47,10 +59,17 @@ public class DustRendererProcessor implements Processor {
 			
 			this.dirty.set(false);
 		}
+		*/
 		
+		String compiledTemplate = null;
+		try {
+			compiledTemplate = IOUtils.toString(this.getFileService().getContentsOfFile("2", this.templatePath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		if (compiledTemplate != null) {
 			String json = ExpressionUtils.evaluateNoFail(this.jsonData, message, "{}");
-			String result = this.evaluate(this.name, compiledTemplate, json);
+			String result = this.evaluate(this.templatePath, compiledTemplate, json);
 			message.setPayload(result);
 		}
 		
@@ -95,5 +114,24 @@ public class DustRendererProcessor implements Processor {
 	public void setTemplate(Expression template) {
 		this.template = template;
 		this.dirty.set(true);
+	}
+
+	public FileService getFileService() {
+		if (this.fileService == null) {
+			this.fileService = new FileService("./files");
+		}
+		return this.fileService;
+	}
+
+	public void setFileService(FileService fileService) {
+		this.fileService = fileService;
+	}
+
+	public String getTemplatePath() {
+		return templatePath;
+	}
+
+	public void setTemplatePath(String templateName) {
+		this.templatePath = templateName;
 	}
 }

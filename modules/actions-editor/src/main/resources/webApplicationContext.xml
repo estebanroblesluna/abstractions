@@ -69,7 +69,7 @@
     <property name="deployer" ref="asyncDeployer" />
   </bean>
 
-  <bean id="fileService" class="com.abstractions.service.FileService">
+  <bean id="fileService" class="com.service.core.FileService">
     <constructor-arg index="0" value="./files" />
   </bean>
 
