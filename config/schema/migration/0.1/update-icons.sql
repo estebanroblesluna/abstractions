@@ -39,13 +39,3 @@ WHERE element_definition_id = 18;
 UPDATE `element_definition` 
 SET `icon` = 'Resources/null.png'
 WHERE element_definition_id = 19;
-
-
---TEST
---TEST
---TEST
---TEST
-
---this is a super test
-
---Come on!
