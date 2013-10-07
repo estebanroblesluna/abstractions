@@ -21,6 +21,7 @@ public class GenericRepository {
 		
 		this.sessionFactory = sessionFactory;
 	}
+        
 
 	public void save(Object object) {
 		this.sessionFactory.getCurrentSession().save(object);

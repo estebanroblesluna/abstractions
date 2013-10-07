@@ -19,6 +19,7 @@ import com.abstractions.model.ElementDefinitionType;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
+import com.abstractions.service.ApplicationService;
 import com.abstractions.service.FlowService;
 import com.abstractions.service.LibraryService;
 import com.service.core.ContextDefinition;
@@ -38,13 +39,16 @@ public class FlowController {
 	@Autowired
 	LibraryService libraryService;
 
+        @Autowired
+	ApplicationService applicationService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("flows");
-		
+		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<Flow> flows = this.service.getFlows(teamId, applicationId);
 		mv.addObject("flows", flows);
+                mv.addObject("applicationName", applicationName);
 
 		return mv;
 	}
