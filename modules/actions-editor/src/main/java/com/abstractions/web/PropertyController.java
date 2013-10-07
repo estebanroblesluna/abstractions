@@ -11,21 +11,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.model.Property;
+import com.abstractions.service.ApplicationService;
 import com.abstractions.service.PropertiesService;
 
 @Controller
 public class PropertyController {
 
+        @Autowired
+	ApplicationService applicationService;
+        
 	@Autowired
 	PropertiesService service;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/properties", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("properties");
-		
+		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<Property> properties = this.service.getProperties(teamId, applicationId);
 		mv.addObject("properties", properties);
-
+                mv.addObject("applicationName", applicationName);
+                
 		return mv;
 	}
 	
@@ -36,7 +41,7 @@ public class PropertyController {
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/properties/add", method = RequestMethod.GET)
-	public ModelAndView add() {
+	public ModelAndView add(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("addProperty");
 		return mv;
 	}

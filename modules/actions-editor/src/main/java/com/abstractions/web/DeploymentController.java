@@ -30,7 +30,7 @@ public class DeploymentController {
 	LibraryService libraryService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments", method = RequestMethod.GET)
-	public ModelAndView home(@PathVariable("snapshotId") long snapshotId) {
+	public ModelAndView home(@PathVariable("snapshotId") long snapshotId, @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("deployments");
 		List<Deployment> deployments = this.deploymentService.getDeployments(snapshotId);
 		mv.addObject("deployments", deployments);
@@ -38,7 +38,7 @@ public class DeploymentController {
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments/add", method = RequestMethod.GET)
-	public ModelAndView addDeployment(@PathVariable("snapshotId") long snapshotId, @ModelAttribute("form") AddDeploymentForm form) {
+	public ModelAndView addDeployment(@PathVariable("snapshotId") long snapshotId, @ModelAttribute("form") AddDeploymentForm form,  @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("addDeployment");
 		mv.addObject("servers", this.serverService.getServers());
 		return mv;

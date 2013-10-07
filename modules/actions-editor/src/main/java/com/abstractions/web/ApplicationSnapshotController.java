@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.service.ApplicationService;
 import com.abstractions.service.SnapshotService;
 
 @Controller
@@ -18,14 +19,18 @@ public class ApplicationSnapshotController {
 	@Autowired
 	SnapshotService service;
 	
+        @Autowired
+	ApplicationService applicationService;
+        
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("snapshots");
-		
+		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<ApplicationSnapshot> snapshots = this.service.getSnapshots(applicationId);
 		mv.addObject("snapshots", snapshots);
 		mv.addObject("teamId", teamId);
 		mv.addObject("applicationId", applicationId);
+                mv.addObject("applicationName", applicationName);
 		return mv;
 	}
 	

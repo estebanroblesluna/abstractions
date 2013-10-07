@@ -148,7 +148,7 @@ public class Meta {
 	public static ElementDefinition createWireTapConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("WIRE_TAP_CONNECTION");
 		definition.setDisplayName("Wire tap connection");
-		definition.setIcon("Resources/allConnection.png");
+		definition.setIcon("Resources/wireTapConnection.png");
 		definition.setClassName("com.core.impl.WireTapConnection");
 
 		definition.setColor("AA00BB");
