@@ -32,6 +32,17 @@
               <div class="col-lg-10">
                 <input type="text" class="form-control" id="inputServerGroupName" name="name" placeholder="">
               </div>
+              <label for="inputServerGroupEnvironment" class="col-lg-2 control-label">Server group Environment</label>
+             
+              <div class="col-lg-10">
+                <select class="form-control" id="inputServerGroupEnvironment" name="environment">
+                    <option>DEV</option>
+                    <option>QA</option>
+                    <option>PROD</option>
+                    <option>STG_ALPHA</option>
+                    <option>STG_BETA</option>
+                </select>
+              </div>
             </div>
 
             <div class="form-group">

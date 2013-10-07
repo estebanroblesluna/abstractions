@@ -45,8 +45,8 @@ public class ServerGroupController {
 
 	@RequestMapping(value = "/teams/{teamId}/serverGroups/add", method = RequestMethod.POST)
 	public String addContact(@PathVariable("teamId") long teamId,
-			@ModelAttribute("form") AddApplicationForm form) {
-		this.service.addServerGroup(teamId, form.getName());
+			@ModelAttribute("form") AddServerGroupForm form) {
+		this.service.addServerGroup(teamId, form.getName(), form.getEnvironment());
 		return "redirect:/teams/" + teamId + "/serverGroups/";
 	}
 }
