@@ -48,6 +48,11 @@ var ElementWireTapConnection     = @"WIRE_TAP";
 	[[self model] deleteFromServer];
 }
 
+- (void) deleted
+{
+   [self removeMyself];
+}
+
 - (id) elementId
 {
 	return [[self model] elementId];

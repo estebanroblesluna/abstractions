@@ -142,6 +142,13 @@ ELEMENT_FAKE_ID = @"FAKE_ID";
    }
 }
 
+- (void) deleted
+{
+   if ([_delegate != nil]) {
+     [_delegate deleted];
+   }
+}
+
 - (id) api
 {
 	return _elementAPI;

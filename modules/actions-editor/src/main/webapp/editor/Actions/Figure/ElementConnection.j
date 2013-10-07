@@ -38,11 +38,20 @@
 - (void) deleteFromServer
 {
 	[[self model] deleteFromServer];
-	[self removeFromSuperview];
+}
+
+- (void) deleted
+{
+   [self removeMyself];
 }
 
 - (void) addCache
 {
 	[[self model] addCache];
+}
+
+- (id) elementId
+{
+	return [[self model] elementId];
 }
 @end
