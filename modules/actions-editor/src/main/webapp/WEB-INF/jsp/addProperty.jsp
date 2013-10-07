@@ -41,7 +41,20 @@
                 <input type="text" class="form-control" id="inputValue" name="value" placeholder="Property value...">
               </div>
             </div>
+            
+            <div class="form-group">
+                <label for="inputProperyEnvironment" class="col-lg-2 control-label">Property Environment</label>
 
+                <div class="col-lg-10">
+                    <select class="form-control" id="inputProperyEnvironment" name="environment">
+                        <option>DEV</option>
+                        <option>QA</option>
+                        <option>PROD</option>
+                        <option>STG_ALPHA</option>
+                        <option>STG_BETA</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="form-group">
               <div class="col-lg-offset-2 col-lg-10">

@@ -15,8 +15,20 @@
       })
       $("#objectsToRemove").val(propertiesIds);
       $("#removePropertiesForm")[0].submit();
-    })
+    })  
   })
+  </script>
+  <script type="text/javascript">
+      function filterEnvironment() {
+          var environment = document.getElementById("select-environment");
+          $('#properties-table td:nth-child(4)').each (function() {
+            
+           if ((this).innerHTML == environment.value || environment.value == 'DISPLAY ALL')
+               ($(this).closest('tr')).css('display','table-row');
+            else
+                ($(this).closest('tr')).css('display','none');
+          });
+      }
   </script>
   <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
     <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -39,29 +51,36 @@
           <li class="active"> Properties </li>
           
         </ol>
-      </div>
-      <div class="col-lg-6" style="text-align: right;">
-        <div class="col-lg-2" style="text-align: right;">
+       
+      <div class="col-lg-2" >
+          <label>Show properties with environment:</label>
           <form class="form-horizontal" role="form">
-            <select class="form-control">
+            <select class="form-control" onchange="filterEnvironment();" id="select-environment">
+              <option>DISPLAY ALL</option>
               <option>DEV</option>
               <option>QA</option>
               <option>PROD</option>
+              <option>STG_ALPHA</option>
+              <option>STG_BETA</option>
             </select>
           </form>
-        </div>
+      </div>    
+      <br/>    
+      </div>
+      <div class="col-lg-6" style="text-align: right;">       
         <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
       </div>
     </div>
 
     <div class="row">
       <div class="col-lg-12">
-        <table class="table table-striped">
+        <table class="table table-striped" id="properties-table">
           <thead>
             <tr>
               <th>#</th>
               <th>Property name</th>
               <th>Property value</th>
+              <th>Property environment</th>
             </tr>
           </thead>
           <tbody>
@@ -70,6 +89,7 @@
               <td><input type="checkbox" class="selectedProperties" value="${property.id}" /></td>
               <td>${property.name}</td>
               <td>${property.value}</td>
+              <td>${property.environment}</td>
             </tr>
           </c:forEach>
           </tbody>
