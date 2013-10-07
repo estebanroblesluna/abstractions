@@ -36,7 +36,7 @@ public class PropertyController {
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/properties/add", method = RequestMethod.POST)
 	public String addContact(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @ModelAttribute("form") AddPropertyForm form) {
-		this.service.addProperty(applicationId, form.getName(), form.getValue());
+		this.service.addProperty(applicationId, form.getName(), form.getValue(), form.getEnvironment());
 		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/properties/";
 	}
 	
