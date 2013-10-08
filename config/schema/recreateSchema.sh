@@ -10,3 +10,5 @@ mysql -u root < $BASEDIR/migration/0.1/module-cache.sql
 mysql -u root < $BASEDIR/migration/0.1/chain.sql
 mysql -u root < $BASEDIR/migration/0.1/null.sql
 mysql -u root < $BASEDIR/migration/0.1/amazon-sample.sql
+
+mysql -u root < $BASEDIR/migration/0.2/resource-based-dust-renderer.sql
