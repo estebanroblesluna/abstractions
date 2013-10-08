@@ -14,7 +14,6 @@ import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;
-import com.service.rest.ResponseUtils;
 
 @Path("/context")
 public class ContextRESTService {
