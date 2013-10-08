@@ -28,4 +28,9 @@ public class NullInterpreterDelegate implements InterpreterDelegate {
 			String contextId, Message currentMessage) {
 	}
 
+	@Override
+	public void uncaughtException(String interpreterId, String threadId,
+			String contextId, ObjectDefinition currentProcessor,
+			Message currentMessage, Exception e) {
+	}
 }

@@ -212,6 +212,7 @@
 	var currentMessage = aMessage.currentMessage;
 	var processorId = aMessage.processorId;
 	var jsonCurrentMessage = JSON.stringify(aMessage);
+	var exception = aMessage.exception;
 
 	CPLog.debug("[DEBUG WINDOW] Processor id " + processorId);
 	CPLog.debug("[DEBUG WINDOW] " + jsonCurrentMessage);
@@ -225,8 +226,30 @@
 		[self processBeforeStep: currentMessage processorId: processorId];
 	} else if ([eventType isEqualToString: "after-step"]) {
 		[self processAfterStep: currentMessage processorId: processorId];
+	} else if ([eventType isEqualToString: "uncaught-exception"]) {
+		[self processUncaughtException: currentMessage processorId: processorId exception: exception];
 	} else if ([eventType isEqualToString: "finish-interpretation"]) {
 		[self processFinish: currentMessage];
+	}
+}
+
+- (void) processUncaughtException: (id) aMessage processorId: (id) processorId exception: (id) anException
+{
+	[_stepButton setEnabled: NO];
+	[_resumeButton setEnabled: NO];
+	[self showMessage: aMessage];
+		
+	var figure = [_drawing processorFor: processorId];
+	_currentProcessor = figure;
+		
+	CPLog.debug("[DEBUG WINDOW] >> processUncaughtException " + _currentProcessor);
+		
+	if (figure != nil) {
+		[self setTitle: @"Uncaught exception at " + [[figure model] propertyValue: @"Name"]];
+		[_drawing unselectAll];
+		[figure select];
+		[_drawing selectedFigure: figure];
+		[figure highlight];
 	}
 }
 

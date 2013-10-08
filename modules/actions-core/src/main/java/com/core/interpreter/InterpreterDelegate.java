@@ -12,4 +12,6 @@ public interface InterpreterDelegate {
 	void afterStep(String interpreterId, String threadId, String contextId, ObjectDefinition currentProcessor, Message currentMessage);
 
 	void finishInterpretation(String interpreterId, String threadId, String contextId, Message currentMessage);
+
+	void uncaughtException(String interpreterId, String threadId, String contextId, ObjectDefinition currentProcessor, Message currentMessage, Exception e);
 }
