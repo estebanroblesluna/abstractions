@@ -23,7 +23,7 @@ import org.jsoup.nodes.Attribute;
 
 import com.abstractions.server.core.ActionsServer;
 import com.abstractions.server.core.ProfilingInfo;
-import com.service.rest.ResponseUtils;
+import com.abstractions.service.rest.ResponseUtils;
 import com.sun.jersey.multipart.FormDataParam;
 
 @Path("server")

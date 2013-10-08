@@ -31,7 +31,6 @@ import com.service.core.DevelopmentContextHolder;
 import com.service.core.InterpreterHolder;
 import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
-import com.service.rest.ResponseUtils;
 
 @Path("/interpreter")
 public class InterpreterRESTService implements InterpreterDelegate {

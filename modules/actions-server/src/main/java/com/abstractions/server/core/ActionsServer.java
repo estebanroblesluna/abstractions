@@ -56,7 +56,19 @@ public class ActionsServer {
 		this.objectIdLogs = new ConcurrentHashMap<String, LogProcessorWrapper>();
 		this.logs = new ConcurrentHashMap<String, List<LogProcessorWrapper>>();
 		this.wrapperToObjectIdMapping = new ConcurrentHashMap<Object, String>();
+		
+		this.startApplications();
  	}
+
+	private void startApplications() {
+		File applicationDirectory = new File(this.applicationDirectory + "/");
+		for (Object fileAsObject : applicationDirectory.listFiles()) {
+			if (fileAsObject instanceof File && ((File) fileAsObject).isDirectory()) {
+				File file = (File) fileAsObject;
+				this.startFromFiles(file.getName());
+			}
+		}
+	}
 
 	/**
 	 * Starts the context definition in contextDefinition assuming that it 
