@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>com.actions</groupId>
-      <artifactId>actions-rest-utils</artifactId>
+      <artifactId>actions-utils</artifactId>
       <version>${version}</version>
     </dependency>
 
