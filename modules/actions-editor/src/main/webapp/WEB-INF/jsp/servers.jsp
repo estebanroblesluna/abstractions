@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.util.Date" %>
 
 <jsp:include page="/WEB-INF/jsp/header.jsp">
   <jsp:param name="title" value="Servers" />
@@ -40,6 +42,7 @@
             <th>Server name</th>
             <th>IP/DNS</th>
             <th>Status</th>
+            <th>Last update</th>
           </tr>
         </thead>
         <tbody>
@@ -48,7 +51,21 @@
               <td>${lp.index + 1}</td>
               <td>${server.name}</td>
               <td>${server.ipDNS}</td>
-              <td><span class="label label-success">Running</span> TODO</td>
+              <c:set var="serverTime" scope="request" value="${server.getLastUpdate().getTime()}" />
+              <c:set var="now" scope="request" value="<%=new Date().getTime() %>" />
+              <c:set var="secondsSinceLastUpdate" scope="request" value="${(now-serverTime)/1000}" />
+              <c:choose>
+                  <c:when test="${secondsSinceLastUpdate < 70}">
+                    <td><span class="label label-success">Running</span></td>
+                  </c:when>
+                  <c:when test="${secondsSinceLastUpdate < 200}">
+                    <td><span class="label label-warning">Not sure</span></td>
+                  </c:when>
+                  <c:otherwise>
+                    <td><span class="label label-danger">Unreachable</span></td>
+                  </c:otherwise>
+                </c:choose>
+              <td><fmt:formatDate type="date" value="${server.getLastUpdate()}" pattern="yyyy-MM-dd hh:mm:ss"/>  </td>
             </tr>
           </c:forEach>
         </tbody>
