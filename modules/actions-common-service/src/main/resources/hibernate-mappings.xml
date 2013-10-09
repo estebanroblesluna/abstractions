@@ -98,6 +98,8 @@
     <property name="name" type="string" />
     <property name="ipDNS" type="string" />
     <property name="port" />
+    <property name="lastUpdate" column="last_update" />
+    <property name="key" column="server_key" />
   </class>
 
 
@@ -106,7 +108,11 @@
       <generator class="native" />
     </id>
     <property name="name" type="string" access="field" />
-    <property name="environment" />
+    <property name="environment" column="environment">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.Environment</param>
+       </type>
+    </property>
 
     <bag name="servers" lazy="true" access="field">
       <key column="server_group_id" />

@@ -1,5 +1,7 @@
 package com.abstractions.model;
 
+import java.util.Date;
+
 public class Server {
 
 	private long id;
@@ -7,6 +9,8 @@ public class Server {
 	private String name;
 	private String ipDNS;
 	private int port;
+	private String key;
+	private Date lastUpdate;
 
 	protected Server() {
 		this.port = -1;
@@ -44,5 +48,21 @@ public class Server {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 }
