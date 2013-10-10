@@ -3,24 +3,17 @@
 </jsp:include>
 
 <body>
-  <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">App 1</a></li>
-          </ul></li>
-      </ul>
-    </div>
-  </nav>
+  <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
 
   <div class="container">
     <div class="row">
       <div class="col-lg-6">
         <ol class="breadcrumb">
-          <li><a href="#">App 1</a></li>
-          <li><a href="properties.htm">Properties</a></li>
+          <li><a href="/teams/">Teams</a></li>
+          <li>${teamName}</li>
+          <li><a href="/teams/${teamId}/applications/">Applications</a></li>
+          <li>${applicationName}</li>
+          <li><a href="/teams/${teamId}/applications/${applicationId}/properties/">Properties</a></li>
           <li class="active">Add property</li>
         </ol>
       </div>
@@ -42,7 +35,20 @@
                 <input type="text" class="form-control" id="inputValue" name="value" placeholder="Property value...">
               </div>
             </div>
+            
+            <div class="form-group">
+                <label for="inputProperyEnvironment" class="col-lg-2 control-label">Property Environment</label>
 
+                <div class="col-lg-10">
+                    <select class="form-control" id="inputProperyEnvironment" name="environment">
+                        <option>DEV</option>
+                        <option>QA</option>
+                        <option>PROD</option>
+                        <option>STG_ALPHA</option>
+                        <option>STG_BETA</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="form-group">
               <div class="col-lg-offset-2 col-lg-10">
