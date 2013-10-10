@@ -16,7 +16,14 @@ public class ServerGroup {
 	
 	protected ServerGroup() { }
 
-	public ServerGroup(String name, Team team) {
+	public ServerGroup(String name, Team team, Environment environment) {
+		this.name = name;
+		this.environment = environment;
+		this.servers = new ArrayList<Server>();
+		this.team = team;
+	}
+        
+    public ServerGroup(String name, Team team) {
 		this.name = name;
 		this.environment = Environment.DEV;
 		this.servers = new ArrayList<Server>();
