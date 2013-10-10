@@ -1,5 +1,6 @@
 package com.abstractions.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -65,5 +66,26 @@ public class GenericRepository {
 			.createCriteria(theClass)
 			.add(Restrictions.eq(property, value))
 			.uniqueResult();
+	}
+
+	@SuppressWarnings("rawtypes")
+	public List<Long> getPendingDeploymentIdsFor(long serverId) {
+		List<Long> result = new ArrayList<Long>();
+		
+		List queryResults =  this.sessionFactory.getCurrentSession()
+			.createSQLQuery("SELECT deployment_id FROM deployment_to_server WHERE server_id = ? AND deployment_state = ?")
+			.setLong(0, serverId)
+			.setString(1, "PENDING")
+			.list();
+		
+		for (Object o : queryResults) {
+			if (o instanceof Object[]) {
+				result.add((Long) ((Object[]) o)[0]);
+			} else {
+				result.add(Long.valueOf(o.toString()));
+			}
+		}
+		
+		return result;
 	}
 }

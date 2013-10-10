@@ -140,7 +140,11 @@ public class FileService {
 		return null;
 	}
 
-	private String buildSnapshotPath(String applicationId, String snapshotId) {
+	public String buildSnapshotPath(Long applicationId, Long snapshotId) {
+		return this.buildSnapshotPath(applicationId.toString(), snapshotId.toString());
+	}
+	
+	public String buildSnapshotPath(String applicationId, String snapshotId) {
 		if (snapshotId == null) {
 			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY;
 		} else {

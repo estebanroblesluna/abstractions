@@ -24,5 +24,6 @@
   
   <bean id="serverRest" class="com.abstractions.service.rest.ServerRESTService">
     <constructor-arg ref="serverService" />
+    <constructor-arg ref="deploymentService" />
   </bean>
 </beans>
