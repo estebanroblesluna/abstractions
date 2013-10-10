@@ -31,11 +31,3 @@ WHERE element_definition_id = 11;
 UPDATE `element_definition` 
 SET `icon` = 'Resources/log.png'
 WHERE element_definition_id = 13;
-
-UPDATE `element_definition` 
-SET `icon` = 'Resources/chainConnection.gif'
-WHERE element_definition_id = 18;
-
-UPDATE `element_definition` 
-SET `icon` = 'Resources/null.png'
-WHERE element_definition_id = 19;
