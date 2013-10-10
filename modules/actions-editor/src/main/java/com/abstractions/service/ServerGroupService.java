@@ -49,6 +49,7 @@ public class ServerGroupService {
 		return serverGroups;
 	}
 
+    @Transactional
 	public ServerGroup getServerGroup(long serverGroupId) {
 		return this.repository.get(ServerGroup.class, serverGroupId);
 	}
