@@ -332,7 +332,7 @@
   </dependencyManagement>
 
   <modules>
-    <module>modules/actions-rest-utils</module>
+    <module>modules/actions-utils</module>
 
     <module>modules/actions-common-service</module>
 

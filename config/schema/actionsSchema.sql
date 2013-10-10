@@ -80,7 +80,7 @@ DROP TABLE IF EXISTS `server_group`;
 CREATE TABLE `server_group` (
   `server_group_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `environment` tinyblob,
+  `environment` varchar(20),
   `team_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`server_group_id`),
   KEY `FK_lk0ip0o5wh0qcqnv0rw22dq2` (`team_id`),

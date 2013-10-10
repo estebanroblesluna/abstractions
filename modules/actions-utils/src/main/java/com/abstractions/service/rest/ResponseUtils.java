@@ -1,4 +1,4 @@
-package com.service.rest;
+package com.abstractions.service.rest;
 
 import java.util.Map;
 

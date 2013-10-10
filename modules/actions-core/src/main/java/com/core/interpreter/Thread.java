@@ -78,32 +78,45 @@ public class Thread {
 	}
 	
 	protected void basicRun() {
-		while (this.hasNext() && !this.stopOnCurrentElement()) {
-			ObjectDefinition currentDefinition = this.currentElement;
-			this.beforeStep(currentDefinition);
-			this.basicStep();
-			this.afterStep(currentDefinition);
-		}
-		
-		if (this.hasNext()) {
-			log.info("[Thread" + this.id + "] " + "Stop on breakpoint in: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
+		try {
+			while (this.hasNext() && !this.stopOnCurrentElement()) {
+				ObjectDefinition currentDefinition = this.currentElement;
+				this.beforeStep(currentDefinition);
+				this.basicStep();
+				this.afterStep(currentDefinition);
+			}
 			
-			this.interpreter.getDelegate().stopInBreakPoint(
+			if (this.hasNext()) {
+				log.info(
+						"[Thread" + this.id + "] " 
+								+ "Stop on breakpoint in: " 
+								+ StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
+				
+				this.interpreter.getDelegate().stopInBreakPoint(
+						this.interpreter.getId(), 
+						this.getId().toString(), 
+						this.getContext().getId(), 
+						this.currentElement, 
+						this.currentMessage.clone());
+			} else {
+				log.info("[Thread" + this.id + "] " + "has finished");
+				
+				this.interpreter.getDelegate().finishInterpretation(
+						this.interpreter.getId(), 
+						this.getId().toString(), 
+						this.getRootContext().getId(), 
+						this.currentMessage.clone());
+				
+				this.notifyObserversOfTermination();
+			}
+		} catch (Exception e) {
+			this.interpreter.getDelegate().uncaughtException(
 					this.interpreter.getId(), 
 					this.getId().toString(), 
 					this.getContext().getId(), 
 					this.currentElement, 
-					this.currentMessage.clone());
-		} else {
-			log.info("[Thread" + this.id + "] " + "has finished");
-			
-			this.interpreter.getDelegate().finishInterpretation(
-					this.interpreter.getId(), 
-					this.getId().toString(), 
-					this.getRootContext().getId(), 
-					this.currentMessage.clone());
-			
-			this.notifyObserversOfTermination();
+					this.currentMessage.clone(),
+					e);
 		}
 	}
 	
