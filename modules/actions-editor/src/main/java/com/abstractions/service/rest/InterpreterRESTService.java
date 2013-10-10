@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.atmosphere.cpr.Broadcaster;
@@ -31,7 +32,6 @@ import com.service.core.DevelopmentContextHolder;
 import com.service.core.InterpreterHolder;
 import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
-import com.service.rest.ResponseUtils;
 
 @Path("/interpreter")
 public class InterpreterRESTService implements InterpreterDelegate {
@@ -261,6 +261,35 @@ public class InterpreterRESTService implements InterpreterDelegate {
 					
 					JSONObject messageAsJSON = serialize(clonedMessage);
 					json.put("currentMessage", messageAsJSON);
+					
+					sendEvent(contextId, json);
+				} catch (JSONException e) {
+					log.warn("Error creating json", e);
+				}
+			}
+		});
+	}
+	
+	@Override
+	public void uncaughtException(final String interpreterId, final String threadId,
+			final String contextId, final ObjectDefinition currentProcessor,
+			final Message currentMessage, final Exception e) {
+		this.executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					JSONObject json = new JSONObject();
+					json.put("eventType", "uncaught-exception");
+					json.put("interpreterId", interpreterId);
+					json.put("threadId", threadId);
+					json.put("contextId", contextId);
+					json.put("processorId", currentProcessor.getId());
+					
+					JSONObject messageAsJSON = serialize(currentMessage);
+					json.put("currentMessage", messageAsJSON);
+					
+					String exceptionAsString = ExceptionUtils.getFullStackTrace(e);
+					json.put("exception", exceptionAsString);
 					
 					sendEvent(contextId, json);
 				} catch (JSONException e) {

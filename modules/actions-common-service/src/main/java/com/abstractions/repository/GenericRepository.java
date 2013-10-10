@@ -9,6 +9,8 @@ import org.hibernate.criterion.Restrictions;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Repository;
 
+import com.abstractions.model.Server;
+
 @Repository
 public class GenericRepository {
 
@@ -49,11 +51,19 @@ public class GenericRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> get(Class<T> theClass, String assocProperty, long applicationSnapshotId) {
+	public <T> List<T> get(Class<T> theClass, String assocProperty, long anID) {
 		return (List<T>) this.sessionFactory.getCurrentSession()
 			.createCriteria(theClass)
 			.createAlias(assocProperty, "a")
-			.add(Restrictions.eq("a.id", applicationSnapshotId))
+			.add(Restrictions.eq("a.id", anID))
 			.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T findBy(Class<Server> theClass, String property, Object value) {
+		return (T) this.sessionFactory.getCurrentSession()
+			.createCriteria(theClass)
+			.add(Restrictions.eq(property, value))
+			.uniqueResult();
 	}
 }
