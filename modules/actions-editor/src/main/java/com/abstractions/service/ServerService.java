@@ -61,10 +61,16 @@ public class ServerService {
 
 	@Transactional
 	public void updateServerStatusWithKey(String serverKey) {
-		Server server = this.repository.findBy(Server.class, "key", serverKey);
+		Server server = this.getServer(serverKey);
 		if (server != null) {
 			server.setLastUpdate(new Date());
 			this.repository.save(server);
 		}
+	}
+
+	@Transactional
+	public Server getServer(String serverKey) {
+		Server server = this.repository.findBy(Server.class, "key", serverKey);
+		return server;
 	}
 }

@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -21,8 +20,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -39,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Deployment;
 import com.abstractions.model.DeploymentState;
+import com.abstractions.model.DeploymentToServer;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Server;
 import com.abstractions.model.User;
@@ -55,7 +53,6 @@ public class DeploymentService {
 	private SnapshotService snapshotService;
 	private UserService userService;
 	private ServerService serverService;
-	private AsyncDeployer deployer;
 	private FileService fileService;
 	
 	public DeploymentService() {
@@ -110,7 +107,6 @@ public class DeploymentService {
 		}
 
 		this.repository.save(deployment);
-		this.deployer.deploy(deployment.getId());
 	}
 
 	@Transactional
@@ -120,67 +116,6 @@ public class DeploymentService {
 			deployment.getServerList();
 		}
 		return deployments;
-	}
-
-	@Transactional
-	public void deploy(long deploymentId) {
-		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		try {
-			boolean deployed = true;
-			for (Server server : deployment.getServers()) {
-				deployed = deployed && this.basicDeploy(deployment, server);
-			}
-			
-			if (deployed) {
-				deployment.setState(DeploymentState.FINISH_SUCCESSFULLY);
-			} else {
-				deployment.setState(DeploymentState.FINISH_WITH_ERRORS);
-			}
-		} catch (Exception e) {
-			deployment.setState(DeploymentState.FINISH_WITH_ERRORS);
-		}
-		
-		this.repository.save(deployment);
-	}
-
-	private boolean basicDeploy(Deployment deployment, Server server) {
-		String applicationId = Long.valueOf(deployment.getSnapshot().getApplication().getId()).toString();
-		String snapshotId = Long.valueOf(deployment.getSnapshot().getId()).toString();
-		
-		InputStream snapshotFileIS = this.fileService.getContentsOfSnapshot(applicationId, snapshotId);
-
-		if (snapshotFileIS == null) {
-			return false;
-		}
-		
-		String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-				+ "/service/server/" + applicationId + "/start";
-		
-		HttpPost post = new HttpPost(url);
-		InputStream is = null;
-		
-		try {
-			MultipartEntity entity = new MultipartEntity();
-			entity.addPart("applicationZip", new InputStreamBody(snapshotFileIS, "application"));
-			post.setEntity(entity);
-			
-			HttpResponse response = this.execute(post);
-			int statusCode = response.getStatusLine().getStatusCode();
-			
-			if (statusCode >= 200 && statusCode < 300) {
-				is = response.getEntity().getContent();
-				JSONObject json = new JSONObject(IOUtils.toString(is));
-				return json.has("result") 
-						&& StringUtils.equalsIgnoreCase(json.getString("result"), "success");
-			} else {
-				return false;
-			}
-		} catch (Exception e) {
-			log.error("Error deploying context", e);
-		} finally {
-			IOUtils.closeQuietly(is);
-		}
-		return false;		
 	}
 
 	@Transactional
@@ -361,11 +296,42 @@ public class DeploymentService {
 		return this.client.execute(method);
 	}
 
-	public AsyncDeployer getDeployer() {
-		return deployer;
+	@Transactional
+	public String startDeployment(long deploymentId, String serverKey) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		Server server = this.serverService.getServer(serverKey);
+		
+		DeploymentToServer toServer = deployment.getToServer(server.getId());
+		toServer.setState(DeploymentState.STARTED);
+		this.repository.save(toServer);
+		
+		String filename = this.fileService.buildSnapshotPath(
+				deployment.getSnapshot().getApplication().getId(), 
+				deployment.getSnapshot().getId());
+		return filename;
+	}
+	
+	@Transactional
+	public void endDeploymentWithErrors(long deploymentId, String serverKey) {
+		this.setStateToServer(deploymentId, serverKey, DeploymentState.FINISH_WITH_ERRORS);
 	}
 
-	public void setDeployer(AsyncDeployer deployer) {
-		this.deployer = deployer;
+	@Transactional
+	public void endDeploymentSuccessfully(long deploymentId, String serverKey) {
+		this.setStateToServer(deploymentId, serverKey, DeploymentState.FINISH_SUCCESSFULLY);
+	}
+
+	private void setStateToServer(long deploymentId, String serverKey, DeploymentState state) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		Server server = this.serverService.getServer(serverKey);
+		
+		DeploymentToServer toServer = deployment.getToServer(server.getId());
+		toServer.setState(state);
+		this.repository.save(toServer);		
+	}
+	
+	@Transactional
+	public List<Long> getPendingDeploymentIdsFor(long serverId) {
+		return this.repository.getPendingDeploymentIdsFor(serverId);
 	}
 }
