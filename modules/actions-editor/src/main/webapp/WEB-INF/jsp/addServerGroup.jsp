@@ -3,23 +3,15 @@
 </jsp:include>
 
 <body>
-  <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/teams/">Home</a></li>
-        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">App 1</a></li>
-          </ul></li>
-      </ul>
-    </div>
-  </nav>
+  <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
 
   <div class="container">
     <div class="row">
       <div class="col-lg-6">
         <ol class="breadcrumb">
-          <li><a href="#">Server Groups</a></li>
+          <li><a href="/teams/">Teams</a></li>
+          <li>${team.name}</li>
+          <li><a href="/teams/${team.id}/serverGroups/">Server Groups</a></li>
           <li class="active">Add server group</li>
         </ol>
       </div>

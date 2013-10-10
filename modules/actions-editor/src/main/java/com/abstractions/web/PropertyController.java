@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.abstractions.model.Property;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.PropertiesService;
+import com.abstractions.service.TeamService;
 
 @Controller
 public class PropertyController {
@@ -22,12 +23,17 @@ public class PropertyController {
         
 	@Autowired
 	PropertiesService service;
+        
+        @Autowired
+	TeamService teamService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/properties", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("properties");
 		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<Property> properties = this.service.getProperties(teamId, applicationId);
+                String teamName = this.teamService.getTeam(teamId).getName();
+		mv.addObject("teamName", teamName);
 		mv.addObject("properties", properties);
                 mv.addObject("applicationName", applicationName);
                 
@@ -43,6 +49,10 @@ public class PropertyController {
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/properties/add", method = RequestMethod.GET)
 	public ModelAndView add(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("addProperty");
+                String teamName = this.teamService.getTeam(teamId).getName();
+                String applicationName = this.applicationService.getApplication(applicationId).getName();
+		mv.addObject("teamName", teamName);
+                mv.addObject("applicationName", applicationName);
 		return mv;
 	}
 

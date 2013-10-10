@@ -13,9 +13,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.model.Deployment;
 import com.abstractions.model.Flow;
+import com.abstractions.model.Property;
+import com.abstractions.service.ApplicationService;
 import com.abstractions.service.DeploymentService;
 import com.abstractions.service.LibraryService;
+import com.abstractions.service.PropertiesService;
 import com.abstractions.service.ServerService;
+import com.abstractions.service.TeamService;
 
 @Controller
 public class DeploymentController {
@@ -28,19 +32,33 @@ public class DeploymentController {
 	
 	@Autowired
 	LibraryService libraryService;
+        
+        @Autowired
+	ApplicationService applicationService;
+        
+        @Autowired
+	TeamService teamService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("snapshotId") long snapshotId, @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("deployments");
 		List<Deployment> deployments = this.deploymentService.getDeployments(snapshotId);
+                String teamName = this.teamService.getTeam(teamId).getName();
+                String applicationName = this.applicationService.getApplication(applicationId).getName();
+		mv.addObject("teamName", teamName);
 		mv.addObject("deployments", deployments);
+                mv.addObject("applicationName", applicationName);
 		return mv;
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments/add", method = RequestMethod.GET)
 	public ModelAndView addDeployment(@PathVariable("snapshotId") long snapshotId, @ModelAttribute("form") AddDeploymentForm form,  @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("addDeployment");
+                String teamName = this.teamService.getTeam(teamId).getName();
+                String applicationName = this.applicationService.getApplication(applicationId).getName();
+		mv.addObject("teamName", teamName);
 		mv.addObject("servers", this.serverService.getServers());
+                mv.addObject("applicationName", applicationName);
 		return mv;
 	}
 	

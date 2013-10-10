@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.SnapshotService;
+import com.abstractions.service.TeamService;
 
 @Controller
 public class ApplicationSnapshotController {
@@ -22,11 +23,16 @@ public class ApplicationSnapshotController {
         @Autowired
 	ApplicationService applicationService;
         
+        @Autowired
+	TeamService teamService;
+        
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("snapshots");
 		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<ApplicationSnapshot> snapshots = this.service.getSnapshots(applicationId);
+                String teamName = this.teamService.getTeam(teamId).getName();
+		mv.addObject("teamName", teamName);
 		mv.addObject("snapshots", snapshots);
 		mv.addObject("teamId", teamId);
 		mv.addObject("applicationId", applicationId);
