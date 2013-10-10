@@ -9,14 +9,14 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
       <ol class="breadcrumb">
         <li><a href="#">Teams</a></li>
       </ol>
     </div>
-      <div class="col-lg-6" style="text-align:right;">
-<a href="add" class="btn btn-primary">Add</a>
-<a href="button" class="btn btn-danger">Delete</a>
+    <div class="col-lg-12" style="text-align:right;">
+        <a href="add" class="btn btn-primary">Add</a>
+        <a href="button" class="btn btn-danger">Delete</a>
     </div>
     </div>
     

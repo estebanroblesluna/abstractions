@@ -7,7 +7,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
         <ol class="breadcrumb">
           <li><a href="/teams/">Teams</a></li>
           <li class="active">${team.name}</li>
