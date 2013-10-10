@@ -34,7 +34,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
         <ol class="breadcrumb">
           <li><a href="/teams/">Teams</a></li>
           <li>${teamName}</li>
@@ -44,7 +44,7 @@
           
         </ol>
        
-      <div class="col-lg-2" >
+      <div class="col-lg-12" >
           <label>Show properties with environment:</label>
           <form class="form-horizontal" role="form">
             <select class="form-control" onchange="filterEnvironment();" id="select-environment">
@@ -59,7 +59,7 @@
       </div>    
       <br/>    
       </div>
-      <div class="col-lg-6" style="text-align: right;">       
+      <div class="col-lg-12" style="text-align: right;">       
         <a href="add" class="btn btn-primary">Add</a> <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
       </div>
     </div>
