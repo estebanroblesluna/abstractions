@@ -1,5 +1,6 @@
 package com.abstractions.service;
 
+import com.abstractions.model.Environment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,10 @@ public class ServerGroupService {
 	}
 
 	@Transactional
-	public void addServerGroup(long teamId, String name) {
+	public void addServerGroup(long teamId, String name, Environment environment) {
 		Team team = this.teamService.getTeam(teamId);
 		ServerGroup server = new ServerGroup(name, team);
+                server.setEnvironment(environment);
 
 		team.addServerGroup(server);
 		this.repository.save(server);
@@ -49,6 +51,7 @@ public class ServerGroupService {
 		return serverGroups;
 	}
 
+    @Transactional
 	public ServerGroup getServerGroup(long serverGroupId) {
 		return this.repository.get(ServerGroup.class, serverGroupId);
 	}

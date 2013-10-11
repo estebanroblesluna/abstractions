@@ -203,7 +203,7 @@
           var message = $.parseJSON(response.responseBody);
           
           if ([message.interpreterId != nil]) {
-          	[self processDebugMessage: message];
+          	  [self processDebugMessage: message];
           } else {
 	          [self receiveMessage: message];
           }
@@ -214,8 +214,6 @@
       };
   
       var subSocket = socket.subscribe(request);
-  
-      //subSocket.push(JSON.stringify({ author: author, message: msg }));
 }
 
 - (void) processDebugMessage: (id) message

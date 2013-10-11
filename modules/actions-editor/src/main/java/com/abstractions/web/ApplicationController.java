@@ -29,13 +29,19 @@ public class ApplicationController {
 
 		List<Application> apps = this.service.getApplicationsOf(teamId);
 		mv.addObject("applications", apps);
+                String teamName = this.teamService.getTeam(teamId).getName();
+		mv.addObject("teamName", teamName);
 
 		return mv; 
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/add", method = RequestMethod.GET)
-	public ModelAndView addContact() {
-		return new ModelAndView("addApplication");
+	public ModelAndView addContact(@PathVariable("teamId") long teamId) {
+                ModelAndView mv = new ModelAndView("addApplication");
+                String teamName = this.teamService.getTeam(teamId).getName();
+		mv.addObject("teamName", teamName);
+
+		return mv;
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/add", method = RequestMethod.POST)

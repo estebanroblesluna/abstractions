@@ -66,15 +66,9 @@
     <constructor-arg index="2" ref="userService" />
     <constructor-arg index="3" ref="serverService" />
     <constructor-arg index="4" ref="fileService" />
-    <property name="deployer" ref="asyncDeployer" />
   </bean>
 
   <bean id="fileService" class="com.service.core.FileService">
     <constructor-arg index="0" value="./files" />
   </bean>
-
-  <bean id="asyncDeployer" class="com.abstractions.service.AsyncDeployer">
-    <constructor-arg index="0" ref="deploymentService" />
-  </bean>
-
 </beans>
