@@ -15,4 +15,4 @@ mysql -u root < $BASEDIR/migration/0.1/add-server-fields.sql
 mysql -u root < $BASEDIR/migration/0.1/add-sample-server.sql
 mysql -u root < $BASEDIR/migration/0.1/update-icons-2.sql
 
-mysql -u root < $BASEDIR/migration/0.2/resource-based-dust-renderer.sql
+mysql -u root < $BASEDIR/migration/0.1/resource-based-dust-renderer.sql
