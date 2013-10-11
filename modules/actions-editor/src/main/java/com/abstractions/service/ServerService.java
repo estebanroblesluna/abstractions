@@ -1,6 +1,7 @@
 package com.abstractions.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
@@ -53,7 +54,23 @@ public class ServerService {
 		return this.repository.get(Server.class, "name");
 	}
 
+	@Transactional
 	public Server getServer(long serverId) {
 		return this.repository.get(Server.class, serverId);
+	}
+
+	@Transactional
+	public void updateServerStatusWithKey(String serverKey) {
+		Server server = this.getServer(serverKey);
+		if (server != null) {
+			server.setLastUpdate(new Date());
+			this.repository.save(server);
+		}
+	}
+
+	@Transactional
+	public Server getServer(String serverKey) {
+		Server server = this.repository.findBy(Server.class, "key", serverKey);
+		return server;
 	}
 }

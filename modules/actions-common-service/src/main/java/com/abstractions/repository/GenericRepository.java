@@ -1,5 +1,6 @@
 package com.abstractions.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -8,6 +9,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Repository;
+
+import com.abstractions.model.Server;
 
 @Repository
 public class GenericRepository {
@@ -21,6 +24,7 @@ public class GenericRepository {
 		
 		this.sessionFactory = sessionFactory;
 	}
+        
 
 	public void save(Object object) {
 		this.sessionFactory.getCurrentSession().save(object);
@@ -48,11 +52,40 @@ public class GenericRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> List<T> get(Class<T> theClass, String assocProperty, long applicationSnapshotId) {
+	public <T> List<T> get(Class<T> theClass, String assocProperty, long anID) {
 		return (List<T>) this.sessionFactory.getCurrentSession()
 			.createCriteria(theClass)
 			.createAlias(assocProperty, "a")
-			.add(Restrictions.eq("a.id", applicationSnapshotId))
+			.add(Restrictions.eq("a.id", anID))
 			.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T findBy(Class<Server> theClass, String property, Object value) {
+		return (T) this.sessionFactory.getCurrentSession()
+			.createCriteria(theClass)
+			.add(Restrictions.eq(property, value))
+			.uniqueResult();
+	}
+
+	@SuppressWarnings("rawtypes")
+	public List<Long> getPendingDeploymentIdsFor(long serverId) {
+		List<Long> result = new ArrayList<Long>();
+		
+		List queryResults =  this.sessionFactory.getCurrentSession()
+			.createSQLQuery("SELECT deployment_id FROM deployment_to_server WHERE server_id = ? AND deployment_state = ?")
+			.setLong(0, serverId)
+			.setString(1, "PENDING")
+			.list();
+		
+		for (Object o : queryResults) {
+			if (o instanceof Object[]) {
+				result.add((Long) ((Object[]) o)[0]);
+			} else {
+				result.add(Long.valueOf(o.toString()));
+			}
+		}
+		
+		return result;
 	}
 }

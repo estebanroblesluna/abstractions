@@ -1,12 +1,6 @@
 <jsp:include page="/WEB-INF/jsp/templateEditorHeader.jsp" />
 <body>
-  <nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Dust Editor</a></li>
-      </ul>
-    </div>
-  </nav>
+  <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
 
   <div class="container">
     <div id="alerts"></div>

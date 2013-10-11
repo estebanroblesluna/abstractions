@@ -30,9 +30,9 @@ public class PropertiesService {
 	}
 	
 	@Transactional
-	public void addProperty(long applicationId, String name, String value) {
+	public void addProperty(long applicationId, String name, String value, Environment environment) {
 		Application application = this.applicationService.getApplication(applicationId);
-		Property property = new Property(name, value, Environment.DEV);
+		Property property = new Property(name, value, environment);
 		
 		application.addProperty(property);
 		this.repository.save(property);

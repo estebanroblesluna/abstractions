@@ -19,8 +19,10 @@ import com.abstractions.model.ElementDefinitionType;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
+import com.abstractions.service.ApplicationService;
 import com.abstractions.service.FlowService;
 import com.abstractions.service.LibraryService;
+import com.abstractions.service.TeamService;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.ObjectDefinition;
@@ -38,13 +40,21 @@ public class FlowController {
 	@Autowired
 	LibraryService libraryService;
 
+        @Autowired
+	ApplicationService applicationService;
+        
+        @Autowired
+	TeamService teamService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("flows");
-		
+		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<Flow> flows = this.service.getFlows(teamId, applicationId);
+                String teamName = this.teamService.getTeam(teamId).getName();
+		mv.addObject("teamName", teamName);
 		mv.addObject("flows", flows);
+                mv.addObject("applicationName", applicationName);
 
 		return mv;
 	}
@@ -52,6 +62,10 @@ public class FlowController {
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/add", method = RequestMethod.GET)
 	public ModelAndView add(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("addFlow");
+                String applicationName = this.applicationService.getApplication(applicationId).getName();
+                String teamName = this.teamService.getTeam(teamId).getName();
+                mv.addObject("applicationName", applicationName);
+                mv.addObject("teamName", teamName);
 		mv.addObject("teamId", teamId);
 		mv.addObject("applicationId", applicationId);
 		mv.addObject("libraries", getLibraries(libraryService));
@@ -215,6 +229,10 @@ public class FlowController {
 		ModelAndView mv = new ModelAndView("editFlow");
 		
 		Flow flow = this.service.loadFlow(teamId, applicationId, flowId);
+                String applicationName = this.applicationService.getApplication(applicationId).getName();
+                String teamName = this.teamService.getTeam(teamId).getName();
+                mv.addObject("applicationName", applicationName);
+                mv.addObject("teamName", teamName);
 		mv.addObject("flow", flow);
 		mv.addObject("libraries", getLibraries(libraryService));
 		

@@ -1,7 +1,6 @@
 package com.abstractions.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
@@ -12,27 +11,24 @@ public class Deployment {
 
 	private User triggerBy;
 	private ApplicationSnapshot snapshot;
-	private List<Server> servers;
-	private DeploymentState state;
+	private List<DeploymentToServer> toServers;
 	
-	protected Deployment() {
-		this.state = DeploymentState.PENDING;
-	}
+	public Deployment() { }
 
 	public Deployment(ApplicationSnapshot snapshot, User user) {
-		this();
 		Validate.notNull(snapshot);
 		Validate.notNull(user);
 		
 		this.snapshot = snapshot;
 		this.triggerBy = user;
-		this.servers = new ArrayList<Server>();
+		this.toServers = new ArrayList<DeploymentToServer>();
 	}
 	
 	public void addServer(Server server) {
 		Validate.notNull(server);
 
-		this.servers.add(server);
+		DeploymentToServer toServer = new DeploymentToServer(this, server);
+		this.toServers.add(toServer);
 	}
 
 	public ApplicationSnapshot getSnapshot() {
@@ -40,7 +36,11 @@ public class Deployment {
 	}
 
 	public List<Server> getServers() {
-		return Collections.unmodifiableList(this.servers);
+		List<Server> servers = new ArrayList<Server>();
+		for (DeploymentToServer toServer : this.toServers) {
+			servers.add(toServer.getServer());
+		}
+		return servers;
 	}
 
 	public User getTriggerBy() {
@@ -62,11 +62,12 @@ public class Deployment {
 		return list;
 	}
 
-	public DeploymentState getState() {
-		return state;
-	}
-
-	public void setState(DeploymentState state) {
-		this.state = state;
+	public DeploymentToServer getToServer(long id) {
+		for (DeploymentToServer toServer : this.toServers) {
+			if (toServer.getServer().getId() == id) {
+				return toServer;
+			}
+		}
+		return null;
 	}
 }
