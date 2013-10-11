@@ -1,9 +1,15 @@
 package com.modules.dust;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.core.api.Expression;
 import com.core.api.Message;
@@ -17,7 +23,12 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	/**
 	 * Path to get the template
 	 */
-	private String templatePath;
+	private String templateList;
+	
+	/**
+	 * Path to put the compiled template
+	 */
+	private String compiledTemplatePath;
 	
 	/**
 	 * The data to be passed into the template
@@ -32,41 +43,55 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	private FileService fileService;
 	
 	private final AtomicBoolean dirty;
+
+	private String name;
+	
+	private static Log log = LogFactory.getLog(ResourceBasedDustRendererProcessor.class);
 	
 	public ResourceBasedDustRendererProcessor() {
 		this.dirty = new AtomicBoolean(false);
+		this.name = IdGenerator.getNewId();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Message process(Message message) {
-		/*
-		String compiledTemplate = this.getConnector().getCompiledTemplate(this.name);
-		
-		if (compiledTemplate == null || this.dirty.get()) {
-			String templateAsString = ExpressionUtils.evaluateNoFail(template, message, "");
-			this.getConnector().putTemplate(name, templateAsString);
-			compiledTemplate = this.getConnector().getCompiledTemplate(this.name);
-			
-			this.dirty.set(false);
-		}
-		*/
-		
+	public Message process(Message message) {	
 		String compiledTemplate = null;
+		String lastTemplateName = this.getTemplates().isEmpty() ? this.name : this.getTemplateNameFromPath(this.getTemplates().get(this.getTemplates().size() - 1));
 		try {
-			compiledTemplate = IOUtils.toString(this.getFileService().getContentsOfFile("2", this.templatePath));
+			InputStream compiledTemplateInputStream = this.getFileService().getContentsOfFile("2", this.compiledTemplatePath);
+			if (compiledTemplateInputStream != null) {
+				compiledTemplate = IOUtils.toString(compiledTemplateInputStream);
+			}
+			if (compiledTemplate == null || this.dirty.get()) {
+				compiledTemplate = "";
+				for (String templatePath : this.getTemplates()) {
+					String template = IOUtils.toString(this.getFileService().getContentsOfFile("2", templatePath));
+					String templateName = this.getTemplateNameFromPath(templatePath);
+					this.getConnector().putTemplate(templateName, template);
+					if (!compiledTemplate.isEmpty()){
+						compiledTemplate += ";";
+					}
+					compiledTemplate += this.getConnector().getCompiledTemplate(templateName);
+				}
+				this.dirty.set(false);
+				this.getFileService().storeFile("2", this.compiledTemplatePath, new ByteArrayInputStream(compiledTemplate.getBytes()));
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Error reading template", e);
 		}
-		if (compiledTemplate != null) {
+		if (compiledTemplate != null && this.getTemplates().size() == 1) {
 			String json = ExpressionUtils.evaluateNoFail(this.jsonData, message, "{}");
-			String result = this.evaluate(this.templatePath, compiledTemplate, json);
+			String result = this.evaluate(lastTemplateName, compiledTemplate, json);
 			message.setPayload(result);
 		}
-		
 		return message;
+	}
+
+	private String getTemplateNameFromPath(String templatePath) {
+		return templatePath.replace("/", "_").split("\\.")[0];
 	}
 
 	private String evaluate(String name, String compiledTemplate, String json) {
@@ -111,11 +136,23 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 		this.fileService = fileService;
 	}
 
-	public String getTemplatePath() {
-		return templatePath;
+	public String getTemplateList() {
+		return templateList;
 	}
 
-	public void setTemplatePath(String templateName) {
-		this.templatePath = templateName;
+	public void setTemplateList(String templateName) {
+		this.templateList = templateName;
+	}
+	
+	private List<String> getTemplates() {
+		return Arrays.asList(this.templateList.split(";"));
+	}
+
+	public String getCompiledTemplatePath() {
+		return compiledTemplatePath;
+	}
+
+	public void setCompiledTemplatePath(String compiledTemplatePath) {
+		this.compiledTemplatePath = compiledTemplatePath;
 	}
 }
