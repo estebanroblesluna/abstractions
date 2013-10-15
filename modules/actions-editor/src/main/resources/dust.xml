@@ -12,7 +12,7 @@
       <bean class="com.modules.dust.DustConnector" />
     </constructor-arg>
   </bean>
-
+<!-- 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">
     <constructor-arg index="0" ref="keyValueStore" />
   </bean>
@@ -21,5 +21,5 @@
     <constructor-arg index="0" value="${dust.jdbc.url}" />
     <constructor-arg index="1" value="${dust.jdbc.driver}" />
   </bean>
-
+ -->
 </beans>
