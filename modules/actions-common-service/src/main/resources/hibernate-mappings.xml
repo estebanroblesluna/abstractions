@@ -64,21 +64,25 @@
 
     <many-to-one name="triggerBy" column="trigger_by_user_id" access="field" />
     <many-to-one name="snapshot" column="application_snapshot_id" access="field" />
-
+    <bag name="toServers" lazy="false" cascade="all">
+      <key column="deployment_id" />
+      <one-to-many class="com.abstractions.model.DeploymentToServer" />
+    </bag>
+  </class>
+  
+  <class name="com.abstractions.model.DeploymentToServer" table="deployment_to_server">
+    <id name="id" type="long" column="deployment_to_server_id" access="field">
+      <generator class="native" />
+    </id>
+    
+    <property name="lastUpdate" column="last_update" />
+    <many-to-one name="deployment" column="deployment_id" />
+    <many-to-one name="server" column="server_id" />
     <property name="state" column="deployment_state">
        <type name="com.abstractions.repository.GenericEnumUserType">
         <param name="enumClass">com.abstractions.model.DeploymentState</param>
        </type>
     </property>
-
-    <bag name="servers" table="deployment_server" lazy="true" fetch="select">
-      <key>
-        <column name="deployment_id" not-null="true" />
-      </key>
-      <many-to-many entity-name="com.abstractions.model.Server">
-        <column name="server_id" not-null="true" />
-      </many-to-many>
-    </bag>
   </class>
 
   <class name="com.abstractions.model.Property" table="property">

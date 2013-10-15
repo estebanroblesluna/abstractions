@@ -62,7 +62,6 @@ CREATE TABLE `deployment` (
   `trigger_by_user_id` bigint(20) DEFAULT NULL,
   `application_snapshot_id` bigint(20) DEFAULT NULL,
   `application_id` bigint(20) DEFAULT NULL,
-  `deployment_state` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`deployment_id`),
   KEY `FK_6r71apk88qrvikactmjollkhu` (`trigger_by_user_id`),
   KEY `FK_l28mht8yc24ch5p7e1red2ony` (`application_snapshot_id`),
@@ -103,6 +102,21 @@ CREATE TABLE `server` (
   CONSTRAINT `FK_pqtufjlc2ppjsc9rnt5qade2u` FOREIGN KEY (`server_group_id`) REFERENCES `server_group` (`server_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+DROP TABLE IF EXISTS  `actions`.`deployment_to_server`;
+CREATE TABLE `actions`.`deployment_to_server` (
+  `deployment_to_server_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `last_update` TIMESTAMP NULL, 
+  `deployment_state` varchar(50) DEFAULT NULL,
+  `server_id` bigint(20) NOT NULL,
+  `deployment_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`deployment_to_server_id`),
+  KEY `FK_6r71apk88qrvhkactmjollkhu` (`server_id`),
+  KEY `FK_l28mht8yc24cj5p7e1red2ony` (`deployment_id`),
+  CONSTRAINT `FK_6r71apk88qrvhkactmjollkhu` FOREIGN KEY (`server_id`) REFERENCES `server` (`server_id`),
+  CONSTRAINT `FK_l28mht8yc24cj5p7e1red2ony` FOREIGN KEY (`deployment_id`) REFERENCES `deployment` (`deployment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 DROP TABLE IF EXISTS `property`;
@@ -236,9 +250,3 @@ CREATE TABLE element_property_definition (
   primary key (property_definition_id),
   CONSTRAINT `FK_auwamlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
-
-DROP TABLE IF EXISTS  `actions`.`deployment_server`;
-CREATE TABLE `actions`.`deployment_server` (
-  `deployment_id` INT NOT NULL,
-  `server_id` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`deployment_id`, `server_id`));
