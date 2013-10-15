@@ -18,6 +18,7 @@
   <properties>
     <webappName>editor</webappName>
     <jetty.port>9091</jetty.port>
+    <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
   </properties>
 
   <dependencies>

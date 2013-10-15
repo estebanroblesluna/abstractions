@@ -29,4 +29,24 @@ public class LibraryService {
 	public void add(Library library) {
 		this.repository.save(library);
 	}
+        
+        @Transactional
+        public Library get(long id){
+            return this.repository.get(Library.class, id);
+        }
+        
+        @Transactional
+        public List<Library> getLibraries(){
+            return this.repository.get(Library.class, "displayName");
+        }
+        
+//        @Transactional
+//        public void update(Library library){
+//            
+//        }
+        
+        @Transactional
+        public void remove(long id){
+            this.repository.delete(Library.class, id);
+        }
 }
