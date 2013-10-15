@@ -13,5 +13,14 @@ public interface InterpreterDelegate {
 
 	void finishInterpretation(String interpreterId, String threadId, String contextId, Message currentMessage);
 
-	void uncaughtException(String interpreterId, String threadId, String contextId, ObjectDefinition currentProcessor, Message currentMessage, Exception e);
+	/**
+     *
+     * @param interpreterId
+     * @param threadId
+     * @param contextId
+     * @param currentProcessor
+     * @param currentMessage
+     * @param e
+     */
+    void uncaughtException(String interpreterId, String threadId, String contextId, ObjectDefinition currentProcessor, Message currentMessage, Exception e);
 }

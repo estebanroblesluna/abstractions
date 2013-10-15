@@ -6,7 +6,7 @@ public class AddPropertyForm {
 
 	private String name;
 	private String value;
-    private Environment environment;
+        private Environment environment;
         
 	public String getName() {
 		return name;

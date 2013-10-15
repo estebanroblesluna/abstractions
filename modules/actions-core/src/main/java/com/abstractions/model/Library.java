@@ -13,7 +13,7 @@ import com.service.core.NamesMapping;
 
 public class Library {
 
-	long id;
+	private long id;
 	private String name;
 	private String displayName;
 
@@ -110,5 +110,13 @@ public class Library {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+        
+        public long getId() {
+                return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }
