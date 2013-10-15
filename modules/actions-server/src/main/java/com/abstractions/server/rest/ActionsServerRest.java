@@ -1,10 +1,8 @@
 package com.abstractions.server.rest;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -12,7 +10,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.logging.Log;
@@ -24,34 +21,16 @@ import org.jsoup.nodes.Attribute;
 import com.abstractions.server.core.ActionsServer;
 import com.abstractions.server.core.ProfilingInfo;
 import com.abstractions.service.rest.ResponseUtils;
-import com.sun.jersey.multipart.FormDataParam;
 
 @Path("server")
 public class ActionsServerRest {
 
 	private static final Log log = LogFactory.getLog(ActionsServerRest.class);
 	
-	ActionsServer server;
+	private ActionsServer server;
 	
 	public ActionsServerRest(ActionsServer server) {
 		this.server = server;
-	}
-	
-	@Path("/{applicationId}/start")
-	@POST
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response start(
-			@PathParam("applicationId") String applicationId,
-			@FormDataParam("applicationZip") InputStream uploadedApplicationIS) {
-		this.server.start(applicationId, uploadedApplicationIS);
-		return ResponseUtils.ok();
-	}
-	
-	@Path("/{contextId}/stop")
-	@POST
-	public Response stop(@PathParam("contextId") String contextId) {
-		this.server.stop(contextId);
-		return ResponseUtils.ok();
 	}
 	
 	@Path("/{contextId}/running")

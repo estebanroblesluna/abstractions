@@ -1,4 +1,4 @@
-package com.abstractions.service;
+package com.service.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -120,7 +120,7 @@ public class FileService {
 	
 	public InputStream getContentsOfSnapshot(String applicationId, String snapshotId) {
 		try {
-			return new FileInputStream(this.buildSnapshotPath(applicationId, snapshotId));
+			return new FileInputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -129,11 +129,11 @@ public class FileService {
 	
 	public OutputStream getSnapshotOutputStream(String applicationId, String snapshotId) {
 		try {
-			File snapshotsDirectory = new File(this.buildSnapshotPath(applicationId, null));
+			File snapshotsDirectory = new File(this.buildSnapshotPath(Long.parseLong(applicationId), null));
 			if (!snapshotsDirectory.exists()) {
 				snapshotsDirectory.mkdirs();
 			}
-			return new FileOutputStream(this.buildSnapshotPath(applicationId, snapshotId));
+			return new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -141,10 +141,6 @@ public class FileService {
 	}
 
 	public String buildSnapshotPath(Long applicationId, Long snapshotId) {
-		return this.buildSnapshotPath(applicationId.toString(), snapshotId.toString());
-	}
-	
-	public String buildSnapshotPath(String applicationId, String snapshotId) {
 		if (snapshotId == null) {
 			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY;
 		} else {
@@ -154,7 +150,7 @@ public class FileService {
 	
 	public void storeSnapshot(String applicationId, String snapshotId, InputStream content) {
 		try {
-			IOUtils.copy(content, new FileOutputStream(this.buildSnapshotPath(applicationId, snapshotId)));
+			IOUtils.copy(content, new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId))));
 		} catch (Exception e) {
 			log.error("Error storing snapshot", e);
 		}

@@ -28,6 +28,7 @@
     <constructor-arg ref="httpStrategy" />
     <constructor-arg value="${server.editor.url}" />
     <constructor-arg value="${server.key}" />
+    <constructor-arg ref="actionsServer" />
   </bean>
   
   <bean id="actionsServer" class="com.abstractions.server.core.ActionsServer">
@@ -36,7 +37,7 @@
   </bean>
 
   <task:scheduled-tasks scheduler="myScheduler">
-      <task:scheduled ref="editorService" method="ping" fixed-delay="60000"/>
+      <task:scheduled ref="editorService" method="ping" fixed-delay="1000"/>
   </task:scheduled-tasks>
   
   <task:scheduler id="myScheduler" pool-size="10"/>
