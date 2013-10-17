@@ -22,5 +22,10 @@ public abstract class HttpRequest {
 		return this.strategy.execute(request);
 	}
 
+	public void executeAndClose() throws ClientProtocolException, IOException {
+		HttpResponse response = this.execute();
+		this.strategy.close(response);
+	}
+
 	protected abstract HttpUriRequest buildRequest() throws UnsupportedEncodingException;
 }

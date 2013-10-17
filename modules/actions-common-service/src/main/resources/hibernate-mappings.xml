@@ -124,7 +124,23 @@
     </bag>
   </class>
 
-
+  <class name="com.abstractions.model.ServerStats" table="server_stats">
+    <id name="id" type="long" column="server_stats_id">
+      <generator class="native" />
+    </id>
+    
+    <many-to-one name="server" column="server_id" />
+    <property name="contextId" column="context_id" type="string" />
+    <property name="date" />
+    <property name="uncaughtExceptions" column="uncaught_exceptions" />
+    
+    <map name="receivedMessages" table="server_stats_received_messages" lazy="false">
+      <key column="server_stats_id" />
+      <map-key column="message_source" type="string" />
+      <element column="messages_received" type="long" />
+    </map>
+  </class>
+  
   <class name="com.abstractions.model.Team" table="team">
     <id name="id" type="long" column="team_id" access="field">
       <generator class="native" />

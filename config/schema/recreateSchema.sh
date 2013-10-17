@@ -13,5 +13,5 @@ mysql -u root < $BASEDIR/migration/0.1/amazon-sample.sql
 mysql -u root < $BASEDIR/migration/0.1/add-server-fields.sql
 mysql -u root < $BASEDIR/migration/0.1/add-sample-server.sql
 mysql -u root < $BASEDIR/migration/0.1/update-icons-2.sql
-
+mysql -u root < $BASEDIR/migration/0.1/add-server-stats.sql
 

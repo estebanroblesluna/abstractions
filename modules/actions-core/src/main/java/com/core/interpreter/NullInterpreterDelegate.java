@@ -33,4 +33,10 @@ public class NullInterpreterDelegate implements InterpreterDelegate {
 			String contextId, ObjectDefinition currentProcessor,
 			Message currentMessage, Exception e) {
 	}
+
+	@Override
+	public void startInterpreting(String interpreterId, String threadId,
+			String contextId, ObjectDefinition currentProcessor,
+			Message currentMessage) {
+	}
 }

@@ -362,4 +362,11 @@ public class InterpreterRESTService implements InterpreterDelegate {
 			broadcaster.broadcast(json.toString());
 		}
 	}
+
+	@Override
+	public void startInterpreting(String interpreterId, String threadId,
+			String contextId, ObjectDefinition currentProcessor,
+			Message currentMessage) {
+		// DO NOTHING
+	}
 }
