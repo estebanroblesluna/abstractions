@@ -24,6 +24,7 @@ import com.core.api.Terminable;
 import com.core.impl.ConnectionType;
 import com.core.impl.ContextImpl;
 import com.core.interpreter.Interpreter;
+import com.core.interpreter.InterpreterDelegate;
 import com.core.messagesource.MessageSource;
 import com.core.messagesource.MessageSourceListener;
 import com.core.utils.IdGenerator;
@@ -38,6 +39,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	private volatile Map<String, ObjectDefinition> definitions;
 	private volatile Map<ObjectDefinition, ExecutorService> executorServices;
 	private final NamesMapping mapping;
+	private volatile InterpreterDelegate defaultInterpreterDelegate;
 
 	public ContextDefinition(NamesMapping mapping) {
 		this.id = IdGenerator.getNewId();
@@ -286,6 +288,9 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	public Message onMessageReceived(MessageSource messageSource, Message message) {
 		ObjectDefinition source = this.getNextInChainFor(messageSource.getId());
 		Interpreter interpreter = new Interpreter(this, source);
+		if (this.defaultInterpreterDelegate != null) {
+			interpreter.setDelegate(this.defaultInterpreterDelegate);
+		}
 		com.core.interpreter.Thread mainThread = interpreter.run(message);
 		Message response = mainThread.getCurrentMessage();
 		return response;
@@ -311,5 +316,13 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 
 	public NamesMapping getMapping() {
 		return mapping;
+	}
+
+	public InterpreterDelegate getDefaultInterpreterDelegate() {
+		return defaultInterpreterDelegate;
+	}
+
+	public void setDefaultInterpreterDelegate(InterpreterDelegate defaultInterpreterDelegate) {
+		this.defaultInterpreterDelegate = defaultInterpreterDelegate;
 	}
 }

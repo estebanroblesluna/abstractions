@@ -3,6 +3,7 @@ package com.abstractions.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Server;
 import com.abstractions.model.ServerGroup;
+import com.abstractions.model.ServerStats;
 import com.abstractions.repository.GenericRepository;
 
 @Service
@@ -72,5 +74,16 @@ public class ServerService {
 	public Server getServer(String serverKey) {
 		Server server = this.repository.findBy(Server.class, "key", serverKey);
 		return server;
+	}
+
+	@Transactional
+	public void updateStatistics(String serverKey, String contextId, Date date,
+			long uncaughtExceptions, Map<String, Long> receivedMessages) {
+
+		Server server = this.getServer(serverKey);
+		if (server != null) {
+			ServerStats stats = new ServerStats(server, contextId, date, uncaughtExceptions, receivedMessages);
+			this.repository.save(stats);
+		}
 	}
 }

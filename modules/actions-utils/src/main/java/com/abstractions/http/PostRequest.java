@@ -27,7 +27,7 @@ public class PostRequest extends HttpRequest {
 		return method;
 	}
 
-	public HttpRequest addFormParam(String key, String value) {
+	public PostRequest addFormParam(String key, String value) {
 		this.urlParameters.add(new BasicNameValuePair(key, value));
 		return this;
 	}

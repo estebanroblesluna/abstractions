@@ -42,6 +42,9 @@ public class Interpreter implements Identificable, ThreadObserver {
 	public Thread run(Message message) {
 		log.info("Running thread");
 		Thread thread = this.createThread(this.source, message);
+		
+		this.delegate.startInterpreting(this.id, thread.getId().toString(), this.context.getId(), this.source, message.clone());
+		
 		thread.run();
 		return thread;
 	}

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +38,7 @@ public class ActionsServer {
 	private final Map<String, List<PerformanceProcessor>> profilers;
 	private final Map<String, List<LogProcessorWrapper>> logs;
 	private final Map<String, LogProcessorWrapper> objectIdLogs;
+	private final Map<String, StatisticsInterpreterDelegate> statistics;
 	private final Map<Object, String> wrapperToObjectIdMapping;
 	
 	private final NamesMapping mapping;
@@ -55,6 +57,7 @@ public class ActionsServer {
 		this.profilers = new ConcurrentHashMap<String, List<PerformanceProcessor>>();
 		this.objectIdLogs = new ConcurrentHashMap<String, LogProcessorWrapper>();
 		this.logs = new ConcurrentHashMap<String, List<LogProcessorWrapper>>();
+		this.statistics = new ConcurrentHashMap<String, StatisticsInterpreterDelegate>();
 		this.wrapperToObjectIdMapping = new ConcurrentHashMap<Object, String>();
 		
 		this.startApplications();
@@ -82,6 +85,11 @@ public class ActionsServer {
 	private void start(String contextDefinition) {
 		try {
 			ContextDefinition definition = marshaller.unmarshall(contextDefinition);
+			StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();
+			definition.setDefaultInterpreterDelegate(statistics);
+			
+			this.statistics.put(definition.getId(), statistics);
+			
 			definition.sync();
 			definition.start();
 			
@@ -317,5 +325,15 @@ public class ActionsServer {
 		
 		transformation.transform(context);
 
+	}
+
+	public Map<String, StatisticsInfo> getStatistics() {
+		Map<String, StatisticsInfo> stats = new HashMap<String, StatisticsInfo>();
+		
+		for (Map.Entry<String, StatisticsInterpreterDelegate> entry : this.statistics.entrySet()) {
+			stats.put(entry.getKey(), entry.getValue().reset());
+		}
+		
+		return stats;
 	}
 }

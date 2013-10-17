@@ -2,6 +2,9 @@ package com.abstractions.http;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -11,9 +14,12 @@ import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 
 public class HttpStrategy {
 
+	private static final Log log = LogFactory.getLog(HttpStrategy.class);
+	
 	private volatile DefaultHttpClient client;
 	private volatile ThreadSafeClientConnManager connManager;
 	private volatile int connectionTimeout;
@@ -43,7 +49,22 @@ public class HttpStrategy {
 		this.client.getParams().setParameter(
 				ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 	}
+
+	public void close(HttpResponse response) {
+		if (response != null) {
+			this.close(response.getEntity());
+		}
+	}
 	
+	public void close(HttpEntity entity) {
+		if (entity != null) {
+			try {
+				EntityUtils.consume(entity);
+			} catch (IOException e) {
+				log.warn("Error consuming entity");
+			}
+		}
+	}
 	public HttpResponse execute(HttpUriRequest request) throws ClientProtocolException, IOException {
 		return this.client.execute(request);
 	}
