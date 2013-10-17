@@ -80,4 +80,3 @@ INSERT INTO `element_property_definition` (`property_definition_id`, `element_de
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (25,13,'name','Name','STRING','New log');
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (26,13,'logName','Log name','STRING','Log name');
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (27,13,'toLogExpression','String to be logged expression','EXPRESSION','exp');
-

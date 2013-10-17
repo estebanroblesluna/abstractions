@@ -24,7 +24,7 @@ import com.modules.dust.store.TemplateStore;
 @Path("/")
 public class DustService {
 	
-	@Autowired
+	//@Autowired
 	public TemplateStore templateStore;
 
 	@POST

@@ -33,6 +33,7 @@ import com.service.core.InterpreterHolder;
 import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
+
 @Path("/interpreter")
 public class InterpreterRESTService implements InterpreterDelegate {
 
@@ -270,7 +271,16 @@ public class InterpreterRESTService implements InterpreterDelegate {
 		});
 	}
 	
-	@Override
+	/**
+     *
+     * @param interpreterId
+     * @param threadId
+     * @param contextId
+     * @param currentProcessor
+     * @param currentMessage
+     * @param e
+     */
+    @Override
 	public void uncaughtException(final String interpreterId, final String threadId,
 			final String contextId, final ObjectDefinition currentProcessor,
 			final Message currentMessage, final Exception e) {

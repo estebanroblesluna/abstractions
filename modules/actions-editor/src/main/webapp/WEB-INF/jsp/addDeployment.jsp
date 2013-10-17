@@ -24,7 +24,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
         <ol class="breadcrumb">
           <li><a href="/teams/">Teams</a></li>
           <li>${teamName}</li>
@@ -61,7 +61,7 @@
           <input type="hidden" name="servers" value="" id="selectedServers" />
           
           <div class="form-group">
-            <div class="col-lg-offset-2 col-lg-10">
+            <div class="col-lg-offset-11 col-lg-10">
               <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
             </div>
           </div>
