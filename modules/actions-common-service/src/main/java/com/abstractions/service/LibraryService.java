@@ -39,12 +39,7 @@ public class LibraryService {
         public List<Library> getLibraries(){
             return this.repository.get(Library.class, "displayName");
         }
-        
-//        @Transactional
-//        public void update(Library library){
-//            
-//        }
-        
+       
         @Transactional
         public void remove(long id){
             this.repository.delete(Library.class, id);
