@@ -22,7 +22,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
         <ol class="breadcrumb">
           <li><a href="/teams/">Teams</a></li>
           <li>${teamName}</li>
@@ -31,7 +31,7 @@
           <li class="active">Flows</li>
         </ol>
       </div>
-      <div class="col-lg-6" style="text-align: right;">
+      <div class="col-lg-12" style="text-align: right;">
         <a href="add" class="btn btn-primary">Add</a> 
         <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
       </div>

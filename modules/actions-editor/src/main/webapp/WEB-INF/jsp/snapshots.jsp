@@ -9,7 +9,7 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
         <ol class="breadcrumb">
           <li><a href="/teams/">Teams</a></li>
           <li>${teamName}</li>
@@ -18,7 +18,7 @@
           <li class="active">Snapshots</li>
         </ol>
       </div>
-      <div class="col-lg-6" style="text-align: right;">
+      <div class="col-lg-12" style="text-align: right;">
         <a href="generate" class="btn btn-primary">Generate</a>
       </div>
     </div>
