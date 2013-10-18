@@ -3,6 +3,7 @@ package com.modules.dust;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -11,6 +12,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.common.expression.ScriptingExpression;
+import com.common.expression.ScriptingLanguage;
 import com.core.api.Expression;
 import com.core.api.Message;
 import com.core.api.Processor;
@@ -23,17 +26,17 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	/**
 	 * Path to get the template
 	 */
-	private String templateList;
+	private String bodyTemplatePath;
 	
 	/**
-	 * Path to put the compiled template
+	 * Template resource list
 	 */
-	private String compiledTemplatePath;
+	private String resourcesList;
 	
 	/**
-	 * The data to be passed into the template
+	 * Template rendering list formed by triples (templateId,destRenderingElementId,dataExpression) separated by ","
 	 */
-	private Expression jsonData;
+	private String templateRenderingList;
 	
 	/**
 	 * The holder of the templates
@@ -46,6 +49,8 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 
 	private String name;
 	
+	private String compiledMasterTemplate;
+	
 	private static Log log = LogFactory.getLog(ResourceBasedDustRendererProcessor.class);
 	
 	public ResourceBasedDustRendererProcessor() {
@@ -57,37 +62,76 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Message process(Message message) {	
-		String compiledTemplate = null;
-		String lastTemplateName = this.getTemplates().isEmpty() ? this.name : this.getTemplateNameFromPath(this.getTemplates().get(this.getTemplates().size() - 1));
+	public Message process(Message message) {
 		try {
-			InputStream compiledTemplateInputStream = this.getFileService().getContentsOfFile("2", this.compiledTemplatePath);
-			if (compiledTemplateInputStream != null) {
-				compiledTemplate = IOUtils.toString(compiledTemplateInputStream);
+			if (this.compiledMasterTemplate == null) {
+				String template = this.buildMasterTemplate(message);
+				this.getConnector().putTemplate(this.name, template);
+				compiledMasterTemplate = this.getConnector().getCompiledTemplate(this.name);
 			}
-			if (compiledTemplate == null || this.dirty.get()) {
-				compiledTemplate = "";
-				for (String templatePath : this.getTemplates()) {
-					String template = IOUtils.toString(this.getFileService().getContentsOfFile("2", templatePath));
-					String templateName = this.getTemplateNameFromPath(templatePath);
-					this.getConnector().putTemplate(templateName, template);
-					if (!compiledTemplate.isEmpty()){
-						compiledTemplate += ";";
-					}
-					compiledTemplate += this.getConnector().getCompiledTemplate(templateName);
-				}
-				this.dirty.set(false);
-				this.getFileService().storeFile("2", this.compiledTemplatePath, new ByteArrayInputStream(compiledTemplate.getBytes()));
+			if (this.compiledMasterTemplate != null) {
+				message.setPayload(this.evaluate(this.name, this.compiledMasterTemplate, "{\"cdn\":\"" + this.getCDNPath(message) + "\"}"));
 			}
 		} catch (IOException e) {
-			log.error("Error reading template", e);
-		}
-		if (compiledTemplate != null && this.getTemplates().size() == 1) {
-			String json = ExpressionUtils.evaluateNoFail(this.jsonData, message, "{}");
-			String result = this.evaluate(lastTemplateName, compiledTemplate, json);
-			message.setPayload(result);
+			this.log.error("Error compiling master template", e);
 		}
 		return message;
+	}
+
+	private String getCDNPath(Message message) {
+		return "http://localhost:8080/fileStore/2/files/";
+	}
+
+	private String getApplicationIdFromMessage(Message message) {
+		// TODO replace for real getter method
+		return "2";
+	}
+
+	private String buildMasterTemplate(Message message) throws IOException {
+		String head = "";
+		String body = IOUtils.toString(this.getFileService().getContentsOfFile(this.getApplicationIdFromMessage(message), this.getBodyTemplatePath()));
+		for (String resourcePath : this.getResources()) {
+			if (resourcePath.endsWith(".css")) {
+				head += "<link rel=\"stylesheet\" src=\"{cdn}" + resourcePath + "\" />";
+			} else if (resourcePath.endsWith(".js")) {
+				head += "<script type=\"text/javascript\" src=\"{cdn}" + resourcePath + "\"></script>";
+			}
+		}
+		head += "<script type=\"text/javascript\">";
+		head += "$(document).ready(function() {";
+		for (RenderingSpec spec : this.getRenderingList()) {
+			if (this.getIdDev()) {
+				this.ensureTemplateCompiled(spec.templatePath, message);
+			}
+			String json = ExpressionUtils.evaluateNoFail(spec.dataExpression, message, "{}");
+			head += "dust.render(\"" + this.getTemplateNameFromPath(spec.templatePath) + "\", " + json + ", "  +
+					"function(err, out) { $('#" + spec.renderingElementId + "').html(out)});";
+		}
+		head += "});";
+		head += "</script>";
+		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
+	}
+
+	private boolean getIdDev() {
+		// TODO return false if in PROD
+		return true;
+	}
+
+	private String ensureTemplateCompiled(String templatePath, Message message) throws IOException {
+		String destPath = templatePath.split("\\.")[0] + ".ctl";
+		InputStream compiledTemplateInputStream = this.getFileService().getContentsOfFile(this.getApplicationIdFromMessage(message), destPath);
+		String compiledTemplate = null;
+		if (compiledTemplateInputStream != null) {
+			compiledTemplate = IOUtils.toString(compiledTemplateInputStream);
+		}
+		if (compiledTemplate == null) {
+			String templateName = this.getTemplateNameFromPath(templatePath);
+			String template = IOUtils.toString(this.getFileService().getContentsOfFile(this.getApplicationIdFromMessage(message), templatePath));
+			this.getConnector().putTemplate(templateName, template);
+			compiledTemplate = this.getConnector().getCompiledTemplate(templateName);
+			this.getFileService().storeFile(this.getApplicationIdFromMessage(message), destPath, new ByteArrayInputStream(compiledTemplate.getBytes())); 
+		}
+		return compiledTemplate;
 	}
 
 	private String getTemplateNameFromPath(String templatePath) {
@@ -104,14 +148,6 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 				+ "result";
 		
 		return this.getConnector().evaluate(fullJavascript).toString();
-	}
-
-	public Expression getJsonData() {
-		return jsonData;
-	}
-
-	public void setJsonData(Expression jsonData) {
-		this.jsonData = jsonData;
 	}
 
 	public DustConnector getConnector() {
@@ -132,27 +168,68 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 		return this.fileService;
 	}
 
-	public void setFileService(FileService fileService) {
-		this.fileService = fileService;
+	public String getBodyTemplatePath() {
+		return bodyTemplatePath;
 	}
 
-	public String getTemplateList() {
-		return templateList;
+	public void setBodyTemplatePath(String masterTemplate) {
+		this.bodyTemplatePath = masterTemplate;
 	}
 
-	public void setTemplateList(String templateName) {
-		this.templateList = templateName;
+	public String getResourcesList() {
+		return resourcesList;
+	}
+
+	public void setResourcesList(String resourcesList) {
+		this.resourcesList = resourcesList;
+	}
+
+	public String getTemplateRenderingList() {
+		return templateRenderingList;
+	}
+
+	public void setTemplateRenderingList(String templateRenderingList) {
+		this.templateRenderingList = templateRenderingList;
 	}
 	
-	private List<String> getTemplates() {
-		return Arrays.asList(this.templateList.split(";"));
+	private List<String> getResources() {
+		return Arrays.asList(this.resourcesList.split(","));
 	}
+	
+	private List<RenderingSpec> getRenderingList() {
+		List<RenderingSpec> specs = new ArrayList<RenderingSpec>();
+		for (String templateRendering : templateRenderingList.split(";")) {
+			String[] parts = templateRendering.replaceAll("[\\(\\)]", "").split(",");
+			specs.add(new RenderingSpec(parts[0], parts[1], new ScriptingExpression(ScriptingLanguage.GROOVY, parts[2])));
+		}
+		return specs;
+	}
+	
+	private class RenderingSpec {
+		private String templatePath;
+		private String renderingElementId;
+		private Expression dataExpression;
+		
+		public RenderingSpec(String templatePath, String renderingElementId,
+				Expression dataExpression) {
+			super();
+			this.templatePath = templatePath;
+			this.renderingElementId = renderingElementId;
+			this.dataExpression = dataExpression;
+		}
 
-	public String getCompiledTemplatePath() {
-		return compiledTemplatePath;
-	}
+		public String getTemplatePath() {
+			return templatePath;
+		}
 
-	public void setCompiledTemplatePath(String compiledTemplatePath) {
-		this.compiledTemplatePath = compiledTemplatePath;
+		public String getRenderingElementId() {
+			return renderingElementId;
+		}
+
+		public Expression getDataExpression() {
+			return dataExpression;
+		}
+		
 	}
+	
 }
