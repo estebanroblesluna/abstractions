@@ -1,4 +1,4 @@
-package com.core.common;
+package com.abstractions.instance.common;
 
 import com.core.api.Message;
 import com.core.api.Processor;

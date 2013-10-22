@@ -1,4 +1,4 @@
-package com.core.meta;
+package com.abstractions.meta.example;
 
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;

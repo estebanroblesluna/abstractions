@@ -3,12 +3,12 @@ package com.service.core;
 import junit.framework.TestCase;
 
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.instance.common.NullProcessor;
+import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.core.api.Message;
-import com.core.common.NullProcessor;
 import com.core.impl.ConnectionType;
 import com.core.interpreter.Interpreter;
-import com.core.meta.Meta;
 
 public class ContextPerfTest extends TestCase {
 
