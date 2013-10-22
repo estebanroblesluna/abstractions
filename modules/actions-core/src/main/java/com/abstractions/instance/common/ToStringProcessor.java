@@ -1,4 +1,4 @@
-package com.core.common;
+package com.abstractions.instance.common;
 
 import java.io.IOException;
 import java.io.InputStream;

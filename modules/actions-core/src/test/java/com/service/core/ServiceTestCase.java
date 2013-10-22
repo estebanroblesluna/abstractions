@@ -3,11 +3,11 @@ package com.service.core;
 import junit.framework.TestCase;
 
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.instance.common.AddPropertyProcessor;
+import com.abstractions.instance.common.ToStringProcessor;
+import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.core.api.Context;
-import com.core.common.AddPropertyProcessor;
-import com.core.common.ToStringProcessor;
-import com.core.meta.Meta;
 
 public class ServiceTestCase extends TestCase {
 

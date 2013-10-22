@@ -2,8 +2,8 @@ package com.abstractions.service;
 
 import java.util.List;
 
+import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
-import com.core.meta.Meta;
 import com.service.core.NamesMapping;
 
 public class MappingInitializer {

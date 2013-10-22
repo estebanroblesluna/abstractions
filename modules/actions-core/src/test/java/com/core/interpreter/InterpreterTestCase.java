@@ -3,14 +3,14 @@ package com.core.interpreter;
 import junit.framework.TestCase;
 
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.instance.common.ListenerProcessor;
 import com.abstractions.meta.FlowDefinition;
+import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.common.expression.ScriptingLanguage;
 import com.core.api.Message;
-import com.core.common.ListenerProcessor;
 import com.core.composition.FlowEvaluator;
 import com.core.impl.ConnectionType;
-import com.core.meta.Meta;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;
