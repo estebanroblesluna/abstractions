@@ -11,13 +11,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Element;
 import com.core.api.Evaluable;
 import com.core.api.Message;
 import com.core.api.Processor;
 import com.core.impl.AllConnection;
 import com.service.core.ContextDefinition;
-import com.service.core.ObjectDefinition;
 
 public class Thread {
 
@@ -25,14 +25,14 @@ public class Thread {
 	
 	protected volatile AtomicBoolean hasNextProcessor;
 	protected volatile Message currentMessage;
-	protected volatile ObjectDefinition currentElement;
+	protected volatile ObjectClazz currentElement;
 	protected volatile Interpreter interpreter;
 	protected volatile Stack<ThreadContext> threadContexts;
 	private volatile List<ThreadObserver> observers;
 	
 	private final Long id;
 	
-	public Thread(Interpreter interpreter, ObjectDefinition source, Message message, Long id) {
+	public Thread(Interpreter interpreter, ObjectClazz source, Message message, Long id) {
 		this.currentElement = source;
 		this.hasNextProcessor = new AtomicBoolean(true);
 		this.interpreter = interpreter;
@@ -58,8 +58,8 @@ public class Thread {
 	}
 
 	protected void basicStep() {
-		ObjectDefinition definition = this.currentElement;
-		log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectDefinition.NAME)));
+		ObjectClazz definition = this.currentElement;
+		log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectClazz.NAME)));
 
 		Element element = this.getCurrentElement();
 
@@ -73,14 +73,14 @@ public class Thread {
 
 		this.hasNextProcessor.set(this.currentElement != null);
 
-		log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectDefinition.NAME))
+		log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty(ObjectClazz.NAME))
 				+ " HAS NEXT " + this.hasNextProcessor.get());
 	}
 	
 	protected void basicRun() {
 		try {
 			while (this.hasNext() && !this.stopOnCurrentElement()) {
-				ObjectDefinition currentDefinition = this.currentElement;
+				ObjectClazz currentDefinition = this.currentElement;
 				this.beforeStep(currentDefinition);
 				this.basicStep();
 				this.afterStep(currentDefinition);
@@ -90,7 +90,7 @@ public class Thread {
 				log.info(
 						"[Thread" + this.id + "] " 
 								+ "Stop on breakpoint in: " 
-								+ StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
+								+ StringUtils.defaultString(this.currentElement.getProperty(ObjectClazz.NAME)));
 				
 				this.interpreter.getDelegate().stopInBreakPoint(
 						this.interpreter.getId(), 
@@ -132,20 +132,20 @@ public class Thread {
 		}
 	}
 
-	protected void afterStep(ObjectDefinition currentDefinition) {
+	protected void afterStep(ObjectClazz currentDefinition) {
 	}
 
-	protected void beforeStep(ObjectDefinition currentDefinition) {
+	protected void beforeStep(ObjectClazz currentDefinition) {
 	}
 
 	protected boolean hasNext() {
 		return this.hasNextProcessor.get();
 	}
 
-	private ObjectDefinition computeNextInChainProcessor() {
-		log.info("[Thread" + this.id + "] " +"START Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME)));
+	private ObjectClazz computeNextInChainProcessor() {
+		log.info("[Thread" + this.id + "] " +"START Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectClazz.NAME)));
 
-		ObjectDefinition nextInChain = this.getContext().getNextInChainFor(this.currentElement);
+		ObjectClazz nextInChain = this.getContext().getNextInChainFor(this.currentElement);
 		while (nextInChain == null && !this.threadContexts.isEmpty()) {
 			log.info("[Thread" + this.id + "] " +"Seems that we need to pop up from the context stack");
 			//save the message to be overriden
@@ -163,8 +163,8 @@ public class Thread {
 			}
 		}
 
-		log.info("[Thread" + this.id + "] " +"END Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectDefinition.NAME))
-				+ " with result " + (nextInChain == null ? "null" : StringUtils.defaultString(nextInChain.getProperty(ObjectDefinition.NAME))));
+		log.info("[Thread" + this.id + "] " +"END Computing next processor of: " + StringUtils.defaultString(this.currentElement.getProperty(ObjectClazz.NAME))
+				+ " with result " + (nextInChain == null ? "null" : StringUtils.defaultString(nextInChain.getProperty(ObjectClazz.NAME))));
 
 		return nextInChain;
 	}
@@ -181,7 +181,7 @@ public class Thread {
 		return (Element) currentElement.getInstance();
 	}
 
-	public ObjectDefinition getCurrentObjectDefinition() {
+	public ObjectClazz getCurrentObjectDefinition() {
 		return currentElement;
 	}
 	
@@ -190,14 +190,14 @@ public class Thread {
 	}
 
 	void startSubthread(ExecutorService service, final Message newMessage, final Message storeResultMessage, 
-			final ObjectDefinition allConnectionDefinition, final CountDownLatch latch) {
+			final ObjectClazz allConnectionDefinition, final CountDownLatch latch) {
 		
 		service.execute(new Runnable() {
 			@Override
 			public void run() {
 				//get the target object definition
 				String urnTarget = allConnectionDefinition.getProperty("target");
-				ObjectDefinition targetDefinition = getContext().resolve(urnTarget);
+				ObjectClazz targetDefinition = getContext().resolve(urnTarget);
 				
 				//create the subthread starting from the target and with the copy of the message
 				final Thread subthread = createSubthread(targetDefinition, newMessage);
@@ -220,11 +220,11 @@ public class Thread {
 		});
 	}
 
-	ExecutorService getExecutorServiceFor(ObjectDefinition definition) {
+	ExecutorService getExecutorServiceFor(ObjectClazz definition) {
 		return this.interpreter.getExecutorServiceFor(definition);
 	}
 
-	protected Thread createSubthread(ObjectDefinition source, Message message) {
+	protected Thread createSubthread(ObjectClazz source, Message message) {
 		return this.interpreter.createThread(source, message);
 	}
 	
@@ -236,7 +236,7 @@ public class Thread {
 		this.currentElement = this.computeNextInChainProcessor();
 	}
 
-	public void setCurrentElement(ObjectDefinition element) {
+	public void setCurrentElement(ObjectClazz element) {
 		this.currentElement = element;
 	}
 	

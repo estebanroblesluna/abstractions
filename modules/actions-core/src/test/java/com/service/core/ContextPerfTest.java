@@ -2,6 +2,7 @@ package com.service.core;
 
 import junit.framework.TestCase;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.model.Library;
 import com.core.api.Message;
 import com.core.common.NullProcessor;
@@ -47,7 +48,7 @@ public class ContextPerfTest extends TestCase {
 		Message message = new Message();
 		message.setPayload(0l);
 		
-		ObjectDefinition source = context.getDefinition(startIdA);
+		ObjectClazz source = context.getDefinition(startIdA);
 		Interpreter interpreter = new Interpreter(context, source);
 		com.core.interpreter.Thread thread = interpreter.createThread(source, message);
 		
@@ -80,9 +81,9 @@ public class ContextPerfTest extends TestCase {
 	}
 
 	private void buildChain(long count, String elementName) {
-		ObjectDefinition source = null;
+		ObjectClazz source = null;
 		for (int i = 0; i < count; i++) {
-			ObjectDefinition definition = new ObjectDefinition(common.getDefinition(elementName));
+			ObjectClazz definition = new ObjectClazz(common.getDefinition(elementName));
 			
 			this.context.addDefinition(definition);
 			

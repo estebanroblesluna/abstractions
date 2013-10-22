@@ -2,6 +2,7 @@ package com.core.interpreter;
 
 import junit.framework.TestCase;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.FlowDefinition;
 import com.abstractions.model.Library;
 import com.common.expression.ScriptingLanguage;
@@ -12,7 +13,6 @@ import com.core.impl.ConnectionType;
 import com.core.meta.Meta;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
 public class InterpreterTestCase extends TestCase {
@@ -39,8 +39,8 @@ public class InterpreterTestCase extends TestCase {
 	
 	
 	public void testNextInChain() throws InterruptedException, ServiceException {
-		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
-		ObjectDefinition target = new ObjectDefinition(this.common.getDefinition("INC"));
+		ObjectClazz source = new ObjectClazz(this.common.getDefinition("INC"));
+		ObjectClazz target = new ObjectClazz(this.common.getDefinition("INC"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(target);
@@ -59,10 +59,10 @@ public class InterpreterTestCase extends TestCase {
 	}
 	
 	public void testChoiceRouter() throws ServiceException {
-		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
-		ObjectDefinition router = new ObjectDefinition(this.common.getDefinition("CHOICE"));
-		ObjectDefinition inc2 = new ObjectDefinition(this.common.getDefinition("INC2"));
-		ObjectDefinition inc3 = new ObjectDefinition(this.common.getDefinition("INC3"));
+		ObjectClazz source = new ObjectClazz(this.common.getDefinition("INC"));
+		ObjectClazz router = new ObjectClazz(this.common.getDefinition("CHOICE"));
+		ObjectClazz inc2 = new ObjectClazz(this.common.getDefinition("INC2"));
+		ObjectClazz inc3 = new ObjectClazz(this.common.getDefinition("INC3"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(router);
@@ -74,9 +74,9 @@ public class InterpreterTestCase extends TestCase {
 		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		
 		
-		ObjectDefinition inc2Connection = this.context.getDefinition(inc2ConnectionId);
+		ObjectClazz inc2Connection = this.context.getDefinition(inc2ConnectionId);
 		inc2Connection.setProperty("expression", "message.properties['val'] == 'aaa'");
-		ObjectDefinition inc3Connection = this.context.getDefinition(inc3ConnectionId);
+		ObjectClazz inc3Connection = this.context.getDefinition(inc3ConnectionId);
 		inc3Connection.setProperty("expression", "message.properties['val'] == 'bbb'");
 		
 		this.context.sync();
@@ -111,10 +111,10 @@ public class InterpreterTestCase extends TestCase {
 	}
 	
 	public void testAllRouter() throws ServiceException {
-		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
-		ObjectDefinition router = new ObjectDefinition(this.common.getDefinition("ALL"));
-		ObjectDefinition inc2 = new ObjectDefinition(this.common.getDefinition("INC2"));
-		ObjectDefinition inc3 = new ObjectDefinition(this.common.getDefinition("INC3"));
+		ObjectClazz source = new ObjectClazz(this.common.getDefinition("INC"));
+		ObjectClazz router = new ObjectClazz(this.common.getDefinition("ALL"));
+		ObjectClazz inc2 = new ObjectClazz(this.common.getDefinition("INC2"));
+		ObjectClazz inc3 = new ObjectClazz(this.common.getDefinition("INC3"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(router);
@@ -126,9 +126,9 @@ public class InterpreterTestCase extends TestCase {
 		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.ALL_CONNECTION).getId();
 		
 		
-		ObjectDefinition inc2Connection = this.context.getDefinition(inc2ConnectionId);
+		ObjectClazz inc2Connection = this.context.getDefinition(inc2ConnectionId);
 		inc2Connection.setProperty("targetExpression", "message.properties['inc2'] = result.payload");
-		ObjectDefinition inc3Connection = this.context.getDefinition(inc3ConnectionId);
+		ObjectClazz inc3Connection = this.context.getDefinition(inc3ConnectionId);
 		inc3Connection.setProperty("targetExpression", "message.properties['inc3'] = result.payload");
 		
 		this.context.sync();
@@ -145,10 +145,10 @@ public class InterpreterTestCase extends TestCase {
 	}
 
 	public void testWireTapRouter() throws ServiceException, InterruptedException {
-		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
-		ObjectDefinition router = new ObjectDefinition(this.common.getDefinition("WIRE_TAP"));
-		ObjectDefinition inc2 = new ObjectDefinition(this.common.getDefinition("INC2"));
-		ObjectDefinition listener = new ObjectDefinition(this.common.getDefinition("LISTENER"));
+		ObjectClazz source = new ObjectClazz(this.common.getDefinition("INC"));
+		ObjectClazz router = new ObjectClazz(this.common.getDefinition("WIRE_TAP"));
+		ObjectClazz inc2 = new ObjectClazz(this.common.getDefinition("INC2"));
+		ObjectClazz listener = new ObjectClazz(this.common.getDefinition("LISTENER"));
 
 		this.context.addDefinition(source);
 		this.context.addDefinition(router);
@@ -181,9 +181,9 @@ public class InterpreterTestCase extends TestCase {
 	public void testFlow() throws ServiceException {
 		FlowDefinition incBy2 = new FlowDefinition("INC_BY_2");
 
-		ObjectDefinition source = new ObjectDefinition(this.common.getDefinition("INC"));
-		ObjectDefinition target = new ObjectDefinition(this.common.getDefinition("INC"));
-		ObjectDefinition sourceTarget = this.context.createConnection(source, target, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz source = new ObjectClazz(this.common.getDefinition("INC"));
+		ObjectClazz target = new ObjectClazz(this.common.getDefinition("INC"));
+		ObjectClazz sourceTarget = this.context.createConnection(source, target, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
 		incBy2.addDefinition(source);
 		incBy2.addDefinition(target);
@@ -193,11 +193,11 @@ public class InterpreterTestCase extends TestCase {
 		
 		FlowDefinition incBy6 = new FlowDefinition("INC_BY_6");
 
-		ObjectDefinition by6_1 = new ObjectDefinition(incBy2);
-		ObjectDefinition by6_2 = new ObjectDefinition(incBy2);
-		ObjectDefinition by6_3 = new ObjectDefinition(incBy2);
-		ObjectDefinition by6_1_by6_2 = this.context.createConnection(by6_1, by6_2, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		ObjectDefinition by6_2_by6_3 = this.context.createConnection(by6_2, by6_3, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz by6_1 = new ObjectClazz(incBy2);
+		ObjectClazz by6_2 = new ObjectClazz(incBy2);
+		ObjectClazz by6_3 = new ObjectClazz(incBy2);
+		ObjectClazz by6_1_by6_2 = this.context.createConnection(by6_1, by6_2, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz by6_2_by6_3 = this.context.createConnection(by6_2, by6_3, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 
 		incBy6.addDefinition(by6_1);
 		incBy6.addDefinition(by6_2);
@@ -207,13 +207,13 @@ public class InterpreterTestCase extends TestCase {
 		incBy6.setStartingDefinition(by6_1);
 
 		
-		ObjectDefinition add6 = new ObjectDefinition(incBy6);
+		ObjectClazz add6 = new ObjectClazz(incBy6);
 		this.context.addDefinition(add6);
 		
-		ObjectDefinition inc3 = new ObjectDefinition(this.common.getDefinition("INC3"));
+		ObjectClazz inc3 = new ObjectClazz(this.common.getDefinition("INC3"));
 		this.context.addDefinition(inc3);
 
-		ObjectDefinition add62 = new ObjectDefinition(incBy6);
+		ObjectClazz add62 = new ObjectClazz(incBy6);
 		this.context.addDefinition(add62);
 
 		this.context.addConnection(add6.getId(), inc3.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);

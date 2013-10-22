@@ -5,9 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Message;
 import com.core.interpreter.InterpreterDelegate;
-import com.service.core.ObjectDefinition;
 
 public class StatisticsInterpreterDelegate implements InterpreterDelegate {
 
@@ -40,7 +40,7 @@ public class StatisticsInterpreterDelegate implements InterpreterDelegate {
 	}
 	@Override
 	public void startInterpreting(String interpreterId, String threadId,
-			String contextId, ObjectDefinition currentProcessor,
+			String contextId, ObjectClazz currentProcessor,
 			Message currentMessage) {
 		try {
 			this.lock.readLock().lock();
@@ -64,7 +64,7 @@ public class StatisticsInterpreterDelegate implements InterpreterDelegate {
 
 	@Override
 	public void uncaughtException(String interpreterId, String threadId,
-			String contextId, ObjectDefinition currentProcessor,
+			String contextId, ObjectClazz currentProcessor,
 			Message currentMessage, Exception e) {
 		try {
 			this.lock.readLock().lock();
@@ -76,19 +76,19 @@ public class StatisticsInterpreterDelegate implements InterpreterDelegate {
 	
 	@Override
 	public void stopInBreakPoint(String interpreterId, String threadId,
-			String contextId, ObjectDefinition currentProcessor,
+			String contextId, ObjectClazz currentProcessor,
 			Message currentMessage) {
 	}
 
 	@Override
 	public void beforeStep(String interpreterId, String threadId,
-			String contextId, ObjectDefinition currentProcessor,
+			String contextId, ObjectClazz currentProcessor,
 			Message currentMessage) {
 	}
 
 	@Override
 	public void afterStep(String interpreterId, String threadId,
-			String contextId, ObjectDefinition currentProcessor,
+			String contextId, ObjectClazz currentProcessor,
 			Message currentMessage) {
 	}
 

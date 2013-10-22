@@ -1,4 +1,4 @@
-package com.service.core;
+package com.abstractions.clazz.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -19,8 +19,12 @@ import com.core.api.Startable;
 import com.core.api.Terminable;
 import com.core.impl.ConnectionType;
 import com.core.utils.IdGenerator;
+import com.service.core.BeanUtils;
+import com.service.core.ContextDefinition;
+import com.service.core.NamesMapping;
+import com.service.core.ServiceException;
 
-public class ObjectDefinition implements Startable, Terminable {
+public class ObjectClazz implements Startable, Terminable {
 
 	public static final String NAME = "name";
 	
@@ -32,7 +36,7 @@ public class ObjectDefinition implements Startable, Terminable {
 	private volatile boolean dirty;
 	private volatile boolean hasBreakpoint;
 	
-	public ObjectDefinition(ElementDefinition metaElementDefinition) {
+	public ObjectClazz(ElementDefinition metaElementDefinition) {
 		Validate.notNull(metaElementDefinition);
 
 		this.id = IdGenerator.getNewId();
@@ -42,7 +46,7 @@ public class ObjectDefinition implements Startable, Terminable {
 		this.metaElementDefinition = metaElementDefinition;
 	}
 
-	public ObjectDefinition(String id, ElementDefinition metaElementDefinition) {
+	public ObjectClazz(String id, ElementDefinition metaElementDefinition) {
 		Validate.notNull(metaElementDefinition);
 
 		this.id = id;
@@ -150,7 +154,7 @@ public class ObjectDefinition implements Startable, Terminable {
 		}
 	}
 	
-	public void addConnection(ObjectDefinition definition) {
+	public void addConnection(ObjectClazz definition) {
 		if (definition.getMeta() instanceof ConnectionDefinition) {
 			ConnectionDefinition meta = (ConnectionDefinition)definition.getMeta();
 			String type = meta.getName();
@@ -163,7 +167,7 @@ public class ObjectDefinition implements Startable, Terminable {
 		}
 	}
 	
-	public void removeConnection(ObjectDefinition definition) {
+	public void removeConnection(ObjectClazz definition) {
 		if (definition.getMeta() instanceof ConnectionDefinition) {
 			ConnectionDefinition meta = (ConnectionDefinition)definition.getMeta();
 			String type = meta.getName();
@@ -176,7 +180,7 @@ public class ObjectDefinition implements Startable, Terminable {
 		}
 	}
 	
-	public void addIncomingConnection(ObjectDefinition definition) {
+	public void addIncomingConnection(ObjectClazz definition) {
 		if (definition.getMeta() instanceof ConnectionDefinition) {
 			this.addToUrns("__incoming_connections", "urn:" + definition.getId());
 		}
@@ -190,7 +194,7 @@ public class ObjectDefinition implements Startable, Terminable {
 		return BeanUtils.getUrnsFromList(this.getProperty("__connections"));
 	}
 
-	public ObjectDefinition getUniqueConnectionOfType(String type, ContextDefinition context) {
+	public ObjectClazz getUniqueConnectionOfType(String type, ContextDefinition context) {
 		if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
 			String urn = this.properties.get("__next_in_chain");
 			if (urn != null) {
@@ -204,17 +208,17 @@ public class ObjectDefinition implements Startable, Terminable {
 			return null;
 		} else {
 			String urn = urns.get(0);
-			ObjectDefinition object = context.resolve(urn);
+			ObjectClazz object = context.resolve(urn);
 			return object;
 		}
 	}
 	
-	public List<ObjectDefinition> getAllConnectionsOfType(String type, ContextDefinition context) {
+	public List<ObjectClazz> getAllConnectionsOfType(String type, ContextDefinition context) {
 		List<String> urns = BeanUtils.getUrnsFromList(this.getProperty("__connections" + type));
-		List<ObjectDefinition> definitions = new ArrayList<ObjectDefinition>();
+		List<ObjectClazz> definitions = new ArrayList<ObjectClazz>();
 		
 		for (String urn : urns) {
-			ObjectDefinition object = context.resolve(urn);
+			ObjectClazz object = context.resolve(urn);
 			definitions.add(object);
 		}
 		

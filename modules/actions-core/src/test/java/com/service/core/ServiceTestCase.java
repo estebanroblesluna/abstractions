@@ -2,6 +2,7 @@ package com.service.core;
 
 import junit.framework.TestCase;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.model.Library;
 import com.core.api.Context;
 import com.core.common.AddPropertyProcessor;
@@ -24,8 +25,8 @@ public class ServiceTestCase extends TestCase {
 
 	public void testDefinitions() throws ServiceException {
 		ContextDefinition contextDefinition = new ContextDefinition(this.mapping);
-		ObjectDefinition addPropertyDefinition = new ObjectDefinition(this.common.getDefinition("ADD_PROPERTY"));
-		ObjectDefinition toStringDefinition = new ObjectDefinition(this.common.getDefinition("TO_STRING"));
+		ObjectClazz addPropertyDefinition = new ObjectClazz(this.common.getDefinition("ADD_PROPERTY"));
+		ObjectClazz toStringDefinition = new ObjectClazz(this.common.getDefinition("TO_STRING"));
 		
 		contextDefinition.addDefinition(addPropertyDefinition);
 		contextDefinition.addDefinition(toStringDefinition);

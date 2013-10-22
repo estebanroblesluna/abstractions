@@ -1,6 +1,6 @@
 package com.abstractions.meta;
 
-import com.service.core.ObjectDefinition;
+import com.abstractions.clazz.core.ObjectClazz;
 
 public class ConnectionDefinition extends ElementDefinition {
 
@@ -70,8 +70,8 @@ public class ConnectionDefinition extends ElementDefinition {
 		return visitor.visitConnectionDefinition(this);
 	}
 
-	public ObjectDefinition createInstance(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition) {
-		ObjectDefinition definition = new ObjectDefinition(this);
+	public ObjectClazz createInstance(ObjectClazz sourceDefinition, ObjectClazz targetDefinition) {
+		ObjectClazz definition = new ObjectClazz(this);
 		
 		definition.setProperty("source", "urn:" + sourceDefinition.getId());
 		definition.setProperty("target", "urn:" + targetDefinition.getId());
@@ -83,11 +83,11 @@ public class ConnectionDefinition extends ElementDefinition {
 		return definition;
 	}
 
-	public void addOutgoingConnection(ObjectDefinition sourceDefinition, ObjectDefinition definition) {
+	public void addOutgoingConnection(ObjectClazz sourceDefinition, ObjectClazz definition) {
 		sourceDefinition.addConnection(definition);
 	}
 
-	public void addIncomingConnection(ObjectDefinition targetDefinition, ObjectDefinition definition) {
+	public void addIncomingConnection(ObjectClazz targetDefinition, ObjectClazz definition) {
 		targetDefinition.addIncomingConnection(definition);
 	}
 }

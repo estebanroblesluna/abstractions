@@ -1,4 +1,4 @@
-package com.abstractions.impl.generalization;
+package com.abstractions.clazz.generalization;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,23 +10,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ElementDefinitionType;
 import com.service.core.ContextDefinition;
-import com.service.core.ObjectDefinition;
 
 public class Abstracter {
 
-	public Abstraction abstractFrom(ContextDefinition context, ObjectDefinition... definitions) throws UnconnectedDefinitionsException, MultipleEntryPointsException {
-		Map<String, ObjectDefinition> definitionsMap = new HashMap<String, ObjectDefinition>();
-		for (ObjectDefinition definition : definitions) {
+	public AbstractionClazz abstractFrom(ContextDefinition context, ObjectClazz... definitions) throws UnconnectedDefinitionsException, MultipleEntryPointsException {
+		Map<String, ObjectClazz> definitionsMap = new HashMap<String, ObjectClazz>();
+		for (ObjectClazz definition : definitions) {
 			definitionsMap.put(definition.getId(), definition);
 		}
 
 		return this.abstractFrom(context, definitionsMap);
 	}
 
-	public Abstraction abstractFrom(ContextDefinition context, List<String> urns) throws UnconnectedDefinitionsException, MultipleEntryPointsException {
-		Map<String, ObjectDefinition> definitionsMap = new HashMap<String, ObjectDefinition>();
+	public AbstractionClazz abstractFrom(ContextDefinition context, List<String> urns) throws UnconnectedDefinitionsException, MultipleEntryPointsException {
+		Map<String, ObjectClazz> definitionsMap = new HashMap<String, ObjectClazz>();
 		for (String urn : urns) {
 			definitionsMap.put(urn, context.resolve(urn));
 		}
@@ -34,11 +34,11 @@ public class Abstracter {
 		return this.abstractFrom(context, definitionsMap);
 	}
 
-	public Abstraction abstractFrom(ContextDefinition context, Map<String, ObjectDefinition> definitionsMap) throws UnconnectedDefinitionsException, MultipleEntryPointsException {
-		Set<ObjectDefinition> definitions = new HashSet<ObjectDefinition>(definitionsMap.values());
+	public AbstractionClazz abstractFrom(ContextDefinition context, Map<String, ObjectClazz> definitionsMap) throws UnconnectedDefinitionsException, MultipleEntryPointsException {
+		Set<ObjectClazz> definitions = new HashSet<ObjectClazz>(definitionsMap.values());
 
 		if (this.isConnected(definitions, context)) {
-			List<Map.Entry<ObjectDefinition, Long>> sortedDefinitions = this.topologicalSortByIncomingExternalConnections(definitions, context);
+			List<Map.Entry<ObjectClazz, Long>> sortedDefinitions = this.topologicalSortByIncomingExternalConnections(definitions, context);
 			if (this.hasOneEntry(sortedDefinitions)) {
 				return this.createAbstraction(sortedDefinitions);
 			} else {
@@ -52,10 +52,10 @@ public class Abstracter {
 	/**
 	 * Creates the Abstractions from the definition list
 	 */
-	private Abstraction createAbstraction(List<Map.Entry<ObjectDefinition, Long>> definitions) {
-		Abstraction abstraction = new Abstraction(definitions.get(definitions.size() - 1).getKey());
+	private AbstractionClazz createAbstraction(List<Map.Entry<ObjectClazz, Long>> definitions) {
+		AbstractionClazz abstraction = new AbstractionClazz(definitions.get(definitions.size() - 1).getKey());
 		
-		for (Map.Entry<ObjectDefinition, Long> definition : definitions) {
+		for (Map.Entry<ObjectClazz, Long> definition : definitions) {
 			abstraction.addDefinition(definition.getKey());
 		}
 		
@@ -66,13 +66,13 @@ public class Abstracter {
 	 * Verifies that the subgraph has only one node that receives the incoming connections and this will be
 	 * the starting node
 	 */
-	private boolean hasOneEntry(List<Map.Entry<ObjectDefinition, Long>> definitions) {
-		Entry<ObjectDefinition, Long> entry = definitions.get(definitions.size() - 1);
+	private boolean hasOneEntry(List<Map.Entry<ObjectClazz, Long>> definitions) {
+		Entry<ObjectClazz, Long> entry = definitions.get(definitions.size() - 1);
 		if (entry.getValue().longValue() == 0) {
 			return true;
 		} else {
 			//verify that the previous one has 0 connections
-			Entry<ObjectDefinition, Long> beforeLast = definitions.get(definitions.size() - 2);
+			Entry<ObjectClazz, Long> beforeLast = definitions.get(definitions.size() - 2);
 			return beforeLast.getValue().longValue() == 0;
 		}
 	}
@@ -80,17 +80,17 @@ public class Abstracter {
 	/**
 	 * Runs a topological sort excluding incoming connections from external sources to the subgraph
 	 */
-	private List<Map.Entry<ObjectDefinition, Long>> topologicalSortByIncomingExternalConnections(Set<ObjectDefinition> definitions, ContextDefinition context) {
-		final Map<ObjectDefinition, Long> incomingConnections = new HashMap<ObjectDefinition, Long>();
+	private List<Map.Entry<ObjectClazz, Long>> topologicalSortByIncomingExternalConnections(Set<ObjectClazz> definitions, ContextDefinition context) {
+		final Map<ObjectClazz, Long> incomingConnections = new HashMap<ObjectClazz, Long>();
 		
-		for (ObjectDefinition definition : definitions) {
+		for (ObjectClazz definition : definitions) {
 			long counter = 0;
 			
 			for (String connectionUrn : definition.getIncomingConnections()) {
-				ObjectDefinition connection = context.resolve(connectionUrn);
+				ObjectClazz connection = context.resolve(connectionUrn);
 				if (connection != null) {
 					String sourceUrn = connection.getProperty("source");
-					ObjectDefinition source = context.resolve(sourceUrn);
+					ObjectClazz source = context.resolve(sourceUrn);
 					if (!definitions.contains(source)) {
 						counter++;
 					}
@@ -121,24 +121,24 @@ public class Abstracter {
 	/**
 	 * Verifies that the subgraph is a connected subgraph
 	 */
-	private boolean isConnected(Set<ObjectDefinition> definitions, ContextDefinition context) {
-		for (ObjectDefinition definition : definitions) {
+	private boolean isConnected(Set<ObjectClazz> definitions, ContextDefinition context) {
+		for (ObjectClazz definition : definitions) {
 			if (definition.getMeta().getType().equals(ElementDefinitionType.CONNECTION)) {
 				String sourceUrn = definition.getProperty("source");
 				String targetUrn = definition.getProperty("target");
 				
-				ObjectDefinition source = context.resolve(sourceUrn);
-				ObjectDefinition target = context.resolve(targetUrn);
+				ObjectClazz source = context.resolve(sourceUrn);
+				ObjectClazz target = context.resolve(targetUrn);
 				
 				if (!definitions.contains(source) || !definitions.contains(target)) {
 					return false;
 				}
 			} else {
 				for (String connectionUrn : definition.getOutgoingConnections()) {
-					ObjectDefinition connection = context.resolve(connectionUrn);
+					ObjectClazz connection = context.resolve(connectionUrn);
 					if (connection != null) {
 						String targetUrn = connection.getProperty("target");
-						ObjectDefinition target = context.resolve(targetUrn);
+						ObjectClazz target = context.resolve(targetUrn);
 						if (!definitions.contains(target)) {
 							return false;
 						}

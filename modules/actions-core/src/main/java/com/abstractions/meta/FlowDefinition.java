@@ -8,28 +8,28 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Context;
 import com.core.composition.Flow;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
 public class FlowDefinition extends ElementDefinition {
 
 	static final Log log = LogFactory.getLog(FlowDefinition.class);
 	
-	private List<ObjectDefinition> definitions;
-	private ObjectDefinition startingDefinition;
+	private List<ObjectClazz> definitions;
+	private ObjectClazz startingDefinition;
 	
 	protected FlowDefinition() { }
 
 	public FlowDefinition(String name) {
 		super(name);
-		this.definitions = new ArrayList<ObjectDefinition>();
+		this.definitions = new ArrayList<ObjectClazz>();
 	}
 
-	public FlowDefinition(String name, List<ObjectDefinition> definitions) {
+	public FlowDefinition(String name, List<ObjectClazz> definitions) {
 		this(name);
 		this.addDefinitions(definitions);
 	}
@@ -63,11 +63,11 @@ public class FlowDefinition extends ElementDefinition {
 		super.basicSetProperties(object, properties, context, mapping);
 	}
 
-	public void addDefinition(ObjectDefinition definition) {
+	public void addDefinition(ObjectClazz definition) {
 		this.definitions.add(definition);
 	}
 
-	public void addDefinitions(List<ObjectDefinition> definitions) {
+	public void addDefinitions(List<ObjectClazz> definitions) {
 		this.definitions.addAll(definitions);
 	}
 
@@ -81,15 +81,15 @@ public class FlowDefinition extends ElementDefinition {
 		return ElementDefinitionType.FLOW;
 	}
 
-	public ObjectDefinition getStartingDefinition() {
+	public ObjectClazz getStartingDefinition() {
 		return startingDefinition;
 	}
 
-	public void setStartingDefinition(ObjectDefinition startingDefinition) {
+	public void setStartingDefinition(ObjectClazz startingDefinition) {
 		this.startingDefinition = startingDefinition;
 	}
 
-	public List<ObjectDefinition> getDefinitions() {
+	public List<ObjectClazz> getDefinitions() {
 		return Collections.unmodifiableList(this.definitions);
 	}
 }

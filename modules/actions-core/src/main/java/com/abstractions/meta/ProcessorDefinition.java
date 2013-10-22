@@ -1,7 +1,5 @@
 package com.abstractions.meta;
 
-
-
 public class ProcessorDefinition extends ElementDefinition {
 
 	protected ProcessorDefinition() { }

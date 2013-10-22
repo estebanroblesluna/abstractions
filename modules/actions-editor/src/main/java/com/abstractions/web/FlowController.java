@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ElementDefinitionType;
@@ -25,7 +26,6 @@ import com.abstractions.service.LibraryService;
 import com.abstractions.service.TeamService;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
-import com.service.core.ObjectDefinition;
 import com.service.repository.MarshallingException;
 
 @Controller
@@ -98,7 +98,7 @@ public class FlowController {
 				String x = position.getString("x");
 				String y = position.getString("y");
 				
-				ObjectDefinition objectDefinition = context.getDefinition(id);
+				ObjectClazz objectDefinition = context.getDefinition(id);
 				if (objectDefinition != null) {
 					objectDefinition.setProperty("x", x);
 					objectDefinition.setProperty("y", y);
@@ -125,7 +125,7 @@ public class FlowController {
 					builder.append(";");
 				}
 				
-				ObjectDefinition definition = context.getDefinition(id);
+				ObjectClazz definition = context.getDefinition(id);
 				definition.setProperty("points", builder.toString());
 			}
 		} 
@@ -174,7 +174,7 @@ public class FlowController {
 				String x = position.getString("x");
 				String y = position.getString("y");
 				
-				ObjectDefinition objectDefinition = context.getDefinition(id);
+				ObjectClazz objectDefinition = context.getDefinition(id);
 				if (objectDefinition != null) {
 					objectDefinition.setProperty("x", x);
 					objectDefinition.setProperty("y", y);
@@ -201,7 +201,7 @@ public class FlowController {
 					builder.append(";");
 				}
 				
-				ObjectDefinition definition = context.getDefinition(id);
+				ObjectClazz definition = context.getDefinition(id);
 				definition.setProperty("points", builder.toString());
 			}
 		} 

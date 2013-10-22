@@ -5,11 +5,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.ContextDefinitionTransformation;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
 public class LazyAutorefreshableCacheTransformation implements ContextDefinitionTransformation {
@@ -48,16 +48,16 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 	@Override
 	public void transform(ContextDefinition context) {
 		//OBTAIN THE CONNECTION DEFINITION
-		ObjectDefinition connectionDefinition = context.getDefinition(objectId);
+		ObjectClazz connectionDefinition = context.getDefinition(objectId);
 		
 		//SAVE THE PREVIOUS TARGET ID
 		String previousTargetId = connectionDefinition.getProperty("target");
 		
 		//CREATE CACHE, CHOICE, CHAIN, WIRE_TAP
-		ObjectDefinition getCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("GET_MEMCACHED"));
-		ObjectDefinition choiceDefinition = new ObjectDefinition(this.mapping.getDefinition("CHOICE"));
-		ObjectDefinition chainDefinition = new ObjectDefinition(this.mapping.getDefinition("CHAIN"));
-		ObjectDefinition wireTapDefinition = new ObjectDefinition(this.mapping.getDefinition("WIRE_TAP"));
+		ObjectClazz getCacheDefinition = new ObjectClazz(this.mapping.getDefinition("GET_MEMCACHED"));
+		ObjectClazz choiceDefinition = new ObjectClazz(this.mapping.getDefinition("CHOICE"));
+		ObjectClazz chainDefinition = new ObjectClazz(this.mapping.getDefinition("CHAIN"));
+		ObjectClazz wireTapDefinition = new ObjectClazz(this.mapping.getDefinition("WIRE_TAP"));
 		context.addDefinition(getCacheDefinition);
 		context.addDefinition(choiceDefinition);
 		context.addDefinition(chainDefinition);
@@ -74,12 +74,12 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 		//CHOICE -> CHAIN
 		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		//IF CACHE IS NULL
-		ObjectDefinition choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
+		ObjectClazz choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
 		choiceConnectionDefinition.setProperty("expression", "message.payload == null");
 
 		//CHOICE -> WIRE_TAP
 		String choiceWireTapConnectionId = context.addConnection(choiceDefinition.getId(), wireTapDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
-		ObjectDefinition choiceWireTapConnectionDefinition = context.getDefinition(choiceWireTapConnectionId);
+		ObjectClazz choiceWireTapConnectionDefinition = context.getDefinition(choiceWireTapConnectionId);
 		choiceWireTapConnectionDefinition.setProperty("expression", "message.payload != null");
 
 		//POINT TO THE PREVIOUS COMPUTATION
@@ -88,13 +88,13 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 		//ADD PUT OPERATION
 		String[] putExpressions = StringUtils.split(cacheExpressions, ';');
 		if (putExpressions != null && putExpressions.length >= 1) {
-			ObjectDefinition nullProcessorDefinition = new ObjectDefinition(this.mapping.getDefinition("NULL"));
+			ObjectClazz nullProcessorDefinition = new ObjectClazz(this.mapping.getDefinition("NULL"));
 			
-			ObjectDefinition putCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("PUT_MEMCACHED"));
+			ObjectClazz putCacheDefinition = new ObjectClazz(this.mapping.getDefinition("PUT_MEMCACHED"));
 			putCacheDefinition.setProperty("keyExpression", adaptedKeyExpression);
 			putCacheDefinition.setProperty("valueExpression", putExpressions[0]);
 
-			ObjectDefinition putCacheTimeDefinition = new ObjectDefinition(this.mapping.getDefinition("PUT_MEMCACHED"));
+			ObjectClazz putCacheTimeDefinition = new ObjectClazz(this.mapping.getDefinition("PUT_MEMCACHED"));
 			putCacheTimeDefinition.setProperty("keyExpression", adaptedTimeKeyExpression);
 			putCacheTimeDefinition.setProperty("valueExpression", "new java.util.Date().getTime()");
 
@@ -108,8 +108,8 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 		}
 		
 		//ADD WIRE TAP PART
-		ObjectDefinition getTimeFromCacheDefinition = new ObjectDefinition(this.mapping.getDefinition("GET_MEMCACHED"));
-		ObjectDefinition timeChoiceDefinition = new ObjectDefinition(this.mapping.getDefinition("CHOICE"));
+		ObjectClazz getTimeFromCacheDefinition = new ObjectClazz(this.mapping.getDefinition("GET_MEMCACHED"));
+		ObjectClazz timeChoiceDefinition = new ObjectClazz(this.mapping.getDefinition("CHOICE"));
 		context.addDefinition(getTimeFromCacheDefinition);
 		context.addDefinition(timeChoiceDefinition);
 		getTimeFromCacheDefinition.setProperty("expression", adaptedTimeKeyExpression);
@@ -122,7 +122,7 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 		String timeChoiceId = context.addConnection(timeChoiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		
 		//TIME CHOICE CONDITION
-		ObjectDefinition timeChoiceConnectionDefinition = context.getDefinition(timeChoiceId);
+		ObjectClazz timeChoiceConnectionDefinition = context.getDefinition(timeChoiceId);
 		timeChoiceConnectionDefinition.setProperty("expression", "(message.payload != null) && ((new java.util.Date().getTime() - message.payload) > 3000)");
 	
 		

@@ -23,6 +23,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Message;
 import com.core.interpreter.DebuggableThread;
 import com.core.interpreter.Interpreter;
@@ -30,7 +31,6 @@ import com.core.interpreter.InterpreterDelegate;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.InterpreterHolder;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
 
@@ -60,7 +60,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 			return ResponseUtils.fail("Context not found");
 		}
 		
-		ObjectDefinition startProcessor = context.getDefinition(initialProcessorId);
+		ObjectClazz startProcessor = context.getDefinition(initialProcessorId);
 
 		if (startProcessor == null) {
 			return ResponseUtils.fail("Start processor not found");
@@ -177,7 +177,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 	}
 
 	@Override
-	public void stopInBreakPoint(final String interpreterId, final String threadId, final String contextId, final ObjectDefinition currentProcessor, final Message clonedMessage) {
+	public void stopInBreakPoint(final String interpreterId, final String threadId, final String contextId, final ObjectClazz currentProcessor, final Message clonedMessage) {
 		this.executor.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -201,7 +201,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 	}
 
 	@Override
-	public void beforeStep(final String interpreterId, final String threadId, final String contextId, final ObjectDefinition currentProcessor, final Message clonedMessage) {
+	public void beforeStep(final String interpreterId, final String threadId, final String contextId, final ObjectClazz currentProcessor, final Message clonedMessage) {
 		this.executor.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -225,7 +225,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 	}
 
 	@Override
-	public void afterStep(final String interpreterId, final String threadId, final String contextId, final ObjectDefinition currentProcessor, final Message clonedMessage) {
+	public void afterStep(final String interpreterId, final String threadId, final String contextId, final ObjectClazz currentProcessor, final Message clonedMessage) {
 		this.executor.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -282,7 +282,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
      */
     @Override
 	public void uncaughtException(final String interpreterId, final String threadId,
-			final String contextId, final ObjectDefinition currentProcessor,
+			final String contextId, final ObjectClazz currentProcessor,
 			final Message currentMessage, final Exception e) {
 		this.executor.execute(new Runnable() {
 			@Override
@@ -375,7 +375,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 
 	@Override
 	public void startInterpreting(String interpreterId, String threadId,
-			String contextId, ObjectDefinition currentProcessor,
+			String contextId, ObjectClazz currentProcessor,
 			Message currentMessage) {
 		// DO NOTHING
 	}
