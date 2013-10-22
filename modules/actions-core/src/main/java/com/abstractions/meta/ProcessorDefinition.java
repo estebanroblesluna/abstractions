@@ -1,4 +1,5 @@
-package com.abstractions.model;
+package com.abstractions.meta;
+
 
 
 public class ProcessorDefinition extends ElementDefinition {

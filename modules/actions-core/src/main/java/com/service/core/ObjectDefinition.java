@@ -12,8 +12,8 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.helper.Validate;
 
-import com.abstractions.model.ConnectionDefinition;
-import com.abstractions.model.ElementDefinition;
+import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ElementDefinition;
 import com.core.api.Context;
 import com.core.api.Startable;
 import com.core.api.Terminable;

@@ -186,11 +186,11 @@
 
     <bag name="definitions" lazy="false" cascade="all">
       <key column="library_id" />
-      <one-to-many class="com.abstractions.model.ElementDefinition" />
+      <one-to-many class="com.abstractions.meta.ElementDefinition" />
     </bag>
   </class>
 
-  <class name="com.abstractions.model.ElementDefinition" table="element_definition">
+  <class name="com.abstractions.meta.ElementDefinition" table="element_definition">
     <id name="id" type="long" column="element_definition_id" access="field">
       <generator class="native" />
     </id>
@@ -207,7 +207,7 @@
     </bag>
     
     
-    <joined-subclass name="com.abstractions.model.ConnectionDefinition" table="connection_definition">
+    <joined-subclass name="com.abstractions.meta.ConnectionDefinition" table="connection_definition">
       <key column="element_definition_id"/>
       <property name="color" column="color"/>
       <property name="acceptedSourceTypes" column="accepted_source_types"/>
@@ -216,20 +216,20 @@
       <property name="acceptedTargetMax" column="accepted_target_max"/>
     </joined-subclass>
 
-    <joined-subclass name="com.abstractions.model.FlowDefinition" table="flow_definition">
+    <joined-subclass name="com.abstractions.meta.FlowDefinition" table="flow_definition">
       <key column="element_definition_id"/>
       <!-- TODO -->
     </joined-subclass>
 
-    <joined-subclass name="com.abstractions.model.MessageSourceDefinition" table="message_source_definition">
+    <joined-subclass name="com.abstractions.meta.MessageSourceDefinition" table="message_source_definition">
       <key column="element_definition_id"/>
     </joined-subclass>
 
-    <joined-subclass name="com.abstractions.model.ProcessorDefinition" table="processor_definition">
+    <joined-subclass name="com.abstractions.meta.ProcessorDefinition" table="processor_definition">
       <key column="element_definition_id"/>
     </joined-subclass>
 
-    <joined-subclass name="com.abstractions.model.RouterDefinition" table="router_definition">
+    <joined-subclass name="com.abstractions.meta.RouterDefinition" table="router_definition">
       <key column="element_definition_id"/>
       <property name="routerEvaluatorImplementation" column="router_evaluator_implementation"/>
       <property name="isRouterEvaluatorScript" column="is_router_evaluator_script"/>

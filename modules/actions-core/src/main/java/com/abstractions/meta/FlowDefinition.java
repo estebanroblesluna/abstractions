@@ -1,4 +1,4 @@
-package com.abstractions.model;
+package com.abstractions.meta;
 
 import java.util.ArrayList;
 import java.util.Collections;

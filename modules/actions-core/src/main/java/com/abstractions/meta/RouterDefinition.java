@@ -1,4 +1,4 @@
-package com.abstractions.model;
+package com.abstractions.meta;
 
 
 public class RouterDefinition extends ElementDefinition {

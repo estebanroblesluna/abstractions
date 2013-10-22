@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.model.ConnectionDefinition;
-import com.abstractions.model.ElementDefinition;
-import com.abstractions.model.ElementDefinitionType;
+import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ElementDefinition;
+import com.abstractions.meta.ElementDefinitionType;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
