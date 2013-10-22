@@ -1,4 +1,4 @@
-package com.service.repository;
+package com.abstractions.service.repository;
 
 import javax.sql.DataSource;
 
@@ -6,8 +6,8 @@ import org.jsoup.helper.Validate;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.service.core.ContextDefinition;
-import com.service.core.NamesMapping;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
 
 public class JdbcRepository implements ContextRepository {
 

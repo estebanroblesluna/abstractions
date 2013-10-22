@@ -1,4 +1,4 @@
-package com.service.core;
+package com.abstractions.service.core;
 
 import java.util.Collections;
 import java.util.Map;

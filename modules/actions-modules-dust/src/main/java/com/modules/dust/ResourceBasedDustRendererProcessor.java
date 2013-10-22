@@ -19,9 +19,9 @@ import com.abstractions.api.Message;
 import com.abstractions.api.Processor;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.service.core.FileService;
 import com.abstractions.utils.ExpressionUtils;
 import com.abstractions.utils.IdGenerator;
-import com.service.core.FileService;
 
 public class ResourceBasedDustRendererProcessor implements Processor {
 

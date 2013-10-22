@@ -12,9 +12,9 @@ import org.jsoup.helper.Validate;
 import com.abstractions.api.Identificable;
 import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.ServiceException;
 import com.abstractions.utils.IdGenerator;
-import com.service.core.ContextDefinition;
-import com.service.core.ServiceException;
 
 public class Interpreter implements Identificable, ThreadObserver {
 

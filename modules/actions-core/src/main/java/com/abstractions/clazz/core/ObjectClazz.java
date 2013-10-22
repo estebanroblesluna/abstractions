@@ -18,11 +18,11 @@ import com.abstractions.api.Terminable;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
+import com.abstractions.service.core.BeanUtils;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 import com.abstractions.utils.IdGenerator;
-import com.service.core.BeanUtils;
-import com.service.core.ContextDefinition;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
 
 public class ObjectClazz implements Startable, Terminable {
 

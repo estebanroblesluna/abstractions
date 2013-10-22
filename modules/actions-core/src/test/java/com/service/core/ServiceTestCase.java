@@ -8,6 +8,9 @@ import com.abstractions.instance.common.AddPropertyProcessor;
 import com.abstractions.instance.common.ToStringProcessor;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 
 public class ServiceTestCase extends TestCase {
 

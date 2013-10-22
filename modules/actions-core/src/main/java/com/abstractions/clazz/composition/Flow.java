@@ -3,7 +3,7 @@ package com.abstractions.clazz.composition;
 import com.abstractions.api.Element;
 import com.abstractions.api.Evaluable;
 import com.abstractions.clazz.core.ObjectClazz;
-import com.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinition;
 
 public class Flow implements Element, Evaluable {
 	

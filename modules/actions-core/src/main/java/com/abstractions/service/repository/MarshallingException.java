@@ -1,4 +1,4 @@
-package com.service.repository;
+package com.abstractions.service.repository;
 
 public class MarshallingException extends Exception {
 

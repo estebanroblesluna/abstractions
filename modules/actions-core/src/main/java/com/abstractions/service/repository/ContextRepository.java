@@ -1,6 +1,6 @@
-package com.service.repository;
+package com.abstractions.service.repository;
 
-import com.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinition;
 
 public interface ContextRepository {
 

@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
-import com.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinition;
 
 public class WireTapRouterEvaluator implements Evaluator {
 

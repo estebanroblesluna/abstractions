@@ -13,9 +13,9 @@ import com.abstractions.api.Context;
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.instance.common.ScriptingProcessor;
 import com.abstractions.model.PropertyDefinition;
-import com.service.core.BeanUtils;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
+import com.abstractions.service.core.BeanUtils;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 
 public abstract class ElementDefinition {
 

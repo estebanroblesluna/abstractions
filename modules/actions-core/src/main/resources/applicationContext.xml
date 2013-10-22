@@ -18,11 +18,11 @@
  
   <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
 
-  <bean id="inMemoryRepository" class="com.service.repository.InMemoryContextRepository">
+  <bean id="inMemoryRepository" class="com.abstractions.service.repository.InMemoryContextRepository">
     <constructor-arg index="0" ref="namesMapping" />
   </bean>
 
-  <bean id="databaseRepository" class="com.service.repository.JdbcRepository">
+  <bean id="databaseRepository" class="com.abstractions.service.repository.JdbcRepository">
     <constructor-arg index="0" ref="dataSource" />
     <constructor-arg index="1" ref="namesMapping" />
   </bean>
@@ -34,10 +34,10 @@
       <property name="password" value="${jdbc.password}"/>
   </bean>
 	
-  <bean id="contextHolder" class="com.service.core.DevelopmentContextHolder">
+  <bean id="contextHolder" class="com.abstractions.service.core.DevelopmentContextHolder">
     <constructor-arg index="0" value="10" />
     <constructor-arg index="1" value="MINUTES" />
   </bean>
   
-  <bean id="interpreterHolder" class="com.service.core.InterpreterHolder" />
+  <bean id="interpreterHolder" class="com.abstractions.service.core.InterpreterHolder" />
 </beans>

@@ -28,10 +28,10 @@ import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.runtime.interpreter.DebuggableThread;
 import com.abstractions.runtime.interpreter.Interpreter;
 import com.abstractions.runtime.interpreter.InterpreterDelegate;
-import com.service.core.ContextDefinition;
-import com.service.core.DevelopmentContextHolder;
-import com.service.core.InterpreterHolder;
-import com.service.core.ServiceException;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.DevelopmentContextHolder;
+import com.abstractions.service.core.InterpreterHolder;
+import com.abstractions.service.core.ServiceException;
 
 
 @Path("/interpreter")
