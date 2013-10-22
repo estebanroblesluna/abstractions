@@ -69,7 +69,7 @@ public class LazyComputedCacheTransformation implements ContextDefinitionTransfo
 		context.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 
 		//CHOICE -> CHAIN
-		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
+		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		//IF CACHE IS NULL
 		ObjectDefinition choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
 		choiceConnectionDefinition.setProperty("expression", "message.payload == null");

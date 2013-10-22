@@ -1,10 +1,7 @@
  package com.core.routing;
 
-public class WireTapRouter implements Router {
+import com.core.api.Router;
 
-	@Override
-	public Object accept(RouterVisitor visitor) {
-		return visitor.visitWireTapRouter(this);
-	}
+public class WireTapRouter implements Router {
 
 }

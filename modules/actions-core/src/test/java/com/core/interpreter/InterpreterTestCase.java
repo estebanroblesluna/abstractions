@@ -70,8 +70,8 @@ public class InterpreterTestCase extends TestCase {
 		this.context.addDefinition(inc3);
 
 		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.CHOICE_CONNECTION);
-		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.CHOICE_CONNECTION);
+		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.CHOICE_CONNECTION).getId();
+		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		
 		
 		ObjectDefinition inc2Connection = this.context.getDefinition(inc2ConnectionId);
@@ -122,8 +122,8 @@ public class InterpreterTestCase extends TestCase {
 		this.context.addDefinition(inc3);
 
 		this.context.addConnection(source.getId(), router.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.ALL_CONNECTION);
-		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.ALL_CONNECTION);
+		String inc2ConnectionId = this.context.addConnection(router.getId(), inc2.getId(), ConnectionType.ALL_CONNECTION).getId();
+		String inc3ConnectionId = this.context.addConnection(router.getId(), inc3.getId(), ConnectionType.ALL_CONNECTION).getId();
 		
 		
 		ObjectDefinition inc2Connection = this.context.getDefinition(inc2ConnectionId);

@@ -147,7 +147,7 @@ public class ElementRESTService {
 			return ResponseUtils.fail("Invalid type");
 		}
 		
-		String connectionId = context.addConnection(sourceId, targetId, type);
+		String connectionId = context.addConnection(sourceId, targetId, type).getId();
 		return ResponseUtils.ok(new Attribute("id", connectionId));
 	}
 	
