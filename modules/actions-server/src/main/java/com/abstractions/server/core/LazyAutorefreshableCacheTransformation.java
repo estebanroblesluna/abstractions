@@ -72,13 +72,13 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 		context.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 
 		//CHOICE -> CHAIN
-		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
+		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		//IF CACHE IS NULL
 		ObjectDefinition choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
 		choiceConnectionDefinition.setProperty("expression", "message.payload == null");
 
 		//CHOICE -> WIRE_TAP
-		String choiceWireTapConnectionId = context.addConnection(choiceDefinition.getId(), wireTapDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
+		String choiceWireTapConnectionId = context.addConnection(choiceDefinition.getId(), wireTapDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		ObjectDefinition choiceWireTapConnectionDefinition = context.getDefinition(choiceWireTapConnectionId);
 		choiceWireTapConnectionDefinition.setProperty("expression", "message.payload != null");
 
@@ -119,7 +119,7 @@ public class LazyAutorefreshableCacheTransformation implements ContextDefinition
 		//CACHE -> CHOICE
 		context.addConnection(getTimeFromCacheDefinition.getId(), timeChoiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		//CHOICE -> CHAIN
-		String timeChoiceId = context.addConnection(timeChoiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION);
+		String timeChoiceId = context.addConnection(timeChoiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		
 		//TIME CHOICE CONDITION
 		ObjectDefinition timeChoiceConnectionDefinition = context.getDefinition(timeChoiceId);

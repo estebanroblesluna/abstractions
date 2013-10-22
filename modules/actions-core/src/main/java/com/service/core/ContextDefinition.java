@@ -2,6 +2,7 @@ package com.service.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -158,14 +159,18 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		}
 	}
 
-	public String addConnection(String sourceId, String targetId, ConnectionType type) {
+	public ObjectDefinition addConnection(String sourceId, String targetId, ConnectionType type) {
 		ObjectDefinition sourceDefinition = this.getDefinition(sourceId);
 		ObjectDefinition targetDefinition = this.getDefinition(targetId);
 
+		return addConnection(sourceDefinition, targetDefinition, type);
+	}
+
+	public ObjectDefinition addConnection(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition, ConnectionType type) {
 		if (sourceDefinition != null && targetDefinition != null) {
 			ObjectDefinition connectionDefinition = this.createConnection(sourceDefinition, targetDefinition, type);
 			this.addDefinition(connectionDefinition);
-			return connectionDefinition.getId();
+			return connectionDefinition;
 		} else {
 			return null;
 		}
@@ -255,6 +260,14 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		return this.getDefinition(id);
 	}
 	
+	public Map<String, ObjectDefinition> resolve(List<String> urns) {
+		Map<String, ObjectDefinition> definitions = new HashMap<String, ObjectDefinition>();
+		for (String urn : urns) {
+			definitions.put(urn, this.resolve(urn));
+		}
+		return definitions;
+	}
+	
 	public String resolveId(String urn) {
 		if (StringUtils.isEmpty(urn) || !urn.startsWith("urn:")) {
 			return null;
@@ -325,4 +338,6 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	public void setDefaultInterpreterDelegate(InterpreterDelegate defaultInterpreterDelegate) {
 		this.defaultInterpreterDelegate = defaultInterpreterDelegate;
 	}
+
+
 }
