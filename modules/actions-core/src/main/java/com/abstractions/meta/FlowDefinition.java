@@ -11,9 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import com.abstractions.api.Context;
 import com.abstractions.clazz.composition.Flow;
 import com.abstractions.clazz.core.ObjectClazz;
-import com.service.core.ContextDefinition;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 
 public class FlowDefinition extends ElementDefinition {
 

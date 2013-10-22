@@ -1,4 +1,4 @@
-package com.service.core;
+package com.abstractions.service.core;
 
 public class NullKeyProvider implements KeyProvider {
 

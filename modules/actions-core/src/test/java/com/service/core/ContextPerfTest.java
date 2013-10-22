@@ -9,6 +9,9 @@ import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.abstractions.runtime.interpreter.Interpreter;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 
 public class ContextPerfTest extends TestCase {
 

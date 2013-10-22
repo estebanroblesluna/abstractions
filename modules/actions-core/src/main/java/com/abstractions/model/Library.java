@@ -16,7 +16,7 @@ import com.abstractions.meta.MessageSourceDefinition;
 import com.abstractions.meta.ProcessorDefinition;
 import com.abstractions.meta.RouterDefinition;
 import com.abstractions.runtime.interpreter.Evaluator;
-import com.service.core.NamesMapping;
+import com.abstractions.service.core.NamesMapping;
 
 public class Library {
 

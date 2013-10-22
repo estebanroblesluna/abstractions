@@ -12,7 +12,7 @@ import java.util.Set;
 
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ElementDefinitionType;
-import com.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinition;
 
 public class Abstracter {
 

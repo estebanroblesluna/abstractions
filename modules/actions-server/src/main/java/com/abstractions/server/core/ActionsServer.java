@@ -22,11 +22,11 @@ import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.common.LogProcessorWrapper;
 import com.abstractions.instance.common.PerformanceProcessor;
 import com.abstractions.instance.common.ProcessorWrapper;
-import com.service.core.ContextDefinition;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
-import com.service.repository.ContextDefinitionMarshaller;
-import com.service.repository.MarshallingException;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
+import com.abstractions.service.repository.ContextDefinitionMarshaller;
+import com.abstractions.service.repository.MarshallingException;
 
 public class ActionsServer {
 

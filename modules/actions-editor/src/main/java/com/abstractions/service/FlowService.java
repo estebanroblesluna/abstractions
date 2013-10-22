@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.model.Application;
 import com.abstractions.model.Flow;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.DevelopmentContextHolder;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
+import com.abstractions.service.repository.ContextDefinitionMarshaller;
+import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.web.WebUserKeyProvider;
-import com.service.core.ContextDefinition;
-import com.service.core.DevelopmentContextHolder;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
-import com.service.repository.ContextDefinitionMarshaller;
-import com.service.repository.MarshallingException;
 
 @Service
 public class FlowService {

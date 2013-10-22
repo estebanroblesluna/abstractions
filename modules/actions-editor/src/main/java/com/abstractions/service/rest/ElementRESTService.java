@@ -22,10 +22,10 @@ import org.jsoup.nodes.Attribute;
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.service.DeploymentService;
-import com.service.core.ContextDefinition;
-import com.service.core.DevelopmentContextHolder;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.DevelopmentContextHolder;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 
 
 @Path("/element")

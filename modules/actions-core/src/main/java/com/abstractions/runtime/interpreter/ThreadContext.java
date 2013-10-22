@@ -2,7 +2,7 @@ package com.abstractions.runtime.interpreter;
 
 import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
-import com.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinition;
 
 public class ThreadContext {
 

@@ -1,4 +1,4 @@
-package com.service.core;
+package com.abstractions.service.core;
 
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;

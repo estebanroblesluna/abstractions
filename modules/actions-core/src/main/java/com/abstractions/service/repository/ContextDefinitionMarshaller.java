@@ -1,4 +1,4 @@
-package com.service.repository;
+package com.abstractions.service.repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ElementDefinition;
-import com.service.core.ContextDefinition;
-import com.service.core.NamesMapping;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
 
 public class ContextDefinitionMarshaller {
 

@@ -6,7 +6,7 @@ import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ChoiceConnection;
 import com.abstractions.instance.core.ConnectionType;
-import com.service.core.BeanUtils;
+import com.abstractions.service.core.BeanUtils;
 
 public class ChoiceRouterEvaluator implements Evaluator {
 

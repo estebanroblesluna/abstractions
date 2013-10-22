@@ -1,10 +1,10 @@
-package com.service.repository;
+package com.abstractions.service.repository;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.service.core.ContextDefinition;
-import com.service.core.NamesMapping;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.NamesMapping;
 
 public class InMemoryContextRepository implements ContextRepository {
 

@@ -7,10 +7,10 @@ import org.jsoup.helper.Validate;
 
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
-import com.service.core.ContextDefinition;
-import com.service.core.ContextDefinitionTransformation;
-import com.service.core.NamesMapping;
-import com.service.core.ServiceException;
+import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinitionTransformation;
+import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 
 public class LazyComputedCacheTransformation implements ContextDefinitionTransformation {
 

@@ -1,6 +1,6 @@
 package com.abstractions.web;
 
-import com.service.core.KeyProvider;
+import com.abstractions.service.core.KeyProvider;
 
 public class WebUserKeyProvider implements KeyProvider {
 

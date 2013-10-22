@@ -17,7 +17,7 @@ import com.abstractions.api.Message;
 import com.abstractions.api.Processor;
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.AllConnection;
-import com.service.core.ContextDefinition;
+import com.abstractions.service.core.ContextDefinition;
 
 public class Thread {
 

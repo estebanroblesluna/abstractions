@@ -1,4 +1,4 @@
-package com.service.core;
+package com.abstractions.service.core;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;

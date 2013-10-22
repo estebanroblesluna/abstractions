@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
-import com.service.core.BeanUtils;
+import com.abstractions.service.core.BeanUtils;
 
 public class ChainRouterEvaluator implements Evaluator {
 
