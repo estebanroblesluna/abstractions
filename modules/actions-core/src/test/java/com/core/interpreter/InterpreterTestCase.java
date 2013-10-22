@@ -2,7 +2,7 @@ package com.core.interpreter;
 
 import junit.framework.TestCase;
 
-import com.abstractions.model.FlowDefinition;
+import com.abstractions.meta.FlowDefinition;
 import com.abstractions.model.Library;
 import com.common.expression.ScriptingLanguage;
 import com.core.api.Message;

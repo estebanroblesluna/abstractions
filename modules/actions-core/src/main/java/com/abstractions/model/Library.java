@@ -8,6 +8,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 
+import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ElementDefinition;
+import com.abstractions.meta.ElementDefinitionVisitor;
+import com.abstractions.meta.FlowDefinition;
+import com.abstractions.meta.MessageSourceDefinition;
+import com.abstractions.meta.ProcessorDefinition;
+import com.abstractions.meta.RouterDefinition;
 import com.core.interpreter.Evaluator;
 import com.service.core.NamesMapping;
 

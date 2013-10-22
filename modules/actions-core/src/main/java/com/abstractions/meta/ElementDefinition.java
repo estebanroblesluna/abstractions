@@ -1,4 +1,4 @@
-package com.abstractions.model;
+package com.abstractions.meta;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.model.PropertyDefinition;
 import com.common.expression.ScriptingLanguage;
 import com.common.expression.ScriptingProcessor;
 import com.core.api.Context;

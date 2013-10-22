@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.abstractions.model.ConnectionDefinition;
-import com.abstractions.model.ElementDefinition;
+import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ElementDefinition;
 import com.core.api.Context;
 import com.core.api.Identificable;
 import com.core.api.IdentificableMutable;

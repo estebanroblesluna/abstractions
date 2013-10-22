@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.abstractions.model.ElementDefinitionType;
+import com.abstractions.meta.ElementDefinitionType;
 import com.service.core.ContextDefinition;
 import com.service.core.ObjectDefinition;
 

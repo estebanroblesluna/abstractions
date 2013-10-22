@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.abstractions.model.ElementDefinition;
+import com.abstractions.meta.ElementDefinition;
 import com.common.expression.ScriptingLanguage;
 import com.core.interpreter.Evaluator;
 

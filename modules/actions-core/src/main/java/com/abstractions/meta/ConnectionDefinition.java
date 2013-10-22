@@ -1,4 +1,4 @@
-package com.abstractions.model;
+package com.abstractions.meta;
 
 import com.service.core.ObjectDefinition;
 
