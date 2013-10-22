@@ -3,7 +3,7 @@ package com.service.core;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.core.api.Identificable;
+import com.abstractions.api.Identificable;
 
 public class GeneralHolder<T extends Identificable> {
 

@@ -1,6 +1,6 @@
 package com.modules.dust;
 
-import com.core.api.Expression;
+import com.abstractions.api.Expression;
 
 public class RenderingSpec {
 	private String templatePath;

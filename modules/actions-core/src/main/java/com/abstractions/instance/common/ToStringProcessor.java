@@ -5,8 +5,8 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
 
 
 public class ToStringProcessor implements Processor

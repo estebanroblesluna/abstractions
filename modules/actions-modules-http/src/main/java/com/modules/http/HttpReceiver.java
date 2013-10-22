@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.core.api.Message;
-import com.core.utils.ExpressionUtils;
+import com.abstractions.api.Message;
+import com.abstractions.utils.ExpressionUtils;
 
 @WebServlet(asyncSupported = true)
 public class HttpReceiver extends HttpServlet {

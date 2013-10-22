@@ -1,8 +1,8 @@
 package com.abstractions.instance.common;
 
-import com.core.api.Message;
-import com.core.api.Processor;
-import com.core.utils.Average;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.utils.Average;
 
 public class PerformanceProcessor extends ProcessorWrapper {
 

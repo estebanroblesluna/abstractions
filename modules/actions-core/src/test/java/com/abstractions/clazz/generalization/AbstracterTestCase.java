@@ -3,10 +3,10 @@ package com.abstractions.clazz.generalization;
 import junit.framework.TestCase;
 
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
-import com.common.expression.ScriptingLanguage;
-import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 

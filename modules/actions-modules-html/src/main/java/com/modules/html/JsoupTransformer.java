@@ -9,10 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.ProcessingException;
-import com.core.api.Processor;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.ProcessingException;
+import com.abstractions.api.Processor;
 
 public class JsoupTransformer implements Processor
 {

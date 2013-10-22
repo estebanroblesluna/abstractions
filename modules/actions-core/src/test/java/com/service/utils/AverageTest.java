@@ -2,7 +2,7 @@ package com.service.utils;
 
 import junit.framework.TestCase;
 
-import com.core.utils.Average;
+import com.abstractions.utils.Average;
 
 public class AverageTest extends TestCase {
 

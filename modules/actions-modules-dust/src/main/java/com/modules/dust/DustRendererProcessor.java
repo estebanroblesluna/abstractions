@@ -2,11 +2,11 @@ package com.modules.dust;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.Processor;
-import com.core.utils.ExpressionUtils;
-import com.core.utils.IdGenerator;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.utils.ExpressionUtils;
+import com.abstractions.utils.IdGenerator;
 
 public class DustRendererProcessor implements Processor {
 

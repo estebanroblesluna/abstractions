@@ -7,11 +7,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.common.expression.ScriptingExpression;
-import com.common.expression.ScriptingLanguage;
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.expression.ScriptingExpression;
+import com.abstractions.expression.ScriptingLanguage;
 
 public class LogProcessorWrapper extends ProcessorWrapper {
 

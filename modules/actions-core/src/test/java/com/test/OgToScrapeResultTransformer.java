@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
 
 public class OgToScrapeResultTransformer implements Processor
 {

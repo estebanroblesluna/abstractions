@@ -3,9 +3,9 @@ package com.modules.boilerpipe;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.core.api.Message;
-import com.core.api.ProcessingException;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.ProcessingException;
+import com.abstractions.api.Processor;
 
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;

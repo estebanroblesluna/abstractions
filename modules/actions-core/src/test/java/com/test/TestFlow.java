@@ -2,7 +2,7 @@ package com.test;
 
 import junit.framework.TestCase;
 
-import com.core.api.Processor;
+import com.abstractions.api.Processor;
 
 public class TestFlow extends TestCase
 {

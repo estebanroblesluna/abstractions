@@ -8,9 +8,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.api.Context;
+import com.abstractions.clazz.composition.Flow;
 import com.abstractions.clazz.core.ObjectClazz;
-import com.core.api.Context;
-import com.core.composition.Flow;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;

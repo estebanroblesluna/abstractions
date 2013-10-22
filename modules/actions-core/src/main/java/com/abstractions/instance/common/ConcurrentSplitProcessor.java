@@ -8,10 +8,10 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.Validate;
 
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.ProcessingException;
-import com.core.api.Processor;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.ProcessingException;
+import com.abstractions.api.Processor;
 
 
 public class ConcurrentSplitProcessor implements Processor

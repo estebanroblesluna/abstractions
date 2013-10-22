@@ -7,8 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
 
 public class OgTransformer implements Processor
 {

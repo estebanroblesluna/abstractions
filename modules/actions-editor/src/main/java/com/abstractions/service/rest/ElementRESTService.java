@@ -20,8 +20,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.service.DeploymentService;
-import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;

@@ -16,8 +16,8 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-import com.core.api.Startable;
-import com.core.api.Terminable;
+import com.abstractions.api.Startable;
+import com.abstractions.api.Terminable;
 
 public class QuartzConnector implements Startable, Terminable {
 
