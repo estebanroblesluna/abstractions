@@ -12,13 +12,13 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.api.Context;
+import com.abstractions.api.Startable;
+import com.abstractions.api.Terminable;
+import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
-import com.core.api.Context;
-import com.core.api.Startable;
-import com.core.api.Terminable;
-import com.core.impl.ConnectionType;
-import com.core.utils.IdGenerator;
+import com.abstractions.utils.IdGenerator;
 import com.service.core.BeanUtils;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;

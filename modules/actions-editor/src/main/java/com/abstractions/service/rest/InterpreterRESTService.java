@@ -23,11 +23,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
-import com.core.api.Message;
-import com.core.interpreter.DebuggableThread;
-import com.core.interpreter.Interpreter;
-import com.core.interpreter.InterpreterDelegate;
+import com.abstractions.runtime.interpreter.DebuggableThread;
+import com.abstractions.runtime.interpreter.Interpreter;
+import com.abstractions.runtime.interpreter.InterpreterDelegate;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.InterpreterHolder;

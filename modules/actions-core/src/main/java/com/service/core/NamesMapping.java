@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.meta.ElementDefinition;
-import com.common.expression.ScriptingLanguage;
-import com.core.interpreter.Evaluator;
+import com.abstractions.runtime.interpreter.Evaluator;
 
 public class NamesMapping {
 	

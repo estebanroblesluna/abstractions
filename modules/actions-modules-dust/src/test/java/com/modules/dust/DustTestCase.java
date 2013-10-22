@@ -2,8 +2,8 @@ package com.modules.dust;
 
 import junit.framework.TestCase;
 
-import com.core.api.Message;
-import com.core.utils.ExpressionUtils;
+import com.abstractions.api.Message;
+import com.abstractions.utils.ExpressionUtils;
 
 public class DustTestCase extends TestCase {
 

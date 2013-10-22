@@ -7,9 +7,9 @@ import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 
-import com.core.api.Message;
-import com.core.api.ProcessingException;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.ProcessingException;
+import com.abstractions.api.Processor;
 
 public class ImageReaderProcessor implements Processor
 {

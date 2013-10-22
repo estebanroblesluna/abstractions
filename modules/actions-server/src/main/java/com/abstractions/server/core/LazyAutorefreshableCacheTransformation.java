@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
 import com.abstractions.clazz.core.ObjectClazz;
-import com.core.impl.ConnectionType;
+import com.abstractions.instance.core.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.ContextDefinitionTransformation;
 import com.service.core.NamesMapping;

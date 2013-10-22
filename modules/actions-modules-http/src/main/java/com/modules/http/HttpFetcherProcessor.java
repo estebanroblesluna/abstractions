@@ -29,10 +29,10 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.ProcessingException;
-import com.core.api.Processor;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.ProcessingException;
+import com.abstractions.api.Processor;
 
 public class HttpFetcherProcessor implements Processor
 {

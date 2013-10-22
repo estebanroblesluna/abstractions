@@ -2,13 +2,13 @@ package com.service.core;
 
 import junit.framework.TestCase;
 
+import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.common.NullProcessor;
+import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
-import com.core.api.Message;
-import com.core.impl.ConnectionType;
-import com.core.interpreter.Interpreter;
+import com.abstractions.runtime.interpreter.Interpreter;
 
 public class ContextPerfTest extends TestCase {
 
@@ -50,7 +50,7 @@ public class ContextPerfTest extends TestCase {
 		
 		ObjectClazz source = context.getDefinition(startIdA);
 		Interpreter interpreter = new Interpreter(context, source);
-		com.core.interpreter.Thread thread = interpreter.createThread(source, message);
+		com.abstractions.runtime.interpreter.Thread thread = interpreter.createThread(source, message);
 		
 		start = System.currentTimeMillis();
 		thread.run();

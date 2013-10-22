@@ -3,8 +3,8 @@ package com.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
 
 public class ScoreAndMergeProcessor implements Processor
 {

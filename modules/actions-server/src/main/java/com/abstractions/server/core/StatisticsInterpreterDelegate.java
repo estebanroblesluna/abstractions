@@ -5,9 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.abstractions.api.Message;
 import com.abstractions.clazz.core.ObjectClazz;
-import com.core.api.Message;
-import com.core.interpreter.InterpreterDelegate;
+import com.abstractions.runtime.interpreter.InterpreterDelegate;
 
 public class StatisticsInterpreterDelegate implements InterpreterDelegate {
 

@@ -44,10 +44,10 @@ public class Meta {
 		RouterDefinition definition = new RouterDefinition("CHOICE");
 		definition.setDisplayName("Choice router");
 		definition.setIcon("Resources/groovy.gif");
-		definition.setClassName("com.core.routing.ChoiceRouter");
+		definition.setClassName("com.abstractions.instance.routing.ChoiceRouter");
 		
 		definition.addProperty(createNameProperty("New choice router"));
-		definition.setRouterEvaluatorImplementation("com.core.interpreter.ChoiceRouterEvaluator");
+		definition.setRouterEvaluatorImplementation("com.abstractions.runtime.interpreter.ChoiceRouterEvaluator");
 		definition.setRouterEvaluatorScript(false);
 		
 		return definition;
@@ -57,10 +57,10 @@ public class Meta {
 		RouterDefinition definition = new RouterDefinition("ALL");
 		definition.setDisplayName("All router");
 		definition.setIcon("Resources/groovy.gif");
-		definition.setClassName("com.core.routing.AllRouter");
+		definition.setClassName("com.abstractions.instance.routing.AllRouter");
 		
 		definition.addProperty(createNameProperty("New all router"));
-		definition.setRouterEvaluatorImplementation("com.core.interpreter.AllRouterEvaluator");
+		definition.setRouterEvaluatorImplementation("com.abstractions.runtime.interpreter.AllRouterEvaluator");
 		definition.setRouterEvaluatorScript(false);
 
 		return definition;
@@ -70,10 +70,10 @@ public class Meta {
 		RouterDefinition definition = new RouterDefinition("WIRE_TAP");
 		definition.setDisplayName("Wire tap router");
 		definition.setIcon("Resources/groovy.gif");
-		definition.setClassName("com.core.routing.WireTapRouter");
+		definition.setClassName("com.abstractions.instance.routing.WireTapRouter");
 		
 		definition.addProperty(createNameProperty("New wire tap router"));
-		definition.setRouterEvaluatorImplementation("com.core.interpreter.WireTapRouterEvaluator");
+		definition.setRouterEvaluatorImplementation("com.abstractions.runtime.interpreter.WireTapRouterEvaluator");
 		definition.setRouterEvaluatorScript(false);
 
 		return definition;
@@ -83,7 +83,7 @@ public class Meta {
 		ConnectionDefinition definition = new ConnectionDefinition("NEXT_IN_CHAIN_CONNECTION");
 		definition.setDisplayName("Next in chain connection");
 		definition.setIcon("Resources/nextInChainConnection.png");
-		definition.setClassName("com.core.impl.NextInChainConnection");
+		definition.setClassName("com.abstractions.instance.core.NextInChainConnection");
 
 		definition.setColor("777777");
 		
@@ -101,7 +101,7 @@ public class Meta {
 		ConnectionDefinition definition = new ConnectionDefinition("CHOICE_CONNECTION");
 		definition.setDisplayName("Choice connection");
 		definition.setIcon("Resources/choiceConnection.png");
-		definition.setClassName("com.core.impl.ChoiceConnection");
+		definition.setClassName("com.abstractions.instance.core.ChoiceConnection");
 
 		definition.setColor("0000BB");
 		
@@ -125,7 +125,7 @@ public class Meta {
 		ConnectionDefinition definition = new ConnectionDefinition("ALL_CONNECTION");
 		definition.setDisplayName("All connection");
 		definition.setIcon("Resources/allConnection.png");
-		definition.setClassName("com.core.impl.AllConnection");
+		definition.setClassName("com.abstractions.instance.core.AllConnection");
 
 		definition.setColor("00BB00");
 		
@@ -149,7 +149,7 @@ public class Meta {
 		ConnectionDefinition definition = new ConnectionDefinition("WIRE_TAP_CONNECTION");
 		definition.setDisplayName("Wire tap connection");
 		definition.setIcon("Resources/wireTapConnection.png");
-		definition.setClassName("com.core.impl.WireTapConnection");
+		definition.setClassName("com.abstractions.instance.core.WireTapConnection");
 
 		definition.setColor("AA00BB");
 		
@@ -167,7 +167,7 @@ public class Meta {
 		ElementDefinition definition = new ProcessorDefinition("GROOVY");
 		definition.setDisplayName("Groovy");
 		definition.setIcon("Resources/groovy.gif");
-		definition.setClassName("com.common.expression.ScriptingProcessor");
+		definition.setClassName("com.abstractions.instance.common.ScriptingProcessor");
 		
 		definition.addProperty(createNameProperty("New script"));
 		definition.addProperty(createStringProperty("script", "Script", ""));
@@ -181,7 +181,7 @@ public class Meta {
 		ElementDefinition definition = new ProcessorDefinition("LOG");
 		definition.setDisplayName("Logger");
 		definition.setIcon("Resources/groovy.gif");
-		definition.setClassName("com.core.common.LogProcessor");
+		definition.setClassName("com.abstractions.instance.common.LogProcessor");
 		
 		definition.addProperty(createNameProperty("New log"));
 		definition.addProperty(createStringProperty("logName", "Log name", "Log name"));

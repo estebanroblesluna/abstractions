@@ -13,23 +13,23 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.api.Context;
+import com.abstractions.api.Identificable;
+import com.abstractions.api.IdentificableMutable;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.api.Startable;
+import com.abstractions.api.Terminable;
 import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.instance.core.ConnectionType;
+import com.abstractions.instance.core.ContextImpl;
+import com.abstractions.instance.messagesource.MessageSource;
+import com.abstractions.instance.messagesource.MessageSourceListener;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
-import com.core.api.Context;
-import com.core.api.Identificable;
-import com.core.api.IdentificableMutable;
-import com.core.api.Message;
-import com.core.api.Processor;
-import com.core.api.Startable;
-import com.core.api.Terminable;
-import com.core.impl.ConnectionType;
-import com.core.impl.ContextImpl;
-import com.core.interpreter.Interpreter;
-import com.core.interpreter.InterpreterDelegate;
-import com.core.messagesource.MessageSource;
-import com.core.messagesource.MessageSourceListener;
-import com.core.utils.IdGenerator;
+import com.abstractions.runtime.interpreter.Interpreter;
+import com.abstractions.runtime.interpreter.InterpreterDelegate;
+import com.abstractions.utils.IdGenerator;
 
 public class ContextDefinition implements Identificable, MessageSourceListener, Terminable, Startable {
 
@@ -305,7 +305,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		if (this.defaultInterpreterDelegate != null) {
 			interpreter.setDelegate(this.defaultInterpreterDelegate);
 		}
-		com.core.interpreter.Thread mainThread = interpreter.run(message);
+		com.abstractions.runtime.interpreter.Thread mainThread = interpreter.run(message);
 		Message response = mainThread.getCurrentMessage();
 		return response;
 	}

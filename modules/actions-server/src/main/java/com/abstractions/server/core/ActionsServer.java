@@ -17,11 +17,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.api.Processor;
 import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.common.LogProcessorWrapper;
 import com.abstractions.instance.common.PerformanceProcessor;
 import com.abstractions.instance.common.ProcessorWrapper;
-import com.core.api.Processor;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;

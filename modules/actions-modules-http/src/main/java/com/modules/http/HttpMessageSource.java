@@ -5,11 +5,11 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.modules.jetty.JettyHttpServer;
 
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.Startable;
-import com.core.api.Terminable;
-import com.core.messagesource.AbstractMessageSource;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.Startable;
+import com.abstractions.api.Terminable;
+import com.abstractions.instance.messagesource.AbstractMessageSource;
 
 public class HttpMessageSource extends AbstractMessageSource implements Terminable, Startable {
 

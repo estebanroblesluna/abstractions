@@ -15,12 +15,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.common.expression.ScriptingExpression;
-import com.common.expression.ScriptingLanguage;
-import com.core.api.Message;
-import com.core.api.Processor;
-import com.core.utils.ExpressionUtils;
-import com.core.utils.IdGenerator;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.expression.ScriptingExpression;
+import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.utils.ExpressionUtils;
+import com.abstractions.utils.IdGenerator;
 import com.service.core.FileService;
 
 public class ResourceBasedDustRendererProcessor implements Processor {

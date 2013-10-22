@@ -2,8 +2,8 @@ package com.abstractions.instance.common;
 
 import org.jsoup.helper.Validate;
 
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
 
 public class ProcessorWrapper implements Processor {
 

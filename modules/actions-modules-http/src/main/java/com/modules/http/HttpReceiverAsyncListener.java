@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-import com.core.api.Message;
-import com.core.utils.MessageUtils;
+import com.abstractions.api.Message;
+import com.abstractions.utils.MessageUtils;
 
 public class HttpReceiverAsyncListener implements AsyncListener {
 	

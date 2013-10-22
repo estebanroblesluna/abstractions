@@ -8,11 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.common.expression.ScriptingExpression;
-import com.common.expression.ScriptingLanguage;
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.Processor;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.expression.ScriptingExpression;
+import com.abstractions.expression.ScriptingLanguage;
 
 public class SelectProcessor implements Processor {
 

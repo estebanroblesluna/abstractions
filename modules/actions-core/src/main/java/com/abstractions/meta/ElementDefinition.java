@@ -9,10 +9,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.api.Context;
+import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.instance.common.ScriptingProcessor;
 import com.abstractions.model.PropertyDefinition;
-import com.common.expression.ScriptingLanguage;
-import com.common.expression.ScriptingProcessor;
-import com.core.api.Context;
 import com.service.core.BeanUtils;
 import com.service.core.NamesMapping;
 import com.service.core.ServiceException;

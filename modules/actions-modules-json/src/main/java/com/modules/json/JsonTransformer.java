@@ -7,9 +7,9 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.core.api.Message;
-import com.core.api.ProcessingException;
-import com.core.api.Processor;
+import com.abstractions.api.Message;
+import com.abstractions.api.ProcessingException;
+import com.abstractions.api.Processor;
 
 public class JsonTransformer implements Processor
 {

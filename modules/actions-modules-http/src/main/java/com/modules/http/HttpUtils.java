@@ -13,8 +13,8 @@ import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
 
-import com.core.api.Message;
-import com.core.utils.MessageUtils;
+import com.abstractions.api.Message;
+import com.abstractions.utils.MessageUtils;
 
 public class HttpUtils
 {

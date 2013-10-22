@@ -9,11 +9,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.core.api.Expression;
-import com.core.api.Message;
-import com.core.api.Processor;
-import com.core.utils.ExpressionUtils;
-import com.core.utils.MessageUtils;
+import com.abstractions.api.Expression;
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.utils.ExpressionUtils;
+import com.abstractions.utils.MessageUtils;
 
 public class FileReaderProcessor implements Processor {
 
