@@ -7,11 +7,11 @@ import java.util.concurrent.ExecutorService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Message;
 import com.core.impl.AllConnection;
 import com.core.impl.ConnectionType;
 import com.service.core.BeanUtils;
-import com.service.core.ObjectDefinition;
 
 public class AllRouterEvaluator implements Evaluator {
 
@@ -19,7 +19,7 @@ public class AllRouterEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(Thread thread) {
-		ObjectDefinition currentElement = thread.getCurrentObjectDefinition();
+		ObjectClazz currentElement = thread.getCurrentObjectDefinition();
 		Message currentMessage = thread.getCurrentMessage();
 		ExecutorService service = thread.getExecutorServiceFor(currentElement);
 		
@@ -28,7 +28,7 @@ public class AllRouterEvaluator implements Evaluator {
 		
 		int count = 0;
 		for (String urn : urns) {
-			final ObjectDefinition connectionDefinition = thread.getContext().resolve(urn);
+			final ObjectClazz connectionDefinition = thread.getContext().resolve(urn);
 			if (connectionDefinition != null) {
 				count++;
 			}
@@ -37,7 +37,7 @@ public class AllRouterEvaluator implements Evaluator {
 		CountDownLatch latch = new CountDownLatch(count);
 		
 		for (String urn : urns) {
-			final ObjectDefinition connectionDefinition = thread.getContext().resolve(urn);
+			final ObjectClazz connectionDefinition = thread.getContext().resolve(urn);
 			if (connectionDefinition != null) {
 				Object connection = connectionDefinition.getInstance();
 				if (connection instanceof AllConnection) {

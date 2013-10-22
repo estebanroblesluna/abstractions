@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.core.api.Context;
@@ -37,16 +38,16 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	private String id;
 	private int version;
 	private volatile Context context;
-	private volatile Map<String, ObjectDefinition> definitions;
-	private volatile Map<ObjectDefinition, ExecutorService> executorServices;
+	private volatile Map<String, ObjectClazz> definitions;
+	private volatile Map<ObjectClazz, ExecutorService> executorServices;
 	private final NamesMapping mapping;
 	private volatile InterpreterDelegate defaultInterpreterDelegate;
 
 	public ContextDefinition(NamesMapping mapping) {
 		this.id = IdGenerator.getNewId();
 		this.version = 1;
-		this.definitions = new ConcurrentHashMap<String, ObjectDefinition>();
-		this.executorServices = new ConcurrentHashMap<ObjectDefinition, ExecutorService>();
+		this.definitions = new ConcurrentHashMap<String, ObjectClazz>();
+		this.executorServices = new ConcurrentHashMap<ObjectClazz, ExecutorService>();
 		this.mapping = mapping;
 	}
 	
@@ -73,7 +74,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	{
 		synchronized (this.definitions) {
 			//create all objects
-			for (ObjectDefinition definition : this.definitions.values())
+			for (ObjectClazz definition : this.definitions.values())
 			{
 				try {
 					if (!definition.isInstantiated()) {
@@ -92,7 +93,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 			}
 			
 			//wire them all together
-			for (ObjectDefinition definition : this.definitions.values())
+			for (ObjectClazz definition : this.definitions.values())
 			{
 				try {
 					definition.initialize(this.context, mapping);
@@ -103,7 +104,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		}
 	}
 
-	public void addDefinition(ObjectDefinition definition) {
+	public void addDefinition(ObjectClazz definition) {
 		synchronized (this.definitions) {
 			this.definitions.put(definition.getId(), definition);
 			
@@ -113,9 +114,9 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		}
 	}
 	
-	public void addDefinitions(List<ObjectDefinition> definitions) {
+	public void addDefinitions(List<ObjectClazz> definitions) {
 		synchronized (this.definitions) {
-			for (ObjectDefinition definition : definitions) {
+			for (ObjectClazz definition : definitions) {
 				this.definitions.put(definition.getId(), definition);
 				if (this.isConnection(definition)) {
 					this.bindConnection(definition);
@@ -128,13 +129,13 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		return id;
 	}
 
-	public ObjectDefinition getDefinition(String elementId) {
+	public ObjectClazz getDefinition(String elementId) {
 		synchronized (this.definitions) {
 			return this.definitions.get(elementId);
 		}
 	}
 
-	public Map<String, ObjectDefinition> getDefinitions() {
+	public Map<String, ObjectClazz> getDefinitions() {
 		return Collections.unmodifiableMap(this.definitions);
 	}
 
@@ -150,25 +151,25 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		return context;
 	}
 	
-	public void bindConnection(ObjectDefinition definition) {
+	public void bindConnection(ObjectClazz definition) {
 		if (this.isConnection(definition)) {
-			ObjectDefinition sourceDefinition = this.resolve(definition.getProperty("source"));
-			ObjectDefinition targetDefinition = this.resolve(definition.getProperty("target"));
+			ObjectClazz sourceDefinition = this.resolve(definition.getProperty("source"));
+			ObjectClazz targetDefinition = this.resolve(definition.getProperty("target"));
 			((ConnectionDefinition) definition.getMeta()).addOutgoingConnection(sourceDefinition, definition);
 			((ConnectionDefinition) definition.getMeta()).addIncomingConnection(targetDefinition, definition);
 		}
 	}
 
-	public ObjectDefinition addConnection(String sourceId, String targetId, ConnectionType type) {
-		ObjectDefinition sourceDefinition = this.getDefinition(sourceId);
-		ObjectDefinition targetDefinition = this.getDefinition(targetId);
+	public ObjectClazz addConnection(String sourceId, String targetId, ConnectionType type) {
+		ObjectClazz sourceDefinition = this.getDefinition(sourceId);
+		ObjectClazz targetDefinition = this.getDefinition(targetId);
 
 		return addConnection(sourceDefinition, targetDefinition, type);
 	}
 
-	public ObjectDefinition addConnection(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition, ConnectionType type) {
+	public ObjectClazz addConnection(ObjectClazz sourceDefinition, ObjectClazz targetDefinition, ConnectionType type) {
 		if (sourceDefinition != null && targetDefinition != null) {
-			ObjectDefinition connectionDefinition = this.createConnection(sourceDefinition, targetDefinition, type);
+			ObjectClazz connectionDefinition = this.createConnection(sourceDefinition, targetDefinition, type);
 			this.addDefinition(connectionDefinition);
 			return connectionDefinition;
 		} else {
@@ -176,11 +177,11 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		}
 	}
 	
-	public ObjectDefinition createConnection(ObjectDefinition sourceDefinition, ObjectDefinition targetDefinition, ConnectionType type) {
+	public ObjectClazz createConnection(ObjectClazz sourceDefinition, ObjectClazz targetDefinition, ConnectionType type) {
 		String elementName = type.getElementName();
 		ElementDefinition elementDefinition = this.mapping.getDefinition(elementName);
 		if (elementDefinition instanceof ConnectionDefinition) {
-			ObjectDefinition definition = ((ConnectionDefinition) elementDefinition).createInstance(
+			ObjectClazz definition = ((ConnectionDefinition) elementDefinition).createInstance(
 					sourceDefinition,
 					targetDefinition);
 			return definition;
@@ -189,9 +190,9 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		}
 	}
 	
-	public void deleteConnection(ObjectDefinition definition) {
+	public void deleteConnection(ObjectClazz definition) {
 		String urn = definition.getProperty("source");
-		ObjectDefinition sourceDefinition = this.resolve(urn);
+		ObjectClazz sourceDefinition = this.resolve(urn);
 		if (sourceDefinition != null) {
 			sourceDefinition.removeConnection(definition);
 		}
@@ -204,7 +205,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		}
 		
 		synchronized (this.definitions) {
-			ObjectDefinition definition = this.definitions.remove(elementId);
+			ObjectClazz definition = this.definitions.remove(elementId);
 			
 			if (definition != null) {
 				if (this.isConnection(definition)) {
@@ -233,25 +234,25 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		return deletedEntities;
 	}
 	
-	private boolean isConnection(ObjectDefinition definition) {
+	private boolean isConnection(ObjectClazz definition) {
 		return definition.getMeta() instanceof ConnectionDefinition;
 	}
 
-	public ObjectDefinition getNextInChainFor(String objectDefinitionId) {
-		ObjectDefinition definition = this.getDefinition(objectDefinitionId);
-		ObjectDefinition nextInChain = definition.getUniqueConnectionOfType(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName(), this);
+	public ObjectClazz getNextInChainFor(String objectDefinitionId) {
+		ObjectClazz definition = this.getDefinition(objectDefinitionId);
+		ObjectClazz nextInChain = definition.getUniqueConnectionOfType(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName(), this);
 		if (nextInChain == null) {
 			return null;
 		}
 		
 		//target
 		String targetURN = nextInChain.getProperty("target");
-		ObjectDefinition target = this.resolve(targetURN);
+		ObjectClazz target = this.resolve(targetURN);
 
 		return target;
 	}
 
-	public ObjectDefinition resolve(String urn) {
+	public ObjectClazz resolve(String urn) {
 		if (StringUtils.isEmpty(urn) || !urn.startsWith("urn:")) {
 			return null;
 		}
@@ -260,8 +261,8 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		return this.getDefinition(id);
 	}
 	
-	public Map<String, ObjectDefinition> resolve(List<String> urns) {
-		Map<String, ObjectDefinition> definitions = new HashMap<String, ObjectDefinition>();
+	public Map<String, ObjectClazz> resolve(List<String> urns) {
+		Map<String, ObjectClazz> definitions = new HashMap<String, ObjectClazz>();
 		for (String urn : urns) {
 			definitions.put(urn, this.resolve(urn));
 		}
@@ -277,7 +278,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 		return id;
 	}
 
-	public ObjectDefinition getNextInChainFor(ObjectDefinition objectDefinition) {
+	public ObjectClazz getNextInChainFor(ObjectClazz objectDefinition) {
 		if (objectDefinition == null) {
 			return null;
 		}
@@ -286,11 +287,11 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	}
 	
 	public Processor getNextProcessorInChainFor(String objectDefinitionId) {
-		ObjectDefinition definition = this.getNextInChainFor(objectDefinitionId);
+		ObjectClazz definition = this.getNextInChainFor(objectDefinitionId);
 		return (Processor) ((definition != null) ? definition.getInstance() : null);
 	}
 	
-	public ExecutorService getExecutorServiceFor(ObjectDefinition definition) {
+	public ExecutorService getExecutorServiceFor(ObjectClazz definition) {
 		if (!this.executorServices.containsKey(definition)) {
 			this.executorServices.put(definition, Executors.newFixedThreadPool(10));
 		}
@@ -299,7 +300,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 	}
 
 	public Message onMessageReceived(MessageSource messageSource, Message message) {
-		ObjectDefinition source = this.getNextInChainFor(messageSource.getId());
+		ObjectClazz source = this.getNextInChainFor(messageSource.getId());
 		Interpreter interpreter = new Interpreter(this, source);
 		if (this.defaultInterpreterDelegate != null) {
 			interpreter.setDelegate(this.defaultInterpreterDelegate);
@@ -311,7 +312,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 
 	@Override
 	public void terminate() {
-		for (ObjectDefinition definition : this.definitions.values()) {
+		for (ObjectClazz definition : this.definitions.values()) {
 			definition.terminate();
 		}
 		
@@ -322,7 +323,7 @@ public class ContextDefinition implements Identificable, MessageSourceListener, 
 
 	@Override
 	public void start() {
-		for (ObjectDefinition definition : this.definitions.values()) {
+		for (ObjectClazz definition : this.definitions.values()) {
 			definition.start();
 		}
 	}

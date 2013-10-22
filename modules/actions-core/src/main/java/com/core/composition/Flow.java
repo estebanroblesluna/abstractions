@@ -1,20 +1,20 @@
 package com.core.composition;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Element;
 import com.core.api.Evaluable;
 import com.service.core.ContextDefinition;
-import com.service.core.ObjectDefinition;
 
 public class Flow implements Element, Evaluable {
 	
-	private ObjectDefinition starting;
+	private ObjectClazz starting;
 	private ContextDefinition context;
 
-	public ObjectDefinition getStarting() {
+	public ObjectClazz getStarting() {
 		return starting;
 	}
 
-	public void setStarting(ObjectDefinition starting) {
+	public void setStarting(ObjectClazz starting) {
 		this.starting = starting;
 	}
 

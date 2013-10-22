@@ -11,10 +11,10 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ElementDefinition;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 
 public class ContextDefinitionMarshaller {
 
@@ -42,9 +42,9 @@ public class ContextDefinitionMarshaller {
 	private void marshallDefinitions(ContextDefinition definition, JSONObject root) throws JSONException {
 		JSONArray array = new JSONArray();
 
-		List<ObjectDefinition> postProcessableDefinitions = new ArrayList<ObjectDefinition>();
+		List<ObjectClazz> postProcessableDefinitions = new ArrayList<ObjectClazz>();
 		
-		for (Entry<String, ObjectDefinition> entry : definition.getDefinitions().entrySet())
+		for (Entry<String, ObjectClazz> entry : definition.getDefinitions().entrySet())
 		{
 			if (this.isConnection(entry.getValue())) {
 				postProcessableDefinitions.add(entry.getValue());
@@ -54,7 +54,7 @@ public class ContextDefinitionMarshaller {
 			}
 		}
 
-		for (ObjectDefinition postDefinition : postProcessableDefinitions)
+		for (ObjectClazz postDefinition : postProcessableDefinitions)
 		{
 			JSONObject jsonDefinition = this.marshall(postDefinition);
 			array.put(jsonDefinition);
@@ -63,11 +63,11 @@ public class ContextDefinitionMarshaller {
 		root.put("definitions", array);
 	}
 
-	private boolean isConnection(ObjectDefinition definition) {
+	private boolean isConnection(ObjectClazz definition) {
 		return definition.getElementName().endsWith("_CONNECTION");
 	}
 
-	private JSONObject marshall(ObjectDefinition definition) throws JSONException {
+	private JSONObject marshall(ObjectClazz definition) throws JSONException {
 		JSONObject root = new JSONObject();
 
 		root.put("id", definition.getId());
@@ -103,18 +103,18 @@ public class ContextDefinitionMarshaller {
 			JSONArray definitions = root.getJSONArray("definitions");
 			for (int i = 0; i < definitions.length(); i++) {
 				JSONObject object = definitions.getJSONObject(i);
-				ObjectDefinition objectDefinition = this.parseDefinition(object);
+				ObjectClazz objectDefinition = this.parseDefinition(object);
 				definition.addDefinition(objectDefinition);
 			}
 		}
 	}
 
-	private ObjectDefinition parseDefinition(JSONObject object) throws JSONException {
+	private ObjectClazz parseDefinition(JSONObject object) throws JSONException {
 		String id = object.getString("id");
 		String name = object.getString("name");
 
 		ElementDefinition elementDefinition = this.mapping.getDefinition(name);
-		ObjectDefinition definition = new ObjectDefinition(id, elementDefinition);
+		ObjectClazz definition = new ObjectClazz(id, elementDefinition);
 		JSONObject propertiesAsJson = object.getJSONObject("properties");
 
 		Map<String, String> properties = this.parsePropertiesMap(propertiesAsJson);

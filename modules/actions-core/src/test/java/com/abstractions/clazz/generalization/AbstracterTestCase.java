@@ -1,17 +1,14 @@
-package com.abstractions.generalization;
+package com.abstractions.clazz.generalization;
 
 import junit.framework.TestCase;
 
-import com.abstractions.impl.generalization.Abstracter;
-import com.abstractions.impl.generalization.MultipleEntryPointsException;
-import com.abstractions.impl.generalization.UnconnectedDefinitionsException;
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.model.Library;
 import com.common.expression.ScriptingLanguage;
 import com.core.impl.ConnectionType;
 import com.core.meta.Meta;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 
 public class AbstracterTestCase extends TestCase {
 
@@ -30,16 +27,16 @@ public class AbstracterTestCase extends TestCase {
 	}
 
 	public void testUnconnectedDefinitionsException() {
-		ObjectDefinition a = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition b = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition c = new ObjectDefinition(this.common.getDefinition("GROOVY"));
+		ObjectClazz a = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz b = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz c = new ObjectClazz(this.common.getDefinition("GROOVY"));
 		
 		this.context.addDefinition(a);
 		this.context.addDefinition(b);
 		this.context.addDefinition(c);
 		
-		ObjectDefinition ab = this.context.addConnection(a, b, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		ObjectDefinition bc = this.context.addConnection(b, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz ab = this.context.addConnection(a, b, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz bc = this.context.addConnection(b, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
 		try {
 			this.abstracter.abstractFrom(context, a, b, ab);
@@ -52,19 +49,19 @@ public class AbstracterTestCase extends TestCase {
 	}
 
 	public void testMultipleEntryPointsException() {
-		ObjectDefinition a = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition b = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition c = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition d = new ObjectDefinition(this.common.getDefinition("GROOVY"));
+		ObjectClazz a = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz b = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz c = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz d = new ObjectClazz(this.common.getDefinition("GROOVY"));
 		
 		this.context.addDefinition(a);
 		this.context.addDefinition(b);
 		this.context.addDefinition(c);
 		this.context.addDefinition(d);
 		
-		ObjectDefinition ac = this.context.addConnection(a, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		ObjectDefinition bd = this.context.addConnection(b, d, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		ObjectDefinition cd = this.context.addConnection(c, d, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz ac = this.context.addConnection(a, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz bd = this.context.addConnection(b, d, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz cd = this.context.addConnection(c, d, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
 		try {
 			this.abstracter.abstractFrom(context, c, d, cd);
@@ -77,19 +74,19 @@ public class AbstracterTestCase extends TestCase {
 	}
 	
 	public void testAbstraction() {
-		ObjectDefinition a = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition b = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition c = new ObjectDefinition(this.common.getDefinition("GROOVY"));
-		ObjectDefinition d = new ObjectDefinition(this.common.getDefinition("GROOVY"));
+		ObjectClazz a = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz b = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz c = new ObjectClazz(this.common.getDefinition("GROOVY"));
+		ObjectClazz d = new ObjectClazz(this.common.getDefinition("GROOVY"));
 		
 		this.context.addDefinition(a);
 		this.context.addDefinition(b);
 		this.context.addDefinition(c);
 		this.context.addDefinition(d);
 		
-		ObjectDefinition ac = this.context.addConnection(a, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		ObjectDefinition bc = this.context.addConnection(b, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-		ObjectDefinition cd = this.context.addConnection(c, d, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz ac = this.context.addConnection(a, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz bc = this.context.addConnection(b, c, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		ObjectClazz cd = this.context.addConnection(c, d, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
 		try {
 			this.abstracter.abstractFrom(context, c, d, cd);

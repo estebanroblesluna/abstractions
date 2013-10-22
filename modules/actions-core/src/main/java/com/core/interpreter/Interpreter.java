@@ -9,11 +9,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Identificable;
 import com.core.api.Message;
 import com.core.utils.IdGenerator;
 import com.service.core.ContextDefinition;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
 public class Interpreter implements Identificable, ThreadObserver {
@@ -24,10 +24,10 @@ public class Interpreter implements Identificable, ThreadObserver {
 	private final ContextDefinition context;
 	private final AtomicLong threadCount;
 	private final Map<Long, Thread> threads;
-	private final ObjectDefinition source;
+	private final ObjectClazz source;
 	private volatile InterpreterDelegate delegate;
 
-	public Interpreter(ContextDefinition context, ObjectDefinition source) {
+	public Interpreter(ContextDefinition context, ObjectClazz source) {
 		Validate.notNull(context);
 		Validate.notNull(source);
 		
@@ -76,14 +76,14 @@ public class Interpreter implements Identificable, ThreadObserver {
 		this.delegate = delegate;
 	}
 
-	public Thread createThread(ObjectDefinition source, Message message) {
+	public Thread createThread(ObjectClazz source, Message message) {
 		Thread thread = new Thread(this, source, message, this.threadCount.incrementAndGet());
 		this.threads.put(thread.getId(), thread);
 		thread.addObserver(this);
 		return thread;
 	}
 
-	public Thread createDebuggableThread(ObjectDefinition source, Message message) {
+	public Thread createDebuggableThread(ObjectClazz source, Message message) {
 		Thread thread = new DebuggableThread(this, source, message, this.threadCount.incrementAndGet());
 		this.threads.put(thread.getId(), thread);
 		thread.addObserver(this);
@@ -95,7 +95,7 @@ public class Interpreter implements Identificable, ThreadObserver {
 		return (T) this.threads.get(threadId);
 	}
 	
-	ExecutorService getExecutorServiceFor(ObjectDefinition definition) {
+	ExecutorService getExecutorServiceFor(ObjectClazz definition) {
 		return this.context.getExecutorServiceFor(definition);
 	}
 

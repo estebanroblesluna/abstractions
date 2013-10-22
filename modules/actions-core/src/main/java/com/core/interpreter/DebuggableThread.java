@@ -1,16 +1,16 @@
 package com.core.interpreter;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.common.expression.ScriptingExpression;
 import com.common.expression.ScriptingLanguage;
 import com.core.api.Message;
-import com.service.core.ObjectDefinition;
 
 public class DebuggableThread extends Thread {
 
 	private volatile boolean stopOnBreakpoints;
 	private volatile long delay;
 
-	public DebuggableThread(Interpreter interpreter, ObjectDefinition source, Message message, Long id) {
+	public DebuggableThread(Interpreter interpreter, ObjectClazz source, Message message, Long id) {
 		super(interpreter, source, message, id);
 
 		this.stopOnBreakpoints = true;
@@ -22,7 +22,7 @@ public class DebuggableThread extends Thread {
 		this.basicRun();
 	}
 	
-	protected Thread createSubthread(ObjectDefinition source, Message message) {
+	protected Thread createSubthread(ObjectClazz source, Message message) {
 		return this.interpreter.createDebuggableThread(source, message);
 	}
 	
@@ -35,7 +35,7 @@ public class DebuggableThread extends Thread {
 		this.basicStep();
 	}
 	
-	protected void afterStep(ObjectDefinition currentDefinition) {
+	protected void afterStep(ObjectClazz currentDefinition) {
 		this.delayIfNecessary();
 		this.interpreter.getDelegate().afterStep(
 				this.interpreter.getId(),
@@ -45,7 +45,7 @@ public class DebuggableThread extends Thread {
 				this.currentMessage.clone());
 	}
 
-	protected void beforeStep(ObjectDefinition currentDefinition) {
+	protected void beforeStep(ObjectClazz currentDefinition) {
 		this.delayIfNecessary();
 		this.interpreter.getDelegate().beforeStep(
 				this.interpreter.getId(),

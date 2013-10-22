@@ -17,13 +17,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.core.api.Processor;
 import com.core.common.LogProcessorWrapper;
 import com.core.common.PerformanceProcessor;
 import com.core.common.ProcessorWrapper;
 import com.service.core.ContextDefinition;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 import com.service.repository.ContextDefinitionMarshaller;
 import com.service.repository.MarshallingException;
@@ -207,7 +207,7 @@ public class ActionsServer {
 
 	public void addProfiler(String contextId, String objectId) {
 		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectDefinition objectDefinition = contextDefinition.getDefinition(objectId);
+		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor)  
 				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class))) {
@@ -221,7 +221,7 @@ public class ActionsServer {
 
 	public void removeProfiler(String contextId, String objectId) {
 		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectDefinition objectDefinition = contextDefinition.getDefinition(objectId);
+		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class)) {
 			ProcessorWrapper wrapper = (ProcessorWrapper) object;
@@ -235,7 +235,7 @@ public class ActionsServer {
 	
 	public void addLogger(String contextId, String objectId, String beforeExpression, String afterExpression) {
 		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectDefinition objectDefinition = contextDefinition.getDefinition(objectId);
+		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor) 
 				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class))) {
@@ -253,7 +253,7 @@ public class ActionsServer {
 	
 	public void removeLogger(String contextId, String objectId) {
 		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectDefinition objectDefinition = contextDefinition.getDefinition(objectId);
+		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class)) {
 			ProcessorWrapper wrapper = (ProcessorWrapper) object;

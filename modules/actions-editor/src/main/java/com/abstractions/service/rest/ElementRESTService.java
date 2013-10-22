@@ -19,12 +19,12 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.service.DeploymentService;
 import com.core.impl.ConnectionType;
 import com.service.core.ContextDefinition;
 import com.service.core.DevelopmentContextHolder;
 import com.service.core.NamesMapping;
-import com.service.core.ObjectDefinition;
 import com.service.core.ServiceException;
 
 
@@ -49,7 +49,7 @@ public class ElementRESTService {
 	{
 		ContextDefinition context = this.holder.get(contextId);
 		
-		ObjectDefinition definition = new ObjectDefinition(this.mapping.getDefinition(elementName));
+		ObjectClazz definition = new ObjectClazz(this.mapping.getDefinition(elementName));
 		context.addDefinition(definition);
 		
 		return ResponseUtils.ok(new Attribute("id", definition.getId()));
@@ -164,7 +164,7 @@ public class ElementRESTService {
 			return ResponseUtils.fail("Context not found");
 		}
 
-		ObjectDefinition objectDefinition = context.getDefinition(elementId);
+		ObjectClazz objectDefinition = context.getDefinition(elementId);
 
 		if (objectDefinition == null) {
 			return ResponseUtils.fail("Object not found");
@@ -189,7 +189,7 @@ public class ElementRESTService {
 			@FormParam("propertyValue") String propertyValue)
 	{
 		ContextDefinition context = this.holder.get(contextId);
-		ObjectDefinition definition = context.getDefinition(elementId);
+		ObjectClazz definition = context.getDefinition(elementId);
 		definition.setProperty(propertyName, propertyValue);
 		return ResponseUtils.ok();
 	}
@@ -203,7 +203,7 @@ public class ElementRESTService {
 			@FormParam("arguments") String argumentsAsString)
 	{
 		ContextDefinition context = this.holder.get(contextId);
-		ObjectDefinition definition = context.getDefinition(elementId);
+		ObjectClazz definition = context.getDefinition(elementId);
 		String[] arguments = null;
 		if (!StringUtils.isBlank(argumentsAsString)) {
 			arguments = argumentsAsString.split(",");
@@ -225,7 +225,7 @@ public class ElementRESTService {
 			return ResponseUtils.fail("Context not found");
 		}
 		
-		ObjectDefinition objectDefinition = context.getDefinition(elementId);
+		ObjectClazz objectDefinition = context.getDefinition(elementId);
 
 		if (objectDefinition == null) {
 			return ResponseUtils.fail("Object not found");
