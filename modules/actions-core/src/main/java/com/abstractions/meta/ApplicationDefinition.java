@@ -10,17 +10,25 @@ import org.apache.commons.logging.LogFactory;
 
 import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
+import com.abstractions.api.Message;
+import com.abstractions.generalization.ApplicationTemplate;
+import com.abstractions.instance.messagesource.MessageSource;
+import com.abstractions.instance.messagesource.MessageSourceListener;
+import com.abstractions.runtime.interpreter.Interpreter;
+import com.abstractions.runtime.interpreter.InterpreterDelegate;
 import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
-public class ApplicationDefinition extends ElementDefinition {
+public class ApplicationDefinition extends ElementDefinition implements MessageSourceListener {
 
 	private static final Log log = LogFactory.getLog(ApplicationDefinition.class);
 
 	private Map<String, ElementTemplate> definitions;
+	private volatile InterpreterDelegate interpreterDelegate;
+	private volatile CompositeTemplate composite;
 	
 	protected ApplicationDefinition() { }
 
@@ -37,20 +45,24 @@ public class ApplicationDefinition extends ElementDefinition {
 		//NO Evaluation
 	}
 
-	@Override
-	public Element instantiate(CompositeElement context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
-		CompositeTemplate composite = new CompositeTemplate(this, mapping);
+	public CompositeTemplate primInstantiate(CompositeElement context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
+		this.composite = new ApplicationTemplate(this, mapping);
 		this.basicSetProperties(composite, instanceProperties, context, mapping);
 
-		composite.addDefinitions(this.getDefinitions().values());
+		this.composite.addDefinitions(this.getDefinitions().values());
 		
 		try {
-			composite.sync();
+			this.composite.sync();
 		} catch (ServiceException e) {
 			log.warn("Error starting subcontext", e);
 		}
 		
-		return composite.getInstance();
+		return this.composite;
+	}
+	
+	@Override
+	public Element instantiate(CompositeElement context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
+		return this.primInstantiate(context, mapping, instanceProperties).getInstance();
 	}
 	
 	@Override
@@ -79,5 +91,22 @@ public class ApplicationDefinition extends ElementDefinition {
 
 	public Map<String, ElementTemplate> getDefinitions() {
 		return Collections.unmodifiableMap(this.definitions);
+	}
+
+	public void setDefaultInterpreterDelegate(InterpreterDelegate interpreterDelegate) {
+		this.interpreterDelegate = interpreterDelegate;
+	}
+
+	@Override
+	public Message onMessageReceived(MessageSource messageSource, Message message) {
+		ElementTemplate nextInChain = this.composite.getNextInChainFor(messageSource.getId());
+		Interpreter interpreter = new Interpreter(this.composite, nextInChain);
+		
+		if (this.interpreterDelegate != null) {
+			interpreter.setDelegate(this.interpreterDelegate);
+		}
+
+		Thread root = interpreter.run(message);
+		return root.getCurrentMessage();
 	}
 }

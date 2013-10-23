@@ -31,7 +31,11 @@ public class AbstractMessageSource implements MessageSource, IdentificableMutabl
 	}
 
 	protected Message newMessage(Message message) {
-		Message response = this.mainListener.onMessageReceived(this, message);
+		Message response = message;
+		
+		if (this.mainListener != null) {
+			response = this.mainListener.onMessageReceived(this, message);
+		}
 		
 		for (MessageSourceListener listener : this.listeners) {
 			listener.onMessageReceived(this, message);

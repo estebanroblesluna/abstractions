@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.service.DeploymentService;
 import com.abstractions.service.core.DevelopmentContextHolder;
@@ -34,13 +35,21 @@ public class ContextRESTService {
 	@POST
 	@Path("/")
 	public Response createContext() {
-		CompositeTemplate definition = new CompositeTemplate(new ApplicationDefinition("myApp"), this.mapping);
-		this.holder.put(definition);
-		String contextId = definition.getId();
-		
-		return ResponseUtils.ok(
-				new Attribute("id", contextId), 
-				new Attribute("serverId", serverId));
+		ApplicationDefinition appDefinition = new ApplicationDefinition("myApp");
+		try {
+			CompositeTemplate definition = appDefinition.primInstantiate(null, this.mapping, null);
+			
+			this.holder.put(definition);
+			String contextId = definition.getId();
+			
+			return ResponseUtils.ok(
+					new Attribute("id", contextId), 
+					new Attribute("serverId", serverId));
+		} catch (InstantiationException e) {
+			return ResponseUtils.fail("Error creating context");
+		} catch (IllegalAccessException e) {
+			return ResponseUtils.fail("Error creating context");
+		}
 	}
 	
 	@POST

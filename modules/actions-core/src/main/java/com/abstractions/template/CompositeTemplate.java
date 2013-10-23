@@ -82,6 +82,8 @@ public class CompositeTemplate extends ElementTemplate {
 						this.afterInstantiation(object, definition);
 						this.getCompositeElement().addObject(definition.getId(), object);
 					}
+					
+					this.afterScan(definition.getInstance(), definition);
 				} catch (ServiceException e) {
 					log.warn("Error instantiating object", e);
 				}
@@ -97,6 +99,9 @@ public class CompositeTemplate extends ElementTemplate {
 				}
 			}		
 		}
+	}
+
+	protected void afterScan(Element object, ElementTemplate definition) {
 	}
 
 	protected void afterInstantiation(Element object, ElementTemplate definition) {

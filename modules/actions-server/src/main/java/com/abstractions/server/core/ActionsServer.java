@@ -21,6 +21,7 @@ import com.abstractions.api.Processor;
 import com.abstractions.instance.common.LogProcessorWrapper;
 import com.abstractions.instance.common.PerformanceProcessor;
 import com.abstractions.instance.common.ProcessorWrapper;
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.service.repository.CompositeTemplateMarshaller;
@@ -68,7 +69,11 @@ public class ActionsServer {
 		for (Object fileAsObject : applicationDirectory.listFiles()) {
 			if (fileAsObject instanceof File && ((File) fileAsObject).isDirectory()) {
 				File file = (File) fileAsObject;
-				this.startFromFiles(file.getName());
+				try {
+					this.startApplicationFromFiles(file.getName());
+				} catch (Exception e) {
+					log.error("Error starting application " + file.getName());
+				}
 			}
 		}
 	}
@@ -80,24 +85,18 @@ public class ActionsServer {
 	 * 
 	 * If the definition has been started you can stop it at any time by calling the stop method
 	 * 
-	 * @param flowTemplate
+	 * @param appDefinition
+	 * @param flowDefinition 
 	 */
-	private void start(String flowTemplate) {
+	private void start(ApplicationDefinition appDefinition, String flowDefinition) {
 		try {
-			CompositeTemplate definition = marshaller.unmarshall(flowTemplate);
-			StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();
-			definition.getApplication().setDefaultInterpreterDelegate(statistics);
+			CompositeTemplate composite = marshaller.unmarshall(appDefinition, flowDefinition);
 			
-			this.statistics.put(definition.getId(), statistics);
-			
-			definition.sync();
-			definition.start();
-			
-			this.definitions.put(definition.getId(), definition.getApplication());
+			for (ElementTemplate template : composite.getDefinitions().values()) {
+				appDefinition.addDefinition(template);
+			}
 		} catch (MarshallingException e) {
 			log.error("Error reading definition", e);
-		} catch (ServiceException e) {
-			log.error("Error syncing definition", e);
 		}
 	}
 
@@ -114,14 +113,13 @@ public class ActionsServer {
 				zipEntry = zipInputStream.getNextEntry();
 			}
 			zipInputStream.close();
-		} catch (IOException e) {
+			this.startApplicationFromFiles(applicationId);
+		} catch (Exception e) {
 			log.error("Error deploying application", e);
 		} finally {
 			IOUtils.closeQuietly(applicationZip);
 			IOUtils.closeQuietly(zipInputStream);
 		}
-		
-		this.startFromFiles(applicationId);
 	}
 
 	private void saveFile(String applicationId, ZipEntry zipEntry, ZipInputStream zipInputStream) throws IOException {
@@ -129,20 +127,32 @@ public class ActionsServer {
 		FileUtils.writeByteArrayToFile(file, IOUtils.toByteArray(zipInputStream));
 	}
 
-	private void startFromFiles(String applicationId) {
+	private void startApplicationFromFiles(String applicationId) throws InstantiationException, IllegalAccessException, ServiceException {
+		ApplicationDefinition appDefinition = new ApplicationDefinition(applicationId);
 		File applicationDirectory = new File(this.applicationDirectory + "/" + applicationId);
+
 		if (applicationDirectory.exists()) {
 			File flowDirectory = new File(applicationDirectory, "flows");
 			for (File flowFile : flowDirectory.listFiles()) {
-				this.startFlow(flowFile);
+				this.startFlow(appDefinition, flowFile);
 			}
 		}
+		
+		CompositeTemplate composite = appDefinition.primInstantiate(null, this.mapping, null);
+		composite.sync();
+		composite.start();
+		
+		StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();
+		appDefinition.setDefaultInterpreterDelegate(statistics);
+		
+		this.statistics.put(applicationId, statistics);
+		this.definitions.put(applicationId, composite);
 	}
 
-	private void startFlow(File flowFile) {
+	private void startFlow(ApplicationDefinition appDefinition, File flowFile) {
 		try {
 			String flowDefinition = FileUtils.readFileToString(flowFile);
-			this.start(flowDefinition);
+			this.start(appDefinition, flowDefinition);
 		} catch (IOException e) {
 			log.warn("Error reading flow (ignoring for now) " + flowFile.getAbsolutePath(), e);
 		}
