@@ -19,13 +19,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.service.DeploymentService;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 
 @Path("/element")
@@ -47,9 +47,9 @@ public class ElementRESTService {
 	@Path("/{contextId}/{element}")
 	public Response addElement(@PathParam("contextId") String contextId, @PathParam("element") String elementName)
 	{
-		ContextDefinition context = this.holder.get(contextId);
+		CompositeTemplate context = this.holder.get(contextId);
 		
-		ObjectClazz definition = new ObjectClazz(this.mapping.getDefinition(elementName));
+		ElementTemplate definition = new ElementTemplate(this.mapping.getDefinition(elementName));
 		context.addDefinition(definition);
 		
 		return ResponseUtils.ok(new Attribute("id", definition.getId()));
@@ -59,7 +59,7 @@ public class ElementRESTService {
 	@Path("/{contextId}/{elementId}")
 	public Response deleteElement(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId)
 	{
-		ContextDefinition context = this.holder.get(contextId);
+		CompositeTemplate context = this.holder.get(contextId);
 		List<String> ids = context.deleteDefinition(elementId);
 		JSONObject deleted = new JSONObject();
 		JSONArray array = new JSONArray();
@@ -135,7 +135,7 @@ public class ElementRESTService {
 			@PathParam("nextInChainId") String targetId,
 			@PathParam("connectionType") String connectionType)
 	{
-		ContextDefinition context = this.holder.get(contextId);
+		CompositeTemplate context = this.holder.get(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
@@ -158,13 +158,13 @@ public class ElementRESTService {
 			@PathParam("elementId") String elementId, 
 			@PathParam("breakpoint") String breakpoint)
 	{
-		ContextDefinition context = this.holder.get(contextId);
+		CompositeTemplate context = this.holder.get(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
 		}
 
-		ObjectClazz objectDefinition = context.getDefinition(elementId);
+		ElementTemplate objectDefinition = context.getDefinition(elementId);
 
 		if (objectDefinition == null) {
 			return ResponseUtils.fail("Object not found");
@@ -188,8 +188,8 @@ public class ElementRESTService {
 			@PathParam("propertyName") String propertyName, 
 			@FormParam("propertyValue") String propertyValue)
 	{
-		ContextDefinition context = this.holder.get(contextId);
-		ObjectClazz definition = context.getDefinition(elementId);
+		CompositeTemplate context = this.holder.get(contextId);
+		ElementTemplate definition = context.getDefinition(elementId);
 		definition.setProperty(propertyName, propertyValue);
 		return ResponseUtils.ok();
 	}
@@ -202,8 +202,8 @@ public class ElementRESTService {
 			@PathParam("actionName") String actionName, 
 			@FormParam("arguments") String argumentsAsString)
 	{
-		ContextDefinition context = this.holder.get(contextId);
-		ObjectClazz definition = context.getDefinition(elementId);
+		CompositeTemplate context = this.holder.get(contextId);
+		ElementTemplate definition = context.getDefinition(elementId);
 		String[] arguments = null;
 		if (!StringUtils.isBlank(argumentsAsString)) {
 			arguments = argumentsAsString.split(",");
@@ -219,19 +219,19 @@ public class ElementRESTService {
 	@POST
 	@Path("/{contextId}/{elementId}/sync")
 	public Response sync(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId) {
-		ContextDefinition context = this.holder.get(contextId);
+		CompositeTemplate context = this.holder.get(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
 		}
 		
-		ObjectClazz objectDefinition = context.getDefinition(elementId);
+		ElementTemplate objectDefinition = context.getDefinition(elementId);
 
 		if (objectDefinition == null) {
 			return ResponseUtils.fail("Object not found");
 		}
 
-		if (context.getContext() == null) {
+		if (context.getCompositeElement() == null) {
 			try {
 				context.sync();
 			} catch (ServiceException e) {
@@ -239,7 +239,7 @@ public class ElementRESTService {
 			}
 		} else {
 			try {
-				objectDefinition.initialize(context.getContext(), this.mapping);
+				objectDefinition.initialize(context.getCompositeElement(), this.mapping);
 			} catch (ServiceException e) {
 				return ResponseUtils.fail("Error initializing object");
 			}

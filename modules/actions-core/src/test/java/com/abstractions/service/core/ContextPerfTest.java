@@ -1,21 +1,22 @@
-package com.service.core;
+package com.abstractions.service.core;
 
 import junit.framework.TestCase;
 
 import com.abstractions.api.Message;
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.common.NullProcessor;
 import com.abstractions.instance.core.ConnectionType;
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.abstractions.runtime.interpreter.Interpreter;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 public class ContextPerfTest extends TestCase {
 
-	private ContextDefinition context;
+	private CompositeTemplate application;
 	private String startId;
 	private NamesMapping mapping;
 	private Library common;
@@ -32,7 +33,7 @@ public class ContextPerfTest extends TestCase {
 		
 		long count = 10000;
 
-		this.context = new ContextDefinition(this.mapping);
+		this.application = new CompositeTemplate(new ApplicationDefinition("myApp"), this.mapping);
 		
 		long start = System.currentTimeMillis();
 		
@@ -42,7 +43,7 @@ public class ContextPerfTest extends TestCase {
 		this.buildChain(count, "B");
 		String startIdB = this.startId;
 
-		this.context.sync();
+		this.application.sync();
 		long end = System.currentTimeMillis();
 
 		System.out.println("Took " + (end - start) + "ms to build chain A and B");
@@ -51,8 +52,8 @@ public class ContextPerfTest extends TestCase {
 		Message message = new Message();
 		message.setPayload(0l);
 		
-		ObjectClazz source = context.getDefinition(startIdA);
-		Interpreter interpreter = new Interpreter(context, source);
+		ElementTemplate source = application.getDefinition(startIdA);
+		Interpreter interpreter = new Interpreter(application, source);
 		com.abstractions.runtime.interpreter.Thread thread = interpreter.createThread(source, message);
 		
 		start = System.currentTimeMillis();
@@ -68,8 +69,8 @@ public class ContextPerfTest extends TestCase {
 		message = new Message();
 		message.setPayload(0l);
 		
-		source = context.getDefinition(startIdB);
-		interpreter = new Interpreter(context, source);
+		source = application.getDefinition(startIdB);
+		interpreter = new Interpreter(application, source);
 		thread = interpreter.createThread(source, message);
 		
 		start = System.currentTimeMillis();
@@ -84,16 +85,16 @@ public class ContextPerfTest extends TestCase {
 	}
 
 	private void buildChain(long count, String elementName) {
-		ObjectClazz source = null;
+		ElementTemplate source = null;
 		for (int i = 0; i < count; i++) {
-			ObjectClazz definition = new ObjectClazz(common.getDefinition(elementName));
+			ElementTemplate definition = new ElementTemplate(common.getDefinition(elementName));
 			
-			this.context.addDefinition(definition);
+			this.application.addDefinition(definition);
 			
 			if (source == null) {
 				this.startId = definition.getId();
 			} else {
-				this.context.addConnection(source.getId(), definition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+				this.application.addConnection(source.getId(), definition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 			}
 
 			source = definition;

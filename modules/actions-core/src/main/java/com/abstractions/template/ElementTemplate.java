@@ -1,4 +1,4 @@
-package com.abstractions.clazz.core;
+package com.abstractions.template;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -12,31 +12,37 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.helper.Validate;
 
-import com.abstractions.api.Context;
+import com.abstractions.api.CompositeElement;
+import com.abstractions.api.Element;
+import com.abstractions.api.Identificable;
 import com.abstractions.api.Startable;
 import com.abstractions.api.Terminable;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.service.core.BeanUtils;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.utils.IdGenerator;
 
-public class ObjectClazz implements Startable, Terminable {
+/**
+ * A template represents a definition of the object to be created.
+ * 
+ * @author Esteban Robles Luna <esteban.roblesluna@gmail.com>
+ */
+public class ElementTemplate implements Identificable, Startable, Terminable {
 
 	public static final String NAME = "name";
 	
-	private String id;
-	private Map<String, String> properties;
-	private final ElementDefinition metaElementDefinition;
+	protected String id;
+	protected Map<String, String> properties;
+	protected final ElementDefinition metaElementDefinition;
 	
-	private volatile Object object;
-	private volatile boolean dirty;
-	private volatile boolean hasBreakpoint;
+	protected volatile Element object;
+	protected volatile boolean dirty;
+	protected volatile boolean hasBreakpoint;
 	
-	public ObjectClazz(ElementDefinition metaElementDefinition) {
+	public ElementTemplate(ElementDefinition metaElementDefinition) {
 		Validate.notNull(metaElementDefinition);
 
 		this.id = IdGenerator.getNewId();
@@ -46,7 +52,7 @@ public class ObjectClazz implements Startable, Terminable {
 		this.metaElementDefinition = metaElementDefinition;
 	}
 
-	public ObjectClazz(String id, ElementDefinition metaElementDefinition) {
+	public ElementTemplate(String id, ElementDefinition metaElementDefinition) {
 		Validate.notNull(metaElementDefinition);
 
 		this.id = id;
@@ -55,7 +61,11 @@ public class ObjectClazz implements Startable, Terminable {
 		this.metaElementDefinition = metaElementDefinition;
 	}
 
-	public synchronized Object instantiate(Context context, NamesMapping mapping) throws ServiceException {
+	public synchronized Element instantiate(CompositeElement context, NamesMapping mapping) throws ServiceException {
+		return this.basicInstantiate(context, mapping);
+	}
+
+	protected synchronized Element basicInstantiate(CompositeElement context, NamesMapping mapping) throws ServiceException {
 		try {
 			this.object = this.metaElementDefinition.instantiate(context, mapping, this.properties);
 			return this.object;
@@ -66,7 +76,7 @@ public class ObjectClazz implements Startable, Terminable {
 		}
 	}
 	
-	public void initialize(Context context, NamesMapping mapping) throws ServiceException {
+	public void initialize(CompositeElement context, NamesMapping mapping) throws ServiceException {
 		if (this.object == null) {
 			this.instantiate(context, mapping);
 		}
@@ -105,7 +115,7 @@ public class ObjectClazz implements Startable, Terminable {
 		return this.object != null;
 	}
 	
-	public Object getInstance() {
+	public Element getInstance() {
 		return this.object;
 	}
 
@@ -154,7 +164,7 @@ public class ObjectClazz implements Startable, Terminable {
 		}
 	}
 	
-	public void addConnection(ObjectClazz definition) {
+	public void addConnection(ElementTemplate definition) {
 		if (definition.getMeta() instanceof ConnectionDefinition) {
 			ConnectionDefinition meta = (ConnectionDefinition)definition.getMeta();
 			String type = meta.getName();
@@ -167,7 +177,7 @@ public class ObjectClazz implements Startable, Terminable {
 		}
 	}
 	
-	public void removeConnection(ObjectClazz definition) {
+	public void removeConnection(ElementTemplate definition) {
 		if (definition.getMeta() instanceof ConnectionDefinition) {
 			ConnectionDefinition meta = (ConnectionDefinition)definition.getMeta();
 			String type = meta.getName();
@@ -180,7 +190,7 @@ public class ObjectClazz implements Startable, Terminable {
 		}
 	}
 	
-	public void addIncomingConnection(ObjectClazz definition) {
+	public void addIncomingConnection(ElementTemplate definition) {
 		if (definition.getMeta() instanceof ConnectionDefinition) {
 			this.addToUrns("__incoming_connections", "urn:" + definition.getId());
 		}
@@ -194,7 +204,7 @@ public class ObjectClazz implements Startable, Terminable {
 		return BeanUtils.getUrnsFromList(this.getProperty("__connections"));
 	}
 
-	public ObjectClazz getUniqueConnectionOfType(String type, ContextDefinition context) {
+	public ElementTemplate getUniqueConnectionOfType(String type, CompositeTemplate context) {
 		if (type.equals(ConnectionType.NEXT_IN_CHAIN_CONNECTION.getElementName())) {
 			String urn = this.properties.get("__next_in_chain");
 			if (urn != null) {
@@ -208,17 +218,17 @@ public class ObjectClazz implements Startable, Terminable {
 			return null;
 		} else {
 			String urn = urns.get(0);
-			ObjectClazz object = context.resolve(urn);
+			ElementTemplate object = context.resolve(urn);
 			return object;
 		}
 	}
 	
-	public List<ObjectClazz> getAllConnectionsOfType(String type, ContextDefinition context) {
+	public List<ElementTemplate> getAllConnectionsOfType(String type, CompositeTemplate context) {
 		List<String> urns = BeanUtils.getUrnsFromList(this.getProperty("__connections" + type));
-		List<ObjectClazz> definitions = new ArrayList<ObjectClazz>();
+		List<ElementTemplate> definitions = new ArrayList<ElementTemplate>();
 		
 		for (String urn : urns) {
-			ObjectClazz object = context.resolve(urn);
+			ElementTemplate object = context.resolve(urn);
 			definitions.add(object);
 		}
 		
@@ -259,7 +269,7 @@ public class ObjectClazz implements Startable, Terminable {
 	 * 
 	 * @param newInstance
 	 */
-	public void overrideObject(Object newInstance) {
+	public void overrideObject(Element newInstance) {
 		this.object = newInstance;
 	}
 }

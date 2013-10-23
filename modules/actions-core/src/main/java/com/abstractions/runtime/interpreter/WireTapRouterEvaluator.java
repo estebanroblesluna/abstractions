@@ -3,17 +3,17 @@ package com.abstractions.runtime.interpreter;
 import java.util.concurrent.ExecutorService;
 
 import com.abstractions.api.Message;
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
-import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 public class WireTapRouterEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(final Thread thread) {
 		final Message clonedMessage = thread.getCurrentMessage().clone();
-		final ContextDefinition context = thread.getContext();
-		final ObjectClazz wireTap = thread.getCurrentObjectDefinition();
+		final CompositeTemplate composite = thread.getComposite();
+		final ElementTemplate wireTap = thread.getCurrentObjectDefinition();
 		
 		thread.computeNextInChainProcessorAndSet();
 
@@ -22,8 +22,8 @@ public class WireTapRouterEvaluator implements Evaluator {
 		service.execute(new Runnable() {
 			@Override
 			public void run() {
-				ObjectClazz connection = wireTap.getUniqueConnectionOfType(ConnectionType.WIRE_TAP_CONNECTION.getElementName(), context);
-				ObjectClazz target = context.resolve(connection.getProperty("target"));
+				ElementTemplate connection = wireTap.getUniqueConnectionOfType(ConnectionType.WIRE_TAP_CONNECTION.getElementName(), composite);
+				ElementTemplate target = composite.resolve(connection.getProperty("target"));
 				Thread newThread = thread.getInterpreter().createThread(target, clonedMessage);
 				newThread.run();
 			}

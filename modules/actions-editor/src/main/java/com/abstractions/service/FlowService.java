@@ -8,15 +8,16 @@ import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.Flow;
 import com.abstractions.repository.GenericRepository;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
-import com.abstractions.service.repository.ContextDefinitionMarshaller;
+import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
+import com.abstractions.template.CompositeTemplate;
 import com.abstractions.web.WebUserKeyProvider;
 
 @Service
@@ -24,7 +25,7 @@ public class FlowService {
 
 	private GenericRepository repository;
 	private ApplicationService applicationService;
-	private ContextDefinitionMarshaller marshaller;
+	private CompositeTemplateMarshaller marshaller;
 	private DevelopmentContextHolder holder;
 	
 	protected FlowService() { }
@@ -37,7 +38,7 @@ public class FlowService {
 		
 		this.repository = repository;
 		this.applicationService = applicationService;
-		this.marshaller = new ContextDefinitionMarshaller(mapping);
+		this.marshaller = new CompositeTemplateMarshaller(mapping);
 		this.holder = holder;
 		
 		this.holder.setKeyProvider(new WebUserKeyProvider());
@@ -60,7 +61,7 @@ public class FlowService {
 	}
 
 	@Transactional
-	public void addFlow(long applicationId, String name, ContextDefinition context) throws MarshallingException {
+	public void addFlow(long applicationId, String name, CompositeTemplate context) throws MarshallingException {
 		String json = this.marshaller.marshall(context);
 		
 		Flow flow = new Flow(name);
@@ -79,7 +80,7 @@ public class FlowService {
 	}
 
 	@Transactional
-	public void editFlow(long teamId, long applicationId, long flowId, String name, ContextDefinition context) throws MarshallingException {
+	public void editFlow(long teamId, long applicationId, long flowId, String name, CompositeTemplate context) throws MarshallingException {
 		String json = this.marshaller.marshall(context);
 		
 		Flow flow = this.getFlow(teamId, applicationId, flowId);
@@ -95,11 +96,11 @@ public class FlowService {
 	@Transactional
 	public Flow loadFlow(long teamId, long applicationId, long flowId) {
 		Flow flow = this.getFlow(teamId, applicationId, flowId);
-		ContextDefinition context;
+		CompositeTemplate context;
 		
 		try 
 		{
-			context = this.marshaller.unmarshall(flow.getJson());
+			context = this.marshaller.unmarshall(new ApplicationDefinition("myApp"), flow.getJson());
 			context.instantiate();
 		} 
 		catch (MarshallingException e) 

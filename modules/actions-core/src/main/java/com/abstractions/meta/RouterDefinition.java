@@ -1,5 +1,7 @@
 package com.abstractions.meta;
 
+import com.abstractions.runtime.interpreter.Thread;
+
 
 public class RouterDefinition extends ElementDefinition {
 
@@ -12,6 +14,14 @@ public class RouterDefinition extends ElementDefinition {
 		super(name);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void evaluateUsing(Thread thread) {
+		thread.getEvaluator(this.getName()).evaluate(thread);
+	}
+	
 	@Override
 	public ElementDefinitionType getType() {
 		return ElementDefinitionType.ROUTER;

@@ -18,22 +18,22 @@ import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
 import com.abstractions.api.Processor;
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.common.LogProcessorWrapper;
 import com.abstractions.instance.common.PerformanceProcessor;
 import com.abstractions.instance.common.ProcessorWrapper;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
-import com.abstractions.service.repository.ContextDefinitionMarshaller;
+import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 public class ActionsServer {
 
 	private static Log log = LogFactory.getLog(ActionsServer.class);
 
-	private final ContextDefinitionMarshaller marshaller;
-	private final Map<String, ContextDefinition> definitions;
+	private final CompositeTemplateMarshaller marshaller;
+	private final Map<String, CompositeTemplate> definitions;
 	
 	private final Map<String, List<PerformanceProcessor>> profilers;
 	private final Map<String, List<LogProcessorWrapper>> logs;
@@ -52,8 +52,8 @@ public class ActionsServer {
 		this.mapping = mapping;
 		this.applicationDirectory = applicationDirectory;
 		
-		this.marshaller = new ContextDefinitionMarshaller(mapping);
-		this.definitions = new ConcurrentHashMap<String, ContextDefinition>();
+		this.marshaller = new CompositeTemplateMarshaller(mapping);
+		this.definitions = new ConcurrentHashMap<String, CompositeTemplate>();
 		this.profilers = new ConcurrentHashMap<String, List<PerformanceProcessor>>();
 		this.objectIdLogs = new ConcurrentHashMap<String, LogProcessorWrapper>();
 		this.logs = new ConcurrentHashMap<String, List<LogProcessorWrapper>>();
@@ -74,26 +74,26 @@ public class ActionsServer {
 	}
 
 	/**
-	 * Starts the context definition in contextDefinition assuming that it 
+	 * Starts the context definition in CompositeTemplate assuming that it 
 	 * has been stored as a json object.
 	 * The it tries to sync and start the definition.
 	 * 
 	 * If the definition has been started you can stop it at any time by calling the stop method
 	 * 
-	 * @param contextDefinition
+	 * @param flowTemplate
 	 */
-	private void start(String contextDefinition) {
+	private void start(String flowTemplate) {
 		try {
-			ContextDefinition definition = marshaller.unmarshall(contextDefinition);
+			CompositeTemplate definition = marshaller.unmarshall(flowTemplate);
 			StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();
-			definition.setDefaultInterpreterDelegate(statistics);
+			definition.getApplication().setDefaultInterpreterDelegate(statistics);
 			
 			this.statistics.put(definition.getId(), statistics);
 			
 			definition.sync();
 			definition.start();
 			
-			this.definitions.put(definition.getId(), definition);
+			this.definitions.put(definition.getId(), definition.getApplication());
 		} catch (MarshallingException e) {
 			log.error("Error reading definition", e);
 		} catch (ServiceException e) {
@@ -165,7 +165,7 @@ public class ActionsServer {
 	 * @param definitionId
 	 */
 	public void stop(String contextId) {
-		ContextDefinition definition = this.definitions.remove(contextId);
+		CompositeTemplate definition = this.definitions.remove(contextId);
 		
 		if (definition != null) {
 			definition.terminate();
@@ -179,7 +179,7 @@ public class ActionsServer {
 	 * @return whether it is running or not
 	 */
 	public boolean isRunning(String contextId) {
-		ContextDefinition definition = this.definitions.get(contextId);
+		CompositeTemplate definition = this.definitions.get(contextId);
 		return definition != null;
 	}
 	
@@ -206,8 +206,8 @@ public class ActionsServer {
 	}
 
 	public void addProfiler(String contextId, String objectId) {
-		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
+		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor)  
 				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class))) {
@@ -220,12 +220,12 @@ public class ActionsServer {
 	}
 
 	public void removeProfiler(String contextId, String objectId) {
-		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
+		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class)) {
 			ProcessorWrapper wrapper = (ProcessorWrapper) object;
-			Object processor = wrapper.unwrap(PerformanceProcessor.class);
+			Processor processor = wrapper.unwrap(PerformanceProcessor.class);
 			objectDefinition.overrideObject(processor);
 			this.getProfilers(contextId).remove(wrapper);
 			this.wrapperToObjectIdMapping.remove(wrapper);
@@ -234,8 +234,8 @@ public class ActionsServer {
 
 	
 	public void addLogger(String contextId, String objectId, String beforeExpression, String afterExpression) {
-		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
+		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor) 
 				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class))) {
@@ -252,12 +252,12 @@ public class ActionsServer {
 	}
 	
 	public void removeLogger(String contextId, String objectId) {
-		ContextDefinition contextDefinition = this.definitions.get(contextId);
-		ObjectClazz objectDefinition = contextDefinition.getDefinition(objectId);
+		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class)) {
 			ProcessorWrapper wrapper = (ProcessorWrapper) object;
-			Object processor = wrapper.unwrap(LogProcessorWrapper.class);
+			Processor processor = wrapper.unwrap(LogProcessorWrapper.class);
 			objectDefinition.overrideObject(processor);
 			this.getLoggers(contextId).remove(wrapper);
 			this.wrapperToObjectIdMapping.remove(wrapper);
@@ -304,7 +304,7 @@ public class ActionsServer {
 			String cacheExpressions,
 			int ttl) {
 
-		ContextDefinition context = this.definitions.get(contextId);
+		CompositeTemplate context = this.definitions.get(contextId);
 		LazyComputedCacheTransformation transformation = new LazyComputedCacheTransformation(
 				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
 		
@@ -319,7 +319,7 @@ public class ActionsServer {
 			String cacheExpressions,
 			int ttl) {
 
-		ContextDefinition context = this.definitions.get(contextId);
+		CompositeTemplate context = this.definitions.get(contextId);
 		LazyAutorefreshableCacheTransformation transformation = new LazyAutorefreshableCacheTransformation(
 				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
 		

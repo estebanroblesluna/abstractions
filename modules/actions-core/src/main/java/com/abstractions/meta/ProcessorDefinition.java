@@ -1,5 +1,9 @@
 package com.abstractions.meta;
 
+import com.abstractions.api.Message;
+import com.abstractions.api.Processor;
+import com.abstractions.runtime.interpreter.Thread;
+
 public class ProcessorDefinition extends ElementDefinition {
 
 	protected ProcessorDefinition() { }
@@ -11,6 +15,20 @@ public class ProcessorDefinition extends ElementDefinition {
 	@Override
 	public ElementDefinitionType getType() {
 		return ElementDefinitionType.PROCESSOR;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void evaluateUsing(Thread thread) {
+		Message currentMessage = thread.getCurrentMessage();
+		Processor processor = (Processor) thread.getCurrentElement();
+		
+		currentMessage = processor.process(currentMessage);
+		
+		thread.setCurrentMessage(currentMessage);
+		thread.computeNextInChainProcessorAndSet();
 	}
 	
 	@Override

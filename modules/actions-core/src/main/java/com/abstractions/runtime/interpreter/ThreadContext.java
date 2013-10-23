@@ -1,22 +1,22 @@
 package com.abstractions.runtime.interpreter;
 
 import com.abstractions.api.Message;
-import com.abstractions.clazz.core.ObjectClazz;
-import com.abstractions.service.core.ContextDefinition;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 public class ThreadContext {
 
-	private final ContextDefinition context;
-	private final ObjectClazz processor;
+	private final CompositeTemplate composite;
+	private final ElementTemplate processor;
 	private final Message message;
 	
-	public ThreadContext(ContextDefinition context, ObjectClazz processor, Message message) {
-		this.context = context;
+	public ThreadContext(CompositeTemplate composite, ElementTemplate processor, Message message) {
+		this.composite = composite;
 		this.processor = processor;
 		this.message = message;
 	}
 
-	public ObjectClazz getProcessor() {
+	public ElementTemplate getProcessor() {
 		return processor;
 	}
 
@@ -24,7 +24,7 @@ public class ThreadContext {
 		return message;
 	}
 
-	public ContextDefinition getContext() {
-		return context;
+	public CompositeTemplate getComposite() {
+		return composite;
 	}
 }

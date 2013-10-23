@@ -1,5 +1,6 @@
 package com.abstractions.meta.example;
 
+import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.MessageSourceDefinition;
@@ -23,10 +24,16 @@ public class Meta {
 		library.addDefinition(createAllConnection());
 		library.addDefinition(createWireTapRouter());
 		library.addDefinition(createWireTapConnection());
+		library.addDefinition(createAbstractionDefinition());
 
 		return library;
 	}
 	
+	private static ElementDefinition createAbstractionDefinition() {
+		AbstractionDefinition definition = new AbstractionDefinition("ABSTRACTION");
+		return definition;
+	}
+
 	public static Library getModulesLibrary() {
 		Library library = new Library("modules");
 		library.setDisplayName("Modules");

@@ -11,20 +11,21 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ElementDefinition;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.NamesMapping;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
-public class ContextDefinitionMarshaller {
+public class CompositeTemplateMarshaller {
 
 	private NamesMapping mapping;
 	
-	public ContextDefinitionMarshaller(NamesMapping mapping) {
+	public CompositeTemplateMarshaller(NamesMapping mapping) {
 		this.mapping = mapping;
 	}
 	
-	public String marshall(ContextDefinition definition) throws MarshallingException {
+	public String marshall(CompositeTemplate definition) throws MarshallingException {
 		JSONObject root = new JSONObject();
 		
 		try {
@@ -39,12 +40,12 @@ public class ContextDefinitionMarshaller {
 		return root.toString();
 	}
 
-	private void marshallDefinitions(ContextDefinition definition, JSONObject root) throws JSONException {
+	private void marshallDefinitions(CompositeTemplate definition, JSONObject root) throws JSONException {
 		JSONArray array = new JSONArray();
 
-		List<ObjectClazz> postProcessableDefinitions = new ArrayList<ObjectClazz>();
+		List<ElementTemplate> postProcessableDefinitions = new ArrayList<ElementTemplate>();
 		
-		for (Entry<String, ObjectClazz> entry : definition.getDefinitions().entrySet())
+		for (Entry<String, ElementTemplate> entry : definition.getDefinitions().entrySet())
 		{
 			if (this.isConnection(entry.getValue())) {
 				postProcessableDefinitions.add(entry.getValue());
@@ -54,7 +55,7 @@ public class ContextDefinitionMarshaller {
 			}
 		}
 
-		for (ObjectClazz postDefinition : postProcessableDefinitions)
+		for (ElementTemplate postDefinition : postProcessableDefinitions)
 		{
 			JSONObject jsonDefinition = this.marshall(postDefinition);
 			array.put(jsonDefinition);
@@ -63,11 +64,11 @@ public class ContextDefinitionMarshaller {
 		root.put("definitions", array);
 	}
 
-	private boolean isConnection(ObjectClazz definition) {
+	private boolean isConnection(ElementTemplate definition) {
 		return definition.getElementName().endsWith("_CONNECTION");
 	}
 
-	private JSONObject marshall(ObjectClazz definition) throws JSONException {
+	private JSONObject marshall(ElementTemplate definition) throws JSONException {
 		JSONObject root = new JSONObject();
 
 		root.put("id", definition.getId());
@@ -82,11 +83,14 @@ public class ContextDefinitionMarshaller {
 		return root;
 	}
 	
-	public ContextDefinition unmarshall(String json) throws MarshallingException {
+	public CompositeTemplate unmarshall(ApplicationDefinition application, String json) throws MarshallingException {
 		try {
 			JSONObject root = new JSONObject(json);
 			
-			ContextDefinition definition = new ContextDefinition(root.getString("id"), this.mapping);
+			CompositeTemplate definition = new CompositeTemplate(
+					root.getString("id"), 
+					application, 
+					this.mapping);
 			int version = root.getInt("version");
 			definition.setVersion(version);
 			
@@ -98,23 +102,23 @@ public class ContextDefinitionMarshaller {
 		}
 	}
 
-	private void parseDefinitions(JSONObject root, ContextDefinition definition) throws JSONException {
+	private void parseDefinitions(JSONObject root, CompositeTemplate definition) throws JSONException {
 		if (root.has("definitions")) {
 			JSONArray definitions = root.getJSONArray("definitions");
 			for (int i = 0; i < definitions.length(); i++) {
 				JSONObject object = definitions.getJSONObject(i);
-				ObjectClazz objectDefinition = this.parseDefinition(object);
+				ElementTemplate objectDefinition = this.parseDefinition(object);
 				definition.addDefinition(objectDefinition);
 			}
 		}
 	}
 
-	private ObjectClazz parseDefinition(JSONObject object) throws JSONException {
+	private ElementTemplate parseDefinition(JSONObject object) throws JSONException {
 		String id = object.getString("id");
 		String name = object.getString("name");
 
 		ElementDefinition elementDefinition = this.mapping.getDefinition(name);
-		ObjectClazz definition = new ObjectClazz(id, elementDefinition);
+		ElementTemplate definition = new ElementTemplate(id, elementDefinition);
 		JSONObject propertiesAsJson = object.getJSONObject("properties");
 
 		Map<String, String> properties = this.parsePropertiesMap(propertiesAsJson);

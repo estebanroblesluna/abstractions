@@ -1,16 +1,17 @@
-package com.service.core;
+package com.abstractions.service.core;
 
 import junit.framework.TestCase;
 
-import com.abstractions.api.Context;
-import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.api.CompositeElement;
 import com.abstractions.instance.common.AddPropertyProcessor;
 import com.abstractions.instance.common.ToStringProcessor;
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 public class ServiceTestCase extends TestCase {
 
@@ -27,22 +28,22 @@ public class ServiceTestCase extends TestCase {
 	}
 
 	public void testDefinitions() throws ServiceException {
-		ContextDefinition contextDefinition = new ContextDefinition(this.mapping);
-		ObjectClazz addPropertyDefinition = new ObjectClazz(this.common.getDefinition("ADD_PROPERTY"));
-		ObjectClazz toStringDefinition = new ObjectClazz(this.common.getDefinition("TO_STRING"));
+		CompositeTemplate application = new CompositeTemplate(new ApplicationDefinition("myApp"), this.mapping);
+		ElementTemplate addPropertyDefinition = new ElementTemplate(this.common.getDefinition("ADD_PROPERTY"));
+		ElementTemplate toStringDefinition = new ElementTemplate(this.common.getDefinition("TO_STRING"));
 		
-		contextDefinition.addDefinition(addPropertyDefinition);
-		contextDefinition.addDefinition(toStringDefinition);
+		application.addDefinition(addPropertyDefinition);
+		application.addDefinition(toStringDefinition);
 		
 		addPropertyDefinition.setProperty("key", "http.a");
 		addPropertyDefinition.setProperty("processor", "urn:" + toStringDefinition.getId());
 		
-		Context context = contextDefinition.instantiate();
-		contextDefinition.initialize();
+		CompositeElement composite = (CompositeElement) application.instantiate();
+		application.initialize();
 		
 		
-		AddPropertyProcessor addPropertyProcessor = context.getObjectWithId(addPropertyDefinition.getId());
-		ToStringProcessor toStringProcessor = context.getObjectWithId(toStringDefinition.getId());
+		AddPropertyProcessor addPropertyProcessor = composite.getObjectWithId(addPropertyDefinition.getId());
+		ToStringProcessor toStringProcessor = composite.getObjectWithId(toStringDefinition.getId());
 		
 		assertNotNull(addPropertyProcessor);
 		assertNotNull(toStringProcessor);

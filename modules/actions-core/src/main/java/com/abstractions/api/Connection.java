@@ -1,6 +1,5 @@
 package com.abstractions.api;
 
-
 public class Connection implements Element, Terminable {
 
 	protected String type;
