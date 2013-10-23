@@ -216,11 +216,6 @@
       <property name="acceptedTargetMax" column="accepted_target_max"/>
     </joined-subclass>
 
-    <joined-subclass name="com.abstractions.meta.FlowDefinition" table="flow_definition">
-      <key column="element_definition_id"/>
-      <!-- TODO -->
-    </joined-subclass>
-
     <joined-subclass name="com.abstractions.meta.MessageSourceDefinition" table="message_source_definition">
       <key column="element_definition_id"/>
     </joined-subclass>
