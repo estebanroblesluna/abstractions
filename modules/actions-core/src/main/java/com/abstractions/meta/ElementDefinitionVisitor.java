@@ -1,7 +1,5 @@
 package com.abstractions.meta;
 
-
-
 public interface ElementDefinitionVisitor {
 
 	Object visitConnectionDefinition(ConnectionDefinition connectionDefinition);
@@ -12,5 +10,7 @@ public interface ElementDefinitionVisitor {
 
 	Object visitRouterDefinition(RouterDefinition routerDefinition);
 
-	Object visitFlowDefinition(FlowDefinition flowDefinition);
+	Object visitAbstractionDefinition(AbstractionDefinition abstractionDefinition);
+
+	Object visitApplicationDefinition(ApplicationDefinition applicationDefinition);
 }

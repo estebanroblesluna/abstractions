@@ -3,9 +3,9 @@ package com.abstractions.runtime.interpreter;
 import java.util.Collections;
 import java.util.List;
 
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.service.core.BeanUtils;
+import com.abstractions.template.ElementTemplate;
 
 public class ChainRouterEvaluator implements Evaluator {
 
@@ -14,7 +14,7 @@ public class ChainRouterEvaluator implements Evaluator {
 	 */
 	@Override
 	public void evaluate(Thread thread) {
-		ObjectClazz chainRouter = thread.getCurrentObjectDefinition();
+		ElementTemplate chainRouter = thread.getCurrentObjectDefinition();
 		
 		String connections = chainRouter.getProperty("__connections" + ConnectionType.CHAIN_CONNECTION.getElementName());
 		List<String> urns = BeanUtils.getUrnsFromList(connections);
@@ -22,9 +22,9 @@ public class ChainRouterEvaluator implements Evaluator {
 		
 		//push all the elements in reverse order
 		for (String urn : urns) {
-			ObjectClazz inChain = thread.getContext().resolve(urn);
+			ElementTemplate inChain = thread.getComposite().resolve(urn);
 			if (inChain != null) {
-				ObjectClazz target = thread.getContext().resolve(inChain.getProperty("target"));
+				ElementTemplate target = thread.getComposite().resolve(inChain.getProperty("target"));
 				thread.pushCurrentContext();
 				thread.setCurrentElement(target);
 			}

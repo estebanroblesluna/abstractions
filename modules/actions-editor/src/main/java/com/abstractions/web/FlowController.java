@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ElementDefinitionType;
@@ -24,9 +23,10 @@ import com.abstractions.service.ApplicationService;
 import com.abstractions.service.FlowService;
 import com.abstractions.service.LibraryService;
 import com.abstractions.service.TeamService;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.repository.MarshallingException;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 @Controller
 public class FlowController {
@@ -74,7 +74,7 @@ public class FlowController {
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/save/{flowId}", method = RequestMethod.POST, produces = { "application/json" })
 	public String editFlowOnSave(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
-		ContextDefinition context = this.holder.get(form.getName());
+		CompositeTemplate context = this.holder.get(form.getName());
 		
 		JSONObject result = new JSONObject();
 		
@@ -98,7 +98,7 @@ public class FlowController {
 				String x = position.getString("x");
 				String y = position.getString("y");
 				
-				ObjectClazz objectDefinition = context.getDefinition(id);
+				ElementTemplate objectDefinition = context.getDefinition(id);
 				if (objectDefinition != null) {
 					objectDefinition.setProperty("x", x);
 					objectDefinition.setProperty("y", y);
@@ -125,7 +125,7 @@ public class FlowController {
 					builder.append(";");
 				}
 				
-				ObjectClazz definition = context.getDefinition(id);
+				ElementTemplate definition = context.getDefinition(id);
 				definition.setProperty("points", builder.toString());
 			}
 		} 
@@ -150,7 +150,7 @@ public class FlowController {
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/save", method = RequestMethod.POST, produces = { "application/json" })
 	public String addFlow(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
-		ContextDefinition context = this.holder.get(form.getName());
+		CompositeTemplate context = this.holder.get(form.getName());
 		
 		JSONObject result = new JSONObject();
 		
@@ -174,7 +174,7 @@ public class FlowController {
 				String x = position.getString("x");
 				String y = position.getString("y");
 				
-				ObjectClazz objectDefinition = context.getDefinition(id);
+				ElementTemplate objectDefinition = context.getDefinition(id);
 				if (objectDefinition != null) {
 					objectDefinition.setProperty("x", x);
 					objectDefinition.setProperty("y", y);
@@ -201,7 +201,7 @@ public class FlowController {
 					builder.append(";");
 				}
 				
-				ObjectClazz definition = context.getDefinition(id);
+				ElementTemplate definition = context.getDefinition(id);
 				definition.setProperty("points", builder.toString());
 			}
 		} 

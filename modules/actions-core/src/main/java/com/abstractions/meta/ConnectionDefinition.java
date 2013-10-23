@@ -1,6 +1,7 @@
 package com.abstractions.meta;
 
-import com.abstractions.clazz.core.ObjectClazz;
+import com.abstractions.runtime.interpreter.Thread;
+import com.abstractions.template.ElementTemplate;
 
 public class ConnectionDefinition extends ElementDefinition {
 
@@ -20,6 +21,14 @@ public class ConnectionDefinition extends ElementDefinition {
 		this.acceptedTargetMax = 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void evaluateUsing(Thread thread) {
+		//DO NOTHING AS CONNECTIONS SHOULD NOT BE EVALUABLE
+	}
+	
 	@Override
 	public ElementDefinitionType getType() {
 		return ElementDefinitionType.CONNECTION;
@@ -70,8 +79,8 @@ public class ConnectionDefinition extends ElementDefinition {
 		return visitor.visitConnectionDefinition(this);
 	}
 
-	public ObjectClazz createInstance(ObjectClazz sourceDefinition, ObjectClazz targetDefinition) {
-		ObjectClazz definition = new ObjectClazz(this);
+	public ElementTemplate createInstance(ElementTemplate sourceDefinition, ElementTemplate targetDefinition) {
+		ElementTemplate definition = new ElementTemplate(this);
 		
 		definition.setProperty("source", "urn:" + sourceDefinition.getId());
 		definition.setProperty("target", "urn:" + targetDefinition.getId());
@@ -83,11 +92,11 @@ public class ConnectionDefinition extends ElementDefinition {
 		return definition;
 	}
 
-	public void addOutgoingConnection(ObjectClazz sourceDefinition, ObjectClazz definition) {
+	public void addOutgoingConnection(ElementTemplate sourceDefinition, ElementTemplate definition) {
 		sourceDefinition.addConnection(definition);
 	}
 
-	public void addIncomingConnection(ObjectClazz targetDefinition, ObjectClazz definition) {
+	public void addIncomingConnection(ElementTemplate targetDefinition, ElementTemplate definition) {
 		targetDefinition.addIncomingConnection(definition);
 	}
 }

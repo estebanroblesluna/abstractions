@@ -9,13 +9,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.abstractions.api.Context;
+import com.abstractions.api.CompositeElement;
+import com.abstractions.api.Element;
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.instance.common.ScriptingProcessor;
 import com.abstractions.model.PropertyDefinition;
+import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.BeanUtils;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
+
 
 public abstract class ElementDefinition {
 
@@ -38,6 +41,8 @@ public abstract class ElementDefinition {
 	}
 
 	public abstract Object accept(ElementDefinitionVisitor visitor);
+
+	public abstract void evaluateUsing(Thread thread);
 
 	public void addProperty(PropertyDefinition property) {
 		this.properties.add(property);
@@ -95,14 +100,14 @@ public abstract class ElementDefinition {
 		return isScript;
 	}
 
-	public Object instantiate(Context context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
-		Object object;
+	public Element instantiate(CompositeElement context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
+		Element object;
 		
 		if (this.isScript()) {
 			object = new ScriptingProcessor(ScriptingLanguage.GROOVY, this.implementation);
 		} else {
 			Class<?> theClass = mapping.getClassForElement(this.name);
-			object = theClass.newInstance();
+			object = (Element) theClass.newInstance();
 
 			Map<String, String> initialProperties = mapping.getElementInitialProperties(this.name);
 			this.basicSetProperties(object, initialProperties, context, mapping);
@@ -112,7 +117,7 @@ public abstract class ElementDefinition {
 		return object;
 	}
 
-	public void basicSetProperties(Object object, Map<String, String> properties, Context context, NamesMapping mapping) {
+	public void basicSetProperties(Object object, Map<String, String> properties, CompositeElement context, NamesMapping mapping) {
 		if (properties == null || properties.isEmpty()) {
 			return;
 		}

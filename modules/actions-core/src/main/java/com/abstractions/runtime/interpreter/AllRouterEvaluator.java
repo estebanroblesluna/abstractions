@@ -8,10 +8,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.abstractions.api.Message;
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.instance.core.AllConnection;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.service.core.BeanUtils;
+import com.abstractions.template.ElementTemplate;
 
 public class AllRouterEvaluator implements Evaluator {
 
@@ -19,7 +19,7 @@ public class AllRouterEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(Thread thread) {
-		ObjectClazz currentElement = thread.getCurrentObjectDefinition();
+		ElementTemplate currentElement = thread.getCurrentObjectDefinition();
 		Message currentMessage = thread.getCurrentMessage();
 		ExecutorService service = thread.getExecutorServiceFor(currentElement);
 		
@@ -28,7 +28,7 @@ public class AllRouterEvaluator implements Evaluator {
 		
 		int count = 0;
 		for (String urn : urns) {
-			final ObjectClazz connectionDefinition = thread.getContext().resolve(urn);
+			final ElementTemplate connectionDefinition = thread.getComposite().resolve(urn);
 			if (connectionDefinition != null) {
 				count++;
 			}
@@ -37,7 +37,7 @@ public class AllRouterEvaluator implements Evaluator {
 		CountDownLatch latch = new CountDownLatch(count);
 		
 		for (String urn : urns) {
-			final ObjectClazz connectionDefinition = thread.getContext().resolve(urn);
+			final ElementTemplate connectionDefinition = thread.getComposite().resolve(urn);
 			if (connectionDefinition != null) {
 				Object connection = connectionDefinition.getInstance();
 				if (connection instanceof AllConnection) {

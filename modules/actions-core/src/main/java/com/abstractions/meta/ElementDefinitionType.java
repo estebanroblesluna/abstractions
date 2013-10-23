@@ -8,5 +8,6 @@ public enum ElementDefinitionType {
 
 	CONNECTION,
 	
-	FLOW
+	//composite definitions
+	ABSTRACTION,
 }

@@ -8,10 +8,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
 
+import com.abstractions.generalization.AbstractionEvaluator;
+import com.abstractions.meta.AbstractionDefinition;
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ElementDefinitionVisitor;
-import com.abstractions.meta.FlowDefinition;
 import com.abstractions.meta.MessageSourceDefinition;
 import com.abstractions.meta.ProcessorDefinition;
 import com.abstractions.meta.RouterDefinition;
@@ -94,7 +96,13 @@ public class Library {
 				}
 
 				@Override
-				public Object visitFlowDefinition(FlowDefinition flowDefinition) {
+				public Object visitAbstractionDefinition(AbstractionDefinition abstractionDefinition) {
+					mapping.addEvaluator(abstractionDefinition.getName(), new AbstractionEvaluator());
+					return null;
+				}
+
+				@Override
+				public Object visitApplicationDefinition(ApplicationDefinition applicationDefinition) {
 					return null;
 				}
 			});

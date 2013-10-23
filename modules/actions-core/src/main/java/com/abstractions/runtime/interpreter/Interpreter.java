@@ -11,9 +11,9 @@ import org.jsoup.helper.Validate;
 
 import com.abstractions.api.Identificable;
 import com.abstractions.api.Message;
-import com.abstractions.clazz.core.ObjectClazz;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.ServiceException;
+import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 import com.abstractions.utils.IdGenerator;
 
 public class Interpreter implements Identificable, ThreadObserver {
@@ -21,13 +21,13 @@ public class Interpreter implements Identificable, ThreadObserver {
 	private static Log log = LogFactory.getLog(Interpreter.class);
 
 	private final String id;
-	private final ContextDefinition context;
+	private final CompositeTemplate context;
 	private final AtomicLong threadCount;
 	private final Map<Long, Thread> threads;
-	private final ObjectClazz source;
+	private final ElementTemplate source;
 	private volatile InterpreterDelegate delegate;
 
-	public Interpreter(ContextDefinition context, ObjectClazz source) {
+	public Interpreter(CompositeTemplate context, ElementTemplate source) {
 		Validate.notNull(context);
 		Validate.notNull(source);
 		
@@ -59,7 +59,7 @@ public class Interpreter implements Identificable, ThreadObserver {
 		return id;
 	}
 
-	ContextDefinition getContext() {
+	CompositeTemplate getContext() {
 		return context;
 	}
 
@@ -76,14 +76,14 @@ public class Interpreter implements Identificable, ThreadObserver {
 		this.delegate = delegate;
 	}
 
-	public Thread createThread(ObjectClazz source, Message message) {
+	public Thread createThread(ElementTemplate source, Message message) {
 		Thread thread = new Thread(this, source, message, this.threadCount.incrementAndGet());
 		this.threads.put(thread.getId(), thread);
 		thread.addObserver(this);
 		return thread;
 	}
 
-	public Thread createDebuggableThread(ObjectClazz source, Message message) {
+	public Thread createDebuggableThread(ElementTemplate source, Message message) {
 		Thread thread = new DebuggableThread(this, source, message, this.threadCount.incrementAndGet());
 		this.threads.put(thread.getId(), thread);
 		thread.addObserver(this);
@@ -95,7 +95,7 @@ public class Interpreter implements Identificable, ThreadObserver {
 		return (T) this.threads.get(threadId);
 	}
 	
-	ExecutorService getExecutorServiceFor(ObjectClazz definition) {
+	ExecutorService getExecutorServiceFor(ElementTemplate definition) {
 		return this.context.getExecutorServiceFor(definition);
 	}
 

@@ -9,11 +9,12 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.service.DeploymentService;
-import com.abstractions.service.core.ContextDefinition;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
+import com.abstractions.template.CompositeTemplate;
 
 @Path("/context")
 public class ContextRESTService {
@@ -33,7 +34,7 @@ public class ContextRESTService {
 	@POST
 	@Path("/")
 	public Response createContext() {
-		ContextDefinition definition = new ContextDefinition(this.mapping);
+		CompositeTemplate definition = new CompositeTemplate(new ApplicationDefinition("myApp"), this.mapping);
 		this.holder.put(definition);
 		String contextId = definition.getId();
 		
@@ -45,7 +46,7 @@ public class ContextRESTService {
 	@POST
 	@Path("/{id}/sync")
 	public Response sync(@PathParam("id") String contextId) {
-		ContextDefinition context = this.holder.get(contextId);
+		CompositeTemplate context = this.holder.get(contextId);
 		
 		if (context == null)
 		{

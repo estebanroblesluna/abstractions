@@ -9,14 +9,14 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang.StringUtils;
 
-import com.abstractions.api.Context;
+import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Expression;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
 
 public class BeanUtils {
 
-	public static void setProperty(Object object, String propertyName, String propertyValue, Context context, NamesMapping mapping) throws ServiceException {
+	public static void setProperty(Object object, String propertyName, String propertyValue, CompositeElement context, NamesMapping mapping) throws ServiceException {
 		try {
 			org.apache.commons.beanutils.BeanUtils.setProperty(object, propertyName, propertyValue);
 		} catch (IllegalArgumentException e) {
@@ -94,7 +94,7 @@ public class BeanUtils {
 		}
 	}
 
-	private static void setReference(Object object, String propertyName, String propertyValue, Context context) throws ServiceException {
+	private static void setReference(Object object, String propertyName, String propertyValue, CompositeElement context) throws ServiceException {
 		String referenceId = propertyValue.substring("urn:".length());
 		Object referredObject = context.getObjectWithId(referenceId);
 		try {

@@ -1,16 +1,16 @@
 package com.abstractions.runtime.interpreter;
 
 import com.abstractions.api.Message;
-import com.abstractions.clazz.core.ObjectClazz;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.template.ElementTemplate;
 
 public class DebuggableThread extends Thread {
 
 	private volatile boolean stopOnBreakpoints;
 	private volatile long delay;
 
-	public DebuggableThread(Interpreter interpreter, ObjectClazz source, Message message, Long id) {
+	public DebuggableThread(Interpreter interpreter, ElementTemplate source, Message message, Long id) {
 		super(interpreter, source, message, id);
 
 		this.stopOnBreakpoints = true;
@@ -22,7 +22,7 @@ public class DebuggableThread extends Thread {
 		this.basicRun();
 	}
 	
-	protected Thread createSubthread(ObjectClazz source, Message message) {
+	protected Thread createSubthread(ElementTemplate source, Message message) {
 		return this.interpreter.createDebuggableThread(source, message);
 	}
 	
@@ -35,22 +35,22 @@ public class DebuggableThread extends Thread {
 		this.basicStep();
 	}
 	
-	protected void afterStep(ObjectClazz currentDefinition) {
+	protected void afterStep(ElementTemplate currentDefinition) {
 		this.delayIfNecessary();
 		this.interpreter.getDelegate().afterStep(
 				this.interpreter.getId(),
 				this.getId().toString(), 
-				this.getContext().getId(), 
+				this.getComposite().getId(), 
 				currentDefinition, 
 				this.currentMessage.clone());
 	}
 
-	protected void beforeStep(ObjectClazz currentDefinition) {
+	protected void beforeStep(ElementTemplate currentDefinition) {
 		this.delayIfNecessary();
 		this.interpreter.getDelegate().beforeStep(
 				this.interpreter.getId(),
 				this.getId().toString(), 
-				this.getContext().getId(), 
+				this.getComposite().getId(), 
 				currentDefinition, 
 				this.currentMessage.clone());
 		this.delayIfNecessary();
