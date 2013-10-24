@@ -205,12 +205,45 @@ CREATE TABLE connection_definition (
 );
 
 
-DROP TABLE IF EXISTS `flow_definition`;
-CREATE TABLE flow_definition (
+DROP TABLE IF EXISTS `element_template`;
+CREATE TABLE element_template (
+  `element_template_id` varchar(200) NOT NULL,
   `element_definition_id` bigint(20) NOT NULL,
-  primary key (element_definition_id),
-  CONSTRAINT `FK_ouwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
+  primary key (element_template_id)
 );
+
+DROP TABLE IF EXISTS `element_template_property`;
+CREATE TABLE element_template_property (
+  `element_template_id` varchar(200) NOT NULL,
+  `property_key` varchar(200) NOT NULL,
+  `property_value` varchar(2000) NOT NULL,
+  KEY `FK_Buwdmllmcrsympjv1o04i0hgz` (`element_template_id`),
+  CONSTRAINT `FK_Buwdmllmcrsympjv1o04i0hgz` FOREIGN KEY (`element_template_id`) REFERENCES `element_template` (`element_template_id`)
+);
+
+DROP TABLE IF EXISTS `abstraction_definition`;
+CREATE TABLE abstraction_definition (
+  `element_definition_id` bigint(20) NOT NULL,
+  `starting_definition_id` varchar(200) NOT NULL,
+  primary key (element_definition_id),
+  KEY `FK_ouwdmllmcrsympjv9o04i0hgz` (`starting_definition_id`),
+  CONSTRAINT `FK_ouwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`),
+  CONSTRAINT `FK_ouwdmllmcrsympjv9o04i0hgz` FOREIGN KEY (`starting_definition_id`) REFERENCES `element_template` (`element_template_id`)
+);
+
+DROP TABLE IF EXISTS `abstraction_definition_elements`;
+CREATE TABLE abstraction_definition_elements (
+  `element_definition_id` bigint(20) NOT NULL,
+  `element_id` varchar(200) NOT NULL,
+  `element_template_id` varchar(200) NOT NULL,
+  KEY `FK_wuwdmllmcrsympjv1o04i0hgz` (`element_definition_id`),
+  KEY `FK_wuwdmllmcrsympjv9o04i0hgz` (`element_template_id`),
+  CONSTRAINT `FK_wuwdmllmcrsympjv1o04i0hgz` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`),
+  CONSTRAINT `FK_wuwdmllmcrsympjv9o04i0hgz` FOREIGN KEY (`element_template_id`) REFERENCES `element_template` (`element_template_id`)
+);
+
+
+
 
 
 DROP TABLE IF EXISTS `message_source_definition`;
@@ -250,3 +283,13 @@ CREATE TABLE element_property_definition (
   primary key (property_definition_id),
   CONSTRAINT `FK_auwamlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
+
+
+
+ALTER TABLE `actions`.`element_template` 
+  ADD CONSTRAINT `FK_Auwdmllmcrsympjv1o04i0hgz`
+  FOREIGN KEY (`element_definition_id` )
+  REFERENCES `actions`.`element_definition` (`element_definition_id` )
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION
+, ADD INDEX `aaa_idx` (`element_definition_id` ASC);

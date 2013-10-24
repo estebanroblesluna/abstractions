@@ -138,8 +138,8 @@ public class ActionsServer {
 			}
 		}
 		
-		CompositeTemplate composite = appDefinition.primInstantiate(null, this.mapping, null);
-		composite.sync();
+		CompositeTemplate composite = appDefinition.createTemplate(this.mapping);
+		composite.sync(null, this.mapping);
 		composite.start();
 		
 		StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();

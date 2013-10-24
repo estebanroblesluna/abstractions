@@ -10,4 +10,6 @@ public enum ElementDefinitionType {
 	
 	//composite definitions
 	ABSTRACTION,
+	APPLICATION,
+	DEVELOPMENT_FLOW
 }

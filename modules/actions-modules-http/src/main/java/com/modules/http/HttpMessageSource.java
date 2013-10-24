@@ -17,8 +17,11 @@ public class HttpMessageSource extends AbstractMessageSource implements Terminab
 
 	private volatile Expression timeoutExpression;
 	private volatile int port;
-
 	private volatile JettyHttpServer server;
+
+	public HttpMessageSource() {
+		super();
+	}
 
 	public synchronized void start() {
 		this.stopCurrentServer();

@@ -3,9 +3,6 @@ package com.abstractions.generalization;
 import junit.framework.TestCase;
 
 import com.abstractions.expression.ScriptingLanguage;
-import com.abstractions.generalization.Abstracter;
-import com.abstractions.generalization.MultipleEntryPointsException;
-import com.abstractions.generalization.UnconnectedDefinitionsException;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
@@ -26,7 +23,7 @@ public class AbstracterTestCase extends TestCase {
 		
 		this.common = Meta.getCommonLibrary();
 		this.common.createMappings(mapping);
-		this.application = new CompositeTemplate(new ApplicationDefinition("myApp"), mapping);
+		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp"), mapping);
 		this.abstracter = new Abstracter();
 	}
 

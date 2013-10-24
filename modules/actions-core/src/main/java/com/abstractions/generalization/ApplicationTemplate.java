@@ -1,32 +1,49 @@
 package com.abstractions.generalization;
 
 import com.abstractions.api.Element;
+import com.abstractions.api.Message;
 import com.abstractions.instance.messagesource.MessageSource;
 import com.abstractions.instance.messagesource.MessageSourceListener;
-import com.abstractions.meta.ElementDefinition;
+import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.runtime.interpreter.Interpreter;
+import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
-public class ApplicationTemplate extends CompositeTemplate {
+public class ApplicationTemplate extends CompositeTemplate implements MessageSourceListener {
 	
-	public ApplicationTemplate(ElementDefinition metaElementDefinition, NamesMapping mapping) {
+	public ApplicationTemplate(ApplicationDefinition metaElementDefinition, NamesMapping mapping) {
 		super(metaElementDefinition, mapping);
 	}
 
-	public ApplicationTemplate(String id, ElementDefinition metaElementDefinition, NamesMapping mapping) {
+	public ApplicationTemplate(String id, ApplicationDefinition metaElementDefinition, NamesMapping mapping) {
 		super(id, metaElementDefinition, mapping);
 	}
 	
-	protected void afterInstantiation(Element object, ElementTemplate definition) {
+	public void afterInstantiation(Element object, ElementTemplate definition) {
 		if (object instanceof MessageSource) {
-			((MessageSource) object).setMainListener((MessageSourceListener) this.metaElementDefinition);
+			((MessageSource) object).setMainListener(this);
 		}
 	}
 	
-	protected void afterScan(Element object, ElementTemplate definition) {
-		if (object instanceof MessageSource) {
-			((MessageSource) object).setMainListener((MessageSourceListener) this.metaElementDefinition);
+//	public void afterScan(Element object, ElementTemplate definition) {
+//		if (object instanceof MessageSource) {
+//			((MessageSource) object).setMainListener(this);
+//		}
+//	}
+	
+	@Override
+	public Message onMessageReceived(MessageSource messageSource, Message message) {
+		ElementTemplate nextInChain = this.getNextInChainFor(messageSource.getId());
+		Interpreter interpreter = new Interpreter(this, nextInChain);
+		
+		ApplicationDefinition appDefinition = (ApplicationDefinition) this.getMeta();
+		if (appDefinition.getInterpreterDelegate() != null) {
+			interpreter.setDelegate(appDefinition.getInterpreterDelegate());
 		}
+
+		Thread root = interpreter.run(message);
+		return root.getCurrentMessage();
 	}
 }

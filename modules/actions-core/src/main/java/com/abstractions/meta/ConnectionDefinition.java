@@ -99,4 +99,8 @@ public class ConnectionDefinition extends ElementDefinition {
 	public void addIncomingConnection(ElementTemplate targetDefinition, ElementTemplate definition) {
 		targetDefinition.addIncomingConnection(definition);
 	}
+	
+	public boolean isConnection() {
+		return true;
+	}
 }

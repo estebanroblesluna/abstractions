@@ -3,14 +3,13 @@ package com.abstractions.service.core;
 import junit.framework.TestCase;
 
 import com.abstractions.api.Message;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.common.NullProcessor;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.abstractions.runtime.interpreter.Interpreter;
-import com.abstractions.service.core.NamesMapping;
-import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
@@ -33,7 +32,7 @@ public class ContextPerfTest extends TestCase {
 		
 		long count = 10000;
 
-		this.application = new CompositeTemplate(new ApplicationDefinition("myApp"), this.mapping);
+		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp"), this.mapping);
 		
 		long start = System.currentTimeMillis();
 		
@@ -43,7 +42,7 @@ public class ContextPerfTest extends TestCase {
 		this.buildChain(count, "B");
 		String startIdB = this.startId;
 
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		long end = System.currentTimeMillis();
 
 		System.out.println("Took " + (end - start) + "ms to build chain A and B");
