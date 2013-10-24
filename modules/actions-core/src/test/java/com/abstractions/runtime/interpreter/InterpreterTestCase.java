@@ -5,14 +5,13 @@ import junit.framework.TestCase;
 import com.abstractions.api.Message;
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.generalization.AbstractionEvaluator;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.common.ListenerProcessor;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
-import com.abstractions.runtime.interpreter.Interpreter;
-import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
@@ -38,7 +37,7 @@ public class InterpreterTestCase extends TestCase {
 		
 		mapping.addEvaluator("FLOW", new AbstractionEvaluator());
 		
-		this.application = new CompositeTemplate(new ApplicationDefinition("myApp"), mapping);
+		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp"), mapping);
 	}
 	
 	
@@ -50,7 +49,7 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addDefinition(target);
 		this.application.addConnection(source.getId(), target.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, source);
 
@@ -83,7 +82,7 @@ public class InterpreterTestCase extends TestCase {
 		ElementTemplate inc3Connection = this.application.getDefinition(inc3ConnectionId);
 		inc3Connection.setProperty("expression", "message.properties['val'] == 'bbb'");
 		
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, source);
 
@@ -135,7 +134,7 @@ public class InterpreterTestCase extends TestCase {
 		ElementTemplate inc3Connection = this.application.getDefinition(inc3ConnectionId);
 		inc3Connection.setProperty("targetExpression", "message.properties['inc3'] = result.payload");
 		
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, source);
 
@@ -163,7 +162,7 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addConnection(router.getId(), inc2.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		this.application.addConnection(router.getId(), listener.getId(), ConnectionType.WIRE_TAP_CONNECTION);
 
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, source);
 
@@ -197,7 +196,7 @@ public class InterpreterTestCase extends TestCase {
 		ElementTemplate inc2 = new ElementTemplate(incBy2);
 		this.application.addDefinition(inc2);
 		
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, inc2);
 
@@ -228,7 +227,7 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addDefinition(inc2_2);
 		this.application.addDefinition(inc2_1_2);
 		
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, inc2_1);
 
@@ -280,7 +279,7 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addConnection(add6.getId(), inc3.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		this.application.addConnection(inc3.getId(), add62.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
-		this.application.sync();
+		this.application.sync(null, this.mapping);
 		
 		Interpreter interpreter = new Interpreter(this.application, add6);
 

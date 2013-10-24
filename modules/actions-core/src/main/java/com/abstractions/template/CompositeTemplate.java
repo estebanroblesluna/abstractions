@@ -17,9 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
-import com.abstractions.api.IdentificableMutable;
 import com.abstractions.api.Processor;
-import com.abstractions.instance.composition.CompositeElementImpl;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
@@ -36,7 +34,7 @@ public class CompositeTemplate extends ElementTemplate {
 	private volatile transient Map<ElementTemplate, ExecutorService> executorServices;
 	private final transient NamesMapping mapping;
 
-	public CompositeTemplate(ElementDefinition metaElementDefinition, NamesMapping mapping) {
+	protected CompositeTemplate(ElementDefinition metaElementDefinition, NamesMapping mapping) {
 		super(metaElementDefinition);
 		
 		Validate.notNull(mapping);
@@ -54,57 +52,14 @@ public class CompositeTemplate extends ElementTemplate {
 		this.mapping = mapping;
 	}
 
-	public void sync() throws ServiceException {
-		if (this.object == null) {
-			this.instantiate();
-		} 
-		
-		this.initialize();
+	public synchronized Element sync() throws ServiceException {
+		return this.sync(null, this.mapping);
 	}
 	
-	public synchronized Element instantiate() throws ServiceException {
-		this.object = new CompositeElementImpl(this);
-		return this.object;
-	}
-	
-	public void initialize() 
-	{
-		synchronized (this.definitions) {
-			//create all objects
-			for (ElementTemplate definition : this.definitions.values())
-			{
-				try {
-					if (!definition.isInstantiated()) {
-						Element object = definition.instantiate(this.getCompositeElement(), this.mapping);
-						if (object instanceof IdentificableMutable) {
-							((IdentificableMutable) object).setId(definition.getId());
-						}
-						this.afterInstantiation(object, definition);
-						this.getCompositeElement().addObject(definition.getId(), object);
-					}
-					
-					this.afterScan(definition.getInstance(), definition);
-				} catch (ServiceException e) {
-					log.warn("Error instantiating object", e);
-				}
-			}
-			
-			//wire them all together
-			for (ElementTemplate definition : this.definitions.values())
-			{
-				try {
-					definition.initialize(this.getCompositeElement(), mapping);
-				} catch (ServiceException e) {
-					log.warn("Error initializing object", e);
-				}
-			}		
-		}
+	public void afterScan(Element object, ElementTemplate definition) {
 	}
 
-	protected void afterScan(Element object, ElementTemplate definition) {
-	}
-
-	protected void afterInstantiation(Element object, ElementTemplate definition) {
+	public void afterInstantiation(Element object, ElementTemplate definition) {
 	}
 
 	public void addDefinition(ElementTemplate definition) {

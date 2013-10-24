@@ -3,13 +3,12 @@ package com.abstractions.service.core;
 import junit.framework.TestCase;
 
 import com.abstractions.api.CompositeElement;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.common.AddPropertyProcessor;
 import com.abstractions.instance.common.ToStringProcessor;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
-import com.abstractions.service.core.NamesMapping;
-import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
@@ -28,7 +27,7 @@ public class ServiceTestCase extends TestCase {
 	}
 
 	public void testDefinitions() throws ServiceException {
-		CompositeTemplate application = new CompositeTemplate(new ApplicationDefinition("myApp"), this.mapping);
+		CompositeTemplate application = new ApplicationTemplate(new ApplicationDefinition("myApp"), this.mapping);
 		ElementTemplate addPropertyDefinition = new ElementTemplate(this.common.getDefinition("ADD_PROPERTY"));
 		ElementTemplate toStringDefinition = new ElementTemplate(this.common.getDefinition("TO_STRING"));
 		
@@ -38,8 +37,8 @@ public class ServiceTestCase extends TestCase {
 		addPropertyDefinition.setProperty("key", "http.a");
 		addPropertyDefinition.setProperty("processor", "urn:" + toStringDefinition.getId());
 		
-		CompositeElement composite = (CompositeElement) application.instantiate();
-		application.initialize();
+		application.sync(null, this.mapping);
+		CompositeElement composite = (CompositeElement) application.getInstance();
 		
 		
 		AddPropertyProcessor addPropertyProcessor = composite.getObjectWithId(addPropertyDefinition.getId());

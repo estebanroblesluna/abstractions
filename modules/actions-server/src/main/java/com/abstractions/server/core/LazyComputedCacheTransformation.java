@@ -96,7 +96,7 @@ public class LazyComputedCacheTransformation implements ApplicationTransformatio
 		connectionDefinition.setProperty("target", "urn:" + getCacheDefinition.getId());
 		
 		try {
-			application.sync();
+			application.sync(null, this.mapping);
 		} catch (ServiceException e) {
 			log.warn("Error syncing context", e);
 		}

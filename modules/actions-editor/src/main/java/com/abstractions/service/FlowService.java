@@ -27,6 +27,7 @@ public class FlowService {
 	private ApplicationService applicationService;
 	private CompositeTemplateMarshaller marshaller;
 	private DevelopmentContextHolder holder;
+	private NamesMapping mapping;
 	
 	protected FlowService() { }
 	
@@ -40,6 +41,7 @@ public class FlowService {
 		this.applicationService = applicationService;
 		this.marshaller = new CompositeTemplateMarshaller(mapping);
 		this.holder = holder;
+		this.mapping = mapping;
 		
 		this.holder.setKeyProvider(new WebUserKeyProvider());
 	}
@@ -100,8 +102,11 @@ public class FlowService {
 		
 		try 
 		{
-			context = this.marshaller.unmarshall(new ApplicationDefinition("myApp"), flow.getJson());
-			context.instantiate();
+			ApplicationDefinition appDefinition = new ApplicationDefinition("myApp");
+			CompositeTemplate flowTemplate = this.marshaller.unmarshall(appDefinition, flow.getJson());
+			appDefinition.addDefinitions(flowTemplate.getDefinitions().values());
+			context = appDefinition.createTemplate(flowTemplate.getId(), this.mapping);
+			context.sync();
 		} 
 		catch (MarshallingException e) 
 		{
@@ -110,7 +115,6 @@ public class FlowService {
 			throw new IllegalArgumentException("Error instantiating context", e);
 		} 
 		
-		context.initialize();
 		this.holder.put(context);
 		
 		return flow;

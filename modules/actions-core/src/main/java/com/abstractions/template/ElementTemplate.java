@@ -55,19 +55,25 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 	public ElementTemplate(String id, ElementDefinition metaElementDefinition) {
 		Validate.notNull(metaElementDefinition);
 
-		this.id = id;
+		this.id = (id == null) ? IdGenerator.getNewId() : id;
 		this.dirty = false;
 		this.properties = new ConcurrentHashMap<String, String>();
 		this.metaElementDefinition = metaElementDefinition;
 	}
 
-	public synchronized Element instantiate(CompositeElement context, NamesMapping mapping) throws ServiceException {
-		return this.basicInstantiate(context, mapping);
+	public synchronized Element sync(CompositeElement container, NamesMapping mapping) throws ServiceException {
+		if (this.object == null) {
+			this.instantiate(container, mapping);
+		}
+		
+		this.initialize(container, mapping);
+		
+		return this.object;
 	}
-
-	protected synchronized Element basicInstantiate(CompositeElement context, NamesMapping mapping) throws ServiceException {
+	
+	public synchronized Element instantiate(CompositeElement context, NamesMapping mapping) throws ServiceException {
 		try {
-			this.object = this.metaElementDefinition.instantiate(context, mapping, this.properties);
+			this.object = this.metaElementDefinition.instantiate(context, mapping, this);
 			return this.object;
 		} catch (InstantiationException e) {
 			throw new ServiceException("Error creating object");
@@ -76,12 +82,11 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 		}
 	}
 	
-	public void initialize(CompositeElement context, NamesMapping mapping) throws ServiceException {
+	public void initialize(CompositeElement container, NamesMapping mapping) throws ServiceException {
 		if (this.object == null) {
-			this.instantiate(context, mapping);
+			this.instantiate(container, mapping);
 		}
-
-		this.metaElementDefinition.basicSetProperties(this.object, this.properties, context, mapping);
+		this.metaElementDefinition.initialize(this, this.properties, container, mapping);
 	}
 	
 	public String getId() {

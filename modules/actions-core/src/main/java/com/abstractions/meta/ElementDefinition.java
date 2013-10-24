@@ -18,6 +18,7 @@ import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.BeanUtils;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
+import com.abstractions.template.ElementTemplate;
 
 
 public abstract class ElementDefinition {
@@ -100,8 +101,9 @@ public abstract class ElementDefinition {
 		return isScript;
 	}
 
-	public Element instantiate(CompositeElement context, NamesMapping mapping, Map<String, String> instanceProperties) throws InstantiationException, IllegalAccessException {
+	public Element instantiate(CompositeElement context, NamesMapping mapping, ElementTemplate template) throws InstantiationException, IllegalAccessException {
 		Element object;
+		Map<String, String> instanceProperties = template.getProperties();
 		
 		if (this.isScript()) {
 			object = new ScriptingProcessor(ScriptingLanguage.GROOVY, this.implementation);
@@ -131,5 +133,13 @@ public abstract class ElementDefinition {
 				log.warn("Error setting property " + StringUtils.defaultString(propertyName) + " with value " + StringUtils.defaultString(propertyValue));
 			}
 		}
+	}
+
+	public boolean isConnection() {
+		return false;
+	}
+
+	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping) {
+		this.basicSetProperties(template.getInstance(), properties, container, mapping);
 	}
 }
