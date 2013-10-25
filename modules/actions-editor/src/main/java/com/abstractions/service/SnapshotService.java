@@ -83,8 +83,8 @@ public class SnapshotService {
 	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) {
 		try {
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.fileService.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
-			for (String filename : this.fileService.listFiles(new Long(application.getId()).toString())) {
-				InputStream inputStream = this.fileService.getContentsOfFile(new Long(application.getId()).toString(), filename);
+			for (String filename : this.fileService.listFiles(application.getId())) {
+				InputStream inputStream = this.fileService.getContentsOfFile(application.getId(), filename);
 				inputStream = this.fileProcessor.process(filename, inputStream);
 				if (inputStream == null) {
 					continue;
