@@ -1,6 +1,8 @@
 package com.modules.dust;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,14 +64,48 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	@Override
 	public Message process(Message message) {
 		try {
-			String template = this.buildMasterTemplate(message);
-			this.getConnector().putTemplate(this.getName(), template);
-			String compiledMasterTemplate = this.getConnector().getCompiledTemplate(this.getName());
-			message.setPayload(this.evaluate(this.getName(), compiledMasterTemplate, "{\"cdn\":\"" + this.getCDNPath(message) + "\"}"));
+			String compiledMasterTemplate = this.getCompiledMasterTemplate(message);
+			if (compiledMasterTemplate == null) {
+				compiledMasterTemplate = this.buildAndCompileMasterTemplate(message);
+			}
+			message.setPayload(this.evaluate(this.getName(), compiledMasterTemplate, this.setContentToRender(message)));
 		} catch (IOException e) {
 			log.error("Error compiling master template", e);
 		}
 		return message;
+	}
+
+	private String getCompiledMasterTemplate(Message message) throws IOException {
+		InputStream contents = null;
+		contents = this.getFileService().getContentsOfFile(this.getApplicationIdFromMessage(message), this.getMasterTemplateName());
+		if (contents != null) {
+			return IOUtils.toString(contents);
+		}
+		return null;
+	}
+
+	private String getMasterTemplateName() {
+		return this.getName() + "_master.tl";
+	}
+
+	private String setContentToRender(Message message) {
+		StringBuilder content = new StringBuilder("{");
+		content.append("\"cdn\":\"" + this.getCDNPath(message) + "\"");
+		for (RenderingSpec spec : this.getRenderingList()) {
+			String json = ExpressionUtils.evaluateNoFail(spec.getDataExpression(), message, "{}");
+			content.append(",\"" + this.getJsonPlaceholderForRenderingSpec(spec) + "\":\"" + json.replace("\"", "\\\"") + "\"");
+		}
+		content.append("}");
+		return content.toString();
+	}
+
+	private String buildAndCompileMasterTemplate(Message message) throws IOException {
+		String compiledMasterTemplate;
+		String template = this.buildMasterTemplate(message);
+		this.getConnector().putTemplate(this.getName(), template);
+		compiledMasterTemplate = this.getConnector().getCompiledTemplate(this.getName());
+		this.getFileService().storeFile(this.getApplicationIdFromMessage(message), this.getMasterTemplateName(), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
+		return compiledMasterTemplate;
 	}
 
 	private String getCDNPath(Message message) {
@@ -94,13 +130,16 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 		head += "<script type=\"text/javascript\">";
 		head += "$(document).ready(function() {";
 		for (RenderingSpec spec : this.getRenderingList()) {
-			String json = ExpressionUtils.evaluateNoFail(spec.getDataExpression(), message, "{}");
-			head += "dust.render(\"" + this.getTemplateNameFromPath(spec.getTemplatePath()) + "\", " + json + ", "  +
+			head += "dust.render(\"" + this.getTemplateNameFromPath(spec.getTemplatePath()) + "\", {" + this.getJsonPlaceholderForRenderingSpec(spec) + "|s}, "  +
 					"function(err, out) { $('#" + spec.getRenderingElementId() + "').html(out)});";
 		}
 		head += "});";
 		head += "</script>";
 		return head;
+	}
+	
+	private String getJsonPlaceholderForRenderingSpec(RenderingSpec spec) {
+		return "json_" + spec.getRenderingElementId();
 	}
 
 	private String addJsFiles(Message message, String head)	throws IOException {
