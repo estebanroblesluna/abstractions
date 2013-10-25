@@ -49,7 +49,7 @@ public class FileService {
 	public FileService() {
 	}
 
-	public void storeFile(String applicationId, String path, InputStream stream) {
+	public void storeFile(long applicationId, String path, InputStream stream) {
 		try {
 			FileUtils.writeByteArrayToFile(new File(this.buildFilesPath(applicationId, path)), IOUtils.toByteArray(stream));
 		} catch (IOException e) {
@@ -65,7 +65,7 @@ public class FileService {
 		return path.replaceAll(ENCODED_PATH_SEPARATOR, File.separator);
 	}
 
-	public InputStream getContentsOfFile(String applicationId, String path) {
+	public InputStream getContentsOfFile(long applicationId, String path) {
 		try {
 			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.buildFilesPath(applicationId, path))));
 		} catch (IOException e) {
@@ -74,7 +74,7 @@ public class FileService {
 		return null;
 	}
 
-	public List<String> listFiles(String applicationId) {
+	public List<String> listFiles(long applicationId) {
 		List<String> files = new ArrayList<String>();
 		File directory = new File(this.buildFilesPath(applicationId, ""));
 		if (!directory.exists()) {
@@ -83,13 +83,13 @@ public class FileService {
 		for (Object file : FileUtils.listFiles(directory, FileFilterUtils.fileFileFilter(), FileFilterUtils.trueFileFilter())) {
 			String absolutePath = ((File) file).getAbsolutePath();
 			String currentPath = this.getRootDir().getAbsolutePath().substring(0, this.getRootDir().getAbsolutePath().indexOf(this.getRootPath()));
-			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length() + 1 + FILES_DIRECTORY.length() + 1 + applicationId.length() + 1));
+			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length() + 1 + FILES_DIRECTORY.length() + 1 + new Long(applicationId).toString().length() + 1));
 			files.add(filename.replace("." + File.separator, File.separator));
 		}
 		return files;
 	}
 
-	public void uncompressContent(String applicationId, InputStream stream) {
+	public void uncompressContent(long applicationId, InputStream stream) {
 		try {
 			ZipInputStream zipInputStream = new ZipInputStream(stream);
 			ZipEntry zipEntry = zipInputStream.getNextEntry();
@@ -110,11 +110,11 @@ public class FileService {
 	}
 
 	
-	public void deleteFile(String applicationId, String path) {
+	public void deleteFile(long applicationId, String path) {
 		new File(this.buildFilesPath(applicationId, path)).delete();
 	}
 	
-	private String buildFilesPath(String applicationId, String path) {
+	private String buildFilesPath(long applicationId, String path) {
 		return this.getRootPath() + File.separator + applicationId + File.separator + FILES_DIRECTORY + File.separator + this.encodePath(path);
 	}
 	
@@ -170,6 +170,10 @@ public class FileService {
 
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
+	}
+
+	public boolean resourceExists(long applicationId, String path) {
+		return new File(this.buildFilesPath(applicationId, path)).exists();
 	}
 
 }

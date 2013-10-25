@@ -38,7 +38,7 @@ public class FileEditorController {
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/", method = RequestMethod.GET)
-	public ModelAndView home(@PathVariable("applicationId") String applicationId) {
+	public ModelAndView home(@PathVariable("applicationId") long applicationId) {
 		ModelAndView mv = new ModelAndView("fileEditor");
 		this.addCommonObjects(mv, applicationId);
 		return mv;
@@ -49,13 +49,13 @@ public class FileEditorController {
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/{filename}", method = RequestMethod.GET)
-	public ModelAndView fileSelected(@PathVariable("applicationId") String applicationId, @PathVariable("filename") String filename) {
+	public ModelAndView fileSelected(@PathVariable("applicationId") long applicationId, @PathVariable("filename") String filename) {
 		ModelAndView mv = new ModelAndView("fileEditor");
 		this.addCommonObjects(mv, applicationId);
 		return mv;
 	}
 
-	private void addCommonObjects(ModelAndView mv, String applicationId) {
+	private void addCommonObjects(ModelAndView mv, long applicationId) {
 		mv.addObject("staticResourcesUrl", this.staticResourcesUrl);
 		mv.addObject("fileStorageServiceBaseUrl", this.fileStorageServiceBaseUrl);
 		mv.addObject("applicationId", applicationId);
@@ -67,7 +67,7 @@ public class FileEditorController {
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/upload", method = RequestMethod.POST)
-	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") String applicationId, FileUploadForm fileUploadForm, BindingResult result) {
+	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") long applicationId, FileUploadForm fileUploadForm, BindingResult result) {
 		try {
 			this.fileService.uncompressContent(applicationId, fileUploadForm.getFile().getInputStream());
 		} catch (IOException e) {
