@@ -10,14 +10,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 
 public class ResourceBasedDustTemplateCompiler {
 
-	private FileService fileService;
+	private ResourceService fileService;
 	private DustConnector dustConnector;
 	
-	public ResourceBasedDustTemplateCompiler(FileService fileService, DustConnector dustConnector) {
+	public ResourceBasedDustTemplateCompiler(ResourceService fileService, DustConnector dustConnector) {
 		this.fileService = fileService;
 		this.dustConnector = dustConnector;
 	}
@@ -31,19 +31,19 @@ public class ResourceBasedDustTemplateCompiler {
 					if (!compiledContent.toString().isEmpty()) {
 						compiledContent.append(";");
 					}
-					compiledContent.append(IOUtils.toString(this.fileService.getContentsOfFile(applicationId, path)));
+					compiledContent.append(IOUtils.toString(this.fileService.getContentsOfResource(applicationId, path)));
 				} else if (path.endsWith(".tl")) {
-					String originalTemplate = IOUtils.toString(this.fileService.getContentsOfFile(applicationId, path));
+					String originalTemplate = IOUtils.toString(this.fileService.getContentsOfResource(applicationId, path));
 					templatesToCompile.add(path);
 					templatesToCompile.addAll(this.findDependentTemplates(originalTemplate));
 				}
 			}
 			for (String path : templatesToCompile) {
 				String templateName = this.getTemplateNameFromPath(path);
-				this.dustConnector.putTemplate(templateName, IOUtils.toString(this.fileService.getContentsOfFile(applicationId, path)));
+				this.dustConnector.putTemplate(templateName, IOUtils.toString(this.fileService.getContentsOfResource(applicationId, path)));
 				compiledContent.append(this.dustConnector.getCompiledTemplate(templateName));
 			}
-			this.fileService.storeFile(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
+			this.fileService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
 		}
 	}
 	
@@ -52,10 +52,10 @@ public class ResourceBasedDustTemplateCompiler {
 			StringBuilder compiledContent = new StringBuilder();
 			for (String path : paths) {
 				if (path.endsWith(".css")) {
-					compiledContent.append(this.fileService.getContentsOfFile(applicationId, path));
+					compiledContent.append(this.fileService.getContentsOfResource(applicationId, path));
 				}
 			}
-			this.fileService.storeFile(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
+			this.fileService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
 		}
 	}
 	

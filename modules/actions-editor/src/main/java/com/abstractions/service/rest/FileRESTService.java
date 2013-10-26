@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 import com.modules.dust.JsonBuilder;
 
 @Component
@@ -25,7 +25,7 @@ public class FileRESTService {
 	private static Log log = LogFactory.getLog(FileRESTService.class);
 	
 	@Autowired
-	private FileService fileService;
+	private ResourceService fileService;
 
 	public FileRESTService() {
 	}
@@ -35,7 +35,7 @@ public class FileRESTService {
 	public Response getAllFiles(@PathParam("applicationId") long applicationId) {
 		try {
 			JsonBuilder builder = JsonBuilder.newWithArray("files");
-			for (String filename : this.fileService.listFiles(applicationId)) {
+			for (String filename : this.fileService.listResources(applicationId)) {
 				builder.string(filename);
 			}
 			builder.endArray();
@@ -49,7 +49,7 @@ public class FileRESTService {
 	@GET
 	@Path("{applicationId}/files/{filePath:.+}")
 	public Response getFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
-		InputStream result = this.fileService.getContentsOfFile(applicationId, path);
+		InputStream result = this.fileService.getContentsOfResource(applicationId, path);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
@@ -59,14 +59,14 @@ public class FileRESTService {
 	@DELETE
 	@Path("{applicationId}/files/{filePath:.+}")
 	public Response deleteFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
-		this.fileService.deleteFile(applicationId, path);
+		this.fileService.deleteResource(applicationId, path);
 		return Response.ok("File deleted").build();
 	}
 
 	@PUT
 	@Path("{applicationId}/files/{filePath:.+}")
 	public Response putFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @RequestBody InputStream stream) {
-		this.fileService.storeFile(applicationId, path, stream);
+		this.fileService.storeResource(applicationId, path, stream);
 		return Response.ok("File stored").build();
 	}
 

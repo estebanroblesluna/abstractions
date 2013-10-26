@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 
 @Controller
 @RequestMapping("/")
@@ -28,12 +28,12 @@ public class FileEditorController {
 	private String fileStorageServiceBaseUrl;
 
 	@Autowired
-	private FileService fileService;
+	private ResourceService fileService;
 
 	public FileEditorController() {
 	}
 
-	public FileEditorController(FileService fileService) {
+	public FileEditorController(ResourceService fileService) {
 		this.fileService = fileService;
 	}
 
@@ -60,7 +60,7 @@ public class FileEditorController {
 		mv.addObject("fileStorageServiceBaseUrl", this.fileStorageServiceBaseUrl);
 		mv.addObject("applicationId", applicationId);
 		List<File> files = new ArrayList<File>();
-		for (String filename : this.fileService.listFiles(applicationId)) {
+		for (String filename : this.fileService.listResources(applicationId)) {
 			files.add(new File(filename.substring(1), this.isEditable(filename)));
 		}
 		mv.addObject("files", files);

@@ -68,7 +68,7 @@
     <constructor-arg index="4" ref="fileService" />
   </bean>
 
-  <bean id="fileService" class="com.abstractions.service.core.FileService">
+  <bean id="fileService" class="com.abstractions.service.core.FilesystemResourceService">
     <constructor-arg index="0" value="./files" />
   </bean>
 </beans>
