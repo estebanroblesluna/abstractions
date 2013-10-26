@@ -132,8 +132,8 @@ public class CompositeTemplate extends ElementTemplate {
 	public ElementTemplate createConnection(ElementTemplate sourceDefinition, ElementTemplate targetDefinition, ConnectionType type) {
 		String elementName = type.getElementName();
 		ElementDefinition elementDefinition = this.mapping.getDefinition(elementName);
-		if (elementDefinition instanceof ConnectionDefinition) {
-			ElementTemplate definition = ((ConnectionDefinition) elementDefinition).createInstance(
+		if (elementDefinition.isConnection()) {
+			ElementTemplate definition = elementDefinition.as(ConnectionDefinition.class).createInstance(
 					sourceDefinition,
 					targetDefinition);
 			return definition;

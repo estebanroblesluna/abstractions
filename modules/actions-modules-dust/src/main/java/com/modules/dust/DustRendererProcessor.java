@@ -1,6 +1,9 @@
 package com.modules.dust;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.codehaus.jettison.json.JSONObject;
 
 import com.abstractions.api.Expression;
 import com.abstractions.api.Message;
@@ -49,7 +52,17 @@ public class DustRendererProcessor implements Processor {
 		}
 		
 		if (compiledTemplate != null) {
-			String json = ExpressionUtils.evaluateNoFail(this.jsonData, message, "{}");
+			Object jsonAsObject = ExpressionUtils.evaluateNoFail(this.jsonData, message, "{}");
+			String json = "{}";
+			
+			if (jsonAsObject instanceof String) {
+				json = (String) jsonAsObject;
+			} else if (jsonAsObject instanceof Map) {
+				json = new JSONObject(((Map) jsonAsObject)).toString();
+			} else if (jsonAsObject instanceof JSONObject) {
+				json = ((JSONObject) jsonAsObject).toString();
+			}
+			
 			String result = this.evaluate(this.name, compiledTemplate, json);
 			message.setPayload(result);
 		}

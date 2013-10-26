@@ -30,6 +30,7 @@
 
   CPDictionary _debugFigures;
   CPDictionary _processorFigures;
+  CPDictionary _toolboxes;
 }
 
 + (ActionsDrawing) frame: (id) aFrame contextId: (id) aContextId
@@ -42,6 +43,7 @@
 	_dirty = false;
 	_debugFigures = [CPDictionary dictionary];
 	_processorFigures = [CPDictionary dictionary];
+	_toolboxes = [CPDictionary dictionary];
 	
 	var isDevelopment = [Actions isDevelopment];
 	
@@ -97,6 +99,19 @@
 	[[Actions mode] postAddProcessor: aProcessorFigure];
 	
 	_dirty = true;
+}
+
+- (void) addToolbox: (id) aToolboxFigure withId: (id) anId
+{
+	[_toolboxes setObject: aToolboxFigure forKey: anId];
+
+	[self addFigure: aToolboxFigure];
+}
+
+
+- (id) toolboxWithId: (id) anId
+{
+	return [_toolboxes objectForKey: anId];
 }
 
 - (void) addMessageSource: (id) aMessageSourceFigure
@@ -266,6 +281,9 @@
 
 - (id) processorFor: (id) aProcessorId
 {
+	if (aProcessorId.indexOf('urn:') == 0) {
+		aProcessorId = aProcessorId.substr(4);
+	}
 	var processorFigure = [_processorFigures objectForKey: aProcessorId];
 	return processorFigure;
 }

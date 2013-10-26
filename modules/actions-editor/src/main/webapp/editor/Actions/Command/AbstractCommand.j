@@ -25,9 +25,13 @@
 	var selectedFigures = [[_drawing tool] selectedFigures];
 	var selectedUrns = new Array();
 	
+	var j = 0;
 	for (var i = 0; i < [selectedFigures count]; i++) { 
-		var figure = [figures objectAtIndex: i];
-		selectedUrns[i] = [figure elementId];
+		var figure = [selectedFigures objectAtIndex: i];
+		if ([figure respondsToSelector: @selector(elementId)]) {
+			selectedUrns[j] = [figure elementId];
+			j++;
+		}
 	}
 	
 	var name = window.prompt('Abstraction name');
@@ -38,9 +42,52 @@
 	$.ajax({
 		type: "POST",
 		url: "../service/context/" + contextId + "/abstract",
-		data: {"name" : name, "elementUrns": urns}
+		data: {"name" : name, "displayName" : name, "elementUrns": urns}
 	}).done(function( result ) {
+		[self processResult: result.definition selectedUrns: selectedUrns];
 		CPLog.debug("DONE Abstracting elements");
 	});
+}
+
+- (void) processResult: (id) aNewDefinition selectedUrns: (id) selectedUrns
+{
+	//TODO change this number to the internal user toolbox
+	var toolbox = [_drawing toolboxWithId: "user-defined"];
+	
+	//add the definition to the generator
+	var generator = [_drawing generator];
+	[generator addDefinition: aNewDefinition];
+	
+	
+	//add the element into the toolbar
+	var tool = [CreateProcessorTool 
+					drawing: _drawing 
+					elementName: aNewDefinition.name 
+					generator: generator];
+	[toolbox 
+		addTool: tool
+		withTitle: aNewDefinition.displayName
+		image: aNewDefinition.icon];
+	
+	
+	//get the (x,y) of the starting id
+	var startingId = aNewDefinition.startingDefinitionId;
+	var startingFigure = [_drawing processorFor: startingId];
+	var topLeft = [startingFigure topLeft];
+	
+	
+	//remove all the figures
+	[_drawing removeFigures: selectedUrns];
+	
+	
+	//add the new element using the (x,y)
+	var newFigure = [CreateProcessorTool 
+						createFigureAt: topLeft 
+						on: _drawing
+						elementName: aNewDefinition.name 
+						edit: NO
+						elementId: nil
+						initialProperties: nil
+						tool: tool];
 }
 @end

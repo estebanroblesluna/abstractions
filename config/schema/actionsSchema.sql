@@ -208,8 +208,13 @@ CREATE TABLE connection_definition (
 DROP TABLE IF EXISTS `element_template`;
 CREATE TABLE element_template (
   `element_template_id` varchar(200) NOT NULL,
-  `element_definition_id` bigint(20) NOT NULL,
-  primary key (element_template_id)
+  `element_definition_id` bigint(20) NULL,
+  `meta_element_definition_id` bigint(20) NULL,
+  primary key (element_template_id),
+  KEY `FK_Buwdmllmcrsympjv2o04i0hgz` (`element_definition_id`),
+  KEY `FK_Buwdmllmcrsympjv3o04i0hgz` (`meta_element_definition_id`),
+  CONSTRAINT `FK_Buwdmllmcrsympjv2o04i0hgz` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`),
+  CONSTRAINT `FK_Buwdmllmcrsympjv3o04i0hgz` FOREIGN KEY (`meta_element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
 
 DROP TABLE IF EXISTS `element_template_property`;
@@ -229,17 +234,6 @@ CREATE TABLE abstraction_definition (
   KEY `FK_ouwdmllmcrsympjv9o04i0hgz` (`starting_definition_id`),
   CONSTRAINT `FK_ouwdmlbmcrsympjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`),
   CONSTRAINT `FK_ouwdmllmcrsympjv9o04i0hgz` FOREIGN KEY (`starting_definition_id`) REFERENCES `element_template` (`element_template_id`)
-);
-
-DROP TABLE IF EXISTS `abstraction_definition_elements`;
-CREATE TABLE abstraction_definition_elements (
-  `element_definition_id` bigint(20) NOT NULL,
-  `element_id` varchar(200) NOT NULL,
-  `element_template_id` varchar(200) NOT NULL,
-  KEY `FK_wuwdmllmcrsympjv1o04i0hgz` (`element_definition_id`),
-  KEY `FK_wuwdmllmcrsympjv9o04i0hgz` (`element_template_id`),
-  CONSTRAINT `FK_wuwdmllmcrsympjv1o04i0hgz` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`),
-  CONSTRAINT `FK_wuwdmllmcrsympjv9o04i0hgz` FOREIGN KEY (`element_template_id`) REFERENCES `element_template` (`element_template_id`)
 );
 
 

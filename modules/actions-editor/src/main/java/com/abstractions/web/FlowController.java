@@ -13,9 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.abstractions.meta.AbstractionDefinition;
+import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
-import com.abstractions.meta.ElementDefinitionType;
+import com.abstractions.meta.ElementDefinitionVisitor;
+import com.abstractions.meta.MessageSourceDefinition;
+import com.abstractions.meta.ProcessorDefinition;
+import com.abstractions.meta.RouterDefinition;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
@@ -270,36 +275,7 @@ public class FlowController {
 		JSONArray elementDefinitions = new JSONArray();
 		
 		for (ElementDefinition element : library.getDefinitions()) {
-			JSONObject elementDefinitionJSON = new JSONObject();
-			
-			elementDefinitionJSON.put("name", element.getName());
-			elementDefinitionJSON.put("displayName", element.getDisplayName());
-			elementDefinitionJSON.put("type", element.getType());
-			elementDefinitionJSON.put("icon", element.getIcon());
-
-			if (ElementDefinitionType.CONNECTION.equals(element.getType())) {
-				ConnectionDefinition connection = ((ConnectionDefinition) element);
-				elementDefinitionJSON.put("color", connection.getColor());
-				elementDefinitionJSON.put("acceptedSourceTypes", connection.getAcceptedSourceTypes());
-				elementDefinitionJSON.put("acceptedSourceMax", connection.getAcceptedSourceMax());
-				elementDefinitionJSON.put("acceptedTargetTypes", connection.getAcceptedTargetTypes());
-				elementDefinitionJSON.put("acceptedTargetMax", connection.getAcceptedTargetMax());
-			}
-			
-			JSONArray propertyDefinitions = new JSONArray();
-
-			for (PropertyDefinition property : element.getProperties()) {
-				JSONObject propertyDefinitionJSON = new JSONObject();
-				
-				propertyDefinitionJSON.put("name", property.getName());
-				propertyDefinitionJSON.put("displayName", property.getDisplayName());
-				propertyDefinitionJSON.put("type", property.getType());
-				propertyDefinitionJSON.put("defaultValue", property.getDefaultValue());
-				
-				propertyDefinitions.put(propertyDefinitionJSON);
-			}
-
-			elementDefinitionJSON.put("properties", propertyDefinitions);
+			final JSONObject elementDefinitionJSON = convertDefinition(element);
 			
 			elementDefinitions.put(elementDefinitionJSON);
 		}
@@ -307,5 +283,76 @@ public class FlowController {
 		libraryJSON.put("elements", elementDefinitions);
 		
 		return libraryJSON;
+	}
+
+	public static JSONObject convertDefinition(ElementDefinition element) throws JSONException {
+		final JSONObject elementDefinitionJSON = new JSONObject();
+		
+		elementDefinitionJSON.put("name", element.getName());
+		elementDefinitionJSON.put("displayName", element.getDisplayName());
+		elementDefinitionJSON.put("type", element.getType());
+		elementDefinitionJSON.put("icon", element.getIcon());
+
+		//Add extra properties
+		element.accept(new ElementDefinitionVisitor() {
+			
+			@Override
+			public Object visitRouterDefinition(RouterDefinition routerDefinition) {
+				return null;
+			}
+			
+			@Override
+			public Object visitProcessorDefinition(ProcessorDefinition processorDefinition) {
+				return null;
+			}
+			
+			@Override
+			public Object visitMessageSourceDefinition(MessageSourceDefinition messageSourceDefinition) {
+				return null;
+			}
+			
+			@Override
+			public Object visitConnectionDefinition(ConnectionDefinition connection) {
+				try {
+					elementDefinitionJSON.put("color", connection.getColor());
+					elementDefinitionJSON.put("acceptedSourceTypes", connection.getAcceptedSourceTypes());
+					elementDefinitionJSON.put("acceptedSourceMax", connection.getAcceptedSourceMax());
+					elementDefinitionJSON.put("acceptedTargetTypes", connection.getAcceptedTargetTypes());
+					elementDefinitionJSON.put("acceptedTargetMax", connection.getAcceptedTargetMax());
+				} catch (JSONException e) {
+				}
+				return null;
+			}
+			
+			@Override
+			public Object visitApplicationDefinition(ApplicationDefinition applicationDefinition) {
+				return null;
+			}
+			
+			@Override
+			public Object visitAbstractionDefinition(AbstractionDefinition abstractionDefinition) {
+				try {
+					elementDefinitionJSON.put("startingDefinitionId", abstractionDefinition.getStartingDefinition().getId());
+				} catch (JSONException e) {
+				}
+				return null;
+			}
+		});
+		
+		JSONArray propertyDefinitions = new JSONArray();
+
+		for (PropertyDefinition property : element.getProperties()) {
+			JSONObject propertyDefinitionJSON = new JSONObject();
+			
+			propertyDefinitionJSON.put("name", property.getName());
+			propertyDefinitionJSON.put("displayName", property.getDisplayName());
+			propertyDefinitionJSON.put("type", property.getType());
+			propertyDefinitionJSON.put("defaultValue", property.getDefaultValue());
+			
+			propertyDefinitions.put(propertyDefinitionJSON);
+		}
+
+		elementDefinitionJSON.put("properties", propertyDefinitions);
+		return elementDefinitionJSON;
 	}
 }

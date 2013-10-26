@@ -14,6 +14,7 @@
     <constructor-arg index="1" ref="namesMapping" />
     <constructor-arg index="2" value="1" />
     <constructor-arg index="3" ref="deploymentService" />
+    <constructor-arg index="4" ref="libraryService" />
   </bean>
 
   <bean id="elementRest" class="com.abstractions.service.rest.ElementRESTService">

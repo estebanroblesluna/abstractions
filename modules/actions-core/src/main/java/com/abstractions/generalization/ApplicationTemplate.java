@@ -27,11 +27,11 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 		}
 	}
 	
-//	public void afterScan(Element object, ElementTemplate definition) {
-//		if (object instanceof MessageSource) {
-//			((MessageSource) object).setMainListener(this);
-//		}
-//	}
+	public void afterScan(Element object, ElementTemplate definition) {
+		if (object instanceof MessageSource) {
+			((MessageSource) object).setMainListener(this);
+		}
+	}
 	
 	@Override
 	public Message onMessageReceived(MessageSource messageSource, Message message) {

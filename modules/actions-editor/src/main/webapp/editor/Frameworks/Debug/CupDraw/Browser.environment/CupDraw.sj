@@ -3036,7 +3036,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("tool:initialDragPoint:
 },["id","StateMachineTool","CPPoint"])]);
 }
 
-p;15;SelectionTool.jt;4340;@STATIC;1.0;t;4321;{var the_class = objj_allocateClassPair(StateMachineTool, "SelectionTool"),
+p;15;SelectionTool.jt;4497;@STATIC;1.0;t;4478;{var the_class = objj_allocateClassPair(StateMachineTool, "SelectionTool"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_selectedFigures"), new objj_ivar("_initialPositions"), new objj_ivar("_initialDragPoint")]);
 objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $SelectionTool__init(self, _cmd)
@@ -3051,6 +3051,11 @@ class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $Selec
 { with(self)
 {
  return objj_msgSend(SelectionToolInitialState, "tool:",  self);
+}
+},["id"]), new objj_method(sel_getUid("selectedFigures"), function $SelectionTool__selectedFigures(self, _cmd)
+{ with(self)
+{
+ return _selectedFigures;
 }
 },["id"]), new objj_method(sel_getUid("selectedFigures"), function $SelectionTool__selectedFigures(self, _cmd)
 { with(self)
@@ -3119,13 +3124,13 @@ class_addMethods(the_class, [new objj_method(sel_getUid("init"), function $Selec
 },["void","CPEvent"]), new objj_method(sel_getUid("keyUp:"), function $SelectionTool__keyUp_(self, _cmd, anEvent)
 { with(self)
 {
- if ((objj_msgSend(anEvent, "keyCode") == CPKeyCodes.F2) && (objj_msgSend(_selectedFigures, "count") == 1)) {
+ if ((objj_msgSend(anEvent, "keyCode") ==~ CPKeyCodes.F2) && (objj_msgSend(_selectedFigures, "count") == 1)) {
   var currentFigure = objj_msgSend(_selectedFigures, "objectAtIndex:",  0);
   if (objj_msgSend(currentFigure, "isEditable")) {
    objj_msgSend(currentFigure, "switchToEditMode");
   }
  }
- if (objj_msgSend(anEvent, "keyCode") == CPKeyCodes.DELETE || objj_msgSend(anEvent, "keyCode") == CPKeyCodes.BACKSPACE) {
+ if (objj_msgSend(anEvent, "keyCode") ==~ CPKeyCodes.DELETE || objj_msgSend(anEvent, "keyCode") ==~ CPKeyCodes.BACKSPACE) {
   for (var i = 0; i < objj_msgSend(_selectedFigures, "count"); i++) {
       var selectedFigure = objj_msgSend(_selectedFigures, "objectAtIndex:", i);
    objj_msgSend(selectedFigure, "removeFromSuperview");

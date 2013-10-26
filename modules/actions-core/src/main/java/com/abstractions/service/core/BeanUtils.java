@@ -122,4 +122,8 @@ public class BeanUtils {
 			return Arrays.asList(StringUtils.split(urns, ','));
 		}
 	}
+
+	public static String asUrn(String string) {
+		return string.startsWith("urn:") ? string : "urn:" + string;
+	}
 }

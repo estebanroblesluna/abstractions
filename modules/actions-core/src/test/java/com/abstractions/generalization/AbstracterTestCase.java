@@ -1,15 +1,20 @@
 package com.abstractions.generalization;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.instance.core.ConnectionType;
+import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
+import com.google.common.collect.Sets;
 
 public class AbstracterTestCase extends TestCase {
 
@@ -92,6 +97,28 @@ public class AbstracterTestCase extends TestCase {
 		try {
 			this.abstracter.abstractFrom("MyFirstAbstraction", application, c, d, cd);
 			//expected behavior
+		} catch (UnconnectedDefinitionsException e) {
+			fail("No exception expected");
+		} catch (MultipleEntryPointsException e) {
+			fail("No exception expected");
+		}
+	}
+	
+	public void testAbstractionSimple() {
+		ElementTemplate a = new ElementTemplate(this.common.getDefinition("GROOVY"));
+		ElementTemplate b = new ElementTemplate(this.common.getDefinition("GROOVY"));
+
+		this.application.addDefinition(a);
+		this.application.addDefinition(b);
+
+		ElementTemplate ab = this.application.addConnection(a, b, ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+
+		try {
+			AbstractionDefinition abstraction = this.abstracter.abstractFrom("MyFirstAbstraction", application, a, b, ab);
+			assertEquals(a, abstraction.getStartingDefinition());
+			
+			Set<ElementTemplate> elements = new HashSet<ElementTemplate>(abstraction.getDefinitions().values());
+			assertEquals(Sets.newHashSet(a, b, ab), elements);
 		} catch (UnconnectedDefinitionsException e) {
 			fail("No exception expected");
 		} catch (MultipleEntryPointsException e) {

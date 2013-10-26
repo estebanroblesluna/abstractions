@@ -133,7 +133,7 @@
 
 	[commonToolbox addTool: [SelectionTool drawing: drawing] withTitle: @"Selection" image: @"Resources/Selection.png"];
 	[commonToolbox addCommand: [SaveActionsCommand class] withTitle: @"Save" image: @"Resources/Save.gif"];
-	[commonToolbox addCommand: [DeployCommand class] withTitle: @"Deploy" image: @"Resources/Save.gif"];
+	[commonToolbox addCommand: [AbstractCommand class] withTitle: @"Abstract" image: @"Resources/Save.gif"];
 
     [commonToolbox addCommand: [GroupCommand class] withTitle: @"Group" image: @"Resources/Group.gif"];
     [commonToolbox addCommand: [UngroupCommand class] withTitle: @"Ungroup" image: @"Resources/Ungroup.gif"];
@@ -202,7 +202,7 @@
 		
 		for (var j = 0; j < elements.length; j++) {
 			var element = elements[j];
-			if (element.type == "PROCESSOR" || element.type == "ROUTER") {
+			if (element.type == "PROCESSOR" || element.type == "ROUTER" || element.type == "ABSTRACTION") {
 				[toolbox 
 					addTool: [CreateProcessorTool drawing: aDrawing elementName: element.name generator: generator] 
 					withTitle: element.displayName
@@ -241,7 +241,7 @@
 			}
 		}
 		
-		[aDrawing addFigure: toolbox];
+		[aDrawing addToolbox: toolbox withId: library.name];
 		initialX = initialX + 80;
 	}
 }
