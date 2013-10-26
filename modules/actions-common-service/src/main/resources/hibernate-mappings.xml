@@ -233,11 +233,11 @@
     <joined-subclass name="com.abstractions.meta.AbstractionDefinition" table="abstraction_definition">
       <key column="element_definition_id"/>
       
-      <many-to-one name="startingDefinition" column="starting_definition_id" />
+      <many-to-one name="startingDefinition" column="starting_definition_id" cascade="all" lazy="false" />
       
-      <map name="definitions" table="abstraction_definition_elements" lazy="false">
+      <map name="definitions" lazy="false" cascade="all">
         <key column="element_definition_id" />
-        <map-key column="element_id" type="string" />
+        <map-key column="element_template_id" type="string" />
         <one-to-many class="com.abstractions.template.ElementTemplate" />
       </map>
     </joined-subclass>
@@ -246,13 +246,13 @@
   <class name="com.abstractions.template.ElementTemplate" table="element_template">
     <id name="id" type="string" column="element_template_id" access="field" />
 
-    <map name="properties" table="element_template_property" lazy="false">
+    <map name="properties" table="element_template_property" lazy="false" cascade="all" >
       <key column="element_template_id" />
       <map-key column="property_key" type="string" />
       <element column="property_value" type="string" />
     </map>
 
-    <many-to-one name="metaElementDefinition" column="element_definition_id" />    
+    <many-to-one name="metaElementDefinition" column="meta_element_definition_id" />    
   </class>
 
   <class name="com.abstractions.model.PropertyDefinition" table="element_property_definition">

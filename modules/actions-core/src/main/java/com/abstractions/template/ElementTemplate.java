@@ -36,11 +36,13 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 	
 	protected String id;
 	protected Map<String, String> properties;
-	protected final ElementDefinition metaElementDefinition;
+	protected ElementDefinition metaElementDefinition;
 	
 	protected volatile Element object;
 	protected volatile boolean dirty;
 	protected volatile boolean hasBreakpoint;
+	
+	protected ElementTemplate() { }
 	
 	public ElementTemplate(ElementDefinition metaElementDefinition) {
 		Validate.notNull(metaElementDefinition);

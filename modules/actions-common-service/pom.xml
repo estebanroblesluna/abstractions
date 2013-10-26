@@ -13,7 +13,7 @@
   <version>0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Actions - common service</name>
+  <name>Actions - Common service</name>
 
   <dependencies>
     <dependency>

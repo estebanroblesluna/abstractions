@@ -48,6 +48,8 @@
 @import "Command/DeployCommand.j"
 @import "Command/LoadActionsCommand.j"
 @import "Command/SaveActionsCommand.j"
+@import "Command/AbstractCommand.j"
+
 
 @import "Server/ContextAPI.j"
 @import "Server/ElementAPI.j"

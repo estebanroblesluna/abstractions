@@ -103,17 +103,12 @@ public abstract class ElementDefinition {
 
 	public Element instantiate(CompositeElement context, NamesMapping mapping, ElementTemplate template) throws InstantiationException, IllegalAccessException {
 		Element object;
-		Map<String, String> instanceProperties = template.getProperties();
 		
 		if (this.isScript()) {
 			object = new ScriptingProcessor(ScriptingLanguage.GROOVY, this.implementation);
 		} else {
 			Class<?> theClass = mapping.getClassForElement(this.name);
 			object = (Element) theClass.newInstance();
-
-			Map<String, String> initialProperties = mapping.getElementInitialProperties(this.name);
-			this.basicSetProperties(object, initialProperties, context, mapping);
-			this.basicSetProperties(object, instanceProperties, context, mapping);
 		}
 
 		return object;
@@ -140,6 +135,14 @@ public abstract class ElementDefinition {
 	}
 
 	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping) {
-		this.basicSetProperties(template.getInstance(), properties, container, mapping);
+		Map<String, String> instanceProperties = template.getProperties();
+
+		Map<String, String> initialProperties = mapping.getElementInitialProperties(this.name);
+		this.basicSetProperties(template.getInstance(), initialProperties, container, mapping);
+		this.basicSetProperties(template.getInstance(), instanceProperties, container, mapping);
+	}
+
+	public <T> T as(Class<T> theClass) {
+		return (T) this;
 	}
 }

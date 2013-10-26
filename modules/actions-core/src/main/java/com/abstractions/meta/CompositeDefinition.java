@@ -49,8 +49,14 @@ public abstract class CompositeDefinition extends ElementDefinition {
 	@Override
 	public Element instantiate(CompositeElement container, NamesMapping mapping, ElementTemplate template) throws InstantiationException, IllegalAccessException {
 		CompositeTemplate compositeTemplate = (CompositeTemplate) template;
-		CompositeElementImpl compositeElement = this.basicCreateInstance(compositeTemplate);
-		compositeTemplate.overrideObject(compositeElement);
+		
+		CompositeElementImpl compositeElement = null;
+		if (!compositeTemplate.isInstantiated()) {
+			compositeElement = this.basicCreateInstance(compositeTemplate);
+			compositeTemplate.overrideObject(compositeElement);
+		} else {
+			compositeElement = (CompositeElementImpl) compositeTemplate.getInstance();
+		}
 		
 		synchronized (compositeTemplate.getDefinitions()) {
 			for (ElementTemplate elementTemplate : compositeTemplate.getDefinitions().values()) {
@@ -88,7 +94,16 @@ public abstract class CompositeDefinition extends ElementDefinition {
 			for (ElementTemplate definition : composite.getDefinitions().values())
 			{
 				try {
+					if (!definition.isInstantiated()) {
+						Element element = definition.instantiate(compositeElement, mapping);
+						if (element instanceof IdentificableMutable) {
+							((IdentificableMutable) element).setId(definition.getId());
+						}
+						composite.afterInstantiation(element, definition);
+					}
 					definition.initialize(compositeElement, mapping);
+
+					composite.afterScan(definition.getInstance(), definition);
 				} catch (ServiceException e) {
 					log.warn("Error initializing object", e);
 				}

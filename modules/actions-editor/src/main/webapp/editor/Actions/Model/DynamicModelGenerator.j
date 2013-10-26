@@ -33,10 +33,14 @@
 {
 	for (var j = 0; j < aListOfDefinitions.length; j++) {
 		var element = aListOfDefinitions[j];
-		var key = element.name;
-		
-		[_definitions setObject: element forKey: key];
+		[self addDefinition: element];
 	}	
+}
+
+- (void) addDefinition: (id) element
+{
+	var key = element.name;
+	[_definitions setObject: element forKey: key];
 }
 
 - (ElementModel) modelFor: (id) anElementName elementId: (id) elementId contextId: (id) contextId initialProperties: (id) properties hasBreakpoint: (id) hasBreakpoint

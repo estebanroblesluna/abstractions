@@ -19,6 +19,7 @@ INSERT INTO `flows`(`flow_id`,`name`,`application_id`,`json_representation`) VAL
 
 INSERT INTO `library` (`library_id`, `name`, `display_name`) VALUES (1,'common','Common');
 INSERT INTO `library` (`library_id`, `name`, `display_name`) VALUES (2,'modules','Modules');
+INSERT INTO `library` (`library_id`, `name`, `display_name`) VALUES (3,'user-defined','User defined');
 
 
 

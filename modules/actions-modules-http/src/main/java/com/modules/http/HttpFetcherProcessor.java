@@ -2,6 +2,10 @@ package com.modules.http;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,152 +38,144 @@ import com.abstractions.api.Message;
 import com.abstractions.api.ProcessingException;
 import com.abstractions.api.Processor;
 
-public class HttpFetcherProcessor implements Processor
-{
-  private HttpClient client;
+public class HttpFetcherProcessor implements Processor {
+	private HttpClient client;
 
-  private Expression urlExpression;
-  private FetchMode fetchMode;
-  private boolean streaming;
-  private Map<String, Expression> parameters;
+	private Expression urlExpression;
+	private FetchMode fetchMode;
+	private boolean streaming;
+	private Map<String, Expression> parameters;
 
-  public HttpFetcherProcessor()
-  {
-    this(3000);
-  }
-  
-  public HttpFetcherProcessor(int timeout)
-  {
-    this(timeout, false, "", 0);
-  }
-  
-  public HttpFetcherProcessor(int timeout, boolean useProxy, String proxyHost, int proxyPort)
-  {
-    ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
-    HttpParams params = new BasicHttpParams();
-    HttpConnectionParams.setConnectionTimeout(params, timeout);
-    HttpConnectionParams.setSoTimeout(params, timeout);
-    
-    connManager.setMaxTotal(100);
-    connManager.setDefaultMaxPerRoute(10);
- 
-    this.client = new DefaultHttpClient(connManager, params);
-    this.streaming = true;
-    this.parameters = new HashMap<String, Expression>();
-    
-    if (useProxy)
-    {
-      HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-      this.client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-    }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Message process(Message message)
-  {
-    try
-    {
-      HttpUriRequest request = this.buildRequest(message);
-      HttpResponse response = this.execute(request);
-      Message httpResponseAsMessage = this.readMessageFrom(response);
-      
-      message.overrideAllFrom(httpResponseAsMessage);
-      
-      return message;
-    }
-    catch (ClientProtocolException e)
-    {
-      throw new ProcessingException(e);
-    }
-    catch (IOException e)
-    {
-      throw new ProcessingException(e);
-    }
-  }
+	public HttpFetcherProcessor() {
+		this(3000);
+	}
 
-  private HttpResponse execute(HttpUriRequest request) throws ClientProtocolException, IOException
-  {
-    return this.client.execute(request);
-  }
-  
-  private HttpUriRequest buildRequest(Message message)
-  {
-    String url = this.urlExpression.evaluate(message).toString();
+	public HttpFetcherProcessor(int timeout) {
+		this(timeout, false, "", 0);
+	}
 
-    HttpUriRequest request;
-    switch (this.fetchMode)
-    {
-    case GET:
-      request = new HttpGet(url); 
-      break;
-    case POST:
-      HttpPost post = new HttpPost(url); 
-      
-      List<NameValuePair> data = new ArrayList<NameValuePair>();
-      for (Entry<String, Expression> entry : this.parameters.entrySet())
-      {
-        String value = entry.getValue().evaluate(message).toString();
-        data.add(new BasicNameValuePair(entry.getKey(), value));
-      }
-      
-      try
-      {
-        post.setEntity(new UrlEncodedFormEntity(data, HTTP.UTF_8));
-      }
-      catch (UnsupportedEncodingException e)
-      {
-        //log
-      }
-      
-      request = post;
-      break;
-    case DELETE:
-      request = new HttpDelete(url); 
-      break;
-    case PUT:
-      request = new HttpPut(url); 
-      break;
-    default:
-      request = new HttpGet(url); 
-      break;
-    }
-    
-    return request;
-  }
-  
-  public void addParamter(String parameterName, Expression value)
-  {
-    Validate.notNull(parameterName);
-    Validate.notNull(value);
+	public HttpFetcherProcessor(int timeout, boolean useProxy,
+			String proxyHost, int proxyPort) {
+		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(params, timeout);
+		HttpConnectionParams.setSoTimeout(params, timeout);
 
-    this.parameters.put(parameterName, value);
-  }
-  
-  private Message readMessageFrom(HttpResponse response)
-  {
-    return HttpUtils.readFrom(response, this.isStreaming());
-  }
-  
-  public void setUrlExpression(Expression expression)
-  {
-    this.urlExpression = expression;
-  }
+		connManager.setMaxTotal(100);
+		connManager.setDefaultMaxPerRoute(10);
 
-  public void setFetchMode(FetchMode mode)
-  {
-    this.fetchMode = mode;
-  }
+		this.client = new DefaultHttpClient(connManager, params);
+		this.streaming = true;
+		this.parameters = new HashMap<String, Expression>();
+		this.fetchMode = FetchMode.GET;
 
-  public boolean isStreaming()
-  {
-    return streaming;
-  }
+		if (useProxy) {
+			HttpHost proxy = new HttpHost(proxyHost, proxyPort);
+			this.client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
+					proxy);
+		}
+	}
 
-  public void setStreaming(boolean streaming)
-  {
-    this.streaming = streaming;
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Message process(Message message) {
+		try {
+			HttpUriRequest request = this.buildRequest(message);
+			HttpResponse response = this.execute(request);
+			Message httpResponseAsMessage = this.readMessageFrom(response);
+
+			message.overrideAllFrom(httpResponseAsMessage);
+
+			return message;
+		} catch (ClientProtocolException e) {
+			throw new ProcessingException(e);
+		} catch (IOException e) {
+			throw new ProcessingException(e);
+		}
+	}
+
+	private HttpResponse execute(HttpUriRequest request)
+			throws ClientProtocolException, IOException {
+		return this.client.execute(request);
+	}
+
+	private HttpUriRequest buildRequest(Message message) {
+		String url = null;
+		try {
+			URL urlAsObject = new URL(this.urlExpression.evaluate(message).toString());
+			URI uri = new URI(urlAsObject.getProtocol(),
+					urlAsObject.getAuthority(), urlAsObject.getPath(),
+					urlAsObject.getQuery(), urlAsObject.getRef());
+
+			url = uri.toString();
+		} catch (URISyntaxException e) {
+			throw new ProcessingException(e);
+		} catch (MalformedURLException e) {
+			throw new ProcessingException(e);
+		}
+
+		HttpUriRequest request;
+		switch (this.fetchMode) {
+		case GET:
+			request = new HttpGet(url);
+			break;
+		case POST:
+			HttpPost post = new HttpPost(url);
+
+			List<NameValuePair> data = new ArrayList<NameValuePair>();
+			for (Entry<String, Expression> entry : this.parameters.entrySet()) {
+				String value = entry.getValue().evaluate(message).toString();
+				data.add(new BasicNameValuePair(entry.getKey(), value));
+			}
+
+			try {
+				post.setEntity(new UrlEncodedFormEntity(data, HTTP.UTF_8));
+			} catch (UnsupportedEncodingException e) {
+				// log
+			}
+
+			request = post;
+			break;
+		case DELETE:
+			request = new HttpDelete(url);
+			break;
+		case PUT:
+			request = new HttpPut(url);
+			break;
+		default:
+			request = new HttpGet(url);
+			break;
+		}
+
+		return request;
+	}
+
+	public void addParamter(String parameterName, Expression value) {
+		Validate.notNull(parameterName);
+		Validate.notNull(value);
+
+		this.parameters.put(parameterName, value);
+	}
+
+	private Message readMessageFrom(HttpResponse response) {
+		return HttpUtils.readFrom(response, this.isStreaming());
+	}
+
+	public void setUrlExpression(Expression expression) {
+		this.urlExpression = expression;
+	}
+
+	public void setFetchMode(FetchMode mode) {
+		this.fetchMode = mode;
+	}
+
+	public boolean isStreaming() {
+		return streaming;
+	}
+
+	public void setStreaming(boolean streaming) {
+		this.streaming = streaming;
+	}
 }
