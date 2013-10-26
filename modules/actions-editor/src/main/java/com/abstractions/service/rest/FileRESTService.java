@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 import com.modules.dust.JsonBuilder;
 
 @Component
@@ -25,17 +25,17 @@ public class FileRESTService {
 	private static Log log = LogFactory.getLog(FileRESTService.class);
 	
 	@Autowired
-	private FileService fileService;
+	private ResourceService fileService;
 
 	public FileRESTService() {
 	}
 
 	@GET
 	@Path("{applicationId}/files/")
-	public Response getAllFiles(@PathParam("applicationId") String applicationId) {
+	public Response getAllFiles(@PathParam("applicationId") long applicationId) {
 		try {
 			JsonBuilder builder = JsonBuilder.newWithArray("files");
-			for (String filename : this.fileService.listFiles(applicationId)) {
+			for (String filename : this.fileService.listResources(applicationId)) {
 				builder.string(filename);
 			}
 			builder.endArray();
@@ -48,8 +48,8 @@ public class FileRESTService {
 
 	@GET
 	@Path("{applicationId}/files/{filePath:.+}")
-	public Response getFile(@PathParam("applicationId") String applicationId, @PathParam("filePath") String path) {
-		InputStream result = this.fileService.getContentsOfFile(applicationId, path);
+	public Response getFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
+		InputStream result = this.fileService.getContentsOfResource(applicationId, path);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
@@ -58,21 +58,21 @@ public class FileRESTService {
 	
 	@DELETE
 	@Path("{applicationId}/files/{filePath:.+}")
-	public Response deleteFile(@PathParam("applicationId") String applicationId, @PathParam("filePath") String path) {
-		this.fileService.deleteFile(applicationId, path);
+	public Response deleteFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
+		this.fileService.deleteResource(applicationId, path);
 		return Response.ok("File deleted").build();
 	}
 
 	@PUT
 	@Path("{applicationId}/files/{filePath:.+}")
-	public Response putFile(@PathParam("applicationId") String applicationId, @PathParam("filePath") String path, @RequestBody InputStream stream) {
-		this.fileService.storeFile(applicationId, path, stream);
+	public Response putFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @RequestBody InputStream stream) {
+		this.fileService.storeResource(applicationId, path, stream);
 		return Response.ok("File stored").build();
 	}
 
 	@PUT
 	@Path("{applicationId}/files/compressed")
-	public Response postCompressedFiles(@PathParam("applicationId") String applicationId, @RequestBody InputStream stream) {
+	public Response postCompressedFiles(@PathParam("applicationId") long applicationId, @RequestBody InputStream stream) {
 		this.fileService.uncompressContent(applicationId, stream);
 		return Response.ok("Files uncompressed").build();
 	}
