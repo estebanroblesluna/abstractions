@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -20,9 +21,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
-public class FileService {
+public class FilesystemResourceService implements ResourceService {
 
-	private static Log log = LogFactory.getLog(FileService.class);
+	private static Log log = LogFactory.getLog(FilesystemResourceService.class);
 	
 	private static final String ENCODED_PATH_SEPARATOR = "___";
 	private static final String FILES_DIRECTORY = "files";
@@ -30,7 +31,7 @@ public class FileService {
 	private String rootPath;
 	private File rootDir;
 
-	public FileService(String rootPath) {
+	public FilesystemResourceService(String rootPath) {
 		Validate.notNull(rootPath);
 
 		this.setRootPath(rootPath);
@@ -46,10 +47,14 @@ public class FileService {
 		}
 	}
 
-	public FileService() {
+	public FilesystemResourceService() {
 	}
 
-	public void storeFile(long applicationId, String path, InputStream stream) {
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#storeFile(long, java.lang.String, java.io.InputStream)
+	 */
+	@Override
+	public void storeResource(long applicationId, String path, InputStream stream) {
 		try {
 			FileUtils.writeByteArrayToFile(new File(this.buildFilesPath(applicationId, path)), IOUtils.toByteArray(stream));
 		} catch (IOException e) {
@@ -65,7 +70,11 @@ public class FileService {
 		return path.replaceAll(ENCODED_PATH_SEPARATOR, File.separator);
 	}
 
-	public InputStream getContentsOfFile(long applicationId, String path) {
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#getContentsOfFile(long, java.lang.String)
+	 */
+	@Override
+	public InputStream getContentsOfResource(long applicationId, String path) {
 		try {
 			return new ByteArrayInputStream(FileUtils.readFileToByteArray(new File(this.buildFilesPath(applicationId, path))));
 		} catch (IOException e) {
@@ -74,7 +83,11 @@ public class FileService {
 		return null;
 	}
 
-	public List<String> listFiles(long applicationId) {
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#listFiles(long)
+	 */
+	@Override
+	public List<String> listResources(long applicationId) {
 		List<String> files = new ArrayList<String>();
 		File directory = new File(this.buildFilesPath(applicationId, ""));
 		if (!directory.exists()) {
@@ -89,6 +102,10 @@ public class FileService {
 		return files;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#uncompressContent(long, java.io.InputStream)
+	 */
+	@Override
 	public void uncompressContent(long applicationId, InputStream stream) {
 		try {
 			ZipInputStream zipInputStream = new ZipInputStream(stream);
@@ -99,7 +116,7 @@ public class FileService {
 					zipEntry = zipInputStream.getNextEntry();
 					continue;
 				}
-				this.storeFile(applicationId, zipEntry.getName().replace("." + File.separator,  File.separator), zipInputStream);
+				this.storeResource(applicationId, zipEntry.getName().replace("." + File.separator,  File.separator), zipInputStream);
 				zipInputStream.closeEntry();
 				zipEntry = zipInputStream.getNextEntry();
 			}
@@ -110,7 +127,11 @@ public class FileService {
 	}
 
 	
-	public void deleteFile(long applicationId, String path) {
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#deleteFile(long, java.lang.String)
+	 */
+	@Override
+	public void deleteResource(long applicationId, String path) {
 		new File(this.buildFilesPath(applicationId, path)).delete();
 	}
 	
@@ -118,6 +139,10 @@ public class FileService {
 		return this.getRootPath() + File.separator + applicationId + File.separator + FILES_DIRECTORY + File.separator + this.encodePath(path);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#getContentsOfSnapshot(java.lang.String, java.lang.String)
+	 */
+	@Override
 	public InputStream getContentsOfSnapshot(String applicationId, String snapshotId) {
 		try {
 			return new FileInputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
@@ -127,6 +152,10 @@ public class FileService {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#getSnapshotOutputStream(java.lang.String, java.lang.String)
+	 */
+	@Override
 	public OutputStream getSnapshotOutputStream(String applicationId, String snapshotId) {
 		try {
 			File snapshotsDirectory = new File(this.buildSnapshotPath(Long.parseLong(applicationId), null));
@@ -140,6 +169,10 @@ public class FileService {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#buildSnapshotPath(java.lang.Long, java.lang.Long)
+	 */
+	@Override
 	public String buildSnapshotPath(Long applicationId, Long snapshotId) {
 		if (snapshotId == null) {
 			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY;
@@ -148,6 +181,10 @@ public class FileService {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#storeSnapshot(java.lang.String, java.lang.String, java.io.InputStream)
+	 */
+	@Override
 	public void storeSnapshot(String applicationId, String snapshotId, InputStream content) {
 		try {
 			IOUtils.copy(content, new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId))));
@@ -172,8 +209,17 @@ public class FileService {
 		this.rootDir = rootDir;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.abstractions.service.core.ResourceService#resourceExists(long, java.lang.String)
+	 */
+	@Override
 	public boolean resourceExists(long applicationId, String path) {
 		return new File(this.buildFilesPath(applicationId, path)).exists();
+	}
+
+	@Override
+	public long getResourceLastModifiedDate(long applicationId, String path) {
+		return new File(this.buildFilesPath(applicationId, path)).lastModified();
 	}
 
 }

@@ -9,17 +9,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 import com.modules.dust.DustConnector;
 
 public class DustTemplateFileProcessor implements FileProcessor {
 
 	private static Log log = LogFactory.getLog(DustTemplateFileProcessor.class);
 	
-	private FileService fileService;
+	private ResourceService fileService;
 	private DustConnector dustConnector;
 
-	public DustTemplateFileProcessor(FileService fileService, DustConnector dustConnector) {
+	public DustTemplateFileProcessor(ResourceService fileService, DustConnector dustConnector) {
 		this.fileService = fileService;
 		this.dustConnector = dustConnector;
 	}
@@ -44,11 +44,11 @@ public class DustTemplateFileProcessor implements FileProcessor {
 		return inputStream;
 	}
 
-	public FileService getFileService() {
+	public ResourceService getFileService() {
 		return fileService;
 	}
 
-	public void setFileService(FileService fileService) {
+	public void setFileService(ResourceService fileService) {
 		this.fileService = fileService;
 	}
 

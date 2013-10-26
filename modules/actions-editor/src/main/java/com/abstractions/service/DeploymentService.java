@@ -41,7 +41,7 @@ import com.abstractions.model.Flow;
 import com.abstractions.model.Server;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 
 @Service
 public class DeploymentService {
@@ -54,7 +54,7 @@ public class DeploymentService {
 	private SnapshotService snapshotService;
 	private UserService userService;
 	private ServerService serverService;
-	private FileService fileService;
+	private ResourceService fileService;
 	
 	public DeploymentService() {
 		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
@@ -75,7 +75,7 @@ public class DeploymentService {
 			SnapshotService snapshotService, 
 			UserService userService, 
 			ServerService serverService,
-			FileService fileService) {
+			ResourceService fileService) {
 		this();
 		Validate.notNull(repository);
 		Validate.notNull(snapshotService);

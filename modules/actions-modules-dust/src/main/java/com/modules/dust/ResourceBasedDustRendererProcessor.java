@@ -16,7 +16,8 @@ import com.abstractions.api.Message;
 import com.abstractions.api.Processor;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.FilesystemResourceService;
+import com.abstractions.service.core.ResourceService;
 import com.abstractions.utils.ExpressionUtils;
 import com.abstractions.utils.IdGenerator;
 
@@ -42,7 +43,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	 */
 	private DustConnector connector;
 	
-	private FileService fileService;
+	private ResourceService fileService;
 	
 	private final AtomicBoolean dirty;
 
@@ -77,7 +78,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 
 	private String getCompiledMasterTemplate(Message message) throws IOException {
 		InputStream contents = null;
-		contents = this.getFileService().getContentsOfFile(this.getApplicationIdFromMessage(message), this.getMasterTemplateName());
+		contents = this.getFileService().getContentsOfResource(this.getApplicationIdFromMessage(message), this.getMasterTemplateName());
 		if (contents != null) {
 			return IOUtils.toString(contents);
 		}
@@ -104,7 +105,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 		String template = this.buildMasterTemplate(message);
 		this.getConnector().putTemplate(this.getName(), template);
 		compiledMasterTemplate = this.getConnector().getCompiledTemplate(this.getName());
-		this.getFileService().storeFile(this.getApplicationIdFromMessage(message), this.getMasterTemplateName(), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
+		this.getFileService().storeResource(this.getApplicationIdFromMessage(message), this.getMasterTemplateName(), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
 		return compiledMasterTemplate;
 	}
 
@@ -119,7 +120,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 
 	private String buildMasterTemplate(Message message) throws IOException {
 		String head = "";
-		String body = IOUtils.toString(this.getFileService().getContentsOfFile(this.getApplicationIdFromMessage(message), this.getBodyTemplatePath()));
+		String body = IOUtils.toString(this.getFileService().getContentsOfResource(this.getApplicationIdFromMessage(message), this.getBodyTemplatePath()));
 		head = this.addStylesheets(message, head);
 		head = this.addJsFiles(message, head);
 		head = this.addRenderingScripts(message, head);
@@ -204,9 +205,9 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 		this.connector = connector;
 	}
 
-	public FileService getFileService() {
+	public ResourceService getFileService() {
 		if (this.fileService == null) {
-			this.fileService = new FileService("./files");
+			this.fileService = new FilesystemResourceService("./files");
 		}
 		return this.fileService;
 	}
