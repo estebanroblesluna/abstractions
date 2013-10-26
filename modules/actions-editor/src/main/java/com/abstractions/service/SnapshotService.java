@@ -19,7 +19,7 @@ import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
 import com.abstractions.repository.GenericRepository;
-import com.abstractions.service.core.FileService;
+import com.abstractions.service.core.ResourceService;
 
 @Service
 public class SnapshotService {
@@ -28,12 +28,12 @@ public class SnapshotService {
 	
 	private GenericRepository repository;
 	private ApplicationService applicationService;
-	private FileService fileService;
+	private ResourceService fileService;
 	private FileProcessor fileProcessor;
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, FileService fileService, FileProcessor fileProcessor) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService fileService, FileProcessor fileProcessor) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
 		Validate.notNull(fileService);
@@ -83,8 +83,8 @@ public class SnapshotService {
 	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) {
 		try {
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.fileService.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
-			for (String filename : this.fileService.listFiles(new Long(application.getId()).toString())) {
-				InputStream inputStream = this.fileService.getContentsOfFile(new Long(application.getId()).toString(), filename);
+			for (String filename : this.fileService.listResources(application.getId())) {
+				InputStream inputStream = this.fileService.getContentsOfResource(application.getId(), filename);
 				inputStream = this.fileProcessor.process(filename, inputStream);
 				if (inputStream == null) {
 					continue;
