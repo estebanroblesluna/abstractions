@@ -142,7 +142,12 @@ public abstract class ElementDefinition {
 		this.basicSetProperties(template.getInstance(), instanceProperties, container, mapping);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T as(Class<T> theClass) {
 		return (T) this;
+	}
+
+	public long getId() {
+		return this.id;
 	}
 }
