@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -12,14 +14,14 @@ import org.apache.commons.logging.LogFactory;
 import com.abstractions.service.core.ResourceService;
 import com.modules.dust.DustConnector;
 
-public class DustTemplateFileProcessor implements FileProcessor {
+public class DustTemplateResourceProcessor implements ResourceProcessor {
 
-	private static Log log = LogFactory.getLog(DustTemplateFileProcessor.class);
+	private static Log log = LogFactory.getLog(DustTemplateResourceProcessor.class);
 	
 	private ResourceService fileService;
 	private DustConnector dustConnector;
 
-	public DustTemplateFileProcessor(ResourceService fileService, DustConnector dustConnector) {
+	public DustTemplateResourceProcessor(ResourceService fileService, DustConnector dustConnector) {
 		this.fileService = fileService;
 		this.dustConnector = dustConnector;
 	}
@@ -30,7 +32,7 @@ public class DustTemplateFileProcessor implements FileProcessor {
 	 * @see com.abstractions.service.FileProcessor#process()
 	 */
 	@Override
-	public InputStream process(String filename, InputStream inputStream) {
+	public List<ResourceChange> process(String filename, InputStream inputStream) {
 		if (filename.endsWith(".tl")) {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			try {
@@ -39,9 +41,13 @@ public class DustTemplateFileProcessor implements FileProcessor {
 				log.error("Error compiling template", e);
 			}
 			String compiledTemplate = this.dustConnector.compile(filename, new String(output.toByteArray()));
-			return new ByteArrayInputStream(compiledTemplate.getBytes());
+			return Arrays.asList(new ResourceChange[] {
+					new ResourceChange(filename, new ByteArrayInputStream(compiledTemplate.getBytes()), ResourceAction.CREATE_OR_UPDATE)
+			});
 		}
-		return inputStream;
+		return Arrays.asList(new ResourceChange[] {
+			new ResourceChange(filename, inputStream, ResourceAction.CREATE_OR_UPDATE)
+		});
 	}
 
 	public ResourceService getFileService() {
