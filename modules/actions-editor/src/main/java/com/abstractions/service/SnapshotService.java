@@ -26,6 +26,7 @@ import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
+import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 import com.modules.dust.ResourceBasedDustTemplateCompiler;
 
@@ -45,7 +46,7 @@ public class SnapshotService {
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService fileService, ResourceProcessor fileProcessor) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService fileService, ResourceProcessor fileProcessor, ResourceBasedDustTemplateCompiler dustCompiler) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
 		Validate.notNull(fileService);
@@ -55,6 +56,7 @@ public class SnapshotService {
 		this.applicationService = applicationService;
 		this.resourceService = fileService;
 		this.resourceProcessor = fileProcessor;
+		this.dustCompiler = dustCompiler;
 	}
 	
 	@Transactional
@@ -120,19 +122,22 @@ public class SnapshotService {
 			}
 			zipOutputStream.close();
 		} catch (IOException e) {
-			log.error("Error persisting snapshot", e);
+			log.warn("Error persisting snapshot", e);
 		}
 	}
 	
-	private void processResources(Application application, ApplicationSnapshot snapshot) throws MarshallingException {
+	private void processResources(Application application, ApplicationSnapshot snapshot) throws MarshallingException, IOException {
 		for (Flow flow : snapshot.getFlows()) {
 			ApplicationDefinition applicationDefinition = new ApplicationDefinition(application.getName());
-			new CompositeTemplateMarshaller(this.namesMapping).unmarshall(applicationDefinition, flow.getJson());
-			Iterator<ElementTemplate> elementIterator = applicationDefinition.getDefinitions().values().iterator();
+			CompositeTemplate template = new CompositeTemplateMarshaller(this.namesMapping).unmarshall(applicationDefinition, flow.getJson());
+			Iterator<ElementTemplate> elementIterator = template.getDefinitions().values().iterator();
 			while (elementIterator.hasNext()) {
 				ElementTemplate element = elementIterator.next();
-				if (element.getMeta().getImplementation().equals("RESOURCE_DUST_RENDERER")) {
+				if (element.getMeta().getName().equals("RESOURCE_DUST_RENDERER")) {
 					this.dustCompiler.mergeAndCompile(
+						application.getId(),
+						"http://localhost:8080/service/fileStore/2/files/",
+						element.getProperties().get("name"),
 						element.getProperty("bodyTemplatePath"),
 						element.getProperty("resourcesList"),
 						element.getProperty("templateRenderingList"));

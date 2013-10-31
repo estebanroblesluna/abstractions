@@ -11,6 +11,7 @@ import com.abstractions.service.core.FilesystemResourceService;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.utils.ExpressionUtils;
 import com.abstractions.utils.IdGenerator;
+import com.abstractions.utils.MessageUtils;
 
 public class ResourceBasedDustRendererProcessor implements Processor {
 
@@ -66,12 +67,11 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	}
 	
 	public String getCDNPath(Message message) {
-		return "http://localhost:8080/service/fileStore/2/files/";
+		return message.getProperties().get(	MessageUtils.APPLICATION_CDN_PROPERTY).toString();
 	}
 
 	long getApplicationIdFromMessage(Message message) {
-		// TODO replace for real getter method
-		return 2;
+		return Long.parseLong(message.getProperties().get(	MessageUtils.APPLICATION_ID_PROPERTY).toString());
 	}
 
 

@@ -44,9 +44,10 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 			interpreter.setDelegate(appDefinition.getInterpreterDelegate());
 		}
 
-		message.putProperty(MessageUtils.APPLICATION_ID_PROPERTY, this.getMeta().getId());
-		//TODO set all application properties here
-		message.putProperty(MessageUtils.APPLICATION_PROPERTY_BASE_PROPERTY + ".cdn", "http://");
+		// TODO replace by real app id
+		message.putProperty(MessageUtils.APPLICATION_ID_PROPERTY, 2);
+		// TODO set all application properties here
+		message.putProperty(MessageUtils.APPLICATION_CDN_PROPERTY, "http://localhost:8080/service/fileStore/2/files/");
 		
 		Thread root = interpreter.run(message);
 		return root.getCurrentMessage();

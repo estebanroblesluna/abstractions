@@ -66,7 +66,7 @@ public class TemplateCompilationSpec {
 		return paths;
 	}
 	
-	public List<String> getJsResourcesPaths() {
+	public List<String> getJsAndTemplatesPaths() {
 		List<String> paths = new ArrayList<String>();
 		paths.addAll(this.getTemplatesPaths());
 		paths.addAll(this.getJsPaths());

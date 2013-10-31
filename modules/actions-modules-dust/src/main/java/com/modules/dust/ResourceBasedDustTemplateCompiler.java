@@ -49,7 +49,7 @@ public class ResourceBasedDustTemplateCompiler {
 	}
 	
 	public void mergeAndCompileStylesheets(long applicationId, List<String> paths, String destPath) throws IOException {
-		if (!this.resourceService.resourceExists(applicationId, destPath)) {
+		if (!this.resourceService.resourceExists(applicationId, destPath) && !paths.isEmpty()) {
 			StringBuilder compiledContent = new StringBuilder();
 			for (String path : paths) {
 				if (path.endsWith(".css")) {
@@ -70,9 +70,9 @@ public class ResourceBasedDustTemplateCompiler {
 		return templates;
 	}
 
-	public void mergeAndCompile(String templateBodyPath, String resourcesList, String templateRenderingList) {
-		
-		
+	public void mergeAndCompile(long applicationId, String cdnPath, String templateName, String templateBodyPath, String resourceList, String templateRenderingList) throws IOException {
+		TemplateCompilationSpec compilationSpec = new TemplateCompilationSpec(applicationId, cdnPath, templateName, resourceList, templateRenderingList, templateBodyPath);
+		this.buildAndCompileMasterTemplate(compilationSpec);		
 	}
 
 	public String buildAndCompileMasterTemplate(TemplateCompilationSpec compilationSpec) throws IOException {
@@ -88,12 +88,12 @@ public class ResourceBasedDustTemplateCompiler {
 		String head = "";
 		String body = IOUtils.toString(this.resourceService.getContentsOfResource(compilationSpec.getApplicationId(), compilationSpec.getBodyTemplatePath()));
 		head = this.addStylesheets(compilationSpec, head, compilationSpec.getStylesheetsPaths());
-		head = this.addJsFiles(compilationSpec, head, compilationSpec.getJsPaths());
+		head = this.addJsAndTemplatesFiles(compilationSpec, head, compilationSpec.getJsAndTemplatesPaths());
 		head = this.addRenderingScripts(compilationSpec, head);
 		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
 	}
 	
-	private String addJsFiles(TemplateCompilationSpec compilationSpec, String head, List<String> jsResourcesPath)	throws IOException {
+	private String addJsAndTemplatesFiles(TemplateCompilationSpec compilationSpec, String head, List<String> jsResourcesPath)	throws IOException {
 		this.mergeAndCompileTemplatesAndJsResources(compilationSpec.getApplicationId(), jsResourcesPath, this.getCompiledJsPath(compilationSpec));
 		head += "<script type=\"text/javascript\" src=\"{cdn}" + this.getCompiledJsPath(compilationSpec) + "\"></script>";
 		return head;
@@ -136,16 +136,20 @@ public class ResourceBasedDustTemplateCompiler {
 	}
 	
 	private String getCompiledJsPath(TemplateCompilationSpec compilationSpec) {
-		return compilationSpec.getTemplateName().replaceAll(" ", "") + ".js";
+		return getTemplateName(compilationSpec.getTemplateName()) + ".js";
+	}
+
+	public String getTemplateName(String originalTemplateName) {
+		return "_" + originalTemplateName.replaceAll(" ", "");
 	}
 
 	private String getCompiledStylesheetsPath(TemplateCompilationSpec compilationSpec) {
-		return compilationSpec.getTemplateName().replaceAll(" ", "") + ".css";
+		return getTemplateName(compilationSpec.getTemplateName()) + ".css";
 	}
 	
 
 	private String getMasterTemplateName(TemplateCompilationSpec compilationSpec) {
-		return compilationSpec.getTemplateName() + "_master.tl";
+		return "_" + compilationSpec.getTemplateName() + "_master.tl";
 	}
 
 
