@@ -45,6 +45,7 @@
     <constructor-arg index="1" ref="applicationService" />
     <constructor-arg index="2" ref="fileService" />
     <constructor-arg index="3" ref="dustTemplateFileProcessor" />
+    <constructor-arg index="4" ref="resourceBasedDustTemplateCompiler" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">

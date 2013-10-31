@@ -12,6 +12,12 @@
       <bean class="com.modules.dust.DustConnector" />
     </constructor-arg>
   </bean>
+  
+  <bean id="resourceBasedDustTemplateCompiler" class="com.modules.dust.ResourceBasedDustTemplateCompiler">
+  	<constructor-arg index="0" ref="fileService" />
+  	<constructor-arg index="1"><bean class="com.modules.dust.DustConnector" /></constructor-arg>
+  </bean>
+  
 <!-- 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">
     <constructor-arg index="0" ref="keyValueStore" />
