@@ -50,7 +50,6 @@ public class ElementDefinitionController {
         ModelAndView mv = new ModelAndView("addDefinition");
         List<String> addLinks = new ArrayList<String>();
         addLinks.add("addConnection");
-        addLinks.add("addFlow");
         addLinks.add("addMessageSource");
         addLinks.add("addProcessor");
         addLinks.add("addRouter");
