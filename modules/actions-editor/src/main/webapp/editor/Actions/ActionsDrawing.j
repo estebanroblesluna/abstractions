@@ -189,13 +189,16 @@
 
 - (void) initiateMessageSendFrom: (id) aProcessorFigure
 {
-	var debugWindow = [DebugWindow
-						newAt: [aProcessorFigure frameOrigin]
-						contextId: [self contextId]
-						elementId: [aProcessorFigure elementId]
-						drawing: self];
+	var myController = [[CPWindowController alloc] initWithWindowCibName: "SendMessageWindow"];
+	[myController showWindow: nil];
+
+//	var debugWindow = [DebugWindow
+//						newAt: [aProcessorFigure frameOrigin]
+//						contextId: [self contextId]
+//						elementId: [aProcessorFigure elementId]
+//						drawing: self];
 						
-	[debugWindow orderFront:self];
+//	[debugWindow orderFront:self];
 }
 
 - (void) setupNotifications
