@@ -22,6 +22,7 @@ public class Thread {
 	private static Log log = LogFactory.getLog(Thread.class);
 	
 	protected volatile AtomicBoolean hasNextProcessor;
+	protected volatile AtomicBoolean hasException;
 	protected volatile Message currentMessage;
 	protected volatile ElementTemplate currentElement;
 	protected volatile Interpreter interpreter;
@@ -33,6 +34,7 @@ public class Thread {
 	public Thread(Interpreter interpreter, ElementTemplate source, Message message, Long id) {
 		this.currentElement = source;
 		this.hasNextProcessor = new AtomicBoolean(true);
+		this.hasException = new AtomicBoolean(false);
 		this.interpreter = interpreter;
 		this.currentMessage = message;
 		this.id = id;
@@ -60,48 +62,16 @@ public class Thread {
 	}
 
 	protected void basicStep() {
-		ElementTemplate definition = this.currentElement;
-		log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ElementTemplate.NAME)));
-
-		this.currentElement.getMeta().evaluateUsing(this);
-		this.hasNextProcessor.set(this.currentElement != null);
-
-		log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty(ElementTemplate.NAME))
-				+ " HAS NEXT " + this.hasNextProcessor.get());
-	}
-	
-	protected void basicRun() {
 		try {
-			while (this.hasNext() && !this.stopOnCurrentElement()) {
-				ElementTemplate currentDefinition = this.currentElement;
-				this.beforeStep(currentDefinition);
-				this.basicStep();
-				this.afterStep(currentDefinition);
-			}
-			
-			if (this.hasNext()) {
-				log.info(
-						"[Thread" + this.id + "] " 
-								+ "Stop on breakpoint in: " 
-								+ StringUtils.defaultString(this.currentElement.getProperty(ElementTemplate.NAME)));
-				
-				this.interpreter.getDelegate().stopInBreakPoint(
-						this.interpreter.getId(), 
-						this.getId().toString(), 
-						this.getComposite().getId(), 
-						this.currentElement, 
-						this.currentMessage.clone());
-			} else {
-				log.info("[Thread" + this.id + "] " + "has finished");
-				
-				this.interpreter.getDelegate().finishInterpretation(
-						this.interpreter.getId(), 
-						this.getId().toString(), 
-						this.getRootContext().getId(), 
-						this.currentMessage.clone());
-				
-				this.notifyObserversOfTermination();
-			}
+			ElementTemplate definition = this.currentElement;
+			log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ElementTemplate.NAME)));
+	
+			this.currentElement.getMeta().evaluateUsing(this);
+			this.hasNextProcessor.set(this.currentElement != null);
+	
+			log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty(ElementTemplate.NAME))
+					+ " HAS NEXT " + this.hasNextProcessor.get());
+
 		} catch (Exception e) {
 			this.interpreter.getDelegate().uncaughtException(
 					this.interpreter.getId(), 
@@ -110,6 +80,47 @@ public class Thread {
 					this.currentElement, 
 					this.currentMessage.clone(),
 					e);
+			this.hasNextProcessor.set(false);
+			this.hasException.set(true);
+		}
+	}
+	
+	protected void basicRun() {
+		while (this.hasNext() && !this.stopOnCurrentElement()) {
+			ElementTemplate currentDefinition = this.currentElement;
+			this.beforeStep(currentDefinition);
+			this.basicStep();
+			this.afterStep(currentDefinition);
+		}
+		
+		this.notifyStopped();
+	}
+
+	public void notifyStopped() {
+		if (this.hasNext()) {
+			log.info(
+					"[Thread" + this.id + "] " 
+							+ "Stop on breakpoint in: " 
+							+ StringUtils.defaultString(this.currentElement.getProperty(ElementTemplate.NAME)));
+			
+			this.interpreter.getDelegate().stopInBreakPoint(
+					this.interpreter.getId(), 
+					this.getId().toString(), 
+					this.getComposite().getId(), 
+					this.currentElement, 
+					this.currentMessage.clone());
+		} else {
+			log.info("[Thread" + this.id + "] " + "has finished");
+			
+			if (!this.hasException.get()) {
+				this.interpreter.getDelegate().finishInterpretation(
+						this.interpreter.getId(), 
+						this.getId().toString(), 
+						this.getRootContext().getId(), 
+						this.currentMessage.clone());
+			}
+
+			this.notifyObserversOfTermination();
 		}
 	}
 	

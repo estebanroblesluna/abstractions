@@ -138,7 +138,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 		}
 		
 		DebuggableThread thread = interpreter.getThread(threadId);
-		thread.resume();
+		thread.step();
 		
 		return ResponseUtils.ok();
 	}
@@ -166,6 +166,8 @@ public class InterpreterRESTService implements InterpreterDelegate {
 
 			JSONObject json = new JSONObject();
 			json.put("evaluationResult", result);
+			json.put("interpreterId", interpreterId);
+			json.put("threadId", threadId);
 			json.put("currentMessage", messageAsJSON);
 
 			return ResponseUtils.ok(new Attribute("result", json.toString()));
