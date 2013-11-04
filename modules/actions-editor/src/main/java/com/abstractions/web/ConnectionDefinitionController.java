@@ -1,6 +1,6 @@
 package com.abstractions.web;
 
-import com.abstractions.model.ConnectionDefinition;
+import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.model.Library;
 import com.abstractions.service.ElementDefinitionService;
 import com.abstractions.service.LibraryService;

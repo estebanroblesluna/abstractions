@@ -1,6 +1,6 @@
 package com.abstractions.service;
 
-import com.abstractions.model.ElementDefinition;
+import com.abstractions.meta.ElementDefinition;
 import com.abstractions.repository.GenericRepository;
 import java.util.List;
 import org.jsoup.helper.Validate;
