@@ -67,11 +67,16 @@
 
 - (void) addLogger: (id) sender
 {
-	var addLoggerWindow = [AddLoggerWindow
-						newAt: [self frameOrigin]
-						elementAPI: [[self model] api]];
+	var myController = [[AddLoggerWindowController alloc] initWithWindowCibName: "AddLoggerWindow"];
+	[myController showWindow: nil];
+	[myController elementAPI: [[self model] api]];
+
+
+	//var addLoggerWindow = [AddLoggerWindow
+	//					newAt: [self frameOrigin]
+	//					elementAPI: [[self model] api]];
 						
-	[addLoggerWindow orderFront:self];
+	//[addLoggerWindow orderFront:self];
 }
 
 - (void) removeLogger: (id) sender
@@ -86,16 +91,27 @@
 
 - (void) loggerLines: (id) loggerInfo
 {
-	if (_loggerWindow == nil) {
-		_loggerWindow = [ViewLoggerWindow
-						newAt: [self frameOrigin]];
+	//if (_loggerWindow == nil) {
+	//	_loggerWindow = [ViewLoggerWindow
+	//					newAt: [self frameOrigin]];
+	//}
+
+	var elementId = [self elementId];
+	var serverInfo = loggerInfo.logger.servers[0];
+	var lines;
+	if (serverInfo === undefined) {
+		lines = "No log yet";
+	} else {
+		lines = serverInfo.logger[elementId];
 	}
 						
+	var myController = [[ViewLoggerWindowController alloc] initWithWindowCibName: "ViewLoggerWindow"];
+	[myController lines: lines];
+	[myController showWindow: nil];
+						
 	//TODO do something with all servers
-	var elementId = [self elementId];
-	var lines = loggerInfo.logger.servers[0].logger[elementId];
-	[_loggerWindow orderFront: self];
-	[_loggerWindow loggerInfo: lines];
+	//[_loggerWindow orderFront: self];
+	//[_loggerWindow loggerInfo: lines];
 }
 
 - (id) acceptsNewStartingChain
