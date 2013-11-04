@@ -22,6 +22,8 @@
               <div class="col-lg-10">
                 <input type="text" class="form-control" id="inputLibraryName" name="name" placeholder="Enter library name...">
               </div>
+            </div>
+            <div class="form-group">
               <label for="inputApplicationName" class="col-lg-2 control-label">Library display name</label>
               <div class="col-lg-10">
                 <input type="text" class="form-control" id="inputLibraryDisplayName" name="displayName" placeholder="Enter library display name...">

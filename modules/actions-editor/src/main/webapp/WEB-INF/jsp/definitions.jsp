@@ -1,8 +1,10 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:include page="/WEB-INF/jsp/header.jsp">
-  <jsp:param name="title" value="Libraries" />
+  <jsp:param name="title" value="Definitions" />
 </jsp:include>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <body>
   <script type="text/javascript">
@@ -18,25 +20,15 @@
     })  
   })
   </script>
-  <script type="text/javascript">
-      function filterEnvironment() {
-          var environment = document.getElementById("select-environment");
-          $('#properties-table td:nth-child(4)').each (function() {
-            
-           if ((this).innerHTML == environment.value || environment.value == 'DISPLAY ALL')
-               ($(this).closest('tr')).css('display','table-row');
-            else
-                ($(this).closest('tr')).css('display','none');
-          });
-      }
-  </script>
   <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
 
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
         <ol class="breadcrumb">
-          <li><a href="/libraries/" class='active'>Libraries</a></li>          
+          <li><a href="/libraries/">Libraries</a></li>
+          <li>${libraryName}</li>
+          <li><a href="/libraries/${libraryId}/definitions/" class='active'>Definitions</a></li>   
         </ol>   
       </div>
       <div class="col-lg-12" style="text-align: right;">       
@@ -50,18 +42,24 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Library name</th>
-              <th>Library display name</th>
+              <th>Definition name</th>
+              <th>Display name</th>
+              <th>Icon</th>
+              <th>Implementation</th>
+              <th>Script?</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-          <c:forEach var="library" items='${libraries}' varStatus="lp">
+          <c:forEach var="definition" items='${definitions}' varStatus="lp">
             <tr>
-              <td><input type="checkbox" class="selectedProperties" value="${library.id}" /></td>
-              <td>${library.name}</td>
-              <td>${library.displayName}</td>
-              <td><a href="/libraries/${library.id}/definitions/">Definitions</a></td>
+              <td><input type="checkbox" class="selectedProperties" value="${definition.id}" /></td>
+              <td>${definition.name}</td>
+              <td>${definition.displayName}</td>
+              <td><img src="/editor/${definition.icon}" alt="..." style="max-width: 20px;max-height: 20px;"/></td>
+              <td><small><i>${definition.implementation}</i></small></td>
+              <td>${definition.isScript() == true ? 'Yes' : 'No'} </td>
+              <td><button type="button" class="btn btn-default btn-xs" onclick="location.href='/libraries/${libraryId}/definitions/show/${definition.id}/'"><span class="glyphicon glyphicon-eye-open"></span> <small>Show</small></button></td>
             </tr>
           </c:forEach>
           </tbody>
