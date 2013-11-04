@@ -19,6 +19,12 @@
 
 @import "Util/DataUtil.j"
 
+@import "Controller/AddLoggerController.j"
+@import "Controller/AddLoggerWindowController.j"
+@import "Controller/ViewLoggerDelegate.j"
+@import "Controller/ViewLoggerWindowController.j"
+
+
 @import "Model/ElementModel.j"
 @import "Model/DynamicElementModel.j"
 @import "Model/DynamicMessageSourceModel.j"
