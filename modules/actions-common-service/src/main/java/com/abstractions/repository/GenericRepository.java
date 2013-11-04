@@ -87,5 +87,9 @@ public class GenericRepository {
 		}
 		
 		return result;
-	}
+	}        
+        
+        public void update(Object o) {
+            this.sessionFactory.getCurrentSession().update(o);
+        }
 }

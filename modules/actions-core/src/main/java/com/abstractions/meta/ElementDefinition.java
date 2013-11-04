@@ -25,7 +25,7 @@ public abstract class ElementDefinition {
 
 	private static Log log = LogFactory.getLog(ElementDefinition.class);
 	
-	long id;
+	protected long id;
 	private String name;
 	private String displayName;
 	private String icon;

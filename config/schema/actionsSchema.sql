@@ -1,7 +1,5 @@
 USE `actions`;
 
--- this is a test
-
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -278,8 +276,6 @@ CREATE TABLE element_property_definition (
   primary key (property_definition_id),
   CONSTRAINT `FK_auwamlbmdrszmpjv9o14i0hgr` FOREIGN KEY (`element_definition_id`) REFERENCES `element_definition` (`element_definition_id`)
 );
-
-
 
 ALTER TABLE `actions`.`element_template` 
   ADD CONSTRAINT `FK_Auwdmllmcrsympjv1o04i0hgz`

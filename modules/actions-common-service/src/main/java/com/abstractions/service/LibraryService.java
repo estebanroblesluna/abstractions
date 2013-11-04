@@ -54,4 +54,9 @@ public class LibraryService {
 		this.repository.save(definition);
 		this.repository.save(library);
 	}
+        
+    @Transactional
+    public void update(Library library) {
+        this.repository.update(library);
+    }
 }

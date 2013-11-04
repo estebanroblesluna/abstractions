@@ -72,4 +72,15 @@
   <bean id="fileService" class="com.abstractions.service.core.FilesystemResourceService">
     <constructor-arg index="0" value="./files" />
   </bean>
+  
+  <bean id="elementDefinitionService" class="com.abstractions.service.ElementDefinitionService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" ref="libraryService" />
+  </bean>
+   
+ <bean id="multipartResolver"  
+  class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> 
+    
+ <bean class="org.spring.log.LoggingHandlerExceptionResolver"/>
+
 </beans>
