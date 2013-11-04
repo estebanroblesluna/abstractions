@@ -1,6 +1,6 @@
 package com.abstractions.web;
 
-import com.abstractions.model.ElementDefinition;
+import com.abstractions.meta.ElementDefinition;
 import com.abstractions.service.ElementDefinitionService;
 import com.abstractions.service.LibraryService;
 import java.io.FileOutputStream;

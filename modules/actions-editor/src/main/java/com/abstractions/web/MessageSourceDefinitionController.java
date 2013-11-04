@@ -1,7 +1,7 @@
 package com.abstractions.web;
 
 import com.abstractions.model.Library;
-import com.abstractions.model.MessageSourceDefinition;
+import com.abstractions.meta.MessageSourceDefinition;
 import com.abstractions.service.ElementDefinitionService;
 import com.abstractions.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
