@@ -1,5 +1,6 @@
 USE `actions`;
 
+-- this is a test
 
 DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
