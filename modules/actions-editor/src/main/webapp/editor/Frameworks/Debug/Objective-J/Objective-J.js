@@ -27,6 +27,86 @@ var ObjectiveJ = { };
 
 (function (global, exports)
 {
+if (!Object.create)
+{
+    Object.create = function(o)
+    {
+        if (arguments.length > 1)
+            throw new Error('Object.create implementation only accepts the first parameter.');
+        function F() {}
+        F.prototype = o;
+        return new F();
+    };
+}
+if (!Object.keys)
+{
+    Object.keys = (function ()
+    {
+        var hasOwnProperty = Object.prototype.hasOwnProperty,
+            hasDontEnumBug = !({toString: null}).propertyIsEnumerable('toString'),
+            dontEnums = [
+                'toString',
+                'toLocaleString',
+                'valueOf',
+                'hasOwnProperty',
+                'isPrototypeOf',
+                'propertyIsEnumerable',
+                'constructor'
+            ],
+            dontEnumsLength = dontEnums.length;
+        return function (obj)
+        {
+            if (typeof obj !== 'object' && typeof obj !== 'function' || obj === null)
+                throw new TypeError('Object.keys called on non-object');
+            var result = [];
+            for (var prop in obj)
+            {
+                if (hasOwnProperty.call(obj, prop))
+                    result.push(prop);
+            }
+            if (hasDontEnumBug)
+            {
+                for (var i = 0; i < dontEnumsLength; i++)
+                {
+                    if (hasOwnProperty.call(obj, dontEnums[i]))
+                        result.push(dontEnums[i]);
+                }
+            }
+            return result;
+        };
+    })();
+}
+if (!Array.prototype.indexOf)
+{
+    Array.prototype.indexOf = function(searchElement )
+    {
+        "use strict";
+        if (this === null)
+            throw new TypeError();
+        var t = new Object(this),
+            len = t.length >>> 0;
+        if (len === 0)
+            return -1;
+        var n = 0;
+        if (arguments.length > 1)
+        {
+            n = Number(arguments[1]);
+            if (n != n)
+                n = 0;
+            else if (n !== 0 && n != Infinity && n != -Infinity)
+                n = (n > 0 || -1) * Math.floor(Math.abs(n));
+        }
+        if (n >= len)
+            return -1;
+        var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
+        for (; k < len; k++)
+        {
+            if (k in t && t[k] === searchElement)
+                return k;
+        }
+        return -1;
+    };
+}
 if (!this.JSON) {
     JSON = {};
 }
@@ -202,8 +282,8 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         };
     }
 }());
-var formatRegex = new RegExp("([^%]+|%(?:\\d+\\$)?[\\+\\-\\ \\#0]*[0-9\\*]*(.[0-9\\*]+)?[hlL]?[cbBdieEfgGosuxXpn%@])", "g");
-var tagRegex = new RegExp("(%)(?:(\\d+)\\$)?([\\+\\-\\ \\#0]*)([0-9\\*]*)((?:.[0-9\\*]+)?)([hlL]?)([cbBdieEfgGosuxXpn%@])");
+var formatRegex = /([^%]+|%(?:\d+\$)?[\+\-\ \#0]*[0-9\*]*(.[0-9\*]+)?[hlL]?[cbBdieEfgGosuxXpn%@])/g,
+    tagRegex = /(%)(?:(\d+)\$)?([\+\-\ \#0]*)([0-9\*]*)((?:.[0-9\*]+)?)([hlL]?)([cbBdieEfgGosuxXpn%@])/;
 exports.sprintf = function(format)
 {
     var format = arguments[0],
@@ -214,10 +294,8 @@ exports.sprintf = function(format)
     for (var i = 0; i < tokens.length; i++)
     {
         var t = tokens[i];
-        if (format.substring(index, index + t.length) != t)
-        {
+        if (format.substring(index, index + t.length) !== t)
             return result;
-        }
         index += t.length;
         if (t.charAt(0) !== "%")
             result += t;
@@ -226,10 +304,8 @@ exports.sprintf = function(format)
         else
         {
             var subtokens = t.match(tagRegex);
-            if (subtokens.length != 8 || subtokens[0] != t)
-            {
+            if (subtokens.length !== 8 || subtokens[0] !== t)
                 return result;
-            }
             var percentSign = subtokens[1],
                 argIndex = subtokens[2],
                 flags = subtokens[3],
@@ -244,20 +320,20 @@ exports.sprintf = function(format)
             var width = null;
             if (widthString == "*")
                 width = arguments[argIndex];
-            else if (widthString != "")
+            else if (widthString !== "")
                 width = Number(widthString);
             var precision = null;
-            if (precisionString == ".*")
+            if (precisionString === ".*")
                 precision = arguments[argIndex];
-            else if (precisionString != "")
+            else if (precisionString !== "")
                 precision = Number(precisionString.substring(1));
-            var leftJustify = (flags.indexOf("-") >= 0);
-            var padZeros = (flags.indexOf("0") >= 0);
-            var subresult = "";
-            if (RegExp("[bBdiufeExXo]").test(specifier))
+            var leftJustify = (flags.indexOf("-") >= 0),
+                padZeros = (flags.indexOf("0") >= 0),
+                subresult = "";
+            if (/[bBdiufeExXo]/.test(specifier))
             {
-                var num = Number(arguments[argIndex]);
-                var sign = "";
+                var num = Number(arguments[argIndex]),
+                    sign = "";
                 if (num < 0)
                 {
                     sign = "-";
@@ -269,21 +345,21 @@ exports.sprintf = function(format)
                     else if (flags.indexOf(" ") >= 0)
                         sign = " ";
                 }
-                if (specifier == "d" || specifier == "i" || specifier == "u")
+                if (specifier === "d" || specifier === "i" || specifier === "u")
                 {
                     var number = String(Math.abs(Math.floor(num)));
                     subresult = justify(sign, "", number, "", width, leftJustify, padZeros)
                 }
                 if (specifier == "f")
                 {
-                    var number = String((precision != null) ? Math.abs(num).toFixed(precision) : Math.abs(num));
-                    var suffix = (flags.indexOf("#") >= 0 && number.indexOf(".") < 0) ? "." : "";
+                    var number = String((precision !== null) ? Math.abs(num).toFixed(precision) : Math.abs(num)),
+                        suffix = (flags.indexOf("#") >= 0 && number.indexOf(".") < 0) ? "." : "";
                     subresult = justify(sign, "", number, suffix, width, leftJustify, padZeros);
                 }
-                if (specifier == "e" || specifier == "E")
+                if (specifier === "e" || specifier === "E")
                 {
-                    var number = String(Math.abs(num).toExponential(precision != null ? precision : 21));
-                    var suffix = (flags.indexOf("#") >= 0 && number.indexOf(".") < 0) ? "." : "";
+                    var number = String(Math.abs(num).toExponential(precision !== null ? precision : 21)),
+                        suffix = (flags.indexOf("#") >= 0 && number.indexOf(".") < 0) ? "." : "";
                     subresult = justify(sign, "", number, suffix, width, leftJustify, padZeros);
                 }
                 if (specifier == "x" || specifier == "X")
@@ -304,7 +380,7 @@ exports.sprintf = function(format)
                     var prefix = (flags.indexOf("#") >= 0 && num != 0) ? "0" : "";
                     subresult = justify(sign, prefix, number, "", width, leftJustify, padZeros);
                 }
-                if (RegExp("[A-Z]").test(specifier))
+                if (/[A-Z]/.test(specifier))
                     subresult = subresult.toUpperCase();
                 else
                     subresult = subresult.toLowerCase();
@@ -312,16 +388,14 @@ exports.sprintf = function(format)
             else
             {
                 var subresult = "";
-                if (specifier == "%")
+                if (specifier === "%")
                     subresult = "%";
-                else if (specifier == "c")
+                else if (specifier === "c")
                     subresult = String(arguments[argIndex]).charAt(0);
-                else if (specifier == "s" || specifier == "@")
+                else if (specifier === "s" || specifier === "@")
                     subresult = String(arguments[argIndex]);
-                else if (specifier == "p" || specifier == "n")
-                {
+                else if (specifier === "p" || specifier === "n")
                     subresult = "";
-                }
                 subresult = justify("", "", subresult, "", width, leftJustify, false);
             }
             result += subresult;
@@ -405,29 +479,42 @@ for (var i = 0; i < CPLogLevels.length; i++)
     CPLog[CPLogLevels[i]] = (function(level) { return function() { _CPLogDispatch(arguments, level); }; })(CPLogLevels[i]);
 var _CPFormatLogMessage = function(aString, aLevel, aTitle)
 {
-    var now = new Date();
-    aLevel = ( aLevel == null ? '' : ' [' + CPLogColorize(aLevel, aLevel) + ']' );
+    var now = new Date(),
+        titleAndLevel;
+    if (aLevel === null)
+        aLevel = "";
+    else
+    {
+        aLevel = aLevel || "info";
+        aLevel = "[" + CPLogColorize(aLevel, aLevel) + "]";
+    }
+    aTitle = aTitle || "";
+    if (aTitle && aLevel)
+        aTitle += " ";
+    titleAndLevel = aTitle + aLevel;
+    if (titleAndLevel)
+        titleAndLevel += ": ";
     if (typeof exports.sprintf == "function")
-        return exports.sprintf("%4d-%02d-%02d %02d:%02d:%02d.%03d %s%s: %s",
+        return exports.sprintf("%4d-%02d-%02d %02d:%02d:%02d.%03d %s%s",
             now.getFullYear(), now.getMonth() + 1, now.getDate(),
             now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds(),
-            aTitle, aLevel, aString);
+            titleAndLevel, aString);
     else
-        return now + " " + aTitle + aLevel + ": " + aString;
+        return now + " " + titleAndLevel + ": " + aString;
 }
 CPLogConsole = function(aString, aLevel, aTitle, aFormatter)
 {
     if (typeof console != "undefined")
     {
-        var message = (aFormatter || _CPFormatLogMessage)(aString, aLevel, aTitle);
-        var logger = {
-            "fatal": "error",
-            "error": "error",
-            "warn": "warn",
-            "info": "info",
-            "debug": "debug",
-            "trace": "debug"
-        }[aLevel];
+        var message = (aFormatter || _CPFormatLogMessage)(aString, aLevel, aTitle),
+            logger = {
+                "fatal": "error",
+                "error": "error",
+                "warn": "warn",
+                "info": "info",
+                "debug": "debug",
+                "trace": "debug"
+            }[aLevel];
         if (logger && console[logger])
             console[logger](message);
         else if (console.log)
@@ -590,6 +677,7 @@ SQRT = Math.sqrt;
 E = Math.E;
 LN2 = Math.LN2;
 LN10 = Math.LN10;
+LOG = Math.log;
 LOG2E = Math.LOG2E;
 LOG10E = Math.LOG10E;
 PI = Math.PI;
@@ -671,11 +759,18 @@ function Asynchronous( aFunction)
         if (asynchronousTimeoutCount > currentAsynchronousTimeoutCount)
             aFunction.apply(this, args);
         else
-            asynchronousFunctionQueue.push(function() { aFunction.apply(this, args) });
+            asynchronousFunctionQueue.push(function()
+            {
+                aFunction.apply(this, args);
+            });
     };
 }
 var NativeRequest = null;
-if (window.ActiveXObject !== undefined)
+if (window.XMLHttpRequest)
+{
+    NativeRequest = window.XMLHttpRequest;
+}
+else if (window.ActiveXObject !== undefined)
 {
     var MSXML_XMLHTTP_OBJECTS = ["Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP.6.0"],
         index = MSXML_XMLHTTP_OBJECTS.length;
@@ -688,7 +783,7 @@ if (window.ActiveXObject !== undefined)
             NativeRequest = function()
             {
                 return new ActiveXObject(MSXML_XMLHTTP);
-            }
+            };
             break;
         }
         catch (anException)
@@ -696,8 +791,6 @@ if (window.ActiveXObject !== undefined)
         }
     }
 }
-if (!NativeRequest)
-    NativeRequest = window.XMLHttpRequest;
 CFHTTPRequest = function()
 {
     this._isOpen = false;
@@ -709,10 +802,13 @@ CFHTTPRequest = function()
     this._stateChangeHandler = function()
     {
         determineAndDispatchHTTPRequestEvents(self);
-    }
+    };
     this._nativeRequest.onreadystatechange = this._stateChangeHandler;
     if (CFHTTPRequest.AuthenticationDelegate !== nil)
-        this._eventDispatcher.addEventListener("HTTP403", function(){CFHTTPRequest.AuthenticationDelegate(self)});
+        this._eventDispatcher.addEventListener("HTTP403", function()
+            {
+                CFHTTPRequest.AuthenticationDelegate(self);
+            });
 }
 CFHTTPRequest.UninitializedState = 0;
 CFHTTPRequest.LoadingState = 1;
@@ -730,7 +826,7 @@ CFHTTPRequest.prototype.status = function()
     {
         return 0;
     }
-}
+};
 CFHTTPRequest.prototype.statusText = function()
 {
     try
@@ -741,52 +837,52 @@ CFHTTPRequest.prototype.statusText = function()
     {
         return "";
     }
-}
+};
 CFHTTPRequest.prototype.readyState = function()
 {
     return this._nativeRequest.readyState;
-}
+};
 CFHTTPRequest.prototype.success = function()
 {
     var status = this.status();
     if (status >= 200 && status < 300)
         return YES;
     return status === 0 && this.responseText() && this.responseText().length;
-}
+};
 CFHTTPRequest.prototype.responseXML = function()
 {
     var responseXML = this._nativeRequest.responseXML;
     if (responseXML && (NativeRequest === window.XMLHttpRequest))
         return responseXML;
     return parseXML(this.responseText());
-}
+};
 CFHTTPRequest.prototype.responsePropertyList = function()
 {
     var responseText = this.responseText();
     if (CFPropertyList.sniffedFormatOfString(responseText) === CFPropertyList.FormatXML_v1_0)
         return CFPropertyList.propertyListFromXML(this.responseXML());
     return CFPropertyList.propertyListFromString(responseText);
-}
+};
 CFHTTPRequest.prototype.responseText = function()
 {
     return this._nativeRequest.responseText;
-}
+};
 CFHTTPRequest.prototype.setRequestHeader = function( aHeader, aValue)
 {
     this._requestHeaders[aHeader] = aValue;
-}
+};
 CFHTTPRequest.prototype.getResponseHeader = function( aHeader)
 {
     return this._nativeRequest.getResponseHeader(aHeader);
-}
+};
 CFHTTPRequest.prototype.getAllResponseHeaders = function()
 {
     return this._nativeRequest.getAllResponseHeaders();
-}
+};
 CFHTTPRequest.prototype.overrideMimeType = function( aMimeType)
 {
     this._mimeType = aMimeType;
-}
+};
 CFHTTPRequest.prototype.open = function( aMethod, aURL, isAsynchronous, aUser, aPassword)
 {
     this._isOpen = true;
@@ -796,7 +892,7 @@ CFHTTPRequest.prototype.open = function( aMethod, aURL, isAsynchronous, aUser, a
     this._user = aUser;
     this._password = aPassword;
     return this._nativeRequest.open(aMethod, aURL, isAsynchronous, aUser, aPassword);
-}
+};
 CFHTTPRequest.prototype.send = function( aBody)
 {
     if (!this._isOpen)
@@ -821,20 +917,20 @@ CFHTTPRequest.prototype.send = function( aBody)
     {
         this._eventDispatcher.dispatchEvent({ type:"failure", request:this });
     }
-}
+};
 CFHTTPRequest.prototype.abort = function()
 {
     this._isOpen = false;
     return this._nativeRequest.abort();
-}
+};
 CFHTTPRequest.prototype.addEventListener = function( anEventName, anEventListener)
 {
     this._eventDispatcher.addEventListener(anEventName, anEventListener);
-}
+};
 CFHTTPRequest.prototype.removeEventListener = function( anEventName, anEventListener)
 {
     this._eventDispatcher.removeEventListener(anEventName, anEventListener);
-}
+};
 function determineAndDispatchHTTPRequestEvents( aRequest)
 {
     var eventDispatcher = aRequest._eventDispatcher;
@@ -852,20 +948,51 @@ function determineAndDispatchHTTPRequestEvents( aRequest)
     else
         eventDispatcher.dispatchEvent({ type:readyStates[aRequest.readyState()], request:aRequest});
 }
-function FileRequest( aURL, onsuccess, onfailure)
+function FileRequest( aURL, onsuccess, onfailure, onprogress)
 {
     var request = new CFHTTPRequest();
     if (aURL.pathExtension() === "plist")
         request.overrideMimeType("text/xml");
+    var loaded = 0,
+        progressHandler = null;
+    function progress(progressEvent)
+    {
+        onprogress(progressEvent.loaded - loaded);
+        loaded = progressEvent.loaded;
+    }
+    function success(anEvent)
+    {
+        if (onprogress && progressHandler === null)
+            onprogress(anEvent.request.responseText().length);
+        onsuccess(anEvent);
+    }
     if (exports.asyncLoader)
     {
-        request.onsuccess = Asynchronous(onsuccess);
+        request.onsuccess = Asynchronous(success);
         request.onfailure = Asynchronous(onfailure);
     }
     else
     {
-        request.onsuccess = onsuccess;
+        request.onsuccess = success;
         request.onfailure = onfailure;
+    }
+    if (onprogress)
+    {
+        var supportsProgress = true;
+        if (document.all)
+            supportsProgress = !!window.atob;
+        if (supportsProgress)
+        {
+            try
+            {
+                progressHandler = exports.asyncLoader ? Asynchronous(progress) : progress;
+                request._nativeRequest.onprogress = progressHandler;
+            }
+            catch (anException)
+            {
+                progressHandler = null;
+            }
+        }
     }
     request.open("GET", aURL.absoluteString(), exports.asyncLoader);
     request.send("");
@@ -954,7 +1081,7 @@ CFPropertyListSerializers[CFPropertyList.FormatXML_v1_0] =
                     },
     "string": function( aString)
                     {
-                        return "<string>" + encodeHTMLComponent(aString) + "</string>";;
+                        return "<string>" + encodeHTMLComponent(aString) + "</string>";
                     },
     "boolean" : function( aBoolean)
                     {
@@ -1060,6 +1187,7 @@ var XML_XML = "xml",
     PLIST_DICTIONARY = "dict",
     PLIST_ARRAY = "array",
     PLIST_STRING = "string",
+    PLIST_DATE = "date",
     PLIST_BOOLEAN_TRUE = "true",
     PLIST_BOOLEAN_FALSE = "false",
     PLIST_NUMBER_REAL = "real",
@@ -1255,12 +1383,16 @@ CFPropertyList.propertyListFromXML = function( aStringOrXMLNode)
                                         else
                                             object = decodeHTMLComponent((XMLNode.firstChild) ? (XMLNode.textContent || (XMLNode.textContent !== "" && textContent([XMLNode]))) : "");
                                         break;
+            case PLIST_DATE: var timestamp = Date.parseISO8601((XMLNode.textContent || (XMLNode.textContent !== "" && textContent([XMLNode]))));
+                                        object = isNaN(timestamp) ? new Date() : new Date(timestamp);
+                                        break;
             case PLIST_BOOLEAN_TRUE: object = YES;
                                         break;
             case PLIST_BOOLEAN_FALSE: object = NO;
                                         break;
             case PLIST_DATA: object = new CFMutableData();
-                                        object.bytes = (XMLNode.firstChild) ? CFData.decodeBase64ToArray((XMLNode.textContent || (XMLNode.textContent !== "" && textContent([XMLNode]))), YES) : [];
+                                        var data_bytes = (XMLNode.firstChild) ? CFData.decodeBase64ToArray((XMLNode.textContent || (XMLNode.textContent !== "" && textContent([XMLNode]))), YES) : [];
+                                        object.setBytes(data_bytes);
                                         break;
             default: throw new Error("*** " + (String(XMLNode.nodeName)) + " tag not recognized in Plist.");
         }
@@ -1318,7 +1450,7 @@ var indexOf = Array.prototype.indexOf,
 CFDictionary.prototype.copy = function()
 {
     return this;
-}
+};
 CFDictionary.prototype.mutableCopy = function()
 {
     var newDictionary = new CFMutableDictionary(),
@@ -1335,11 +1467,11 @@ CFDictionary.prototype.mutableCopy = function()
         newBuckets[key] = buckets[key];
     }
     return newDictionary;
-}
+};
 CFDictionary.prototype.containsKey = function( aKey)
 {
     return hasOwnProperty.apply(this._buckets, [aKey]);
-}
+};
 CFDictionary.prototype.containsKey.displayName = "CFDictionary.prototype.containsKey";
 CFDictionary.prototype.containsValue = function( anObject)
 {
@@ -1351,17 +1483,17 @@ CFDictionary.prototype.containsValue = function( anObject)
         if (buckets[keys[index]] === anObject)
             return YES;
     return NO;
-}
+};
 CFDictionary.prototype.containsValue.displayName = "CFDictionary.prototype.containsValue";
 CFDictionary.prototype.count = function()
 {
     return this._count;
-}
+};
 CFDictionary.prototype.count.displayName = "CFDictionary.prototype.count";
 CFDictionary.prototype.countOfKey = function( aKey)
 {
     return this.containsKey(aKey) ? 1 : 0;
-}
+};
 CFDictionary.prototype.countOfKey.displayName = "CFDictionary.prototype.countOfKey";
 CFDictionary.prototype.countOfValue = function( anObject)
 {
@@ -1374,12 +1506,12 @@ CFDictionary.prototype.countOfValue = function( anObject)
         if (buckets[keys[index]] === anObject)
             ++countOfValue;
     return countOfValue;
-}
+};
 CFDictionary.prototype.countOfValue.displayName = "CFDictionary.prototype.countOfValue";
 CFDictionary.prototype.keys = function()
 {
     return this._keys.slice();
-}
+};
 CFDictionary.prototype.keys.displayName = "CFDictionary.prototype.keys";
 CFDictionary.prototype.valueForKey = function( aKey)
 {
@@ -1387,7 +1519,7 @@ CFDictionary.prototype.valueForKey = function( aKey)
     if (!hasOwnProperty.apply(buckets, [aKey]))
         return nil;
     return buckets[aKey];
-}
+};
 CFDictionary.prototype.valueForKey.displayName = "CFDictionary.prototype.valueForKey";
 CFDictionary.prototype.toString = function()
 {
@@ -1401,7 +1533,7 @@ CFDictionary.prototype.toString = function()
         string += "\t" + key + " = \"" + String(this.valueForKey(key)).split('\n').join("\n\t") + "\"\n";
     }
     return string + "}";
-}
+};
 CFDictionary.prototype.toString.displayName = "CFDictionary.prototype.toString";
 CFMutableDictionary = function( aDictionary)
 {
@@ -1411,7 +1543,7 @@ CFMutableDictionary.prototype = new CFDictionary();
 CFMutableDictionary.prototype.copy = function()
 {
     return this.mutableCopy();
-}
+};
 CFMutableDictionary.prototype.addValueForKey = function( aKey, aValue)
 {
     if (this.containsKey(aKey))
@@ -1419,7 +1551,7 @@ CFMutableDictionary.prototype.addValueForKey = function( aKey, aValue)
     ++this._count;
     this._keys.push(aKey);
     this._buckets[aKey] = aValue;
-}
+};
 CFMutableDictionary.prototype.addValueForKey.displayName = "CFMutableDictionary.prototype.addValueForKey";
 CFMutableDictionary.prototype.removeValueForKey = function( aKey)
 {
@@ -1443,21 +1575,21 @@ CFMutableDictionary.prototype.removeValueForKey = function( aKey)
     --this._count;
     this._keys.splice(indexOfKey, 1);
     delete this._buckets[aKey];
-}
+};
 CFMutableDictionary.prototype.removeValueForKey.displayName = "CFMutableDictionary.prototype.removeValueForKey";
 CFMutableDictionary.prototype.removeAllValues = function()
 {
     this._count = 0;
     this._keys = [];
     this._buckets = { };
-}
+};
 CFMutableDictionary.prototype.removeAllValues.displayName = "CFMutableDictionary.prototype.removeAllValues";
 CFMutableDictionary.prototype.replaceValueForKey = function( aKey, aValue)
 {
     if (!this.containsKey(aKey))
         return;
     this._buckets[aKey] = aValue;
-}
+};
 CFMutableDictionary.prototype.replaceValueForKey.displayName = "CFMutableDictionary.prototype.replaceValueForKey";
 CFMutableDictionary.prototype.setValueForKey = function( aKey, aValue)
 {
@@ -1467,7 +1599,7 @@ CFMutableDictionary.prototype.setValueForKey = function( aKey, aValue)
         this.replaceValueForKey(aKey, aValue);
     else
         this.addValueForKey(aKey, aValue);
-}
+};
 CFMutableDictionary.prototype.setValueForKey.displayName = "CFMutableDictionary.prototype.setValueForKey";
 CFData = function()
 {
@@ -1477,13 +1609,13 @@ CFData = function()
     this._JSONObject = NULL;
     this._bytes = NULL;
     this._base64 = NULL;
-}
+};
 CFData.prototype.propertyList = function()
 {
     if (!this._propertyList)
         this._propertyList = CFPropertyList.propertyListFromString(this.rawString());
     return this._propertyList;
-}
+};
 CFData.prototype.JSONObject = function()
 {
     if (!this._JSONObject)
@@ -1497,7 +1629,7 @@ CFData.prototype.JSONObject = function()
         }
     }
     return this._JSONObject;
-}
+};
 CFData.prototype.rawString = function()
 {
     if (this._rawString === NULL)
@@ -1506,23 +1638,41 @@ CFData.prototype.rawString = function()
             this._rawString = CFPropertyList.stringFromPropertyList(this._propertyList, this._propertyListFormat);
         else if (this._JSONObject)
             this._rawString = JSON.stringify(this._JSONObject);
+        else if (this._bytes)
+            this._rawString = CFData.bytesToString(this._bytes);
+        else if (this._base64)
+            this._rawString = CFData.decodeBase64ToString(this._base64, true);
         else
             throw new Error("Can't convert data to string.");
     }
     return this._rawString;
-}
+};
 CFData.prototype.bytes = function()
 {
+    if (this._bytes === NULL)
+    {
+        var bytes = CFData.stringToBytes(this.rawString());
+        this.setBytes(bytes);
+    }
     return this._bytes;
-}
+};
 CFData.prototype.base64 = function()
 {
+    if (this._base64 === NULL)
+    {
+        var base64;
+        if (this._bytes)
+            base64 = CFData.encodeBase64Array(this._bytes);
+        else
+            base64 = CFData.encodeBase64String(this.rawString());
+        this.setBase64String(base64);
+    }
     return this._base64;
-}
+};
 CFMutableData = function()
 {
     CFData.call(this);
-}
+};
 CFMutableData.prototype = new CFData();
 function clearMutableData( aData)
 {
@@ -1538,27 +1688,27 @@ CFMutableData.prototype.setPropertyList = function( aPropertyList, aFormat)
     clearMutableData(this);
     this._propertyList = aPropertyList;
     this._propertyListFormat = aFormat;
-}
+};
 CFMutableData.prototype.setJSONObject = function( anObject)
 {
     clearMutableData(this);
-    this._JSONObject = anObject
-}
+    this._JSONObject = anObject;
+};
 CFMutableData.prototype.setRawString = function( aString)
 {
     clearMutableData(this);
     this._rawString = aString;
-}
+};
 CFMutableData.prototype.setBytes = function( bytes)
 {
     clearMutableData(this);
     this._bytes = bytes;
-}
+};
 CFMutableData.prototype.setBase64String = function( aBase64String)
 {
     clearMutableData(this);
     this._base64 = aBase64String;
-}
+};
 var base64_map_to = [
         "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
         "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
@@ -1587,7 +1737,7 @@ CFData.decodeBase64ToArray = function(input, strip)
     if (pad > 0)
         return output.slice(0, -1 * pad);
     return output;
-}
+};
 CFData.encodeBase64Array = function(input)
 {
     var pad = (3 - (input.length % 3)) % 3,
@@ -1608,53 +1758,60 @@ CFData.encodeBase64Array = function(input)
     }
     if (pad > 0)
     {
-        output[output.length-1] = "=";
+        output[output.length - 1] = "=";
         input.pop();
     }
     if (pad > 1)
     {
-        output[output.length-2] = "=";
+        output[output.length - 2] = "=";
         input.pop();
     }
     return output.join("");
-}
+};
 CFData.decodeBase64ToString = function(input, strip)
 {
     return CFData.bytesToString(CFData.decodeBase64ToArray(input, strip));
-}
+};
 CFData.decodeBase64ToUtf16String = function(input, strip)
 {
     return CFData.bytesToUtf16String(CFData.decodeBase64ToArray(input, strip));
-}
+};
 CFData.bytesToString = function(bytes)
 {
     return String.fromCharCode.apply(NULL, bytes);
-}
+};
+CFData.stringToBytes = function(input)
+{
+    var temp = [];
+    for (var i = 0; i < input.length; i++)
+        temp.push(input.charCodeAt(i));
+    return temp;
+};
 CFData.encodeBase64String = function(input)
 {
     var temp = [];
     for (var i = 0; i < input.length; i++)
         temp.push(input.charCodeAt(i));
     return CFData.encodeBase64Array(temp);
-}
+};
 CFData.bytesToUtf16String = function(bytes)
 {
     var temp = [];
-    for (var i = 0; i < bytes.length; i+=2)
-        temp.push(bytes[i+1] << 8 | bytes[i]);
+    for (var i = 0; i < bytes.length; i += 2)
+        temp.push(bytes[i + 1] << 8 | bytes[i]);
     return String.fromCharCode.apply(NULL, temp);
-}
+};
 CFData.encodeBase64Utf16String = function(input)
 {
     var temp = [];
     for (var i = 0; i < input.length; i++)
     {
         var c = input.charCodeAt(i);
-        temp.push(input.charCodeAt(i) & 0xFF);
-        temp.push((input.charCodeAt(i) & 0xFF00) >> 8);
+        temp.push(c & 0xFF);
+        temp.push((c & 0xFF00) >> 8);
     }
     return CFData.encodeBase64Array(temp);
-}
+};
 var CFURLsForCachedUIDs,
     CFURLPartsForURLStrings,
     CFURLCachingEnableCount = 0;
@@ -1739,9 +1896,8 @@ function CFURLGetParts( aURL)
     {
         var split = parts.path.split("/"),
             pathComponents = parts.pathComponents,
-            index = 0,
             count = split.length;
-        for (; index < count; ++index)
+        for (index = 0; index < count; ++index)
         {
             var component = split[index];
             if (component)
@@ -1766,7 +1922,7 @@ CFURL = function( aURL, aBaseURL)
     if (aURL instanceof CFURL)
     {
         if (!aBaseURL)
-            return aURL;
+            return new CFURL(aURL.absoluteString());
         var existingBaseURL = aURL.baseURL();
         if (existingBaseURL)
             aBaseURL = new CFURL(existingBaseURL.absoluteURL(), aBaseURL);
@@ -1800,18 +1956,18 @@ CFURL.displayName = "CFURL";
 CFURL.prototype.UID = function()
 {
     return this._UID;
-}
+};
 CFURL.prototype.UID.displayName = "CFURL.prototype.UID";
 var URLMap = { };
 CFURL.prototype.mappedURL = function()
 {
     return URLMap[this.absoluteString()] || this;
-}
+};
 CFURL.prototype.mappedURL.displayName = "CFURL.prototype.mappedURL";
 CFURL.setMappedURLForURL = function( fromURL, toURL)
 {
     URLMap[fromURL.absoluteString()] = toURL;
-}
+};
 CFURL.setMappedURLForURL.displayName = "CFURL.setMappedURLForURL";
 CFURL.prototype.schemeAndAuthority = function()
 {
@@ -1823,19 +1979,19 @@ CFURL.prototype.schemeAndAuthority = function()
     if (authority)
         string += "//" + authority;
     return string;
-}
+};
 CFURL.prototype.schemeAndAuthority.displayName = "CFURL.prototype.schemeAndAuthority";
 CFURL.prototype.absoluteString = function()
 {
     if (this._absoluteString === undefined)
         this._absoluteString = this.absoluteURL().string();
     return this._absoluteString;
-}
+};
 CFURL.prototype.absoluteString.displayName = "CFURL.prototype.absoluteString";
 CFURL.prototype.toString = function()
 {
     return this.absoluteString();
-}
+};
 CFURL.prototype.toString.displayName = "CFURL.prototype.toString";
 function resolveURL(aURL)
 {
@@ -1847,8 +2003,15 @@ function resolveURL(aURL)
         resolvedParts,
         absoluteBaseURL = baseURL.absoluteURL(),
         baseParts = ((absoluteBaseURL)._parts || CFURLGetParts(absoluteBaseURL));
-    if (parts.scheme || parts.authority)
+    if (!parts.scheme && parts.authorityRoot)
+    {
+        resolvedParts = CFURLPartsCreateCopy(parts);
+        resolvedParts.scheme = baseURL.scheme();
+    }
+    else if (parts.scheme || parts.authority)
+    {
         resolvedParts = parts;
+    }
     else
     {
         resolvedParts = { };
@@ -1861,7 +2024,7 @@ function resolveURL(aURL)
         resolvedParts.portNumber = baseParts.portNumber;
         resolvedParts.queryString = parts.queryString;
         resolvedParts.fragment = parts.fragment;
-        var pathComponents = parts.pathComponents
+        var pathComponents = parts.pathComponents;
         if (pathComponents.length && pathComponents[0] === "/")
         {
             resolvedParts.path = parts.path;
@@ -1908,7 +2071,7 @@ function standardizePathComponents( pathComponents, inPlace)
     {
         var component = pathComponents[index];
         if (component === "")
-             continue;
+            continue;
         if (component === ".")
         {
             startsWithPeriod = resultIndex === 0;
@@ -1951,7 +2114,7 @@ CFURL.prototype.absoluteURL = function()
     if (this._absoluteURL === undefined)
         this._absoluteURL = resolveURL(this);
     return this._absoluteURL;
-}
+};
 CFURL.prototype.absoluteURL.displayName = "CFURL.prototype.absoluteURL";
 CFURL.prototype.standardizedURL = function()
 {
@@ -1975,7 +2138,7 @@ CFURL.prototype.standardizedURL = function()
         }
     }
     return this._standardizedURL;
-}
+};
 CFURL.prototype.standardizedURL.displayName = "CFURL.prototype.standardizedURL";
 function CFURLPartsCreateCopy(parts)
 {
@@ -1991,7 +2154,7 @@ function CFURLPartsCreateCopy(parts)
 CFURL.prototype.string = function()
 {
     return this._string;
-}
+};
 CFURL.prototype.string.displayName = "CFURL.prototype.string";
 CFURL.prototype.authority = function()
 {
@@ -2000,7 +2163,7 @@ CFURL.prototype.authority = function()
         return authority;
     var baseURL = this.baseURL();
     return baseURL && baseURL.authority() || "";
-}
+};
 CFURL.prototype.authority.displayName = "CFURL.prototype.authority";
 CFURL.prototype.hasDirectoryPath = function()
 {
@@ -2017,17 +2180,17 @@ CFURL.prototype.hasDirectoryPath = function()
         this._hasDirectoryPath = hasDirectoryPath;
     }
     return hasDirectoryPath;
-}
+};
 CFURL.prototype.hasDirectoryPath.displayName = "CFURL.prototype.hasDirectoryPath";
 CFURL.prototype.hostName = function()
 {
     return this.authority();
-}
+};
 CFURL.prototype.hostName.displayName = "CFURL.prototype.hostName";
 CFURL.prototype.fragment = function()
 {
     return ((this)._parts || CFURLGetParts(this)).fragment;
-}
+};
 CFURL.prototype.fragment.displayName = "CFURL.prototype.fragment";
 CFURL.prototype.lastPathComponent = function()
 {
@@ -2041,17 +2204,30 @@ CFURL.prototype.lastPathComponent = function()
             this._lastPathComponent = pathComponents[pathComponentCount - 1];
     }
     return this._lastPathComponent;
-}
+};
 CFURL.prototype.lastPathComponent.displayName = "CFURL.prototype.lastPathComponent";
 CFURL.prototype.path = function()
 {
     return ((this)._parts || CFURLGetParts(this)).path;
-}
+};
 CFURL.prototype.path.displayName = "CFURL.prototype.path";
+CFURL.prototype.createCopyDeletingLastPathComponent = function()
+{
+    var parts = ((this)._parts || CFURLGetParts(this)),
+        components = standardizePathComponents(parts.pathComponents, NO);
+    if (components.length > 0)
+        if (components.length > 1 || components[0] !== "/")
+            components.pop();
+    var isRoot = components.length === 1 && components[0] === "/";
+    parts.pathComponents = components;
+    parts.path = isRoot ? "/" : pathFromPathComponents(components, NO);
+    return new CFURL(URLStringFromParts(parts));
+};
+CFURL.prototype.createCopyDeletingLastPathComponent.displayName = "CFURL.prototype.createCopyDeletingLastPathComponent";
 CFURL.prototype.pathComponents = function()
 {
     return ((this)._parts || CFURLGetParts(this)).pathComponents;
-}
+};
 CFURL.prototype.pathComponents.displayName = "CFURL.prototype.pathComponents";
 CFURL.prototype.pathExtension = function()
 {
@@ -2061,12 +2237,12 @@ CFURL.prototype.pathExtension = function()
     lastPathComponent = lastPathComponent.replace(/^\.*/, '');
     var index = lastPathComponent.lastIndexOf(".");
     return index <= 0 ? "" : lastPathComponent.substring(index + 1);
-}
+};
 CFURL.prototype.pathExtension.displayName = "CFURL.prototype.pathExtension";
 CFURL.prototype.queryString = function()
 {
     return ((this)._parts || CFURLGetParts(this)).queryString;
-}
+};
 CFURL.prototype.queryString.displayName = "CFURL.prototype.queryString";
 CFURL.prototype.scheme = function()
 {
@@ -2082,32 +2258,32 @@ CFURL.prototype.scheme = function()
         this._scheme = scheme;
     }
     return scheme;
-}
+};
 CFURL.prototype.scheme.displayName = "CFURL.prototype.scheme";
 CFURL.prototype.user = function()
 {
     return ((this)._parts || CFURLGetParts(this)).user;
-}
+};
 CFURL.prototype.user.displayName = "CFURL.prototype.user";
 CFURL.prototype.password = function()
 {
     return ((this)._parts || CFURLGetParts(this)).password;
-}
+};
 CFURL.prototype.password.displayName = "CFURL.prototype.password";
 CFURL.prototype.portNumber = function()
 {
     return ((this)._parts || CFURLGetParts(this)).portNumber;
-}
+};
 CFURL.prototype.portNumber.displayName = "CFURL.prototype.portNumber";
 CFURL.prototype.domain = function()
 {
     return ((this)._parts || CFURLGetParts(this)).domain;
-}
+};
 CFURL.prototype.domain.displayName = "CFURL.prototype.domain";
 CFURL.prototype.baseURL = function()
 {
     return this._baseURL;
-}
+};
 CFURL.prototype.baseURL.displayName = "CFURL.prototype.baseURL";
 CFURL.prototype.asDirectoryPathURL = function()
 {
@@ -2117,7 +2293,7 @@ CFURL.prototype.asDirectoryPathURL = function()
     if (lastPathComponent !== "/")
         lastPathComponent = "./" + lastPathComponent;
     return new CFURL(lastPathComponent + "/", this);
-}
+};
 CFURL.prototype.asDirectoryPathURL.displayName = "CFURL.prototype.asDirectoryPathURL";
 function CFURLGetResourcePropertiesForKeys( aURL)
 {
@@ -2128,19 +2304,19 @@ function CFURLGetResourcePropertiesForKeys( aURL)
 CFURL.prototype.resourcePropertyForKey = function( aKey)
 {
     return CFURLGetResourcePropertiesForKeys(this).valueForKey(aKey);
-}
+};
 CFURL.prototype.resourcePropertyForKey.displayName = "CFURL.prototype.resourcePropertyForKey";
 CFURL.prototype.setResourcePropertyForKey = function( aKey, aValue)
 {
     CFURLGetResourcePropertiesForKeys(this).setValueForKey(aKey, aValue);
-}
+};
 CFURL.prototype.setResourcePropertyForKey.displayName = "CFURL.prototype.setResourcePropertyForKey";
 CFURL.prototype.staticResourceData = function()
 {
     var data = new CFMutableData();
     data.setRawString(StaticResource.resourceAtURL(this).contents());
     return data;
-}
+};
 CFURL.prototype.staticResourceData.displayName = "CFURL.prototype.staticResourceData";
 function MarkedStream( aString)
 {
@@ -2199,6 +2375,7 @@ var CFBundleUnloaded = 0,
     CFBundleLoaded = 1 << 4;
 var CFBundlesForURLStrings = { },
     CFBundlesForClasses = { },
+    CFBundlesWithIdentifiers = { },
     CFCacheBuster = new Date().getTime(),
     CFTotalBytesLoaded = 0,
     CPApplicationSizeInBytes = 0;
@@ -2223,7 +2400,7 @@ CFBundle.displayName = "CFBundle";
 CFBundle.environments = function()
 {
     return ["Browser","ObjJ"];
-}
+};
 CFBundle.environments.displayName = "CFBundle.environments";
 CFBundle.bundleContainingURL = function( aURL)
 {
@@ -2240,32 +2417,45 @@ CFBundle.bundleContainingURL = function( aURL)
         URLString = aURL.absoluteString();
     }
     return NULL;
-}
+};
 CFBundle.bundleContainingURL.displayName = "CFBundle.bundleContainingURL";
 CFBundle.mainBundle = function()
 {
     return new CFBundle(mainBundleURL);
-}
+};
 CFBundle.mainBundle.displayName = "CFBundle.mainBundle";
 function addClassToBundle(aClass, aBundle)
 {
     if (aBundle)
         CFBundlesForClasses[aClass.name] = aBundle;
 }
+function resetBundle()
+{
+    CFBundlesForURLStrings = { };
+    CFBundlesForClasses = { };
+    CFBundlesWithIdentifiers = { };
+    CFTotalBytesLoaded = 0;
+    CPApplicationSizeInBytes = 0;
+}
 CFBundle.bundleForClass = function( aClass)
 {
     return CFBundlesForClasses[aClass.name] || CFBundle.mainBundle();
-}
+};
 CFBundle.bundleForClass.displayName = "CFBundle.bundleForClass";
+CFBundle.bundleWithIdentifier = function( bundleID)
+{
+    return CFBundlesWithIdentifiers[bundleID] || NULL;
+};
+CFBundle.bundleWithIdentifier.displayName = "CFBundle.bundleWithIdentifier";
 CFBundle.prototype.bundleURL = function()
 {
-    return this._bundleURL;
-}
+    return this._bundleURL.absoluteURL();
+};
 CFBundle.prototype.bundleURL.displayName = "CFBundle.prototype.bundleURL";
 CFBundle.prototype.resourcesDirectoryURL = function()
 {
     return this._resourcesDirectoryURL;
-}
+};
 CFBundle.prototype.resourcesDirectoryURL.displayName = "CFBundle.prototype.resourcesDirectoryURL";
 CFBundle.prototype.resourceURL = function( aResourceName, aType, aSubDirectory)
  {
@@ -2275,7 +2465,7 @@ CFBundle.prototype.resourceURL = function( aResourceName, aType, aSubDirectory)
         aResourceName = aSubDirectory + "/" + aResourceName;
     var resourceURL = (new CFURL(aResourceName, this.resourcesDirectoryURL())).mappedURL();
     return resourceURL.absoluteURL();
-}
+};
 CFBundle.prototype.resourceURL.displayName = "CFBundle.prototype.resourceURL";
 CFBundle.prototype.mostEligibleEnvironmentURL = function()
 {
@@ -2295,18 +2485,23 @@ CFBundle.prototype.executableURL = function()
             this._executableURL = new CFURL(executableSubPath, this.mostEligibleEnvironmentURL());
     }
     return this._executableURL;
-}
+};
 CFBundle.prototype.executableURL.displayName = "CFBundle.prototype.executableURL";
 CFBundle.prototype.infoDictionary = function()
 {
     return this._infoDictionary;
-}
+};
 CFBundle.prototype.infoDictionary.displayName = "CFBundle.prototype.infoDictionary";
 CFBundle.prototype.valueForInfoDictionaryKey = function( aKey)
 {
     return this._infoDictionary.valueForKey(aKey);
-}
+};
 CFBundle.prototype.valueForInfoDictionaryKey.displayName = "CFBundle.prototype.valueForInfoDictionaryKey";
+CFBundle.prototype.identifier = function()
+{
+    return this._infoDictionary.valueForKey("CPBundleIdentifier");
+};
+CFBundle.prototype.identifier.displayName = "CFBundle.prototype.identifier";
 CFBundle.prototype.hasSpritedImages = function()
 {
     var environments = this._infoDictionary.valueForKey("CPBundleEnvironmentsWithImageSprites") || [],
@@ -2316,12 +2511,12 @@ CFBundle.prototype.hasSpritedImages = function()
         if (environments[index] === mostEligibleEnvironment)
             return YES;
     return NO;
-}
+};
 CFBundle.prototype.hasSpritedImages.displayName = "CFBundle.prototype.hasSpritedImages";
 CFBundle.prototype.environments = function()
 {
     return this._infoDictionary.valueForKey("CPBundleEnvironments") || ["ObjJ"];
-}
+};
 CFBundle.prototype.environments.displayName = "CFBundle.prototype.environments";
 CFBundle.prototype.mostEligibleEnvironment = function( environments)
 {
@@ -2339,17 +2534,17 @@ CFBundle.prototype.mostEligibleEnvironment = function( environments)
                 return environment;
     }
     return NULL;
-}
+};
 CFBundle.prototype.mostEligibleEnvironment.displayName = "CFBundle.prototype.mostEligibleEnvironment";
 CFBundle.prototype.isLoading = function()
 {
     return this._loadStatus & CFBundleLoading;
-}
+};
 CFBundle.prototype.isLoading.displayName = "CFBundle.prototype.isLoading";
 CFBundle.prototype.isLoaded = function()
 {
-    return this._loadStatus & CFBundleLoaded;
-}
+    return !!(this._loadStatus & CFBundleLoaded);
+};
 CFBundle.prototype.isLoaded.displayName = "CFBundle.prototype.isLoaded";
 CFBundle.prototype.load = function( shouldExecute)
 {
@@ -2363,7 +2558,7 @@ CFBundle.prototype.load = function( shouldExecute)
         parentURL = parentURL.schemeAndAuthority();
     StaticResource.resolveResourceAtURL(parentURL, YES, function(aStaticResource)
     {
-        var resourceName = bundleURL.absoluteURL().lastPathComponent();
+        var resourceName = bundleURL.lastPathComponent();
         self._staticResource = aStaticResource._children[resourceName] ||
                                 new StaticResource(bundleURL, aStaticResource, YES, NO);
         function onsuccess( anEvent)
@@ -2372,7 +2567,12 @@ CFBundle.prototype.load = function( shouldExecute)
             var infoDictionary = anEvent.request.responsePropertyList();
             self._isValid = !!infoDictionary || CFBundle.mainBundle() === self;
             if (infoDictionary)
+            {
                 self._infoDictionary = infoDictionary;
+                var identifier = self._infoDictionary.valueForKey("CPBundleIdentifier");
+                if (identifier)
+                    CFBundlesWithIdentifiers[identifier] = self;
+            }
             if (!self._infoDictionary)
             {
                 finishBundleLoadingWithError(self, new Error("Could not load bundle at \"" + path + "\""));
@@ -2390,7 +2590,7 @@ CFBundle.prototype.load = function( shouldExecute)
         }
         new FileRequest(new CFURL("Info.plist", self.bundleURL()), onsuccess, onfailure);
     });
-}
+};
 CFBundle.prototype.load.displayName = "CFBundle.prototype.load";
 function finishBundleLoadingWithError( aBundle, anError)
 {
@@ -2406,8 +2606,8 @@ function loadExecutableAndResources( aBundle, shouldExecute)
 {
     if (!aBundle.mostEligibleEnvironment())
         return failure();
-    loadExecutableForBundle(aBundle, success, failure);
-    loadSpritedImagesForBundle(aBundle, success, failure);
+    loadExecutableForBundle(aBundle, success, failure, progress);
+    loadSpritedImagesForBundle(aBundle, success, failure, progress);
     if (aBundle._loadStatus === CFBundleLoading)
         return success();
     function failure( anError)
@@ -2420,13 +2620,18 @@ function loadExecutableAndResources( aBundle, shouldExecute)
         aBundle._loadStatus = CFBundleUnloaded;
         finishBundleLoadingWithError(aBundle, anError || new Error("Could not recognize executable code format in Bundle " + aBundle));
     }
-    function success()
+    function progress(bytesLoaded)
     {
         if ((typeof CPApp === "undefined" || !CPApp || !CPApp._finishedLaunching) &&
-             typeof OBJJ_PROGRESS_CALLBACK === "function" && CPApplicationSizeInBytes)
+             typeof OBJJ_PROGRESS_CALLBACK === "function")
         {
-            OBJJ_PROGRESS_CALLBACK(MAX(MIN(1.0, CFTotalBytesLoaded / CPApplicationSizeInBytes), 0.0), CPApplicationSizeInBytes, aBundle.bundlePath())
+            CFTotalBytesLoaded += bytesLoaded;
+            var percent = CPApplicationSizeInBytes ? MAX(MIN(1.0, CFTotalBytesLoaded / CPApplicationSizeInBytes), 0.0) : 0;
+            OBJJ_PROGRESS_CALLBACK(percent, CPApplicationSizeInBytes, aBundle.bundlePath());
         }
+    }
+    function success()
+    {
         if (aBundle._loadStatus === CFBundleLoading)
             aBundle._loadStatus = CFBundleLoaded;
         else
@@ -2446,7 +2651,7 @@ function loadExecutableAndResources( aBundle, shouldExecute)
             complete();
     }
 }
-function loadExecutableForBundle( aBundle, success, failure)
+function loadExecutableForBundle( aBundle, success, failure, progress)
 {
     var executableURL = aBundle.executableURL();
     if (!executableURL)
@@ -2456,7 +2661,6 @@ function loadExecutableForBundle( aBundle, success, failure)
     {
         try
         {
-            CFTotalBytesLoaded += anEvent.request.responseText().length;
             decompileStaticFile(aBundle, anEvent.request.responseText(), executableURL);
             aBundle._loadStatus &= ~CFBundleLoadingExecutable;
             success();
@@ -2465,7 +2669,7 @@ function loadExecutableForBundle( aBundle, success, failure)
         {
             failure(anException);
         }
-    }, failure);
+    }, failure, progress);
 }
 function spritedImagesTestURLStringForBundle( aBundle)
 {
@@ -2480,7 +2684,7 @@ function spritedImagesURLForBundle( aBundle)
         return new CFURL("MHTMLPaths.txt", aBundle.mostEligibleEnvironmentURL());
     return NULL;
 }
-function loadSpritedImagesForBundle( aBundle, success, failure)
+function loadSpritedImagesForBundle( aBundle, success, failure, progress)
 {
     if (!aBundle.hasSpritedImages())
         return;
@@ -2488,7 +2692,7 @@ function loadSpritedImagesForBundle( aBundle, success, failure)
     if (!CFBundleHasTestedSpriteSupport())
         return CFBundleTestSpriteSupport(spritedImagesTestURLStringForBundle(aBundle), function()
         {
-            loadSpritedImagesForBundle(aBundle, success, failure);
+            loadSpritedImagesForBundle(aBundle, success, failure, progress);
         });
     var spritedImagesURL = spritedImagesURLForBundle(aBundle);
     if (!spritedImagesURL)
@@ -2500,16 +2704,15 @@ function loadSpritedImagesForBundle( aBundle, success, failure)
     {
         try
         {
-            CFTotalBytesLoaded += anEvent.request.responseText().length;
             decompileStaticFile(aBundle, anEvent.request.responseText(), spritedImagesURL);
             aBundle._loadStatus &= ~CFBundleLoadingSpritedImages;
+            success();
         }
         catch(anException)
         {
             failure(anException);
         }
-        success();
-    }, failure);
+    }, failure, progress);
 }
 var CFBundleSpriteSupportListeners = [],
     CFBundleSupportedSpriteType = -1,
@@ -2545,7 +2748,7 @@ function CFBundleTestSpriteSupport( MHTMLPath, aCallback)
                 break;
         }
         CPApplicationSizeInBytes += size;
-    })
+    });
     CFBundleTestSpriteTypes([
         CFBundleDataURLSpriteType,
         "data:image/gif;base64,R0lGODlhAQABAIAAAMc9BQAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==",
@@ -2579,11 +2782,11 @@ function CFBundleTestSpriteTypes( spriteTypes)
         }
         else
             image.onerror();
-    }
+    };
     image.onerror = function()
     {
         CFBundleTestSpriteTypes(spriteTypes.slice(2));
-    }
+    };
     image.src = spriteTypes[1];
 }
 function executeBundle( aBundle, aCallback)
@@ -2676,33 +2879,33 @@ function decompileStaticFile( aBundle, aString, aPath)
 CFBundle.prototype.addEventListener = function( anEventName, anEventListener)
 {
     this._eventDispatcher.addEventListener(anEventName, anEventListener);
-}
+};
 CFBundle.prototype.addEventListener.displayName = "CFBundle.prototype.addEventListener";
 CFBundle.prototype.removeEventListener = function( anEventName, anEventListener)
 {
     this._eventDispatcher.removeEventListener(anEventName, anEventListener);
-}
+};
 CFBundle.prototype.removeEventListener.displayName = "CFBundle.prototype.removeEventListener";
 CFBundle.prototype.onerror = function( anEvent)
 {
     throw anEvent.error;
-}
+};
 CFBundle.prototype.onerror.displayName = "CFBundle.prototype.onerror";
 CFBundle.prototype.bundlePath = function()
 {
-    return this._bundleURL.absoluteURL().path();
-}
+    return this.bundleURL().path();
+};
 CFBundle.prototype.path = function()
 {
     CPLog.warn("CFBundle.prototype.path is deprecated, use CFBundle.prototype.bundlePath instead.");
     return this.bundlePath.apply(this, arguments);
-}
+};
 CFBundle.prototype.pathForResource = function(aResource)
 {
     return this.resourceURL(aResource).absoluteString();
-}
+};
 var rootResources = { };
-function StaticResource( aURL, aParent, isDirectory, isResolved)
+function StaticResource( aURL, aParent, isDirectory, isResolved, aFilenameTranslateDictionary)
 {
     this._parent = aParent;
     this._eventDispatcher = new EventDispatcher(this);
@@ -2710,6 +2913,7 @@ function StaticResource( aURL, aParent, isDirectory, isResolved)
     this._name = name;
     this._URL = aURL;
     this._isResolved = !!isResolved;
+    this._filenameTranslateDictionary = aFilenameTranslateDictionary;
     if (isDirectory)
         this._URL = this._URL.asDirectoryPathURL();
     if (!aParent)
@@ -2726,6 +2930,23 @@ function StaticResource( aURL, aParent, isDirectory, isResolved)
 StaticResource.rootResources = function()
 {
     return rootResources;
+};
+function countProp(x) {
+    var count = 0;
+    for (var k in x) {
+        if (x.hasOwnProperty(k)) {
+            ++count;
+        }
+    }
+    return count;
+}
+StaticResource.resetRootResources = function()
+{
+    rootResources = {};
+};
+StaticResource.prototype.filenameTranslateDictionary = function()
+{
+    return this._filenameTranslateDictionary || {};
 };
 exports.StaticResource = StaticResource;
 function resolveStaticResource( aResource)
@@ -2758,7 +2979,18 @@ StaticResource.prototype.resolve = function()
             self._isNotFound = YES;
             resolveStaticResource(self);
         }
-        new FileRequest(this.URL(), onsuccess, onfailure);
+        var url = this.URL(),
+            aFilenameTranslateDictionary = this.filenameTranslateDictionary();
+        if (aFilenameTranslateDictionary)
+        {
+            var urlString = url.toString(),
+                lastPathComponent = url.lastPathComponent(),
+                basePath = urlString.substring(0, urlString.length - lastPathComponent.length),
+                translatedName = aFilenameTranslateDictionary[lastPathComponent];
+            if (translatedName && urlString.slice(-translatedName.length) !== translatedName)
+                url = new CFURL(basePath + translatedName);
+        }
+        new FileRequest(url, onsuccess, onfailure);
     }
 };
 StaticResource.prototype.name = function()
@@ -2824,16 +3056,16 @@ StaticResource.prototype.resourceAtURL = function( aURL, resolveAsDirectoriesIfN
 {
     return StaticResource.resourceAtURL(new CFURL(aURL, this.URL()), resolveAsDirectoriesIfNecessary);
 };
-StaticResource.resolveResourceAtURL = function( aURL, isDirectory, aCallback)
+StaticResource.resolveResourceAtURL = function( aURL, isDirectory, aCallback, aFilenameTranslateDictionary)
 {
     aURL = makeAbsoluteURL(aURL).absoluteURL();
-    resolveResourceComponents(rootResourceForAbsoluteURL(aURL), isDirectory, aURL.pathComponents(), 0, aCallback);
+    resolveResourceComponents(rootResourceForAbsoluteURL(aURL), isDirectory, aURL.pathComponents(), 0, aCallback, aFilenameTranslateDictionary);
 };
 StaticResource.prototype.resolveResourceAtURL = function( aURL, isDirectory, aCallback)
 {
     StaticResource.resolveResourceAtURL(new CFURL(aURL, this.URL()).absoluteURL(), isDirectory, aCallback);
 };
-function resolveResourceComponents( aResource, isDirectory, components, index, aCallback)
+function resolveResourceComponents( aResource, isDirectory, components, index, aCallback, aFilenameTranslateDictionary)
 {
     var count = components.length;
     for (; index < count; ++index)
@@ -2842,13 +3074,13 @@ function resolveResourceComponents( aResource, isDirectory, components, index, a
             child = hasOwnProperty.call(aResource._children, name) && aResource._children[name];
         if (!child)
         {
-            child = new StaticResource(new CFURL(name, aResource.URL()), aResource, index + 1 < count || isDirectory , NO);
+            child = new StaticResource(new CFURL(name, aResource.URL()), aResource, index + 1 < count || isDirectory , NO, aFilenameTranslateDictionary);
             child.resolve();
         }
         if (!child.isResolved())
             return child.addEventListener("resolve", function()
             {
-                resolveResourceComponents(aResource, isDirectory, components, index, aCallback);
+                resolveResourceComponents(aResource, isDirectory, components, index, aCallback, aFilenameTranslateDictionary);
             });
         if (child.isNotFound())
             return aCallback(null, new Error("File not found: " + components.join("/")));
@@ -3614,6 +3846,3698 @@ Preprocessor.prototype.error_message = function(errorMessage)
                                 (this._currentClass ? " Class: "+this._currentClass : "") +
                                 (this._currentSelector ? " Method: "+this._currentSelector : "") +">";
 }
+if (typeof exports != "undefined" && !exports.acorn) {
+  exports.acorn = {};
+  exports.acorn.walk = {};
+}
+(function(exports) {
+  "use strict";
+  exports.version = "0.1.01";
+  var options, input, inputLen, sourceFile;
+  exports.parse = function(inpt, opts) {
+    input = String(inpt); inputLen = input.length;
+    setOptions(opts);
+    initTokenState();
+    return parseTopLevel(options.program);
+  };
+  var defaultOptions = exports.defaultOptions = {
+    ecmaVersion: 5,
+    strictSemicolons: false,
+    allowTrailingCommas: true,
+    forbidReserved: false,
+    trackComments: false,
+    trackSpaces: false,
+    locations: false,
+    ranges: false,
+    program: null,
+    sourceFile: null,
+    objj: true,
+    preprocess: true,
+    preprocessAddMacro: defaultAddMacro,
+    preprocessGetMacro: defaultGetMacro,
+    preprocessUndefineMacro: defaultUndefineMacro,
+    preprocessIsMacro: defaultIsMacro
+  };
+  function setOptions(opts) {
+    options = opts || {};
+    for (var opt in defaultOptions) if (!options.hasOwnProperty(opt))
+      options[opt] = defaultOptions[opt];
+    sourceFile = options.sourceFile || null;
+  }
+  var macros;
+  var macrosIsPredicate;
+  function defaultAddMacro(macro) {
+    macros[macro.identifier] = macro;
+    macrosIsPredicate = null;
+  }
+  function defaultGetMacro(macroIdentifier) {
+    return macros[macroIdentifier];
+  }
+  function defaultUndefineMacro(macroIdentifier) {
+    delete macros[macroIdentifier];
+    macrosIsPredicate = null;
+  }
+  function defaultIsMacro(macroIdentifier) {
+    var x = Object.keys(macros).join(" ");
+    return (macrosIsPredicate || (macrosIsPredicate = makePredicate(x)))(macroIdentifier);
+  }
+  var getLineInfo = exports.getLineInfo = function(input, offset) {
+    for (var line = 1, cur = 0;;) {
+      lineBreak.lastIndex = cur;
+      var match = lineBreak.exec(input);
+      if (match && match.index < offset) {
+        ++line;
+        cur = match.index + match[0].length;
+      } else break;
+    }
+    return {line: line, column: offset - cur, lineStart: cur, lineEnd: (match ? match.index + match[0].length : input.length)};
+  };
+  exports.tokenize = function(inpt, opts) {
+    input = String(inpt); inputLen = input.length;
+    setOptions(opts);
+    initTokenState();
+    var t = {};
+    function getToken(forceRegexp) {
+      readToken(forceRegexp);
+      t.start = tokStart; t.end = tokEnd;
+      t.startLoc = tokStartLoc; t.endLoc = tokEndLoc;
+      t.type = tokType; t.value = tokVal;
+      return t;
+    }
+    getToken.jumpTo = function(pos, reAllowed) {
+      tokPos = pos;
+      if (options.locations) {
+        tokCurLine = tokLineStart = lineBreak.lastIndex = 0;
+        var match;
+        while ((match = lineBreak.exec(input)) && match.index < pos) {
+          ++tokCurLine;
+          tokLineStart = match.index + match[0].length;
+        }
+      }
+      var ch = input.charAt(pos - 1);
+      tokRegexpAllowed = reAllowed;
+      skipSpace();
+    };
+    return getToken;
+  };
+  var tokPos;
+  var tokStart, tokEnd;
+  var tokStartLoc, tokEndLoc;
+  var tokType, tokVal;
+  var tokCommentsBefore, tokCommentsAfter, lastTokCommentsAfter;
+  var tokSpacesBefore, tokSpacesAfter, lastTokSpacesAfter;
+  var tokRegexpAllowed, tokComments, tokSpaces;
+  var tokCurLine, tokLineStart, tokLineStartNext;
+  var tokInput, preTokInput;
+  var lastStart, lastEnd, lastEndLoc;
+  var tokAfterImport;
+  var nodeMessageSendObjectExpression;
+  var inFunction, labels, strict;
+  var preTokPos, preTokType, preTokVal, preTokStart, preTokEnd;
+  var preLastStart, preLastEnd;
+  var preprocessStack = [];
+  var preprocessMacroParamterListMode = false;
+  function raise(pos, message) {
+    if (typeof pos == "number") pos = getLineInfo(input, pos);
+    var syntaxError = new SyntaxError(message);
+    syntaxError.line = pos.line;
+    syntaxError.column = pos.column;
+    syntaxError.lineStart = pos.lineStart;
+    syntaxError.lineEnd = pos.lineEnd;
+    syntaxError.fileName = sourceFile;
+    throw syntaxError;
+  }
+  var _num = {type: "num"}, _regexp = {type: "regexp"}, _string = {type: "string"};
+  var _name = {type: "name"}, _eof = {type: "eof"}, _eol = {type: "eol"};
+  var _break = {keyword: "break"}, _case = {keyword: "case", beforeExpr: true}, _catch = {keyword: "catch"};
+  var _continue = {keyword: "continue"}, _debugger = {keyword: "debugger"}, _default = {keyword: "default"};
+  var _do = {keyword: "do", isLoop: true}, _else = {keyword: "else", beforeExpr: true};
+  var _finally = {keyword: "finally"}, _for = {keyword: "for", isLoop: true}, _function = {keyword: "function"};
+  var _if = {keyword: "if"}, _return = {keyword: "return", beforeExpr: true}, _switch = {keyword: "switch"};
+  var _throw = {keyword: "throw", beforeExpr: true}, _try = {keyword: "try"}, _var = {keyword: "var"};
+  var _while = {keyword: "while", isLoop: true}, _with = {keyword: "with"}, _new = {keyword: "new", beforeExpr: true};
+  var _this = {keyword: "this"};
+  var _void = {keyword: "void", prefix: true, beforeExpr: true};
+  var _null = {keyword: "null", atomValue: null}, _true = {keyword: "true", atomValue: true};
+  var _false = {keyword: "false", atomValue: false};
+  var _in = {keyword: "in", binop: 7, beforeExpr: true};
+  var _implementation = {keyword: "implementation"}, _outlet = {keyword: "outlet"}, _accessors = {keyword: "accessors"};
+  var _end = {keyword: "end"}, _import = {keyword: "import", afterImport: true};
+  var _action = {keyword: "action"}, _selector = {keyword: "selector"}, _class = {keyword: "class"}, _global = {keyword: "global"};
+  var _dictionaryLiteral = {keyword: "{"}, _arrayLiteral = {keyword: "["};
+  var _ref = {keyword: "ref"}, _deref = {keyword: "deref"};
+  var _filename = {keyword: "filename"}, _unsigned = {keyword: "unsigned", okAsIdent: true}, _signed = {keyword: "signed", okAsIdent: true};
+  var _byte = {keyword: "byte", okAsIdent: true}, _char = {keyword: "char", okAsIdent: true}, _short = {keyword: "short", okAsIdent: true};
+  var _int = {keyword: "int", okAsIdent: true}, _long = {keyword: "long", okAsIdent: true}, _preprocess = {keyword: "#"};
+  var _preDefine = {keyword: "define"};
+  var _preUndef = {keyword: "undef"};
+  var _preIfdef = {keyword: "ifdef"};
+  var _preIfndef = {keyword: "ifndef"};
+  var _preIf = {keyword: "if"};
+  var _preElse = {keyword: "else"};
+  var _preEndif = {keyword: "endif"};
+  var _preElseIf = {keyword: "elif"};
+  var _prePragma = {keyword: "pragma"};
+  var _preDefined = {keyword: "defined"};
+  var _preBackslash = {keyword: "\\"}
+  var _preprocessParamItem = {type: "preprocessParamItem"}
+  var keywordTypes = {"break": _break, "case": _case, "catch": _catch,
+                      "continue": _continue, "debugger": _debugger, "default": _default,
+                      "do": _do, "else": _else, "finally": _finally, "for": _for,
+                      "function": _function, "if": _if, "return": _return, "switch": _switch,
+                      "throw": _throw, "try": _try, "var": _var, "while": _while, "with": _with,
+                      "null": _null, "true": _true, "false": _false, "new": _new, "in": _in,
+                      "instanceof": {keyword: "instanceof", binop: 7, beforeExpr: true}, "this": _this,
+                      "typeof": {keyword: "typeof", prefix: true, beforeExpr: true},
+                      "void": _void,
+                      "delete": {keyword: "delete", prefix: true, beforeExpr: true} };
+  var keywordTypesObjJ = {"IBAction": _action, "IBOutlet": _outlet, "unsigned": _unsigned, "signed": _signed, "byte": _byte, "char": _char,
+                          "short": _short, "int": _int, "long": _long };
+  var objJAtKeywordTypes = {"implementation": _implementation, "outlet": _outlet, "accessors": _accessors, "end": _end,
+                            "import": _import, "action": _action, "selector": _selector, "class": _class, "global": _global,
+                            "ref": _ref, "deref": _deref};
+  var keywordTypesPreprocess = {"define": _preDefine, "pragma": _prePragma, "ifdef": _preIfdef, "ifndef": _preIfndef,
+                                "undef": _preUndef, "if": _preIf, "endif": _preEndif, "else": _preElse, "elif": _preElseIf,
+                                "defined": _preDefined};
+  var _bracketL = {type: "[", beforeExpr: true}, _bracketR = {type: "]"}, _braceL = {type: "{", beforeExpr: true};
+  var _braceR = {type: "}"}, _parenL = {type: "(", beforeExpr: true}, _parenR = {type: ")"};
+  var _comma = {type: ",", beforeExpr: true}, _semi = {type: ";", beforeExpr: true};
+  var _colon = {type: ":", beforeExpr: true}, _dot = {type: "."}, _question = {type: "?", beforeExpr: true};
+  var _at = {type: "@"}, _dotdotdot = {type: "..."}, _numberSign = {type: "#"};
+  var _slash = {binop: 10, beforeExpr: true, preprocess: true}, _eq = {isAssign: true, beforeExpr: true, preprocess: true};
+  var _assign = {isAssign: true, beforeExpr: true}, _plusmin = {binop: 9, prefix: true, beforeExpr: true, preprocess: true};
+  var _incdec = {postfix: true, prefix: true, isUpdate: true}, _prefix = {prefix: true, beforeExpr: true};
+  var _bin1 = {binop: 1, beforeExpr: true, preprocess: true}, _bin2 = {binop: 2, beforeExpr: true, preprocess: true};
+  var _bin3 = {binop: 3, beforeExpr: true, preprocess: true}, _bin4 = {binop: 4, beforeExpr: true, preprocess: true};
+  var _bin5 = {binop: 5, beforeExpr: true, preprocess: true}, _bin6 = {binop: 6, beforeExpr: true, preprocess: true};
+  var _bin7 = {binop: 7, beforeExpr: true, preprocess: true}, _bin8 = {binop: 8, beforeExpr: true, preprocess: true};
+  var _bin10 = {binop: 10, beforeExpr: true, preprocess: true};
+  exports.tokTypes = {bracketL: _bracketL, bracketR: _bracketR, braceL: _braceL, braceR: _braceR,
+                      parenL: _parenL, parenR: _parenR, comma: _comma, semi: _semi, colon: _colon,
+                      dot: _dot, question: _question, slash: _slash, eq: _eq, name: _name, eof: _eof,
+                      num: _num, regexp: _regexp, string: _string};
+  for (var kw in keywordTypes) exports.tokTypes[kw] = keywordTypes[kw];
+  function makePredicate(words) {
+    words = words.split(" ");
+    var f = "", cats = [];
+    out: for (var i = 0; i < words.length; ++i) {
+      for (var j = 0; j < cats.length; ++j)
+        if (cats[j][0].length == words[i].length) {
+          cats[j].push(words[i]);
+          continue out;
+        }
+      cats.push([words[i]]);
+    }
+    function compareTo(arr) {
+      if (arr.length == 1) return f += "return str === " + JSON.stringify(arr[0]) + ";";
+      f += "switch(str){";
+      for (var i = 0; i < arr.length; ++i) f += "case " + JSON.stringify(arr[i]) + ":";
+      f += "return true}return false;";
+    }
+    if (cats.length > 3) {
+      cats.sort(function(a, b) {return b.length - a.length;});
+      f += "switch(str.length){";
+      for (var i = 0; i < cats.length; ++i) {
+        var cat = cats[i];
+        f += "case " + cat[0].length + ":";
+        compareTo(cat);
+      }
+      f += "}";
+    } else {
+      compareTo(words);
+    }
+    return new Function("str", f);
+  }
+  exports.makePredicate = makePredicate;
+  var isReservedWord3 = makePredicate("abstract boolean byte char class double enum export extends final float goto implements import int interface long native package private protected public short static super synchronized throws transient volatile");
+  var isReservedWord5 = makePredicate("class enum extends super const export import");
+  var isStrictReservedWord = makePredicate("implements interface let package private protected public static yield");
+  var isStrictBadIdWord = makePredicate("eval arguments");
+  var isKeyword = makePredicate("break case catch continue debugger default do else finally for function if return switch throw try var while with null true false instanceof typeof void delete new in this");
+  var isKeywordObjJ = makePredicate("IBAction IBOutlet byte char short int long unsigned signed");
+  var isKeywordPreprocess = makePredicate("define pragma if ifdef ifndef else elif endif defined");
+  var nonASCIIwhitespace = /[\u1680\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/;
+  var nonASCIIwhitespaceNoNewLine = /[\u1680\u180e\u2000-\u200a\u202f\u205f\u3000\ufeff]/;
+  var nonASCIIidentifierStartChars = "\xaa\xb5\xba\xc0-\xd6\xd8-\xf6\xf8-\u02c1\u02c6-\u02d1\u02e0-\u02e4\u02ec\u02ee\u0370-\u0374\u0376\u0377\u037a-\u037d\u0386\u0388-\u038a\u038c\u038e-\u03a1\u03a3-\u03f5\u03f7-\u0481\u048a-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05d0-\u05ea\u05f0-\u05f2\u0620-\u064a\u066e\u066f\u0671-\u06d3\u06d5\u06e5\u06e6\u06ee\u06ef\u06fa-\u06fc\u06ff\u0710\u0712-\u072f\u074d-\u07a5\u07b1\u07ca-\u07ea\u07f4\u07f5\u07fa\u0800-\u0815\u081a\u0824\u0828\u0840-\u0858\u08a0\u08a2-\u08ac\u0904-\u0939\u093d\u0950\u0958-\u0961\u0971-\u0977\u0979-\u097f\u0985-\u098c\u098f\u0990\u0993-\u09a8\u09aa-\u09b0\u09b2\u09b6-\u09b9\u09bd\u09ce\u09dc\u09dd\u09df-\u09e1\u09f0\u09f1\u0a05-\u0a0a\u0a0f\u0a10\u0a13-\u0a28\u0a2a-\u0a30\u0a32\u0a33\u0a35\u0a36\u0a38\u0a39\u0a59-\u0a5c\u0a5e\u0a72-\u0a74\u0a85-\u0a8d\u0a8f-\u0a91\u0a93-\u0aa8\u0aaa-\u0ab0\u0ab2\u0ab3\u0ab5-\u0ab9\u0abd\u0ad0\u0ae0\u0ae1\u0b05-\u0b0c\u0b0f\u0b10\u0b13-\u0b28\u0b2a-\u0b30\u0b32\u0b33\u0b35-\u0b39\u0b3d\u0b5c\u0b5d\u0b5f-\u0b61\u0b71\u0b83\u0b85-\u0b8a\u0b8e-\u0b90\u0b92-\u0b95\u0b99\u0b9a\u0b9c\u0b9e\u0b9f\u0ba3\u0ba4\u0ba8-\u0baa\u0bae-\u0bb9\u0bd0\u0c05-\u0c0c\u0c0e-\u0c10\u0c12-\u0c28\u0c2a-\u0c33\u0c35-\u0c39\u0c3d\u0c58\u0c59\u0c60\u0c61\u0c85-\u0c8c\u0c8e-\u0c90\u0c92-\u0ca8\u0caa-\u0cb3\u0cb5-\u0cb9\u0cbd\u0cde\u0ce0\u0ce1\u0cf1\u0cf2\u0d05-\u0d0c\u0d0e-\u0d10\u0d12-\u0d3a\u0d3d\u0d4e\u0d60\u0d61\u0d7a-\u0d7f\u0d85-\u0d96\u0d9a-\u0db1\u0db3-\u0dbb\u0dbd\u0dc0-\u0dc6\u0e01-\u0e30\u0e32\u0e33\u0e40-\u0e46\u0e81\u0e82\u0e84\u0e87\u0e88\u0e8a\u0e8d\u0e94-\u0e97\u0e99-\u0e9f\u0ea1-\u0ea3\u0ea5\u0ea7\u0eaa\u0eab\u0ead-\u0eb0\u0eb2\u0eb3\u0ebd\u0ec0-\u0ec4\u0ec6\u0edc-\u0edf\u0f00\u0f40-\u0f47\u0f49-\u0f6c\u0f88-\u0f8c\u1000-\u102a\u103f\u1050-\u1055\u105a-\u105d\u1061\u1065\u1066\u106e-\u1070\u1075-\u1081\u108e\u10a0-\u10c5\u10c7\u10cd\u10d0-\u10fa\u10fc-\u1248\u124a-\u124d\u1250-\u1256\u1258\u125a-\u125d\u1260-\u1288\u128a-\u128d\u1290-\u12b0\u12b2-\u12b5\u12b8-\u12be\u12c0\u12c2-\u12c5\u12c8-\u12d6\u12d8-\u1310\u1312-\u1315\u1318-\u135a\u1380-\u138f\u13a0-\u13f4\u1401-\u166c\u166f-\u167f\u1681-\u169a\u16a0-\u16ea\u16ee-\u16f0\u1700-\u170c\u170e-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176c\u176e-\u1770\u1780-\u17b3\u17d7\u17dc\u1820-\u1877\u1880-\u18a8\u18aa\u18b0-\u18f5\u1900-\u191c\u1950-\u196d\u1970-\u1974\u1980-\u19ab\u19c1-\u19c7\u1a00-\u1a16\u1a20-\u1a54\u1aa7\u1b05-\u1b33\u1b45-\u1b4b\u1b83-\u1ba0\u1bae\u1baf\u1bba-\u1be5\u1c00-\u1c23\u1c4d-\u1c4f\u1c5a-\u1c7d\u1ce9-\u1cec\u1cee-\u1cf1\u1cf5\u1cf6\u1d00-\u1dbf\u1e00-\u1f15\u1f18-\u1f1d\u1f20-\u1f45\u1f48-\u1f4d\u1f50-\u1f57\u1f59\u1f5b\u1f5d\u1f5f-\u1f7d\u1f80-\u1fb4\u1fb6-\u1fbc\u1fbe\u1fc2-\u1fc4\u1fc6-\u1fcc\u1fd0-\u1fd3\u1fd6-\u1fdb\u1fe0-\u1fec\u1ff2-\u1ff4\u1ff6-\u1ffc\u2071\u207f\u2090-\u209c\u2102\u2107\u210a-\u2113\u2115\u2119-\u211d\u2124\u2126\u2128\u212a-\u212d\u212f-\u2139\u213c-\u213f\u2145-\u2149\u214e\u2160-\u2188\u2c00-\u2c2e\u2c30-\u2c5e\u2c60-\u2ce4\u2ceb-\u2cee\u2cf2\u2cf3\u2d00-\u2d25\u2d27\u2d2d\u2d30-\u2d67\u2d6f\u2d80-\u2d96\u2da0-\u2da6\u2da8-\u2dae\u2db0-\u2db6\u2db8-\u2dbe\u2dc0-\u2dc6\u2dc8-\u2dce\u2dd0-\u2dd6\u2dd8-\u2dde\u2e2f\u3005-\u3007\u3021-\u3029\u3031-\u3035\u3038-\u303c\u3041-\u3096\u309d-\u309f\u30a1-\u30fa\u30fc-\u30ff\u3105-\u312d\u3131-\u318e\u31a0-\u31ba\u31f0-\u31ff\u3400-\u4db5\u4e00-\u9fcc\ua000-\ua48c\ua4d0-\ua4fd\ua500-\ua60c\ua610-\ua61f\ua62a\ua62b\ua640-\ua66e\ua67f-\ua697\ua6a0-\ua6ef\ua717-\ua71f\ua722-\ua788\ua78b-\ua78e\ua790-\ua793\ua7a0-\ua7aa\ua7f8-\ua801\ua803-\ua805\ua807-\ua80a\ua80c-\ua822\ua840-\ua873\ua882-\ua8b3\ua8f2-\ua8f7\ua8fb\ua90a-\ua925\ua930-\ua946\ua960-\ua97c\ua984-\ua9b2\ua9cf\uaa00-\uaa28\uaa40-\uaa42\uaa44-\uaa4b\uaa60-\uaa76\uaa7a\uaa80-\uaaaf\uaab1\uaab5\uaab6\uaab9-\uaabd\uaac0\uaac2\uaadb-\uaadd\uaae0-\uaaea\uaaf2-\uaaf4\uab01-\uab06\uab09-\uab0e\uab11-\uab16\uab20-\uab26\uab28-\uab2e\uabc0-\uabe2\uac00-\ud7a3\ud7b0-\ud7c6\ud7cb-\ud7fb\uf900-\ufa6d\ufa70-\ufad9\ufb00-\ufb06\ufb13-\ufb17\ufb1d\ufb1f-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb3e\ufb40\ufb41\ufb43\ufb44\ufb46-\ufbb1\ufbd3-\ufd3d\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\uff21-\uff3a\uff41-\uff5a\uff66-\uffbe\uffc2-\uffc7\uffca-\uffcf\uffd2-\uffd7\uffda-\uffdc";
+  var nonASCIIidentifierChars = "\u0371-\u0374\u0483-\u0487\u0591-\u05bd\u05bf\u05c1\u05c2\u05c4\u05c5\u05c7\u0610-\u061a\u0620-\u0649\u0672-\u06d3\u06e7-\u06e8\u06fb-\u06fc\u0730-\u074a\u0800-\u0814\u081b-\u0823\u0825-\u0827\u0829-\u082d\u0840-\u0857\u08e4-\u08fe\u0900-\u0903\u093a-\u093c\u093e-\u094f\u0951-\u0957\u0962-\u0963\u0966-\u096f\u0981-\u0983\u09bc\u09be-\u09c4\u09c7\u09c8\u09d7\u09df-\u09e0\u0a01-\u0a03\u0a3c\u0a3e-\u0a42\u0a47\u0a48\u0a4b-\u0a4d\u0a51\u0a66-\u0a71\u0a75\u0a81-\u0a83\u0abc\u0abe-\u0ac5\u0ac7-\u0ac9\u0acb-\u0acd\u0ae2-\u0ae3\u0ae6-\u0aef\u0b01-\u0b03\u0b3c\u0b3e-\u0b44\u0b47\u0b48\u0b4b-\u0b4d\u0b56\u0b57\u0b5f-\u0b60\u0b66-\u0b6f\u0b82\u0bbe-\u0bc2\u0bc6-\u0bc8\u0bca-\u0bcd\u0bd7\u0be6-\u0bef\u0c01-\u0c03\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c56\u0c62-\u0c63\u0c66-\u0c6f\u0c82\u0c83\u0cbc\u0cbe-\u0cc4\u0cc6-\u0cc8\u0cca-\u0ccd\u0cd5\u0cd6\u0ce2-\u0ce3\u0ce6-\u0cef\u0d02\u0d03\u0d46-\u0d48\u0d57\u0d62-\u0d63\u0d66-\u0d6f\u0d82\u0d83\u0dca\u0dcf-\u0dd4\u0dd6\u0dd8-\u0ddf\u0df2\u0df3\u0e34-\u0e3a\u0e40-\u0e45\u0e50-\u0e59\u0eb4-\u0eb9\u0ec8-\u0ecd\u0ed0-\u0ed9\u0f18\u0f19\u0f20-\u0f29\u0f35\u0f37\u0f39\u0f41-\u0f47\u0f71-\u0f84\u0f86-\u0f87\u0f8d-\u0f97\u0f99-\u0fbc\u0fc6\u1000-\u1029\u1040-\u1049\u1067-\u106d\u1071-\u1074\u1082-\u108d\u108f-\u109d\u135d-\u135f\u170e-\u1710\u1720-\u1730\u1740-\u1750\u1772\u1773\u1780-\u17b2\u17dd\u17e0-\u17e9\u180b-\u180d\u1810-\u1819\u1920-\u192b\u1930-\u193b\u1951-\u196d\u19b0-\u19c0\u19c8-\u19c9\u19d0-\u19d9\u1a00-\u1a15\u1a20-\u1a53\u1a60-\u1a7c\u1a7f-\u1a89\u1a90-\u1a99\u1b46-\u1b4b\u1b50-\u1b59\u1b6b-\u1b73\u1bb0-\u1bb9\u1be6-\u1bf3\u1c00-\u1c22\u1c40-\u1c49\u1c5b-\u1c7d\u1cd0-\u1cd2\u1d00-\u1dbe\u1e01-\u1f15\u200c\u200d\u203f\u2040\u2054\u20d0-\u20dc\u20e1\u20e5-\u20f0\u2d81-\u2d96\u2de0-\u2dff\u3021-\u3028\u3099\u309a\ua640-\ua66d\ua674-\ua67d\ua69f\ua6f0-\ua6f1\ua7f8-\ua800\ua806\ua80b\ua823-\ua827\ua880-\ua881\ua8b4-\ua8c4\ua8d0-\ua8d9\ua8f3-\ua8f7\ua900-\ua909\ua926-\ua92d\ua930-\ua945\ua980-\ua983\ua9b3-\ua9c0\uaa00-\uaa27\uaa40-\uaa41\uaa4c-\uaa4d\uaa50-\uaa59\uaa7b\uaae0-\uaae9\uaaf2-\uaaf3\uabc0-\uabe1\uabec\uabed\uabf0-\uabf9\ufb20-\ufb28\ufe00-\ufe0f\ufe20-\ufe26\ufe33\ufe34\ufe4d-\ufe4f\uff10-\uff19\uff3f";
+  var nonASCIIidentifierStart = new RegExp("[" + nonASCIIidentifierStartChars + "]");
+  var nonASCIIidentifier = new RegExp("[" + nonASCIIidentifierStartChars + nonASCIIidentifierChars + "]");
+  var newline = /[\n\r\u2028\u2029]/;
+  var lineBreak = /\r\n|[\n\r\u2028\u2029]/g;
+  function isIdentifierStart(code) {
+    if (code < 65) return code === 36;
+    if (code < 91) return true;
+    if (code < 97) return code === 95;
+    if (code < 123)return true;
+    return code >= 0xaa && nonASCIIidentifierStart.test(String.fromCharCode(code));
+  }
+  function isIdentifierChar(code) {
+    if (code < 48) return code === 36;
+    if (code < 58) return true;
+    if (code < 65) return false;
+    if (code < 91) return true;
+    if (code < 97) return code === 95;
+    if (code < 123)return true;
+    return code >= 0xaa && nonASCIIidentifier.test(String.fromCharCode(code));
+  }
+  function line_loc_t() {
+    this.line = tokCurLine;
+    this.column = tokPos - tokLineStart;
+  }
+  function initTokenState() {
+    macros = Object.create(null);
+    tokCurLine = 1;
+    tokPos = tokLineStart = 0;
+    tokRegexpAllowed = true;
+    tokComments = null;
+    tokSpaces = null;
+    skipSpace();
+  }
+var preprocessTokens = [_preIf, _preIfdef, _preIfndef, _preElse, _preElseIf, _preEndif];
+  function finishToken(type, val) {
+    if (type in preprocessTokens) return readToken();
+    tokEnd = tokPos;
+    if (options.locations) tokEndLoc = new line_loc_t;
+    tokType = type;
+    skipSpace();
+    if (options.preprocess && input.charCodeAt(tokPos) === 35 && input.charCodeAt(tokPos + 1) === 35) {
+      var val1 = type === _name ? val : type.keyword;
+      tokPos += 2;
+      if (val1) {
+        skipSpace();
+        readToken();
+        var val2 = tokType === _name ? tokVal : tokType.keyword;
+        if (val2) {
+          var concat = "" + val1 + val2,
+              code = concat.charCodeAt(0),
+              tok;
+          if (isIdentifierStart(code))
+            tok = readWord(concat) !== false;
+          if (tok) return tok;
+          tok = getTokenFromCode(code, finishToken);
+          if (tok === false) {
+            unexpected();
+          }
+          return tok;
+        } else {
+        }
+      }
+    }
+    tokVal = val;
+    lastTokCommentsAfter = tokCommentsAfter;
+    lastTokSpacesAfter = tokSpacesAfter;
+    tokCommentsAfter = tokComments;
+    tokSpacesAfter = tokSpaces;
+    tokRegexpAllowed = type.beforeExpr;
+    tokAfterImport = type.afterImport;
+  }
+  function skipBlockComment() {
+    var startLoc = options.onComment && options.locations && new line_loc_t;
+    var start = tokPos, end = input.indexOf("*/", tokPos += 2);
+    if (end === -1) raise(tokPos - 2, "Unterminated comment");
+    tokPos = end + 2;
+    if (options.locations) {
+      lineBreak.lastIndex = start;
+      var match;
+      while ((match = lineBreak.exec(input)) && match.index < tokPos) {
+        ++tokCurLine;
+        tokLineStart = match.index + match[0].length;
+      }
+    }
+    if (options.onComment)
+      options.onComment(true, input.slice(start + 2, end), start, tokPos,
+                        startLoc, options.locations && new line_loc_t);
+    if (options.trackComments)
+      (tokComments || (tokComments = [])).push(input.slice(start, end));
+  }
+  function skipLineComment() {
+    var start = tokPos;
+    var startLoc = options.onComment && options.locations && new line_loc_t;
+    var ch = input.charCodeAt(tokPos+=2);
+    while (tokPos < inputLen && ch !== 10 && ch !== 13 && ch !== 8232 && ch !== 8329) {
+      ++tokPos;
+      ch = input.charCodeAt(tokPos);
+    }
+    if (options.onComment)
+      options.onComment(false, input.slice(start + 2, tokPos), start, tokPos,
+                        startLoc, options.locations && new line_loc_t);
+    if (options.trackComments)
+      (tokComments || (tokComments = [])).push(input.slice(start, tokPos));
+  }
+  function preprocesSkipRestOfLine() {
+    var ch = input.charCodeAt(tokPos);
+    var last;
+    while (tokPos < inputLen && ((ch !== 10 && ch !== 13 && ch !== 8232 && ch !== 8329) || last === 92)) {
+      if (ch != 32 && ch != 9 && ch != 160 && (ch < 5760 || !nonASCIIwhitespaceNoNewLine.test(String.fromCharCode(ch))))
+        last = ch;
+      ch = input.charCodeAt(++tokPos);
+    }
+  }
+  function skipSpace() {
+    tokComments = null;
+    tokSpaces = null;
+    var spaceStart = tokPos;
+    for(;;) {
+      var ch = input.charCodeAt(tokPos);
+      if (ch === 32) {
+        ++tokPos;
+      } else if(ch === 13) {
+        ++tokPos;
+        var next = input.charCodeAt(tokPos);
+        if(next === 10) {
+          ++tokPos;
+        }
+        if(options.locations) {
+          ++tokCurLine;
+          tokLineStart = tokPos;
+        }
+      } else if (ch === 10) {
+        ++tokPos;
+        ++tokCurLine;
+        tokLineStart = tokPos;
+      } else if(ch < 14 && ch > 8) {
+        ++tokPos;
+      } else if (ch === 47) {
+        var next = input.charCodeAt(tokPos+1);
+        if (next === 42) {
+          if (options.trackSpaces)
+            (tokSpaces || (tokSpaces = [])).push(input.slice(spaceStart, tokPos));
+          skipBlockComment();
+          spaceStart = tokPos;
+        } else if (next === 47) {
+          if (options.trackSpaces)
+            (tokSpaces || (tokSpaces = [])).push(input.slice(spaceStart, tokPos));
+          skipLineComment();
+          spaceStart = tokPos;
+        } else break;
+      } else if (ch === 160) {
+        ++tokPos;
+      } else if (ch >= 5760 && nonASCIIwhitespace.test(String.fromCharCode(ch))) {
+        ++tokPos;
+      } else if (tokPos >= inputLen) {
+        if (options.preprocess && preprocessStack.length) {
+          var lastItem = preprocessStack.pop();
+          tokPos = lastItem.end;
+          input = lastItem.input;
+          inputLen = lastItem.inputLen;
+          lastEnd = lastItem.lastEnd;
+          lastStart = lastItem.lastStart;
+        } else {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+  }
+  function readToken_dot(code, finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (next >= 48 && next <= 57) return readNumber(String.fromCharCode(code), finishToken);
+    if (next === 46 && options.objj && input.charCodeAt(tokPos+2) === 46) {
+      tokPos += 3;
+      return finishToken(_dotdotdot);
+    }
+    ++tokPos;
+    return finishToken(_dot);
+  }
+  function readToken_slash(finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (tokRegexpAllowed) {++tokPos; return readRegexp();}
+    if (next === 61) return finishOp(_assign, 2, finishToken);
+    return finishOp(_slash, 1, finishToken);
+  }
+  function readToken_mult_modulo(finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (next === 61) return finishOp(_assign, 2, finishToken);
+    return finishOp(_bin10, 1, finishToken);
+  }
+  function readToken_pipe_amp(code, finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (next === code) return finishOp(code === 124 ? _bin1 : _bin2, 2, finishToken);
+    if (next === 61) return finishOp(_assign, 2, finishToken);
+    return finishOp(code === 124 ? _bin3 : _bin5, 1, finishToken);
+  }
+  function readToken_caret(finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (next === 61) return finishOp(_assign, 2, finishToken);
+    return finishOp(_bin4, 1, finishToken);
+  }
+  function readToken_plus_min(code, finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (next === code) return finishOp(_incdec, 2, finishToken);
+    if (next === 61) return finishOp(_assign, 2, finishToken);
+    return finishOp(_plusmin, 1, finishToken);
+  }
+  function readToken_lt_gt(code, finishToken) {
+    if (tokAfterImport && options.objj && code === 60) {
+      var str = [];
+      for (;;) {
+        if (tokPos >= inputLen) raise(tokStart, "Unterminated import statement");
+        var ch = input.charCodeAt(++tokPos);
+        if (ch === 62) {
+          ++tokPos;
+          return finishToken(_filename, String.fromCharCode.apply(null, str));
+        }
+        str.push(ch);
+      }
+    }
+    var next = input.charCodeAt(tokPos+1);
+    var size = 1;
+    if (next === code) {
+      size = code === 62 && input.charCodeAt(tokPos+2) === 62 ? 3 : 2;
+      if (input.charCodeAt(tokPos + size) === 61) return finishOp(_assign, size + 1, finishToken);
+      return finishOp(_bin8, size, finishToken);
+    }
+    if (next === 61)
+      size = input.charCodeAt(tokPos+2) === 61 ? 3 : 2;
+    return finishOp(_bin7, size, finishToken);
+  }
+  function readToken_eq_excl(code, finishToken) {
+    var next = input.charCodeAt(tokPos+1);
+    if (next === 61) return finishOp(_bin6, input.charCodeAt(tokPos+2) === 61 ? 3 : 2, finishToken);
+    return finishOp(code === 61 ? _eq : _prefix, 1, finishToken);
+  }
+  function readToken_at(code, finishToken) {
+    var next = input.charCodeAt(++tokPos);
+    if (next === 34 || next === 39)
+      return readString(next, finishToken);
+    if (next === 123)
+      return finishToken(_dictionaryLiteral);
+    if (next === 91)
+      return finishToken(_arrayLiteral);
+    var word = readWord1(),
+        token = objJAtKeywordTypes[word];
+    if (!token) raise(tokPos, "Unrecognized Objective-J keyword '@" + word + "'");
+    return finishToken(token);
+  }
+var preNotSkipping = true;
+var preIfLevel = 0;
+  function readToken_preprocess(finishTokenFunction) {
+    ++tokPos;
+    preprocessReadToken();
+    switch (preTokType) {
+      case _preDefine:
+        preprocessReadToken();
+        var macroIdentifierEnd = preTokEnd;
+        var macroIdentifier = preprocessGetIdent();
+        if (input.charCodeAt(macroIdentifierEnd) === 40) {
+          preprocessExpect(_parenL);
+          var parameters = [];
+          var first = true;
+          while (!preprocessEat(_parenR)) {
+            if (!first) preprocessExpect(_comma, "Expected ',' between macro parameters"); else first = false;
+            parameters.push(preprocessGetIdent());
+          }
+        }
+        var start = tokPos = preTokStart;
+        preprocesSkipRestOfLine();
+        var macroString = input.slice(start, tokPos);
+        macroString = macroString.replace(/\\/g, " ");
+        options.preprocessAddMacro(new Macro(macroIdentifier, macroString, parameters));
+        break;
+      case _preUndef:
+        preprocessReadToken();
+        options.preprocessUndefineMacro(preprocessGetIdent());
+        preprocesSkipRestOfLine();
+        break;
+      case _preIf:
+        if (preNotSkipping) {
+          preIfLevel++;
+          preprocessReadToken();
+          var expr = preprocessParseExpression();
+          var test = preprocessEvalExpression(expr);
+          if (!test)
+            preNotSkipping = false
+          preprocessSkipToElseOrEndif(!test);
+        } else {
+          return finishTokenFunction(_preIf);
+        }
+        break;
+      case _preIfdef:
+        if (preNotSkipping) {
+          preIfLevel++;
+          preprocessReadToken();
+          var ident = preprocessGetIdent();
+          var test = options.preprocessGetMacro(ident);
+          if (!test)
+            preNotSkipping = false
+          preprocessSkipToElseOrEndif(!test);
+        } else {
+          return finishTokenFunction(_preIfdef);
+        }
+        break;
+      case _preIfndef:
+        if (preNotSkipping) {
+          preIfLevel++;
+          preprocessReadToken();
+          var ident = preprocessGetIdent();
+          var test = options.preprocessGetMacro(ident);
+          if (test)
+            preNotSkipping = false
+          preprocessSkipToElseOrEndif(test);
+        } else {
+          return finishTokenFunction(_preIfndef);
+        }
+        break;
+      case _preElse:
+        if (preIfLevel) {
+          if (preNotSkipping) {
+            preNotSkipping = false;
+            finishTokenFunction(_preElse);
+            preprocessReadToken();
+            preprocessSkipToElseOrEndif(true, true);
+          } else {
+            return finishTokenFunction(_preElse);
+          }
+        } else
+          raise(preTokStart, "#else without #if");
+        break;
+      case _preEndif:
+        if (preIfLevel) {
+          if (preNotSkipping) {
+            preIfLevel--;
+            break;
+          }
+        } else {
+          raise(preTokStart, "#endif without #if");
+        }
+        return finishTokenFunction(_preEndif);
+        break;
+      case _prePragma:
+        preprocesSkipRestOfLine();
+        break;
+      case _prefix:
+        preprocesSkipRestOfLine();
+        break;
+      default:
+        raise(preTokStart, "Invalid preprocessing directive");
+        preprocesSkipRestOfLine();
+        return finishTokenFunction(_preprocess);
+    }
+    finishToken(_preprocess);
+    return readToken();
+  }
+  function preprocessEvalExpression(expr) {
+    return exports.walk.recursive(expr, {}, {
+      BinaryExpression: function(node, st, c) {
+        var left = node.left, right = node.right;
+        switch(node.operator) {
+          case "+":
+            return c(left, st) + c(right, st);
+          case "-":
+            return c(left, st) - c(right, st);
+          case "*":
+            return c(left, st) * c(right, st);
+          case "/":
+            return c(left, st) / c(right, st);
+          case "%":
+            return c(left, st) % c(right, st);
+          case "<":
+            return c(left, st) < c(right, st);
+          case ">":
+            return c(left, st) > c(right, st);
+          case "=":
+          case "==":
+          case "===":
+            return c(left, st) === c(right, st);
+          case "<=":
+            return c(left, st) <= c(right, st);
+          case ">=":
+            return c(left, st) >= c(right, st);
+          case "&&":
+            return c(left, st) && c(right, st);
+          case "||":
+            return c(left, st) || c(right, st);
+        }
+      },
+      Literal: function(node, st, c) {
+        return node.value;
+      },
+      Identifier: function(node, st, c) {
+        var name = node.name,
+            macro = options.preprocessGetMacro(name);
+        return (macro && parseInt(macro.macro)) || 0;
+      },
+      DefinedExpression: function(node, st, c) {
+        return !!options.preprocessGetMacro(node.id.name);
+      }
+    }, {});
+  }
+  function getTokenFromCode(code, finishToken, allowEndOfLineToken) {
+    switch(code) {
+    case 46:
+      return readToken_dot(code, finishToken);
+    case 40: ++tokPos; return finishToken(_parenL);
+    case 41: ++tokPos; return finishToken(_parenR);
+    case 59: ++tokPos; return finishToken(_semi);
+    case 44: ++tokPos; return finishToken(_comma);
+    case 91: ++tokPos; return finishToken(_bracketL);
+    case 93: ++tokPos; return finishToken(_bracketR);
+    case 123: ++tokPos; return finishToken(_braceL);
+    case 125: ++tokPos; return finishToken(_braceR);
+    case 58: ++tokPos; return finishToken(_colon);
+    case 63: ++tokPos; return finishToken(_question);
+    case 48:
+      var next = input.charCodeAt(tokPos+1);
+      if (next === 120 || next === 88) return readHexNumber(finishToken);
+    case 49: case 50: case 51: case 52: case 53: case 54: case 55: case 56: case 57:
+      return readNumber(false, finishToken);
+    case 34: case 39:
+      return readString(code, finishToken);
+    case 47:
+      return readToken_slash(finishToken);
+    case 37: case 42:
+      return readToken_mult_modulo(finishToken);
+    case 124: case 38:
+      return readToken_pipe_amp(code, finishToken);
+    case 94:
+      return readToken_caret(finishToken);
+    case 43: case 45:
+      return readToken_plus_min(code, finishToken);
+    case 60: case 62:
+      return readToken_lt_gt(code, finishToken, finishToken);
+    case 61: case 33:
+      return readToken_eq_excl(code, finishToken);
+    case 126:
+      return finishOp(_prefix, 1, finishToken);
+    case 64:
+      if (options.objj)
+        return readToken_at(code, finishToken);
+      return false;
+    case 35:
+      if (options.preprocess) {
+        return readToken_preprocess(finishToken);
+      }
+      return false;
+    case 92:
+      if (options.preprocess) {
+        return finishOp(_preBackslash, 1, finishToken);
+      }
+      return false;
+    }
+    if (allowEndOfLineToken && newline.test(String.fromCharCode(code))) {
+      return finishOp(_eol, 1, finishToken);
+    }
+    return false;
+}
+  function preprocessSkipSpace() {
+    while (tokPos < inputLen) {
+      var ch = input.charCodeAt(tokPos);
+      if (ch === 32 || ch === 9 || ch === 160 || (ch >= 5760 && nonASCIIwhitespaceNoNewLine.test(String.fromCharCode(ch)))) {
+        ++tokPos;
+      } else if (ch === 92) {
+        var pos = tokPos + 1;
+        ch = input.charCodeAt(pos);
+        while (pos < inputLen && (ch === 32 || ch === 9 || ch === 11 || ch === 12 || (ch >= 5760 && nonASCIIwhitespaceNoNewLine.test(String.fromCharCode(ch)))))
+          ch = input.charCodeAt(++pos);
+        lineBreak.lastIndex = 0;
+        var match = lineBreak.exec(input.slice(pos, pos + 2));
+        if (match && match.index === 0) {
+          tokPos = pos + match[0].length;
+        } else {
+          return false;
+        }
+      } else {
+        lineBreak.lastIndex = 0;
+        var match = lineBreak.exec(input.slice(tokPos, tokPos + 2));
+        return match && match.index === 0;
+      }
+    }
+  }
+  function preprocessSkipToElseOrEndif(test, skipElse) {
+    if (test) {
+      var ifLevel = 0;
+      while (ifLevel > 0 || (preTokType != _preEndif && (preTokType != _preElse || skipElse))) {
+        switch (preTokType) {
+          case _preIf:
+          case _preIfdef:
+          case _preIfndef:
+            ifLevel++;
+            break;
+          case _preEndif:
+            ifLevel--;
+            break;
+          case _eof:
+            preNotSkipping = true;
+            raise(preTokStart, "Missing #endif");
+        }
+        preprocessReadToken();
+      }
+      preNotSkipping = true;
+      if (preTokType === _preEndif)
+        preIfLevel--;
+    }
+  }
+  function preprocessReadToken() {
+    preTokStart = tokPos;
+    preTokInput = input;
+    if (tokPos >= inputLen) return _eof;
+    var code = input.charCodeAt(tokPos);
+    if (preprocessMacroParamterListMode && code !== 41 && code !== 44) {
+      var parenLevel = 0;
+      while(tokPos < inputLen && (parenLevel || (code !== 41 && code !== 44))) {
+        if (code === 40)
+          parenLevel++;
+        if (code === 41)
+          parenLevel--;
+        code = input.charCodeAt(++tokPos);
+      }
+      return preprocessFinishToken(_preprocessParamItem, input.slice(preTokStart, tokPos));
+    }
+    if (isIdentifierStart(code) || (code === 92 && input.charCodeAt(tokPos +1) === 117 )) return preprocessReadWord();
+    if (getTokenFromCode(code, preprocessFinishToken, true) === false) {
+      var ch = String.fromCharCode(code);
+      if (ch === "\\" || nonASCIIidentifierStart.test(ch)) return preprocessReadWord();
+      raise(tokPos, "Unexpected character '" + ch + "'");
+    }
+  }
+  function preprocessReadWord() {
+    var word = readWord1();
+    preprocessFinishToken(isKeywordPreprocess(word) ? keywordTypesPreprocess[word] : _name, word);
+  }
+  function preprocessFinishToken(type, val) {
+    preTokType = type;
+    preTokVal = val;
+    preTokEnd = tokPos;
+    preprocessSkipSpace();
+  }
+  function preprocessNext() {
+    preLastStart = tokStart;
+    preLastEnd = tokEnd;
+    return preprocessReadToken();
+  }
+  function preprocessEat(type) {
+    if (preTokType === type) {
+      preprocessNext();
+      return true;
+    }
+  }
+  function preprocessExpect(type, errorMessage) {
+    if (preTokType === type) preprocessReadToken();
+    else raise(preTokStart, errorMessage || "Unexpected token");
+  }
+  function preprocessGetIdent() {
+    var ident = preTokType === _name ? preTokVal : ((!options.forbidReserved || preTokType.okAsIdent) && preTokType.keyword) || raise(preTokStart, "Expected Macro identifier");
+    preprocessNext();
+    return ident;
+  }
+  function preprocessParseIdent() {
+    var node = startNode();
+    node.name = preprocessGetIdent();
+    return preprocessFinishNode(node, "Identifier");
+  }
+  function preprocessParseExpression() {
+    return preprocessParseExprOps();
+  }
+  function preprocessParseExprOps() {
+    return preprocessParseExprOp(preprocessParseMaybeUnary(), -1);
+  }
+  function preprocessParseExprOp(left, minPrec) {
+    var prec = preTokType.binop;
+    if (prec) {
+      if (!preTokType.preprocess) raise(preTokStart, "Unsupported macro operator");
+      if (prec > minPrec) {
+        var node = startNodeFrom(left);
+        node.left = left;
+        node.operator = preTokVal;
+        preprocessNext();
+        node.right = preprocessParseExprOp(preprocessParseMaybeUnary(), prec);
+        var node = preprocessFinishNode(node, "BinaryExpression");
+        return preprocessParseExprOp(node, minPrec);
+      }
+    }
+    return left;
+  }
+  function preprocessParseMaybeUnary() {
+    if (preTokType.preprocess && preTokType.prefix) {
+      var node = startNode();
+      node.operator = tokVal;
+      node.prefix = true;
+      preprocessNext();
+      node.argument = preprocessParseMaybeUnary();
+      return preprocessFinishNode(node, "UnaryExpression");
+    }
+    return preprocessParseExprAtom();
+  }
+  function preprocessParseExprAtom() {
+    switch (preTokType) {
+    case _name:
+      return preprocessParseIdent();
+    case _num: case _string:
+      return preprocessParseStringNumLiteral();
+    case _parenL:
+      var tokStart1 = preTokStart;
+      preprocessNext();
+      var val = preprocessParseExpression();
+      val.start = tokStart1;
+      val.end = preTokEnd;
+      preprocessExpect(_parenR, "Expected closing ')' in macro expression");
+      return val;
+    case _preDefined:
+      var node = startNode();
+      preprocessNext();
+      node.id = preprocessParseIdent();
+      return preprocessFinishNode(node, "DefinedExpression");
+    default:
+      unexpected();
+    }
+  }
+  function preprocessParseStringNumLiteral() {
+    var node = startNode();
+    node.value = preTokVal;
+    node.raw = preTokInput.slice(preTokStart, preTokEnd);
+    preprocessNext();
+    return preprocessFinishNode(node, "Literal");
+  }
+  function preprocessFinishNode(node, type) {
+    node.type = type;
+    node.end = preLastEnd;
+    return node;
+  }
+  function readToken(forceRegexp) {
+    tokStart = tokPos;
+    tokInput = input;
+    if (options.locations) tokStartLoc = new line_loc_t;
+    tokCommentsBefore = tokComments;
+    tokSpacesBefore = tokSpaces;
+    if (forceRegexp) return readRegexp();
+    if (tokPos >= inputLen)
+      return finishToken(_eof);
+    var code = input.charCodeAt(tokPos);
+    if (isIdentifierStart(code) || code === 92 ) return readWord();
+    var tok = getTokenFromCode(code, finishToken);
+    if (tok === false) {
+      var ch = String.fromCharCode(code);
+      if (ch === "\\" || nonASCIIidentifierStart.test(ch)) return readWord();
+      raise(tokPos, "Unexpected character '" + ch + "'");
+    }
+    return tok;
+  }
+  function finishOp(type, size, finishToken) {
+    var str = input.slice(tokPos, tokPos + size);
+    tokPos += size;
+    finishToken(type, str);
+  }
+  function readRegexp() {
+    var content = "", escaped, inClass, start = tokPos;
+    for (;;) {
+      if (tokPos >= inputLen) raise(start, "Unterminated regular expression");
+      var ch = input.charAt(tokPos);
+      if (newline.test(ch)) raise(start, "Unterminated regular expression");
+      if (!escaped) {
+        if (ch === "[") inClass = true;
+        else if (ch === "]" && inClass) inClass = false;
+        else if (ch === "/" && !inClass) break;
+        escaped = ch === "\\";
+      } else escaped = false;
+      ++tokPos;
+    }
+    var content = input.slice(start, tokPos);
+    ++tokPos;
+    var mods = readWord1();
+    if (mods && !/^[gmsiy]*$/.test(mods)) raise(start, "Invalid regexp flag");
+    return finishToken(_regexp, new RegExp(content, mods));
+  }
+  function readInt(radix, len) {
+    var start = tokPos, total = 0;
+    for (var i = 0, e = len == null ? Infinity : len; i < e; ++i) {
+      var code = input.charCodeAt(tokPos), val;
+      if (code >= 97) val = code - 97 + 10;
+      else if (code >= 65) val = code - 65 + 10;
+      else if (code >= 48 && code <= 57) val = code - 48;
+      else val = Infinity;
+      if (val >= radix) break;
+      ++tokPos;
+      total = total * radix + val;
+    }
+    if (tokPos === start || len != null && tokPos - start !== len) return null;
+    return total;
+  }
+  function readHexNumber(finishToken) {
+    tokPos += 2;
+    var val = readInt(16);
+    if (val == null) raise(tokStart + 2, "Expected hexadecimal number");
+    if (isIdentifierStart(input.charCodeAt(tokPos))) raise(tokPos, "Identifier directly after number");
+    return finishToken(_num, val);
+  }
+  function readNumber(startsWithDot, finishToken) {
+    var start = tokPos, isFloat = false, octal = input.charCodeAt(tokPos) === 48;
+    if (!startsWithDot && readInt(10) === null) raise(start, "Invalid number");
+    if (input.charCodeAt(tokPos) === 46) {
+      ++tokPos;
+      readInt(10);
+      isFloat = true;
+    }
+    var next = input.charCodeAt(tokPos);
+    if (next === 69 || next === 101) {
+      next = input.charCodeAt(++tokPos);
+      if (next === 43 || next === 45) ++tokPos;
+      if (readInt(10) === null) raise(start, "Invalid number")
+      isFloat = true;
+    }
+    if (isIdentifierStart(input.charCodeAt(tokPos))) raise(tokPos, "Identifier directly after number");
+    var str = input.slice(start, tokPos), val;
+    if (isFloat) val = parseFloat(str);
+    else if (!octal || str.length === 1) val = parseInt(str, 10);
+    else if (/[89]/.test(str) || strict) raise(start, "Invalid number");
+    else val = parseInt(str, 8);
+    return finishToken(_num, val);
+  }
+  var rs_str = [];
+  function readString(quote, finishToken) {
+    tokPos++;
+    rs_str.length = 0;
+    for (;;) {
+      if (tokPos >= inputLen) raise(tokStart, "Unterminated string constant");
+      var ch = input.charCodeAt(tokPos);
+      if (ch === quote) {
+        ++tokPos;
+        return finishToken(_string, String.fromCharCode.apply(null, rs_str));
+      }
+      if (ch === 92) {
+        ch = input.charCodeAt(++tokPos);
+        var octal = /^[0-7]+/.exec(input.slice(tokPos, tokPos + 3));
+        if (octal) octal = octal[0];
+        while (octal && parseInt(octal, 8) > 255) octal = octal.slice(0, octal.length - 1);
+        if (octal === "0") octal = null;
+        ++tokPos;
+        if (octal) {
+          if (strict) raise(tokPos - 2, "Octal literal in strict mode");
+          rs_str.push(parseInt(octal, 8));
+          tokPos += octal.length - 1;
+        } else {
+          switch (ch) {
+          case 110: rs_str.push(10); break;
+          case 114: rs_str.push(13); break;
+          case 120: rs_str.push(readHexChar(2)); break;
+          case 117: rs_str.push(readHexChar(4)); break;
+          case 85: rs_str.push(readHexChar(8)); break;
+          case 116: rs_str.push(9); break;
+          case 98: rs_str.push(8); break;
+          case 118: rs_str.push(11); break;
+          case 102: rs_str.push(12); break;
+          case 48: rs_str.push(0); break;
+          case 13: if (input.charCodeAt(tokPos) === 10) ++tokPos;
+          case 10:
+            if (options.locations) { tokLineStart = tokPos; ++tokCurLine; }
+            break;
+          default: rs_str.push(ch); break;
+          }
+        }
+      } else {
+        if (ch === 13 || ch === 10 || ch === 8232 || ch === 8329) raise(tokStart, "Unterminated string constant");
+        rs_str.push(ch);
+        ++tokPos;
+      }
+    }
+  }
+  function readHexChar(len) {
+    var n = readInt(16, len);
+    if (n === null) raise(tokStart, "Bad character escape sequence");
+    return n;
+  }
+  var containsEsc;
+  function readWord1() {
+    containsEsc = false;
+    var word, first = true, start = tokPos;
+    for (;;) {
+      var ch = input.charCodeAt(tokPos);
+      if (isIdentifierChar(ch)) {
+        if (containsEsc) word += input.charAt(tokPos);
+        ++tokPos;
+      } else if (ch === 92) {
+        if (!containsEsc) word = input.slice(start, tokPos);
+        containsEsc = true;
+        if (input.charCodeAt(++tokPos) != 117)
+          raise(tokPos, "Expecting Unicode escape sequence \\uXXXX");
+        ++tokPos;
+        var esc = readHexChar(4);
+        var escStr = String.fromCharCode(esc);
+        if (!escStr) raise(tokPos - 1, "Invalid Unicode escape");
+        if (!(first ? isIdentifierStart(esc) : isIdentifierChar(esc)))
+          raise(tokPos - 4, "Invalid Unicode escape");
+        word += escStr;
+      } else {
+        break;
+      }
+      first = false;
+    }
+    return containsEsc ? word : input.slice(start, tokPos);
+  }
+  function readWord(preReadWord) {
+    var word = preReadWord || readWord1();
+    var type = _name;
+    var reservedError;
+    if (options.preprocess) {
+      var macro;
+      var i = preprocessStack.length;
+      if (i > 0) {
+        var lastItem = preprocessStack[i - 1];
+        if (lastItem.parameterDict && lastItem.macro.isParameterFunction()(word)) {
+          macro = lastItem.parameterDict[word];
+        }
+      }
+      if (!macro && options.preprocessIsMacro(word))
+        macro = options.preprocessGetMacro(word);
+      if (macro) {
+        var macroStart = tokStart;
+        var parameters;
+        var hasParameters = macro.parameters;
+        var nextIsParenL;
+        if (hasParameters)
+          nextIsParenL = tokPos < inputLen && input.charCodeAt(tokPos) === 40;
+        if (!hasParameters || nextIsParenL) {
+          var macroString = macro.macro;
+          var lastTokPos = tokPos;
+          if (nextIsParenL) {
+            var first = true;
+            var noParams = 0;
+            parameters = Object.create(null);
+            preprocessReadToken();
+            preprocessMacroParamterListMode = true;
+            preprocessExpect(_parenL);
+            lastTokPos = tokPos;
+            while (!preprocessEat(_parenR)) {
+              if (!first) preprocessExpect(_comma, "Expected ',' between macro parameters"); else first = false;
+              var ident = hasParameters[noParams++];
+              var val = preTokVal;
+              preprocessExpect(_preprocessParamItem);
+              parameters[ident] = new Macro(ident, val);
+              lastTokPos = tokPos;
+            }
+            preprocessMacroParamterListMode = false;
+          }
+          if (macroString) {
+            preprocessStack.push({macro: macro, parameterDict: parameters, start: macroStart, end:lastTokPos, input: input, inputLen: inputLen, lastStart: tokStart, lastEnd: lastTokPos});
+            input = macroString;
+            inputLen = macroString.length;
+            tokPos = 0;
+          }
+          return next();
+        }
+      }
+    }
+    if (!containsEsc) {
+      if (isKeyword(word)) type = keywordTypes[word];
+      else if (options.objj && isKeywordObjJ(word)) type = keywordTypesObjJ[word];
+      else if (options.forbidReserved &&
+               (options.ecmaVersion === 3 ? isReservedWord3 : isReservedWord5)(word) ||
+               strict && isStrictReservedWord(word))
+        raise(tokStart, "The keyword '" + word + "' is reserved");
+    }
+    return finishToken(type, word);
+  }
+  function Macro(ident, macro, parameters) {
+    this.identifier = ident;
+    if (macro) this.macro = macro;
+    if (parameters) this.parameters = parameters;
+  }
+  Macro.prototype.isParameterFunction = function() {
+    var y = (this.parameters || []).join(" ");
+    return this.isParameterFunctionVar || (this.isParameterFunctionVar = makePredicate(y));
+  }
+  function next() {
+    lastStart = tokStart;
+    lastEnd = tokEnd;
+    lastEndLoc = tokEndLoc;
+    nodeMessageSendObjectExpression = null;
+    return readToken();
+  }
+  function setStrict(strct) {
+    strict = strct;
+    tokPos = lastEnd;
+    skipSpace();
+    readToken();
+  }
+  function node_t() {
+    this.type = null;
+    this.start = tokStart;
+    this.end = null;
+  }
+  function node_loc_t() {
+    this.start = tokStartLoc;
+    this.end = null;
+    if (sourceFile !== null) this.source = sourceFile;
+  }
+  function startNode() {
+    var node = new node_t();
+    if (options.trackComments && tokCommentsBefore) {
+      node.commentsBefore = tokCommentsBefore;
+      tokCommentsBefore = null;
+    }
+    if (options.trackSpaces && tokSpacesBefore) {
+      node.spacesBefore = tokSpacesBefore;
+      tokSpacesBefore = null;
+    }
+    if (options.locations)
+      node.loc = new node_loc_t();
+    if (options.ranges)
+      node.range = [tokStart, 0];
+    return node;
+  }
+  function startNodeFrom(other) {
+    var node = new node_t();
+    node.start = other.start;
+    if (other.commentsBefore) {
+      node.commentsBefore = other.commentsBefore;
+      delete other.commentsBefore;
+    }
+    if (other.spacesBefore) {
+      node.spacesBefore = other.spacesBefore;
+      delete other.spacesBefore;
+    }
+    if (options.locations) {
+      node.loc = new node_loc_t();
+      node.loc.start = other.loc.start;
+    }
+    if (options.ranges)
+      node.range = [other.range[0], 0];
+    return node;
+  }
+  var lastFinishedNode;
+  function finishNode(node, type) {
+    node.type = type;
+    node.end = lastEnd;
+    if (options.trackComments) {
+      if (lastTokCommentsAfter) {
+        node.commentsAfter = lastTokCommentsAfter;
+        tokCommentsAfter = null;
+      } else if (lastFinishedNode && lastFinishedNode.end === lastEnd &&
+                 lastFinishedNode.commentsAfter) {
+        node.commentsAfter = lastFinishedNode.commentsAfter;
+        delete lastFinishedNode.commentsAfter;
+      }
+      if (!options.trackSpaces)
+        lastFinishedNode = node;
+    }
+    if (options.trackSpaces) {
+      if (lastTokSpacesAfter) {
+        node.spacesAfter = lastTokSpacesAfter;
+        lastTokSpacesAfter = null;
+      } else if (lastFinishedNode && lastFinishedNode.end === lastEnd &&
+                 lastFinishedNode.spacesAfter) {
+        node.spacesAfter = lastFinishedNode.spacesAfter;
+        delete lastFinishedNode.spacesAfter;
+      }
+      lastFinishedNode = node;
+    }
+    if (options.locations)
+      node.loc.end = lastEndLoc;
+    if (options.ranges)
+      node.range[1] = lastEnd;
+    return node;
+  }
+  function isUseStrict(stmt) {
+    return options.ecmaVersion >= 5 && stmt.type === "ExpressionStatement" &&
+      stmt.expression.type === "Literal" && stmt.expression.value === "use strict";
+  }
+  function eat(type) {
+    if (tokType === type) {
+      next();
+      return true;
+    }
+  }
+  function canInsertSemicolon() {
+    return !options.strictSemicolons &&
+      (tokType === _eof || tokType === _braceR || newline.test(tokInput.slice(lastEnd, tokStart)) ||
+        (nodeMessageSendObjectExpression && options.objj));
+  }
+  function semicolon() {
+    if (!eat(_semi) && !canInsertSemicolon()) raise(tokStart, "Expected a semicolon");
+  }
+  function expect(type, errorMessage) {
+    if (tokType === type) next();
+    else errorMessage ? raise(tokStart, errorMessage) : unexpected();
+  }
+  function unexpected() {
+    raise(tokStart, "Unexpected token");
+  }
+  function checkLVal(expr) {
+    if (expr.type !== "Identifier" && expr.type !== "MemberExpression" && expr.type !== "Dereference")
+      raise(expr.start, "Assigning to rvalue");
+    if (strict && expr.type === "Identifier" && isStrictBadIdWord(expr.name))
+      raise(expr.start, "Assigning to " + expr.name + " in strict mode");
+  }
+  function parseTopLevel(program) {
+    lastStart = lastEnd = tokPos;
+    if (options.locations) lastEndLoc = new line_loc_t;
+    inFunction = strict = null;
+    labels = [];
+    readToken();
+    var node = program || startNode(), first = true;
+    if (!program) node.body = [];
+    while (tokType !== _eof) {
+      var stmt = parseStatement();
+      node.body.push(stmt);
+      if (first && isUseStrict(stmt)) setStrict(true);
+      first = false;
+    }
+    return finishNode(node, "Program");
+  }
+  var loopLabel = {kind: "loop"}, switchLabel = {kind: "switch"};
+  function parseStatement() {
+    if (tokType === _slash)
+      readToken(true);
+    var starttype = tokType, node = startNode();
+    if (nodeMessageSendObjectExpression) {
+        node.expression = parseMessageSendExpression(nodeMessageSendObjectExpression, nodeMessageSendObjectExpression.object);
+        semicolon();
+        return finishNode(node, "ExpressionStatement");
+    }
+    switch (starttype) {
+    case _break: case _continue:
+      next();
+      var isBreak = starttype === _break;
+      if (eat(_semi) || canInsertSemicolon()) node.label = null;
+      else if (tokType !== _name) unexpected();
+      else {
+        node.label = parseIdent();
+        semicolon();
+      }
+      for (var i = 0; i < labels.length; ++i) {
+        var lab = labels[i];
+        if (node.label == null || lab.name === node.label.name) {
+          if (lab.kind != null && (isBreak || lab.kind === "loop")) break;
+          if (node.label && isBreak) break;
+        }
+      }
+      if (i === labels.length) raise(node.start, "Unsyntactic " + starttype.keyword);
+      return finishNode(node, isBreak ? "BreakStatement" : "ContinueStatement");
+    case _debugger:
+      next();
+      semicolon();
+      return finishNode(node, "DebuggerStatement");
+    case _do:
+      next();
+      labels.push(loopLabel);
+      node.body = parseStatement();
+      labels.pop();
+      expect(_while, "Expected 'while' at end of do statement");
+      node.test = parseParenExpression();
+      semicolon();
+      return finishNode(node, "DoWhileStatement");
+    case _for:
+      next();
+      labels.push(loopLabel);
+      expect(_parenL, "Expected '(' after 'for'");
+      if (tokType === _semi) return parseFor(node, null);
+      if (tokType === _var) {
+        var init = startNode();
+        next();
+        parseVar(init, true);
+        if (init.declarations.length === 1 && eat(_in))
+          return parseForIn(node, init);
+        return parseFor(node, init);
+      }
+      var init = parseExpression(false, true);
+      if (eat(_in)) {checkLVal(init); return parseForIn(node, init);}
+      return parseFor(node, init);
+    case _function:
+      next();
+      return parseFunction(node, true);
+    case _if:
+      next();
+      node.test = parseParenExpression();
+      node.consequent = parseStatement();
+      node.alternate = eat(_else) ? parseStatement() : null;
+      return finishNode(node, "IfStatement");
+    case _return:
+      if (!inFunction) raise(tokStart, "'return' outside of function");
+      next();
+      if (eat(_semi) || canInsertSemicolon()) node.argument = null;
+      else { node.argument = parseExpression(); semicolon(); }
+      return finishNode(node, "ReturnStatement");
+    case _switch:
+      next();
+      node.discriminant = parseParenExpression();
+      node.cases = [];
+      expect(_braceL, "Expected '{' in switch statement");
+      labels.push(switchLabel);
+      for (var cur, sawDefault; tokType != _braceR;) {
+        if (tokType === _case || tokType === _default) {
+          var isCase = tokType === _case;
+          if (cur) finishNode(cur, "SwitchCase");
+          node.cases.push(cur = startNode());
+          cur.consequent = [];
+          next();
+          if (isCase) cur.test = parseExpression();
+          else {
+            if (sawDefault) raise(lastStart, "Multiple default clauses"); sawDefault = true;
+            cur.test = null;
+          }
+          expect(_colon, "Expected ':' after case clause");
+        } else {
+          if (!cur) unexpected();
+          cur.consequent.push(parseStatement());
+        }
+      }
+      if (cur) finishNode(cur, "SwitchCase");
+      next();
+      labels.pop();
+      return finishNode(node, "SwitchStatement");
+    case _throw:
+      next();
+      if (newline.test(tokInput.slice(lastEnd, tokStart)))
+        raise(lastEnd, "Illegal newline after throw");
+      node.argument = parseExpression();
+      semicolon();
+      return finishNode(node, "ThrowStatement");
+    case _try:
+      next();
+      node.block = parseBlock();
+      node.handlers = [];
+      while (tokType === _catch) {
+        var clause = startNode();
+        next();
+        expect(_parenL, "Expected '(' after 'catch'");
+        clause.param = parseIdent();
+        if (strict && isStrictBadIdWord(clause.param.name))
+          raise(clause.param.start, "Binding " + clause.param.name + " in strict mode");
+        expect(_parenR, "Expected closing ')' after catch");
+        clause.guard = null;
+        clause.body = parseBlock();
+        node.handlers.push(finishNode(clause, "CatchClause"));
+      }
+      node.finalizer = eat(_finally) ? parseBlock() : null;
+      if (!node.handlers.length && !node.finalizer)
+        raise(node.start, "Missing catch or finally clause");
+      return finishNode(node, "TryStatement");
+    case _var:
+      next();
+      node = parseVar(node);
+      semicolon();
+      return node;
+    case _while:
+      next();
+      node.test = parseParenExpression();
+      labels.push(loopLabel);
+      node.body = parseStatement();
+      labels.pop();
+      return finishNode(node, "WhileStatement");
+    case _with:
+      if (strict) raise(tokStart, "'with' in strict mode");
+      next();
+      node.object = parseParenExpression();
+      node.body = parseStatement();
+      return finishNode(node, "WithStatement");
+    case _braceL:
+      return parseBlock();
+    case _semi:
+      next();
+      return finishNode(node, "EmptyStatement");
+    case _implementation:
+      if (options.objj) {
+        next();
+        node.classname = parseIdent(true);
+        if (eat(_colon))
+          node.superclassname = parseIdent(true);
+        else if (eat(_parenL)) {
+          node.categoryname = parseIdent(true);
+          expect(_parenR, "Expected closing ')' after category name");
+        }
+        if (eat(_braceL)) {
+          node.ivardeclarations = [];
+          for (;;) {
+            if (eat(_braceR)) break;
+            parseIvarDeclaration(node);
+          }
+          node.endOfIvars = tokStart;
+        }
+        node.body = [];
+        while(!eat(_end)) {
+          if (tokType === _eof) raise(tokPos, "Expected '@end' after '@implementation'");
+          node.body.push(parseClassElement());
+        }
+      }
+      return finishNode(node, "ClassDeclarationStatement");
+    case _import:
+      next();
+      if (tokType === _string)
+        node.localfilepath = true;
+      else if (tokType ===_filename)
+        node.localfilepath = false;
+      else
+        unexpected();
+      node.filename = parseStringNumRegExpLiteral();
+      return finishNode(node, "ImportStatement");
+    case _preprocess:
+      next();
+      return finishNode(node, "PreprocessStatement");
+    case _class:
+      next();
+      node.id = parseIdent(false);
+      return finishNode(node, "ClassStatement");
+    case _global:
+      next();
+      node.id = parseIdent(false);
+      return finishNode(node, "GlobalStatement");
+    default:
+      var maybeName = tokVal, expr = parseExpression();
+      if (starttype === _name && expr.type === "Identifier" && eat(_colon)) {
+        for (var i = 0; i < labels.length; ++i)
+          if (labels[i].name === maybeName) raise(expr.start, "Label '" + maybeName + "' is already declared");
+        var kind = tokType.isLoop ? "loop" : tokType === _switch ? "switch" : null;
+        labels.push({name: maybeName, kind: kind});
+        node.body = parseStatement();
+        labels.pop();
+        node.label = expr;
+        return finishNode(node, "LabeledStatement");
+      } else {
+        node.expression = expr;
+        semicolon();
+        return finishNode(node, "ExpressionStatement");
+      }
+    }
+  }
+  function parseIvarDeclaration(node) {
+    var outlet;
+    if (eat(_outlet))
+      outlet = true;
+    var type = parseObjectiveJType();
+    if (strict && isStrictBadIdWord(type.name))
+      raise(type.start, "Binding " + type.name + " in strict mode");
+    for (;;) {
+      var decl = startNode();
+      if (outlet)
+        decl.outlet = outlet;
+      decl.ivartype = type;
+      decl.id = parseIdent();
+      if (strict && isStrictBadIdWord(decl.id.name))
+        raise(decl.id.start, "Binding " + decl.id.name + " in strict mode");
+      if (eat(_accessors)) {
+        decl.accessors = {};
+        if (eat(_parenL)) {
+          if (!eat(_parenR)) {
+            for (;;) {
+              var config = parseIdent(true);
+              switch(config.name) {
+                case "property":
+                case "getter":
+                  expect(_eq, "Expected '=' after 'getter' accessor attribute");
+                  decl.accessors[config.name] = parseIdent(true);
+                  break;
+                case "setter":
+                  expect(_eq, "Expected '=' after 'setter' accessor attribute");
+                  var setter = parseIdent(true);
+                  decl.accessors[config.name] = setter;
+                  if (eat(_colon))
+                    setter.end = tokStart;
+                  setter.name += ":"
+                  break;
+                case "readwrite":
+                case "readonly":
+                case "copy":
+                  decl.accessors[config.name] = true;
+                  break;
+                default:
+                  raise(config.start, "Unknown accessors attribute '" + config.name + "'");
+              }
+              if (!eat(_comma)) break;
+            }
+            expect(_parenR, "Expected closing ')' after accessor attributes");
+          }
+        }
+      }
+      finishNode(decl, "IvarDeclaration")
+      node.ivardeclarations.push(decl);
+      if (!eat(_comma)) break;
+    }
+    semicolon();
+  }
+  function parseClassElement() {
+    var methodType = tokVal,
+        element = startNode();
+    if (eat(_plusmin)) {
+      element.methodtype = methodType;
+      if (eat(_parenL)) {
+        if (eat(_action))
+          element.action = true;
+        if (!eat(_parenR)) {
+          element.returntype = parseObjectiveJType();
+          expect(_parenR, "Expected closing ')' after method return type");
+        }
+      }
+      var first = true,
+          selectors = [],
+          args = [];
+      element.selectors = selectors;
+      element.arguments = args;
+      for (;;) {
+        if (tokType !== _colon) {
+          selectors.push(parseIdent(true));
+          if (first && tokType !== _colon) break;
+        } else
+          selectors.push(null);
+        expect(_colon, "Expected ':' in selector");
+        var argument = {};
+        args.push(argument);
+        if (eat(_parenL)) {
+          argument.type = parseObjectiveJType();
+          expect(_parenR, "Expected closing ')' after method argument type");
+        }
+        argument.identifier = parseIdent(false);
+        if (tokType === _braceL || eat(_semi)) break;
+        if (eat(_comma)) {
+          expect(_dotdotdot, "Expected '...' after ',' in method declaration");
+          element.parameters = true;
+          break;
+        }
+        first = false;
+      }
+      element.startOfBody = lastEnd;
+      var oldInFunc = inFunction, oldLabels = labels;
+      inFunction = true; labels = [];
+      element.body = parseBlock(true);
+      inFunction = oldInFunc; labels = oldLabels;
+      return finishNode(element, "MethodDeclarationStatement");
+    } else
+      return parseStatement();
+  }
+  function parseParenExpression() {
+    expect(_parenL, "Expected '(' before expression");
+    var val = parseExpression();
+    expect(_parenR, "Expected closing ')' after expression");
+    return val;
+  }
+  function parseBlock(allowStrict) {
+    var node = startNode(), first = true, strict = false, oldStrict;
+    node.body = [];
+    expect(_braceL, "Expected '{' before block");
+    while (!eat(_braceR)) {
+      var stmt = parseStatement();
+      node.body.push(stmt);
+      if (first && isUseStrict(stmt)) {
+        oldStrict = strict;
+        setStrict(strict = true);
+      }
+      first = false
+    }
+    if (strict && !oldStrict) setStrict(false);
+    return finishNode(node, "BlockStatement");
+  }
+  function parseFor(node, init) {
+    node.init = init;
+    expect(_semi, "Expected ';' in for statement");
+    node.test = tokType === _semi ? null : parseExpression();
+    expect(_semi, "Expected ';' in for statement");
+    node.update = tokType === _parenR ? null : parseExpression();
+    expect(_parenR, "Expected closing ')' in for statement");
+    node.body = parseStatement();
+    labels.pop();
+    return finishNode(node, "ForStatement");
+  }
+  function parseForIn(node, init) {
+    node.left = init;
+    node.right = parseExpression();
+    expect(_parenR, "Expected closing ')' in for statement");
+    node.body = parseStatement();
+    labels.pop();
+    return finishNode(node, "ForInStatement");
+  }
+  function parseVar(node, noIn) {
+    node.declarations = [];
+    node.kind = "var";
+    for (;;) {
+      var decl = startNode();
+      decl.id = parseIdent();
+      if (strict && isStrictBadIdWord(decl.id.name))
+        raise(decl.id.start, "Binding " + decl.id.name + " in strict mode");
+      decl.init = eat(_eq) ? parseExpression(true, noIn) : null;
+      node.declarations.push(finishNode(decl, "VariableDeclarator"));
+      if (!eat(_comma)) break;
+    }
+    return finishNode(node, "VariableDeclaration");
+  }
+  function parseExpression(noComma, noIn) {
+    var expr = parseMaybeAssign(noIn);
+    if (!noComma && tokType === _comma) {
+      var node = startNodeFrom(expr);
+      node.expressions = [expr];
+      while (eat(_comma)) node.expressions.push(parseMaybeAssign(noIn));
+      return finishNode(node, "SequenceExpression");
+    }
+    return expr;
+  }
+  function parseMaybeAssign(noIn) {
+    var left = parseMaybeConditional(noIn);
+    if (tokType.isAssign) {
+      var node = startNodeFrom(left);
+      node.operator = tokVal;
+      node.left = left;
+      next();
+      node.right = parseMaybeAssign(noIn);
+      checkLVal(left);
+      return finishNode(node, "AssignmentExpression");
+    }
+    return left;
+  }
+  function parseMaybeConditional(noIn) {
+    var expr = parseExprOps(noIn);
+    if (eat(_question)) {
+      var node = startNodeFrom(expr);
+      node.test = expr;
+      node.consequent = parseExpression(true);
+      expect(_colon, "Expected ':' in conditional expression");
+      node.alternate = parseExpression(true, noIn);
+      return finishNode(node, "ConditionalExpression");
+    }
+    return expr;
+  }
+  function parseExprOps(noIn) {
+    return parseExprOp(parseMaybeUnary(noIn), -1, noIn);
+  }
+  function parseExprOp(left, minPrec, noIn) {
+    var prec = tokType.binop;
+    if (prec != null && (!noIn || tokType !== _in)) {
+      if (prec > minPrec) {
+        var node = startNodeFrom(left);
+        node.left = left;
+        node.operator = tokVal;
+        next();
+        node.right = parseExprOp(parseMaybeUnary(noIn), prec, noIn);
+        var node = finishNode(node, /&&|\|\|/.test(node.operator) ? "LogicalExpression" : "BinaryExpression");
+        return parseExprOp(node, minPrec, noIn);
+      }
+    }
+    return left;
+  }
+  function parseMaybeUnary(noIn) {
+    if (tokType.prefix) {
+      var node = startNode(), update = tokType.isUpdate;
+      node.operator = tokVal;
+      node.prefix = true;
+      next();
+      node.argument = parseMaybeUnary(noIn);
+      if (update) checkLVal(node.argument);
+      else if (strict && node.operator === "delete" &&
+               node.argument.type === "Identifier")
+        raise(node.start, "Deleting local variable in strict mode");
+      return finishNode(node, update ? "UpdateExpression" : "UnaryExpression");
+    }
+    var expr = parseExprSubscripts();
+    while (tokType.postfix && !canInsertSemicolon()) {
+      var node = startNodeFrom(expr);
+      node.operator = tokVal;
+      node.prefix = false;
+      node.argument = expr;
+      checkLVal(expr);
+      next();
+      expr = finishNode(node, "UpdateExpression");
+    }
+    return expr;
+  }
+  function parseExprSubscripts() {
+    return parseSubscripts(parseExprAtom());
+  }
+  function parseSubscripts(base, noCalls) {
+    if (eat(_dot)) {
+      var node = startNodeFrom(base);
+      node.object = base;
+      node.property = parseIdent(true);
+      node.computed = false;
+      return parseSubscripts(finishNode(node, "MemberExpression"), noCalls);
+    } else {
+      if (options.objj) var messageSendNode = startNode();
+      if (eat(_bracketL)) {
+        var expr = parseExpression();
+        if (options.objj && tokType !== _bracketR) {
+          messageSendNode.object = expr;
+          nodeMessageSendObjectExpression = messageSendNode;
+          return base;
+        }
+        var node = startNodeFrom(base);
+        node.object = base;
+        node.property = expr;
+        node.computed = true;
+        expect(_bracketR, "Expected closing ']' in subscript");
+        return parseSubscripts(finishNode(node, "MemberExpression"), noCalls);
+      } else if (!noCalls && eat(_parenL)) {
+        var node = startNodeFrom(base);
+        node.callee = base;
+        node.arguments = parseExprList(_parenR, tokType === _parenR ? null : parseExpression(true), false);
+        return parseSubscripts(finishNode(node, "CallExpression"), noCalls);
+      }
+    }
+    return base;
+  }
+  function parseExprAtom() {
+    switch (tokType) {
+    case _this:
+      var node = startNode();
+      next();
+      return finishNode(node, "ThisExpression");
+    case _name:
+      return parseIdent();
+    case _num: case _string: case _regexp:
+      return parseStringNumRegExpLiteral();
+    case _null: case _true: case _false:
+      var node = startNode();
+      node.value = tokType.atomValue;
+      node.raw = tokType.keyword;
+      next();
+      return finishNode(node, "Literal");
+    case _parenL:
+      var tokStartLoc1 = tokStartLoc, tokStart1 = tokStart;
+      next();
+      var val = parseExpression();
+      val.start = tokStart1;
+      val.end = tokEnd;
+      if (options.locations) {
+        val.loc.start = tokStartLoc1;
+        val.loc.end = tokEndLoc;
+      }
+      if (options.ranges)
+        val.range = [tokStart1, tokEnd];
+      expect(_parenR, "Expected closing ')' in expression");
+      return val;
+    case _arrayLiteral:
+      var node = startNode(),
+          firstExpr = null;
+      next();
+      expect(_bracketL, "Expected '[' at beginning of array literal");
+      if (tokType !== _bracketR)
+        firstExpr = parseExpression(true, true);
+      node.elements = parseExprList(_bracketR, firstExpr, true, true);
+      return finishNode(node, "ArrayLiteral");
+    case _bracketL:
+      var node = startNode(),
+          firstExpr = null;
+      next();
+      if (tokType !== _comma && tokType !== _bracketR) {
+        firstExpr = parseExpression(true, true);
+        if (tokType !== _comma && tokType !== _bracketR)
+          return parseMessageSendExpression(node, firstExpr);
+      }
+      node.elements = parseExprList(_bracketR, firstExpr, true, true);
+      return finishNode(node, "ArrayExpression");
+    case _dictionaryLiteral:
+      var node = startNode();
+      next();
+      var r = parseDictionary();
+      node.keys = r[0];
+      node.values = r[1];
+      return finishNode(node, "DictionaryLiteral");
+    case _braceL:
+      return parseObj();
+    case _function:
+      var node = startNode();
+      next();
+      return parseFunction(node, false);
+    case _new:
+      return parseNew();
+    case _selector:
+      var node = startNode();
+      next();
+      expect(_parenL, "Expected '(' after '@selector'");
+      parseSelector(node, _parenR);
+      expect(_parenR, "Expected closing ')' after selector");
+      return finishNode(node, "SelectorLiteralExpression");
+    case _ref:
+      var node = startNode();
+      next();
+      expect(_parenL, "Expected '(' after '@ref'");
+      node.element = parseIdent(node, _parenR);
+      expect(_parenR, "Expected closing ')' after ref");
+      return finishNode(node, "Reference");
+    case _deref:
+      var node = startNode();
+      next();
+      expect(_parenL, "Expected '(' after '@deref'");
+      node.expr = parseExpression(true, true);
+      expect(_parenR, "Expected closing ')' after deref");
+      return finishNode(node, "Dereference");
+    default:
+      unexpected();
+    }
+  }
+  function parseMessageSendExpression(node, firstExpr) {
+    parseSelectorWithArguments(node, _bracketR);
+    if (firstExpr.type === "Identifier" && firstExpr.name === "super")
+      node.superObject = true;
+    else
+      node.object = firstExpr;
+    return finishNode(node, "MessageSendExpression");
+  }
+  function parseSelector(node, close) {
+      var first = true,
+          selectors = [];
+      for (;;) {
+        if (tokType !== _colon) {
+          selectors.push(parseIdent(true).name);
+          if (first && tokType === close) break;
+        }
+        expect(_colon, "Expected ':' in selector");
+        selectors.push(":");
+        if (tokType === close) break;
+        first = false;
+      }
+      node.selector = selectors.join("");
+  }
+  function parseSelectorWithArguments(node, close) {
+      var first = true,
+          selectors = [],
+          args = [],
+          parameters = [];
+      node.selectors = selectors;
+      node.arguments = args;
+      for (;;) {
+        if (tokType !== _colon) {
+          selectors.push(parseIdent(true));
+          if (first && eat(close))
+            break;
+        } else {
+          selectors.push(null);
+        }
+        expect(_colon, "Expected ':' in selector");
+        args.push(parseExpression(true, true));
+        if (eat(close))
+          break;
+        if (tokType === _comma) {
+          node.parameters = [];
+          while(eat(_comma)) {
+            node.parameters.push(parseExpression(true, true));
+          }
+          eat(close);
+          break;
+        }
+        first = false;
+      }
+  }
+  function parseNew() {
+    var node = startNode();
+    next();
+    node.callee = parseSubscripts(parseExprAtom(false), true);
+    if (eat(_parenL))
+      node.arguments = parseExprList(_parenR, tokType === _parenR ? null : parseExpression(true), false);
+    else node.arguments = [];
+    return finishNode(node, "NewExpression");
+  }
+  function parseObj() {
+    var node = startNode(), first = true, sawGetSet = false;
+    node.properties = [];
+    next();
+    while (!eat(_braceR)) {
+      if (!first) {
+        expect(_comma, "Expected ',' in object literal");
+        if (options.allowTrailingCommas && eat(_braceR)) break;
+      } else first = false;
+      var prop = {key: parsePropertyName()}, isGetSet = false, kind;
+      if (eat(_colon)) {
+        prop.value = parseExpression(true);
+        kind = prop.kind = "init";
+      } else if (options.ecmaVersion >= 5 && prop.key.type === "Identifier" &&
+                 (prop.key.name === "get" || prop.key.name === "set")) {
+        isGetSet = sawGetSet = true;
+        kind = prop.kind = prop.key.name;
+        prop.key = parsePropertyName();
+        if (tokType !== _parenL) unexpected();
+        prop.value = parseFunction(startNode(), false);
+      } else unexpected();
+      if (prop.key.type === "Identifier" && (strict || sawGetSet)) {
+        for (var i = 0; i < node.properties.length; ++i) {
+          var other = node.properties[i];
+          if (other.key.name === prop.key.name) {
+            var conflict = kind == other.kind || isGetSet && other.kind === "init" ||
+              kind === "init" && (other.kind === "get" || other.kind === "set");
+            if (conflict && !strict && kind === "init" && other.kind === "init") conflict = false;
+            if (conflict) raise(prop.key.start, "Redefinition of property");
+          }
+        }
+      }
+      node.properties.push(prop);
+    }
+    return finishNode(node, "ObjectExpression");
+  }
+  function parsePropertyName() {
+    if (tokType === _num || tokType === _string) return parseExprAtom();
+    return parseIdent(true);
+  }
+  function parseFunction(node, isStatement) {
+    if (tokType === _name) node.id = parseIdent();
+    else if (isStatement) unexpected();
+    else node.id = null;
+    node.params = [];
+    var first = true;
+    expect(_parenL, "Expected '(' before function parameters");
+    while (!eat(_parenR)) {
+      if (!first) expect(_comma, "Expected ',' between function parameters"); else first = false;
+      node.params.push(parseIdent());
+    }
+    var oldInFunc = inFunction, oldLabels = labels;
+    inFunction = true; labels = [];
+    node.body = parseBlock(true);
+    inFunction = oldInFunc; labels = oldLabels;
+    if (strict || node.body.body.length && isUseStrict(node.body.body[0])) {
+      for (var i = node.id ? -1 : 0; i < node.params.length; ++i) {
+        var id = i < 0 ? node.id : node.params[i];
+        if (isStrictReservedWord(id.name) || isStrictBadIdWord(id.name))
+          raise(id.start, "Defining '" + id.name + "' in strict mode");
+        if (i >= 0) for (var j = 0; j < i; ++j) if (id.name === node.params[j].name)
+          raise(id.start, "Argument name clash in strict mode");
+      }
+    }
+    return finishNode(node, isStatement ? "FunctionDeclaration" : "FunctionExpression");
+  }
+  function parseExprList(close, firstExpr, allowTrailingComma, allowEmpty) {
+    if (firstExpr && eat(close))
+      return [firstExpr];
+    var elts = [], first = true;
+    while (!eat(close)) {
+      if (first) {
+        first = false;
+        if (allowEmpty && tokType === _comma && !firstExpr) elts.push(null);
+        else elts.push(firstExpr);
+      } else {
+        expect(_comma, "Expected ',' between expressions");
+        if (allowTrailingComma && options.allowTrailingCommas && eat(close)) break;
+        if (allowEmpty && tokType === _comma) elts.push(null);
+        else elts.push(parseExpression(true));
+      }
+    }
+    return elts;
+  }
+  function parseDictionary() {
+    expect(_braceL, "Expected '{' before dictionary");
+    var keys = [], values = [], first = true;
+    while (!eat(_braceR)) {
+      if (!first) {
+        expect(_comma, "Expected ',' between expressions");
+        if (options.allowTrailingCommas && eat(_braceR)) break;
+      }
+      keys.push(parseExpression(true, true));
+      expect(_colon, "Expected ':' between dictionary key and value");
+      values.push(parseExpression(true, true));
+      first = false;
+    }
+    return [keys, values];
+  }
+  function parseIdent(liberal) {
+    var node = startNode();
+    node.name = tokType === _name ? tokVal : (((liberal && !options.forbidReserved) || tokType.okAsIdent) && tokType.keyword) || unexpected();
+    next();
+    return finishNode(node, "Identifier");
+  }
+  function parseStringNumRegExpLiteral() {
+    var node = startNode();
+    node.value = tokVal;
+    node.raw = tokInput.slice(tokStart, tokEnd);
+    next();
+    return finishNode(node, "Literal");
+  }
+  function parseObjectiveJType() {
+    var node = startNode();
+    if (tokType === _name) {
+      node.name = tokVal;
+      next();
+      if (tokVal === '<') {
+        next();
+        node.protocol = parseIdent(true);
+        if (tokVal !== '>') unexpected();
+        next();
+      }
+    } else {
+      node.name = tokType.keyword;
+      if (!eat(_void)) {
+        var nextKeyWord;
+        if (eat(_signed) || eat(_unsigned))
+          nextKeyWord = tokType.keyword || true;
+        if (eat(_char) || eat(_byte) || eat(_short)) {
+          if (nextKeyWord)
+            node.name += " " + nextKeyWord;
+          nextKeyWord = tokType.keyword || true;
+        } else {
+          if (eat(_int)) {
+            if (nextKeyWord)
+              node.name += " " + nextKeyWord;
+            nextKeyWord = tokType.keyword || true;
+          }
+          if (eat(_long)) {
+            if (nextKeyWord)
+              node.name += " " + nextKeyWord;
+            nextKeyWord = tokType.keyword || true;
+            if (eat(_long)) {
+              node.name += " " + nextKeyWord;
+            }
+          }
+        }
+        if (!nextKeyWord) {
+          node.name = (!options.forbidReserved && tokType.keyword) || unexpected();
+          next();
+        }
+      }
+    }
+   return finishNode(node, "ObjectiveJType");
+  }
+})(typeof exports === "undefined" ? (self.acorn = {}) : exports.acorn);
+if (!exports.acorn) {
+  exports.acorn = {};
+  exports.acorn.walk = {};
+}
+(function(exports) {
+  "use strict";
+  exports.simple = function(node, visitors, base, state) {
+    if (!base) base = exports;
+    function c(node, st, override) {
+      var type = override || node.type, found = visitors[type];
+      if (found) found(node, st);
+      base[type](node, st, c);
+    }
+    c(node, state);
+  };
+  exports.recursive = function(node, state, funcs, base) {
+    var visitor = exports.make(funcs, base);
+    function c(node, st, override) {
+      return visitor[override || node.type](node, st, c);
+    }
+    return c(node, state);
+  };
+  exports.make = function(funcs, base) {
+    if (!base) base = exports;
+    var visitor = {};
+    for (var type in base) visitor[type] = base[type];
+    for (var type in funcs) visitor[type] = funcs[type];
+    return visitor;
+  };
+  function skipThrough(node, st, c) { c(node, st); }
+  function ignore(node, st, c) {}
+  exports.Program = exports.BlockStatement = function(node, st, c) {
+    for (var i = 0; i < node.body.length; ++i) {
+      c(node.body[i], st, "Statement");
+    }
+  };
+  exports.Statement = skipThrough;
+  exports.EmptyStatement = ignore;
+  exports.ExpressionStatement = function(node, st, c) {
+    c(node.expression, st, "Expression");
+  };
+  exports.IfStatement = function(node, st, c) {
+    c(node.test, st, "Expression");
+    c(node.consequent, st, "Statement");
+    if (node.alternate) c(node.alternate, st, "Statement");
+  };
+  exports.LabeledStatement = function(node, st, c) {
+    c(node.body, st, "Statement");
+  };
+  exports.BreakStatement = exports.ContinueStatement = ignore;
+  exports.WithStatement = function(node, st, c) {
+    c(node.object, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  exports.SwitchStatement = function(node, st, c) {
+    c(node.discriminant, st, "Expression");
+    for (var i = 0; i < node.cases.length; ++i) {
+      var cs = node.cases[i];
+      if (cs.test) c(cs.test, st, "Expression");
+      for (var j = 0; j < cs.consequent.length; ++j)
+        c(cs.consequent[j], st, "Statement");
+    }
+  };
+  exports.ReturnStatement = function(node, st, c) {
+    if (node.argument) c(node.argument, st, "Expression");
+  };
+  exports.ThrowStatement = function(node, st, c) {
+    c(node.argument, st, "Expression");
+  };
+  exports.TryStatement = function(node, st, c) {
+    c(node.block, st, "Statement");
+    for (var i = 0; i < node.handlers.length; ++i)
+      c(node.handlers[i].body, st, "ScopeBody");
+    if (node.finalizer) c(node.finalizer, st, "Statement");
+  };
+  exports.WhileStatement = function(node, st, c) {
+    c(node.test, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  exports.DoWhileStatement = function(node, st, c) {
+    c(node.body, st, "Statement");
+    c(node.test, st, "Expression");
+  };
+  exports.ForStatement = function(node, st, c) {
+    if (node.init) c(node.init, st, "ForInit");
+    if (node.test) c(node.test, st, "Expression");
+    if (node.update) c(node.update, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  exports.ForInStatement = function(node, st, c) {
+    c(node.left, st, "ForInit");
+    c(node.right, st, "Expression");
+    c(node.body, st, "Statement");
+  };
+  exports.ForInit = function(node, st, c) {
+    if (node.type == "VariableDeclaration") c(node, st);
+    else c(node, st, "Expression");
+  };
+  exports.DebuggerStatement = ignore;
+  exports.FunctionDeclaration = function(node, st, c) {
+    c(node, st, "Function");
+  };
+  exports.VariableDeclaration = function(node, st, c) {
+    for (var i = 0; i < node.declarations.length; ++i) {
+      var decl = node.declarations[i];
+      if (decl.init) c(decl.init, st, "Expression");
+    }
+  };
+  exports.Function = function(node, st, c) {
+    c(node.body, st, "ScopeBody");
+  };
+  exports.ScopeBody = function(node, st, c) {
+    c(node, st, "Statement");
+  };
+  exports.Expression = skipThrough;
+  exports.ThisExpression = ignore;
+  exports.ArrayExpression = exports.ArrayLiteral = function(node, st, c) {
+    for (var i = 0; i < node.elements.length; ++i) {
+      var elt = node.elements[i];
+      if (elt) c(elt, st, "Expression");
+    }
+  };
+  exports.DictionaryLiteral = function(node, st, c) {
+    for (var i = 0; i < node.keys.length; i++) {
+      var key = node.keys[i];
+      c(key, st, "Expression");
+      var value = node.values[i];
+      c(value, st, "Expression");
+    }
+  };
+  exports.ObjectExpression = function(node, st, c) {
+    for (var i = 0; i < node.properties.length; ++i)
+      c(node.properties[i].value, st, "Expression");
+  };
+  exports.FunctionExpression = exports.FunctionDeclaration;
+  exports.SequenceExpression = function(node, st, c) {
+    for (var i = 0; i < node.expressions.length; ++i)
+      c(node.expressions[i], st, "Expression");
+  };
+  exports.UnaryExpression = exports.UpdateExpression = function(node, st, c) {
+    c(node.argument, st, "Expression");
+  };
+  exports.BinaryExpression = exports.AssignmentExpression = exports.LogicalExpression = function(node, st, c) {
+    c(node.left, st, "Expression");
+    c(node.right, st, "Expression");
+  };
+  exports.ConditionalExpression = function(node, st, c) {
+    c(node.test, st, "Expression");
+    c(node.consequent, st, "Expression");
+    c(node.alternate, st, "Expression");
+  };
+  exports.NewExpression = exports.CallExpression = function(node, st, c) {
+    c(node.callee, st, "Expression");
+    if (node.arguments) for (var i = 0; i < node.arguments.length; ++i)
+      c(node.arguments[i], st, "Expression");
+  };
+  exports.MemberExpression = function(node, st, c) {
+    c(node.object, st, "Expression");
+    if (node.computed) c(node.property, st, "Expression");
+  };
+  exports.Identifier = exports.Literal = ignore;
+  exports.ClassDeclarationStatement = function(node, st, c) {
+    if (node.ivardeclarations) for (var i = 0; i < node.ivardeclarations.length; ++i) {
+      c(node.ivardeclarations[i], st, "IvarDeclaration");
+    }
+    for (var i = 0; i < node.body.length; ++i) {
+      c(node.body[i], st, "Statement");
+    }
+  }
+  exports.ImportStatement = ignore;
+  exports.IvarDeclaration = ignore;
+  exports.MethodDeclarationStatement = ignore;
+  exports.PreprocessStatement = ignore;
+  exports.ClassStatement = ignore;
+  exports.GlobalStatement = ignore;
+  exports.MethodDeclarationStatement = function(node, st, c) {
+    c(node.body, st, "Statement");
+  }
+  exports.MessageSendExpression = function(node, st, c) {
+    if (!node.superObject) c(node.object, st, "Expression");
+    if (node.arguments) for (var i = 0; i < node.arguments.length; ++i)
+      c(node.arguments[i], st, "Expression");
+    if (node.parameters) for (var i = 0; i < node.parameters.length; ++i)
+      c(node.parameters[i], st, "Expression");
+  }
+  exports.SelectorLiteralExpression = ignore;
+  exports.Reference = function(node, st, c) {
+    c(node.element, st, "Identifier");
+  }
+  exports.Dereference = function(node, st, c) {
+    c(node.expr, st, "Expression");
+  }
+  function makeScope(prev) {
+    return {vars: Object.create(null), prev: prev};
+  }
+  exports.scopeVisitor = exports.make({
+    Function: function(node, scope, c) {
+      var inner = makeScope(scope);
+      for (var i = 0; i < node.params.length; ++i)
+        inner.vars[node.params[i].name] = {type: "argument", node: node.params[i]};
+      if (node.id) {
+        var decl = node.type == "FunctionDeclaration";
+        (decl ? scope : inner).vars[node.id.name] =
+          {type: decl ? "function" : "function name", node: node.id};
+      }
+      c(node.body, inner, "ScopeBody");
+    },
+    TryStatement: function(node, scope, c) {
+      c(node.block, scope, "Statement");
+      for (var i = 0; i < node.handlers.length; ++i) {
+        var handler = node.handlers[i], inner = makeScope(scope);
+        inner.vars[handler.param.name] = {type: "catch clause", node: handler.param};
+        c(handler.body, inner, "ScopeBody");
+      }
+      if (node.finalizer) c(node.finalizer, scope, "Statement");
+    },
+    VariableDeclaration: function(node, scope, c) {
+      for (var i = 0; i < node.declarations.length; ++i) {
+        var decl = node.declarations[i];
+        scope.vars[decl.id.name] = {type: "var", node: decl.id};
+        if (decl.init) c(decl.init, scope, "Expression");
+      }
+    }
+  });
+})(typeof exports == "undefined" ? acorn.walk = {} : exports.acorn.walk);
+var Scope = function(prev, base)
+{
+    this.vars = Object.create(null);
+    if (base) for (var key in base) this[key] = base[key];
+    this.prev = prev;
+    if (prev) this.compiler = prev.compiler;
+}
+Scope.prototype.compiler = function()
+{
+    return this.compiler;
+}
+Scope.prototype.rootScope = function()
+{
+    return this.prev ? this.prev.rootScope() : this;
+}
+Scope.prototype.isRootScope = function()
+{
+    return !this.prev;
+}
+Scope.prototype.currentClassName = function()
+{
+    return this.classDef ? this.classDef.className : this.prev ? this.prev.currentClassName() : null;
+}
+Scope.prototype.getIvarForCurrentClass = function( ivarName)
+{
+    if (this.ivars)
+    {
+        var ivar = this.ivars[ivarName];
+        if (ivar)
+            return ivar;
+    }
+    var prev = this.prev;
+    if (prev && !this.classDef)
+        return prev.getIvarForCurrentClass(ivarName);
+    return null;
+}
+Scope.prototype.getLvar = function( lvarName, stopAtMethod)
+{
+    if (this.vars)
+    {
+        var lvar = this.vars[lvarName];
+        if (lvar)
+            return lvar;
+    }
+    var prev = this.prev;
+    if (prev && (!stopAtMethod || !this.methodType))
+        return prev.getLvar(lvarName, stopAtMethod);
+    return null;
+}
+Scope.prototype.currentMethodType = function()
+{
+    return this.methodType ? this.methodType : this.prev ? this.prev.currentMethodType() : null;
+}
+Scope.prototype.copyAddedSelfToIvarsToParent = function()
+{
+  if (this.prev && this.addedSelfToIvars) for (var key in this.addedSelfToIvars)
+  {
+    var addedSelfToIvar = this.addedSelfToIvars[key],
+        scopeAddedSelfToIvar = (this.prev.addedSelfToIvars || (this.prev.addedSelfToIvars = Object.create(null)))[key] || (this.prev.addedSelfToIvars[key] = []);
+    scopeAddedSelfToIvar.push.apply(scopeAddedSelfToIvar, addedSelfToIvar);
+  }
+}
+Scope.prototype.addMaybeWarning = function(warning)
+{
+    var rootScope = this.rootScope();
+    (rootScope._maybeWarnings || (rootScope._maybeWarnings = [])).push(warning);
+}
+Scope.prototype.maybeWarnings = function()
+{
+    return this.rootScope()._maybeWarnings;
+}
+var GlobalVariableMaybeWarning = function( aMessage, node, code)
+{
+    this.message = createMessage(aMessage, node, code);
+    this.node = node;
+}
+GlobalVariableMaybeWarning.prototype.checkIfWarning = function( st)
+{
+    var identifier = this.node.name;
+    return !st.getLvar(identifier) && typeof global[identifier] === "undefined" && typeof window[identifier] === "undefined" && !st.compiler.getClassDef(identifier);
+}
+function StringBuffer()
+{
+    this.atoms = [];
+}
+StringBuffer.prototype.toString = function()
+{
+    return this.atoms.join("");
+}
+StringBuffer.prototype.concat = function(aString)
+{
+    this.atoms.push(aString);
+}
+StringBuffer.prototype.isEmpty = function()
+{
+    return this.atoms.length !== 0;
+}
+var currentCompilerFlags = "";
+var reservedIdentifiers = exports.acorn.makePredicate("self _cmd undefined localStorage arguments");
+var wordPrefixOperators = exports.acorn.makePredicate("delete in instanceof new typeof void");
+var isLogicalBinary = exports.acorn.makePredicate("LogicalExpression BinaryExpression");
+var isInInstanceof = exports.acorn.makePredicate("in instanceof");
+var ObjJAcornCompiler = function( aString, aURL, flags, pass, classDefs)
+{
+    this.source = aString;
+    this.URL = new CFURL(aURL);
+ this.pass = pass;
+ this.jsBuffer = new StringBuffer();
+    this.imBuffer = null;
+    this.cmBuffer = null;
+    this.warnings = [];
+    try {
+        this.tokens = exports.acorn.parse(aString);
+    }
+    catch (e) {
+        if (e.lineStart)
+        {
+            var message = this.prettifyMessage(e, "ERROR");
+            console.log(message);
+        }
+        throw e;
+    }
+    this.dependencies = [];
+    this.flags = flags | ObjJAcornCompiler.Flags.IncludeDebugSymbols;
+    this.classDefs = classDefs ? classDefs : Object.create(null);
+    this.lastPos = 0;
+    if (currentCompilerFlags & ObjJAcornCompiler.Flags.Generate)
+        this.generate = true;
+    this.generate = true;
+    compile(this.tokens, new Scope(null ,{ compiler: this }), pass === 2 ? pass2 : pass1);
+}
+exports.ObjJAcornCompiler = ObjJAcornCompiler;
+exports.ObjJAcornCompiler.compileToExecutable = function( aString, aURL, flags)
+{
+    ObjJAcornCompiler.currentCompileFile = aURL;
+    return new ObjJAcornCompiler(aString, aURL, flags, 2).executable();
+}
+exports.ObjJAcornCompiler.compileToIMBuffer = function( aString, aURL, flags, classDefs)
+{
+    return new ObjJAcornCompiler(aString, aURL, flags, 2, classDefs).IMBuffer();
+}
+exports.ObjJAcornCompiler.compileFileDependencies = function( aString, aURL, flags)
+{
+    ObjJAcornCompiler.currentCompileFile = aURL;
+    return new ObjJAcornCompiler(aString, aURL, flags, 1).executable();
+}
+ObjJAcornCompiler.prototype.compilePass2 = function()
+{
+    ObjJAcornCompiler.currentCompileFile = this.URL;
+ this.pass = 2;
+ this.jsBuffer = new StringBuffer();
+    this.warnings = [];
+    compile(this.tokens, new Scope(null ,{ compiler: this }), pass2);
+    for (var i = 0; i < this.warnings.length; i++)
+    {
+       var message = this.prettifyMessage(this.warnings[i], "WARNING");
+        console.log(message);
+    }
+ return this.jsBuffer.toString();
+}
+var currentCompilerFlags = "";
+exports.setCurrentCompilerFlags = function( compilerFlags)
+{
+    currentCompilerFlags = compilerFlags;
+}
+exports.currentCompilerFlags = function( compilerFlags)
+{
+    return currentCompilerFlags;
+}
+ObjJAcornCompiler.Flags = { };
+ObjJAcornCompiler.Flags.IncludeDebugSymbols = 1 << 0;
+ObjJAcornCompiler.Flags.IncludeTypeSignatures = 1 << 1;
+ObjJAcornCompiler.Flags.Generate = 1 << 2;
+ObjJAcornCompiler.prototype.addWarning = function( aWarning)
+{
+    this.warnings.push(aWarning);
+}
+ObjJAcornCompiler.prototype.getIvarForClass = function( ivarName, scope)
+{
+    var ivar = scope.getIvarForCurrentClass(ivarName);
+    if (ivar)
+        return ivar;
+    var c = this.getClassDef(scope.currentClassName());
+    while (c)
+    {
+        var ivars = c.ivars;
+        if (ivars)
+        {
+            var ivarDef = ivars[ivarName];
+            if (ivarDef)
+                return ivarDef;
+        }
+        c = this.getClassDef(c.superClassName);
+    }
+}
+ObjJAcornCompiler.prototype.getClassDef = function( aClassName)
+{
+    if (!aClassName) return null;
+ var c = this.classDefs[aClassName];
+ if (c) return c;
+ if (objj_getClass)
+ {
+  var aClass = objj_getClass(aClassName);
+  if (aClass)
+  {
+   var ivars = class_copyIvarList(aClass),
+    ivarSize = ivars.length,
+    myIvars = Object.create(null),
+    superClass = aClass.super_class;
+   for (var i = 0; i < ivarSize; i++)
+   {
+    var ivar = ivars[i];
+       myIvars[ivar.name] = {"type": ivar.type, "name": ivar.name};
+   }
+   c = {"className": aClassName, "ivars": myIvars};
+   if (superClass)
+    c.superClassName = superClass.name;
+   this.classDefs[aClassName] = c;
+   return c;
+  }
+ }
+ return null;
+}
+ObjJAcornCompiler.prototype.executable = function()
+{
+    if (!this._executable)
+        this._executable = new Executable(this.jsBuffer ? this.jsBuffer.toString() : null, this.dependencies, this.URL, null, this);
+    return this._executable;
+}
+ObjJAcornCompiler.prototype.IMBuffer = function()
+{
+    return this.imBuffer;
+}
+ObjJAcornCompiler.prototype.JSBuffer = function()
+{
+    return this.jsBuffer;
+}
+ObjJAcornCompiler.prototype.prettifyMessage = function( aMessage, messageType)
+{
+    var line = this.source.substring(aMessage.lineStart, aMessage.lineEnd),
+        message = "\n" + line;
+    message += (new Array(aMessage.column + 1)).join(" ");
+    message += (new Array(Math.min(1, line.length) + 1)).join("^") + "\n";
+    message += messageType + " line " + aMessage.line + " in " + this.URL + ": " + aMessage.message;
+    return message;
+}
+ObjJAcornCompiler.prototype.error_message = function(errorMessage, node)
+{
+    var pos = exports.acorn.getLineInfo(this.source, node.start),
+        syntaxError = {message: errorMessage, line: pos.line, column: pos.column, lineStart: pos.lineStart, lineEnd: pos.lineEnd};
+    return new SyntaxError(this.prettifyMessage(syntaxError, "ERROR"));
+}
+ObjJAcornCompiler.prototype.pushImport = function(url)
+{
+    if (!ObjJAcornCompiler.importStack) ObjJAcornCompiler.importStack = [];
+    ObjJAcornCompiler.importStack.push(url);
+}
+ObjJAcornCompiler.prototype.popImport = function()
+{
+    ObjJAcornCompiler.importStack.pop();
+}
+function createMessage( aMessage, node, code)
+{
+    var message = exports.acorn.getLineInfo(code, node.start);
+    message.message = aMessage;
+    return message;
+}
+function compile(node, state, visitor) {
+    function c(node, st, override) {
+        visitor[override || node.type](node, st, c);
+    }
+    c(node, state);
+};
+function isIdempotentExpression(node) {
+    switch (node.type) {
+        case "Literal":
+        case "Identifier":
+            return true;
+        case "ArrayExpression":
+            for (var i = 0; i < node.elements.length; ++i) {
+                if (!isIdempotentExpression(node.elements[i]))
+                    return false;
+            }
+            return true;
+        case "DictionaryLiteral":
+            for (var i = 0; i < node.keys.length; ++i) {
+                if (!isIdempotentExpression(node.keys[i]))
+                    return false;
+                if (!isIdempotentExpression(node.values[i]))
+                    return false;
+            }
+            return true;
+        case "ObjectExpression":
+            for (var i = 0; i < node.properties.length; ++i)
+                if (!isIdempotentExpression(node.properties[i].value))
+                    return false;
+            return true;
+        case "FunctionExpression":
+            for (var i = 0; i < node.params.length; ++i)
+                if (!isIdempotentExpression(node.params[i]))
+                    return false;
+            return true;
+        case "SequenceExpression":
+            for (var i = 0; i < node.expressions.length; ++i)
+                if (!isIdempotentExpression(node.expressions[i]))
+                    return false;
+            return true;
+        case "UnaryExpression":
+            return isIdempotentExpression(node.argument);
+        case "BinaryExpression":
+            return isIdempotentExpression(node.left) && isIdempotentExpression(node.right);
+        case "ConditionalExpression":
+            return isIdempotentExpression(node.test) && isIdempotentExpression(node.consequent) && isIdempotentExpression(node.alternate);
+        case "MemberExpression":
+            return isIdempotentExpression(node.object) && (!node.computed || isIdempotentExpression(node.property));
+        case "Dereference":
+            return isIdempotentExpression(node.expr);
+        case "Reference":
+            return isIdempotentExpression(node.element);
+        default:
+            return false;
+    }
+}
+function checkCanDereference(st, node) {
+    if (!isIdempotentExpression(node))
+        throw st.compiler.error_message("Dereference of expression with side effects", node);
+}
+function surroundExpression(c) {
+    return function(node, st, override) {
+      st.compiler.jsBuffer.concat("(");
+      c(node, st, override);
+      st.compiler.jsBuffer.concat(")");
+    }
+}
+var operatorPrecedence = {
+    "*": 3, "/": 3, "%": 3,
+    "+": 4, "-": 4,
+    "<<": 5, ">>": 5, ">>>": 5,
+    "<": 6, "<=": 6, ">": 6, ">=": 6, "in": 6, "instanceof": 6,
+    "==": 7, "!=": 7, "===": 7, "!==": 7,
+    "&": 8,
+    "^": 9,
+    "|": 10,
+    "&&": 11,
+    "||": 12
+}
+var expressionTypePrecedence = {
+    MemberExpression: 0,
+    CallExpression: 1,
+    NewExpression: 2,
+    FunctionExpression: 3,
+    UnaryExpression: 4, UpdateExpression: 4,
+    BinaryExpression: 5,
+    LogicalExpression: 6,
+    ConditionalExpression: 7,
+    AssignmentExpression: 8
+}
+function nodePrecedence(node, subNode, right) {
+    var nodeType = node.type,
+        nodePrecedence = expressionTypePrecedence[nodeType] || -1,
+        subNodePrecedence = expressionTypePrecedence[subNode.type] || -1,
+        nodeOperatorPrecedence,
+        subNodeOperatorPrecedence;
+    return nodePrecedence < subNodePrecedence || (nodePrecedence === subNodePrecedence && isLogicalBinary(nodeType) && ((nodeOperatorPrecedence = operatorPrecedence[node.operator]) < (subNodeOperatorPrecedence = operatorPrecedence[subNode.operator]) || (right && nodeOperatorPrecedence === subNodeOperatorPrecedence)));
+}
+var pass1 = exports.acorn.walk.make({
+ImportStatement: function(node, st, c) {
+    var urlString = node.filename.value;
+    st.compiler.dependencies.push(new FileDependency(new CFURL(urlString), node.localfilepath));
+}
+});
+var indentationSpaces = 4;
+var indentStep = Array(indentationSpaces + 1).join(" ");
+var indentation = "";
+var pass2 = exports.acorn.walk.make({
+Program: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    indentation = "";
+    for (var i = 0; i < node.body.length; ++i) {
+      c(node.body[i], st, "Statement");
+    }
+    if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.end));
+    var maybeWarnings = st.maybeWarnings();
+    if (maybeWarnings) for (var i = 0; i < maybeWarnings.length; i++) {
+        var maybeWarning = maybeWarnings[i];
+        if (maybeWarning.checkIfWarning(st)) {
+            compiler.addWarning(maybeWarning.message);
+        }
+    }
+},
+BlockStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      st.indentBlockLevel = typeof st.indentBlockLevel === "undefined" ? 0 : st.indentBlockLevel + 1;
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation.substring(indentationSpaces));
+      buffer.concat("{\n");
+    }
+    for (var i = 0; i < node.body.length; ++i) {
+      c(node.body[i], st, "Statement");
+    }
+    if (generate) {
+      buffer.concat(indentation.substring(indentationSpaces));
+      buffer.concat("}");
+      if (st.isDecl || st.indentBlockLevel > 0)
+        buffer.concat("\n");
+      st.indentBlockLevel--;
+    }
+},
+ExpressionStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (generate) compiler.jsBuffer.concat(indentation);
+    c(node.expression, st, "Expression");
+    if (generate) compiler.jsBuffer.concat(";\n");
+},
+IfStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      if (!st.superNodeIsElse)
+        buffer.concat(indentation);
+      else
+        delete st.superNodeIsElse;
+      buffer.concat("if (");
+    }
+    c(node.test, st, "Expression");
+    if (generate) buffer.concat(node.consequent.type === "EmptyStatement" ? ");\n" : ")\n");
+    indentation += indentStep;
+    c(node.consequent, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+    var alternate = node.alternate;
+    if (alternate) {
+      var alternateNotIf = alternate.type !== "IfStatement";
+      if (generate) {
+        var emptyStatement = alternate.type === "EmptyStatement";
+        buffer.concat(indentation);
+        buffer.concat(alternateNotIf ? emptyStatement ? "else;\n" : "else\n" : "else ");
+      }
+      if (alternateNotIf)
+        indentation += indentStep;
+      else
+        st.superNodeIsElse = true;
+      c(alternate, st, "Statement");
+      if (alternateNotIf) indentation = indentation.substring(indentationSpaces);
+    }
+},
+LabeledStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (compiler.generate) {
+      var buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat(node.label.name);
+      buffer.concat(": ");
+    }
+    c(node.body, st, "Statement");
+},
+BreakStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (compiler.generate) {
+      compiler.jsBuffer.concat(indentation);
+      if (node.label) {
+        compiler.jsBuffer.concat("break ");
+        compiler.jsBuffer.concat(node.label.name);
+        compiler.jsBuffer.concat(";\n");
+      } else
+        compiler.jsBuffer.concat("break;\n");
+    }
+},
+ContinueStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (compiler.generate) {
+      var buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      if (node.label) {
+        buffer.concat("continue ");
+        buffer.concat(node.label.name);
+        buffer.concat(";\n");
+      } else
+        buffer.concat("continue;\n");
+    }
+},
+WithStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("with(");
+    }
+    c(node.object, st, "Expression");
+    if (generate) buffer.concat(")\n");
+    indentation += indentStep;
+    c(node.body, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+},
+SwitchStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("switch(");
+    }
+    c(node.discriminant, st, "Expression");
+    if (generate) buffer.concat(") {\n");
+    for (var i = 0; i < node.cases.length; ++i) {
+      var cs = node.cases[i];
+      if (cs.test) {
+        if (generate) {
+          buffer.concat(indentation);
+          buffer.concat("case ");
+        }
+        c(cs.test, st, "Expression");
+        if (generate) buffer.concat(":\n");
+      } else
+        if (generate) buffer.concat("default:\n");
+      indentation += indentStep;
+      for (var j = 0; j < cs.consequent.length; ++j)
+        c(cs.consequent[j], st, "Statement");
+      indentation = indentation.substring(indentationSpaces);
+    }
+    if (generate) {
+      buffer.concat(indentation);
+      buffer.concat("}\n");
+    }
+},
+ReturnStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("return");
+    }
+    if (node.argument) {
+      if (generate) buffer.concat(" ");
+      c(node.argument, st, "Expression");
+    }
+    if (generate) buffer.concat(";\n");
+},
+ThrowStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("throw ");
+    }
+    c(node.argument, st, "Expression");
+    if (generate) buffer.concat(";\n");
+},
+TryStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("try");
+    }
+    indentation += indentStep;
+    c(node.block, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+    for (var i = 0; i < node.handlers.length; ++i) {
+      var handler = node.handlers[i], inner = new Scope(st),
+          param = handler.param,
+          name = param.name;
+      inner.vars[name] = {type: "catch clause", node: param};
+      if (generate) {
+        buffer.concat(indentation);
+        buffer.concat("catch(");
+        buffer.concat(name);
+        buffer.concat(") ");
+      }
+      indentation += indentStep;
+      c(handler.body, inner, "ScopeBody");
+      indentation = indentation.substring(indentationSpaces);
+      inner.copyAddedSelfToIvarsToParent();
+    }
+    if (node.finalizer) {
+      if (generate) {
+        buffer.concat(indentation);
+        buffer.concat("finally ");
+      }
+      indentation += indentStep;
+      c(node.finalizer, st, "Statement");
+      indentation = indentation.substring(indentationSpaces);
+    }
+},
+WhileStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        body = node.body,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("while (");
+    }
+    c(node.test, st, "Expression");
+    if (generate) buffer.concat(body.type === "EmptyStatement" ? ");\n" : ")\n");
+    indentation += indentStep;
+    c(body, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+},
+DoWhileStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("do\n");
+    }
+    indentation += indentStep;
+    c(node.body, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+    if (generate) {
+      buffer.concat(indentation);
+      buffer.concat("while (");
+    }
+    c(node.test, st, "Expression");
+    if (generate) buffer.concat(");\n");
+},
+ForStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        body = node.body,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("for (");
+    }
+    if (node.init) c(node.init, st, "ForInit");
+    if (generate) buffer.concat("; ");
+    if (node.test) c(node.test, st, "Expression");
+    if (generate) buffer.concat("; ");
+    if (node.update) c(node.update, st, "Expression");
+    if (generate) buffer.concat(body.type === "EmptyStatement" ? ");\n" : ")\n");
+    indentation += indentStep;
+    c(body, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+},
+ForInStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        body = node.body,
+        buffer;
+    if (generate) {
+      buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("for (");
+    }
+    c(node.left, st, "ForInit");
+    if (generate) buffer.concat(" in ");
+    c(node.right, st, "Expression");
+    if (generate) buffer.concat(body.type === "EmptyStatement" ? ");\n" : ")\n");
+    indentation += indentStep;
+    c(body, st, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+},
+ForInit: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (node.type === "VariableDeclaration") {
+        st.isFor = true;
+        c(node, st);
+        delete st.isFor;
+    } else
+      c(node, st, "Expression");
+},
+DebuggerStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (compiler.generate) {
+      var buffer = compiler.jsBuffer;
+      buffer.concat(indentation);
+      buffer.concat("debugger;\n");
+    }
+},
+Function: function(node, st, c) {
+  var compiler = st.compiler,
+      generate = compiler.generate,
+      buffer = compiler.jsBuffer;
+      inner = new Scope(st),
+      decl = node.type == "FunctionDeclaration";
+      inner.isDecl = decl;
+  for (var i = 0; i < node.params.length; ++i)
+    inner.vars[node.params[i].name] = {type: "argument", node: node.params[i]};
+  if (node.id) {
+    (decl ? st : inner).vars[node.id.name] =
+      {type: decl ? "function" : "function name", node: node.id};
+    if (generate) {
+      buffer.concat(node.id.name);
+      buffer.concat(" = ");
+    } else {
+      buffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+      buffer.concat(node.id.name);
+      buffer.concat(" = function");
+      compiler.lastPos = node.id.end;
+    }
+  }
+  if (generate) {
+    buffer.concat("function(");
+    for (var i = 0; i < node.params.length; ++i) {
+      if (i)
+        buffer.concat(", ");
+      buffer.concat(node.params[i].name);
+    }
+    buffer.concat(")\n");
+  }
+  indentation += indentStep;
+  c(node.body, inner, "ScopeBody");
+  indentation = indentation.substring(indentationSpaces);
+  inner.copyAddedSelfToIvarsToParent();
+},
+VariableDeclaration: function(node, st, c) {
+  var compiler = st.compiler,
+      generate = compiler.generate,
+      buffer;
+  if (generate) {
+    buffer = compiler.jsBuffer;
+    if (!st.isFor) buffer.concat(indentation);
+    buffer.concat("var ");
+  }
+  for (var i = 0; i < node.declarations.length; ++i) {
+    var decl = node.declarations[i],
+        identifier = decl.id.name;
+    if (i)
+      if (generate) {
+        if (st.isFor)
+          buffer.concat(", ");
+        else {
+          buffer.concat(",\n");
+          buffer.concat(indentation);
+          buffer.concat("    ");
+        }
+      }
+    st.vars[identifier] = {type: "var", node: decl.id};
+    if (generate) buffer.concat(identifier);
+    if (decl.init) {
+      if (generate) buffer.concat(" = ");
+      c(decl.init, st, "Expression");
+    }
+    if (st.addedSelfToIvars) {
+      var addedSelfToIvar = st.addedSelfToIvars[identifier];
+      if (addedSelfToIvar) {
+        var buffer = st.compiler.jsBuffer.atoms;
+        for (var i = 0; i < addedSelfToIvar.length; i++) {
+          var dict = addedSelfToIvar[i];
+          buffer[dict.index] = "";
+          compiler.addWarning(createMessage("Local declaration of '" + identifier + "' hides instance variable", dict.node, compiler.source));
+        }
+        st.addedSelfToIvars[identifier] = [];
+      }
+    }
+  }
+  if (generate && !st.isFor) compiler.jsBuffer.concat(";\n");
+},
+ThisExpression: function(node, st, c) {
+    var compiler = st.compiler;
+    if (compiler.generate) compiler.jsBuffer.concat("this");
+},
+ArrayExpression: function(node, st, c) {
+  var compiler = st.compiler,
+      generate = compiler.generate;
+  if (generate) compiler.jsBuffer.concat("[");
+    for (var i = 0; i < node.elements.length; ++i) {
+      var elt = node.elements[i];
+      if (i !== 0)
+          if (generate) compiler.jsBuffer.concat(", ");
+      if (elt) c(elt, st, "Expression");
+    }
+  if (generate) compiler.jsBuffer.concat("]");
+},
+ObjectExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (generate) compiler.jsBuffer.concat("{");
+    for (var i = 0; i < node.properties.length; ++i)
+    {
+        var prop = node.properties[i];
+        if (generate) {
+          if (i)
+            compiler.jsBuffer.concat(", ");
+          st.isPropertyKey = true;
+          c(prop.key, st, "Expression");
+          delete st.isPropertyKey;
+          compiler.jsBuffer.concat(": ");
+        } else if (prop.key.raw && prop.key.raw.charAt(0) === "@") {
+          compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, prop.key.start));
+          compiler.lastPos = prop.key.start + 1;
+        }
+        c(prop.value, st, "Expression");
+    }
+    if (generate) compiler.jsBuffer.concat("}");
+},
+SequenceExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (generate) compiler.jsBuffer.concat("(");
+    for (var i = 0; i < node.expressions.length; ++i) {
+      if (generate && i !== 0)
+        compiler.jsBuffer.concat(", ");
+      c(node.expressions[i], st, "Expression");
+    }
+    if (generate) compiler.jsBuffer.concat(")");
+},
+UnaryExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        argument = node.argument;
+    if (generate) {
+      if (node.prefix) {
+        compiler.jsBuffer.concat(node.operator);
+        if (wordPrefixOperators(node.operator))
+          compiler.jsBuffer.concat(" ");
+        (nodePrecedence(node, argument) ? surroundExpression(c) : c)(argument, st, "Expression");
+      } else {
+        (nodePrecedence(node, argument) ? surroundExpression(c) : c)(argument, st, "Expression");
+        compiler.jsBuffer.concat(node.operator);
+      }
+    } else {
+      c(argument, st, "Expression");
+    }
+},
+UpdateExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (node.argument.type === "Dereference") {
+        checkCanDereference(st, node.argument);
+        if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.jsBuffer.concat((node.prefix ? "" : "(") + "(");
+        if (!generate) compiler.lastPos = node.argument.expr.start;
+        c(node.argument.expr, st, "Expression");
+        if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.argument.expr.end));
+        compiler.jsBuffer.concat(")(");
+        if (!generate) compiler.lastPos = node.argument.start;
+        c(node.argument, st, "Expression");
+        if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.argument.end));
+        compiler.jsBuffer.concat(" " + node.operator.substring(0, 1) + " 1)" + (node.prefix ? "" : node.operator == '++' ? " - 1)" : " + 1)"));
+        if (!generate) compiler.lastPos = node.end;
+        return;
+    }
+    if (node.prefix) {
+      if (generate) {
+        compiler.jsBuffer.concat(node.operator);
+        if (wordPrefixOperators(node.operator))
+          compiler.jsBuffer.concat(" ");
+      }
+      (generate && nodePrecedence(node, node.argument) ? surroundExpression(c) : c)(node.argument, st, "Expression");
+    } else {
+      (generate && nodePrecedence(node, node.argument) ? surroundExpression(c) : c)(node.argument, st, "Expression");
+      if (generate) compiler.jsBuffer.concat(node.operator);
+    }
+},
+BinaryExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        operatorType = isInInstanceof(node.operator);
+    (generate && nodePrecedence(node, node.left) ? surroundExpression(c) : c)(node.left, st, "Expression");
+    if (generate) {
+        var buffer = compiler.jsBuffer;
+        buffer.concat(" ");
+        buffer.concat(node.operator);
+        buffer.concat(" ");
+    }
+    (generate && nodePrecedence(node, node.right, true) ? surroundExpression(c) : c)(node.right, st, "Expression");
+},
+LogicalExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    (generate && nodePrecedence(node, node.left) ? surroundExpression(c) : c)(node.left, st, "Expression");
+    if (generate) {
+        var buffer = compiler.jsBuffer;
+        buffer.concat(" ");
+        buffer.concat(node.operator);
+        buffer.concat(" ");
+    }
+    (generate && nodePrecedence(node, node.right, true) ? surroundExpression(c) : c)(node.right, st, "Expression");
+},
+AssignmentExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        saveAssignment = st.assignment,
+        buffer = compiler.jsBuffer;
+    if (node.left.type === "Dereference") {
+        checkCanDereference(st, node.left);
+        if (!generate) buffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        buffer.concat("(");
+        if (!generate) compiler.lastPos = node.left.expr.start;
+        c(node.left.expr, st, "Expression");
+        if (!generate) buffer.concat(compiler.source.substring(compiler.lastPos, node.left.expr.end));
+        buffer.concat(")(");
+        if (node.operator !== "=") {
+            if (!generate) compiler.lastPos = node.left.start;
+            c(node.left, st, "Expression");
+            if (!generate) buffer.concat(compiler.source.substring(compiler.lastPos, node.left.end));
+            buffer.concat(" " + node.operator.substring(0, 1) + " ");
+        }
+        if (!generate) compiler.lastPos = node.right.start;
+        c(node.right, st, "Expression");
+        if (!generate) buffer.concat(compiler.source.substring(compiler.lastPos, node.right.end));
+        buffer.concat(")");
+        if (!generate) compiler.lastPos = node.end;
+        return;
+    }
+    var saveAssignment = st.assignment;
+    st.assignment = true;
+    (generate && nodePrecedence(node, node.left) ? surroundExpression(c) : c)(node.left, st, "Expression");
+    if (generate) {
+        buffer.concat(" ");
+        buffer.concat(node.operator);
+        buffer.concat(" ");
+    }
+    st.assignment = saveAssignment;
+    (generate && nodePrecedence(node, node.right, true) ? surroundExpression(c) : c)(node.right, st, "Expression");
+    if (st.isRootScope() && node.left.type === "Identifier" && !st.getLvar(node.left.name))
+        st.vars[node.left.name] = {type: "global", node: node.left};
+},
+ConditionalExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    (generate && nodePrecedence(node, node.test) ? surroundExpression(c) : c)(node.test, st, "Expression");
+    if (generate)
+      compiler.jsBuffer.concat(" ? ");
+    c(node.consequent, st, "Expression");
+    if (generate) compiler.jsBuffer.concat(" : ");
+    c(node.alternate, st, "Expression");
+},
+NewExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (generate) compiler.jsBuffer.concat("new ");
+    (generate && nodePrecedence(node, node.callee) ? surroundExpression(c) : c)(node.callee, st, "Expression");
+    if (generate) compiler.jsBuffer.concat("(");
+    if (node.arguments) {
+      for (var i = 0; i < node.arguments.length; ++i) {
+        if (generate && i)
+          compiler.jsBuffer.concat(", ");
+        c(node.arguments[i], st, "Expression");
+      }
+    }
+    if (generate) compiler.jsBuffer.concat(")");
+},
+CallExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    (generate && nodePrecedence(node, node.callee) ? surroundExpression(c) : c)(node.callee, st, "Expression");
+    if (generate) compiler.jsBuffer.concat("(");
+    if (node.arguments) {
+      for (var i = 0; i < node.arguments.length; ++i) {
+        if (generate && i)
+          compiler.jsBuffer.concat(", ");
+        c(node.arguments[i], st, "Expression");
+      }
+    }
+    if (generate) compiler.jsBuffer.concat(")");
+},
+MemberExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        computed = node.computed;
+    (generate && nodePrecedence(node, node.object) ? surroundExpression(c) : c)(node.object, st, "Expression");
+    if (generate) {
+      if (computed)
+        compiler.jsBuffer.concat("[");
+      else
+        compiler.jsBuffer.concat(".");
+    }
+    st.secondMemberExpression = !computed;
+    (generate && !computed && nodePrecedence(node, node.property) ? surroundExpression(c) : c)(node.property, st, "Expression");
+    st.secondMemberExpression = false;
+    if (generate && computed)
+      compiler.jsBuffer.concat("]");
+},
+Identifier: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        identifier = node.name;
+    if (st.currentMethodType() === "-" && !st.secondMemberExpression && !st.isPropertyKey)
+    {
+        var lvar = st.getLvar(identifier, true),
+            ivar = compiler.getIvarForClass(identifier, st);
+        if (ivar)
+        {
+            if (lvar)
+                compiler.addWarning(createMessage("Local declaration of '" + identifier + "' hides instance variable", node, compiler.source));
+            else
+            {
+                var nodeStart = node.start;
+                if (!generate) do {
+                    compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, nodeStart));
+                    compiler.lastPos = nodeStart;
+                } while (compiler.source.substr(nodeStart++, 1) === "(")
+                ((st.addedSelfToIvars || (st.addedSelfToIvars = Object.create(null)))[identifier] || (st.addedSelfToIvars[identifier] = [])).push({node: node, index: compiler.jsBuffer.atoms.length});
+                compiler.jsBuffer.concat("self.");
+            }
+        } else if (!reservedIdentifiers(identifier)) {
+            var message,
+                classOrGlobal = typeof global[identifier] !== "undefined" || typeof window[identifier] !== "undefined" || compiler.getClassDef(identifier),
+                globalVar = st.getLvar(identifier);
+            if (classOrGlobal && (!globalVar || globalVar.type !== "class")) {
+            } else if (!globalVar) {
+                if (st.assignment) {
+                    message = new GlobalVariableMaybeWarning("Creating global variable inside function or method '" + identifier + "'", node, compiler.source);
+                    st.vars[identifier] = {type: "remove global warning", node: node};
+                } else {
+                    message = new GlobalVariableMaybeWarning("Using unknown class or uninitialized global variable '" + identifier + "'", node, compiler.source);
+                }
+            }
+            if (message)
+                st.addMaybeWarning(message);
+        }
+    }
+    if (generate) compiler.jsBuffer.concat(identifier);
+},
+Literal: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (generate) {
+      if (node.raw && node.raw.charAt(0) === "@")
+        compiler.jsBuffer.concat(node.raw.substring(1));
+      else
+        compiler.jsBuffer.concat(node.raw);
+    } else if (node.raw.charAt(0) === "@") {
+        compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.start + 1;
+    }
+},
+ArrayLiteral: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (!generate) {
+        compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.start;
+    }
+    if (!generate) buffer.concat(" ");
+    if (!node.elements.length) {
+        compiler.jsBuffer.concat("objj_msgSend(objj_msgSend(CPArray, \"alloc\"), \"init\")");
+    } else {
+        compiler.jsBuffer.concat("objj_msgSend(objj_msgSend(CPArray, \"alloc\"), \"initWithObjects:count:\", [");
+        for (var i = 0; i < node.elements.length; i++) {
+            var elt = node.elements[i];
+            if (i)
+                compiler.jsBuffer.concat(", ");
+            if (!generate) compiler.lastPos = elt.start;
+            c(elt, st, "Expression");
+            if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, elt.end));
+        }
+        compiler.jsBuffer.concat("], " + node.elements.length + ")");
+    }
+    if (!generate) compiler.lastPos = node.end;
+},
+DictionaryLiteral: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    if (!generate) {
+        compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.start;
+    }
+    if (!generate) buffer.concat(" ");
+    if (!node.keys.length) {
+        compiler.jsBuffer.concat("objj_msgSend(objj_msgSend(CPDictionary, \"alloc\"), \"init\")");
+    } else {
+        compiler.jsBuffer.concat("objj_msgSend(objj_msgSend(CPDictionary, \"alloc\"), \"initWithObjectsAndKeys:\"");
+        for (var i = 0; i < node.keys.length; i++) {
+            var key = node.keys[i],
+                value = node.values[i];
+            compiler.jsBuffer.concat(", ");
+            if (!generate) compiler.lastPos = value.start;
+            c(value, st, "Expression");
+            if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, value.end));
+            compiler.jsBuffer.concat(", ");
+            if (!generate) compiler.lastPos = key.start;
+            c(key, st, "Expression");
+            if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, key.end));
+        }
+        compiler.jsBuffer.concat(")");
+    }
+    if (!generate) compiler.lastPos = node.end;
+},
+ImportStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer = compiler.jsBuffer;
+    if (!generate) buffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+    buffer.concat("objj_executeFile(\"");
+    buffer.concat(node.filename.value);
+    buffer.concat(node.localfilepath ? "\", YES);" : "\", NO);");
+    if (!generate) compiler.lastPos = node.end;
+},
+ClassDeclarationStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        classDef,
+        saveJSBuffer = compiler.jsBuffer,
+        className = node.classname.name,
+        classScope = new Scope(st);
+    compiler.imBuffer = new StringBuffer();
+    compiler.cmBuffer = new StringBuffer();
+    compiler.classBodyBuffer = new StringBuffer();
+    if (!generate) saveJSBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+    if (node.superclassname)
+    {
+        classDef = compiler.getClassDef(className);
+        if (classDef && classDef.ivars)
+            throw compiler.error_message("Duplicate class " + className, node.classname);
+        if (!compiler.getClassDef(node.superclassname.name))
+        {
+            var errorMessage = "Can't find superclass " + node.superclassname.name;
+            for (var i = ObjJAcornCompiler.importStack.length; --i >= 0;)
+                errorMessage += "\n" + Array((ObjJAcornCompiler.importStack.length - i) * 2 + 1).join(" ") + "Imported by: " + ObjJAcornCompiler.importStack[i];
+            throw compiler.error_message(errorMessage, node.superclassname);
+        }
+        classDef = {"className": className, "superClassName": node.superclassname.name, "ivars": Object.create(null), "methods": Object.create(null)};
+        saveJSBuffer.concat("{var the_class = objj_allocateClassPair(" + node.superclassname.name + ", \"" + className + "\"),\nmeta_class = the_class.isa;");
+    }
+    else if (node.categoryname)
+    {
+        classDef = compiler.getClassDef(className);
+        if (!classDef)
+            throw compiler.error_message("Class " + className + " not found ", node.classname);
+        saveJSBuffer.concat("{\nvar the_class = objj_getClass(\"" + className + "\")\n");
+        saveJSBuffer.concat("if(!the_class) throw new SyntaxError(\"*** Could not find definition for class \\\"" + className + "\\\"\");\n");
+        saveJSBuffer.concat("var meta_class = the_class.isa;");
+    }
+    else
+    {
+        classDef = {"className": className, "superClassName": null, "ivars": Object.create(null), "methods": Object.create(null)};
+        saveJSBuffer.concat("{var the_class = objj_allocateClassPair(Nil, \"" + className + "\"),\nmeta_class = the_class.isa;");
+    }
+    classScope.classDef = classDef;
+    compiler.currentSuperClass = "objj_getClass(\"" + className + "\").super_class";
+    compiler.currentSuperMetaClass = "objj_getMetaClass(\"" + className + "\").super_class";
+    var firstIvarDeclaration = true,
+        hasAccessors = false;
+    if (node.ivardeclarations) for (var i = 0; i < node.ivardeclarations.length; ++i)
+    {
+        var ivarDecl = node.ivardeclarations[i],
+            ivarType = ivarDecl.ivartype ? ivarDecl.ivartype.name : null,
+            ivarName = ivarDecl.id.name,
+            ivar = {"type": ivarType, "name": ivarName};
+        if (firstIvarDeclaration)
+        {
+            firstIvarDeclaration = false;
+            saveJSBuffer.concat("class_addIvars(the_class, [");
+        }
+        else
+            saveJSBuffer.concat(", ");
+        if (compiler.flags & ObjJAcornCompiler.Flags.IncludeTypeSignatures)
+            saveJSBuffer.concat("new objj_ivar(\"" + ivarName + "\", \"" + ivarType + "\")");
+        else
+            saveJSBuffer.concat("new objj_ivar(\"" + ivarName + "\")");
+        if (ivarDecl.outlet)
+            ivar.outlet = true;
+        classDef.ivars[ivarName] = ivar;
+        if (!classScope.ivars)
+            classScope.ivars = Object.create(null);
+        classScope.ivars[ivarName] = {type: "ivar", name: ivarName, node: ivarDecl.id, ivar: ivar};
+        if (!hasAccessors && ivarDecl.accessors)
+            hasAccessors = true;
+    }
+    if (!firstIvarDeclaration)
+        saveJSBuffer.concat("]);");
+    if (hasAccessors)
+    {
+        var getterSetterBuffer = new StringBuffer();
+        getterSetterBuffer.concat(compiler.source.substring(node.start, node.endOfIvars));
+        getterSetterBuffer.concat("\n");
+        for (var i = 0; i < node.ivardeclarations.length; ++i)
+        {
+            var ivarDecl = node.ivardeclarations[i],
+                ivarType = ivarDecl.ivartype ? ivarDecl.ivartype.name : null,
+                ivarName = ivarDecl.id.name,
+                accessors = ivarDecl.accessors;
+            if (!accessors)
+                continue;
+            var property = (accessors.property && accessors.property.name) || ivarName,
+                getterName = (accessors.getter && accessors.getter.name) || property,
+                getterCode = "- (" + (ivarType ? ivarType : "id") + ")" + getterName + "\n{\nreturn " + ivarName + ";\n}\n";
+            getterSetterBuffer.concat(getterCode);
+            if (accessors.readonly)
+                continue;
+            var setterName = accessors.setter ? accessors.setter.name : null;
+            if (!setterName)
+            {
+                var start = property.charAt(0) == '_' ? 1 : 0;
+                setterName = (start ? "_" : "") + "set" + property.substr(start, 1).toUpperCase() + property.substring(start + 1) + ":";
+            }
+            var setterCode = "- (void)" + setterName + "(" + (ivarType ? ivarType : "id") + ")newValue\n{\n";
+            if (accessors.copy)
+                setterCode += "if (" + ivarName + " !== newValue)\n" + ivarName + " = [newValue copy];\n}\n";
+            else
+                setterCode += ivarName + " = newValue;\n}\n";
+            getterSetterBuffer.concat(setterCode);
+        }
+        getterSetterBuffer.concat("\n@end");
+        var b = getterSetterBuffer.toString().replace(/@accessors(\(.*\))?/g, "");
+        var imBuffer = ObjJAcornCompiler.compileToIMBuffer(b, "Accessors", compiler.flags, compiler.classDefs);
+        compiler.imBuffer.concat(imBuffer);
+    }
+    compiler.classDefs[className] = classDef;
+    if (node.body.length > 0)
+    {
+        if (!generate) compiler.lastPos = node.body[0].start;
+        for (var i = 0; i < node.body.length; ++i) {
+            var body = node.body[i];
+            c(body, classScope, "Statement");
+        }
+        if (!generate) saveJSBuffer.concat(compiler.source.substring(compiler.lastPos, body.end));
+    }
+    if (!node.categoryname) {
+        saveJSBuffer.concat("objj_registerClassPair(the_class);\n");
+    }
+    if (compiler.imBuffer.isEmpty())
+    {
+        saveJSBuffer.concat("class_addMethods(the_class, [");
+        saveJSBuffer.atoms.push.apply(saveJSBuffer.atoms, compiler.imBuffer.atoms);
+        saveJSBuffer.concat("]);\n");
+    }
+    if (compiler.cmBuffer.isEmpty())
+    {
+        saveJSBuffer.concat("class_addMethods(meta_class, [");
+        saveJSBuffer.atoms.push.apply(saveJSBuffer.atoms, compiler.cmBuffer.atoms);
+        saveJSBuffer.concat("]);\n");
+    }
+    saveJSBuffer.concat("}");
+    compiler.jsBuffer = saveJSBuffer;
+    if (!generate) compiler.lastPos = node.end;
+},
+MethodDeclarationStatement: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        saveJSBuffer = compiler.jsBuffer,
+        methodScope = new Scope(st),
+        selectors = node.selectors,
+        arguments = node.arguments,
+        types = [node.returntype ? node.returntype.name : "id"],
+        selector = selectors[0].name;
+    if (!generate) saveJSBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+    compiler.jsBuffer = node.methodtype === '-' ? compiler.imBuffer : compiler.cmBuffer;
+    for (var i = 0; i < arguments.length; i++) {
+        if (i === 0)
+            selector += ":";
+        else
+            selector += (selectors[i] ? selectors[i].name : "") + ":";
+    }
+    if (compiler.jsBuffer.isEmpty())
+        compiler.jsBuffer.concat(", ");
+    compiler.jsBuffer.concat("new objj_method(sel_getUid(\"");
+    compiler.jsBuffer.concat(selector);
+    compiler.jsBuffer.concat("\"), function");
+    if (compiler.flags & ObjJAcornCompiler.Flags.IncludeDebugSymbols)
+    {
+        compiler.jsBuffer.concat(" $" + st.currentClassName() + "__" + selector.replace(/:/g, "_"));
+    }
+    compiler.jsBuffer.concat("(self, _cmd");
+    methodScope.methodType = node.methodtype;
+    if (arguments) for (var i = 0; i < arguments.length; i++)
+    {
+        var argument = arguments[i],
+            argumentName = argument.identifier.name;
+        compiler.jsBuffer.concat(", ");
+        compiler.jsBuffer.concat(argumentName);
+        types.push(argument.type ? argument.type.name : null);
+        methodScope.vars[argumentName] = {type: "method argument", node: argument};
+    }
+    compiler.jsBuffer.concat(")\n");
+    if (!generate) compiler.lastPos = node.startOfBody;
+    indentation += indentStep;
+    c(node.body, methodScope, "Statement");
+    indentation = indentation.substring(indentationSpaces);
+    if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.body.end));
+    compiler.jsBuffer.concat("\n");
+    if (compiler.flags & ObjJAcornCompiler.Flags.IncludeDebugSymbols)
+        compiler.jsBuffer.concat(","+JSON.stringify(types));
+    compiler.jsBuffer.concat(")");
+    compiler.jsBuffer = saveJSBuffer;
+    if (!generate) compiler.lastPos = node.end;
+},
+MessageSendExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate,
+        buffer = compiler.jsBuffer;
+    if (!generate) {
+        buffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.object ? node.object.start : node.arguments.length ? node.arguments[0].start : node.end;
+    }
+    if (node.superObject)
+    {
+        if (!generate) buffer.concat(" ");
+        buffer.concat("objj_msgSendSuper(");
+        buffer.concat("{ receiver:self, super_class:" + (st.currentMethodType() === "+" ? compiler.currentSuperMetaClass : compiler.currentSuperClass ) + " }");
+    }
+    else
+    {
+        if (!generate) buffer.concat(" ");
+        buffer.concat("objj_msgSend(");
+        c(node.object, st, "Expression");
+        if (!generate) buffer.concat(compiler.source.substring(compiler.lastPos, node.object.end));
+    }
+    var selectors = node.selectors,
+        arguments = node.arguments,
+        firstSelector = selectors[0],
+        selector = firstSelector ? firstSelector.name : "";
+    for (var i = 0; i < arguments.length; i++)
+        if (i === 0)
+            selector += ":";
+        else
+            selector += (selectors[i] ? selectors[i].name : "") + ":";
+    buffer.concat(", \"");
+    buffer.concat(selector);
+    buffer.concat("\"");
+    if (node.arguments) for (var i = 0; i < node.arguments.length; i++)
+    {
+        var argument = node.arguments[i];
+        buffer.concat(", ");
+        if (!generate)
+            compiler.lastPos = argument.start;
+        c(argument, st, "Expression");
+        if (!generate) {
+            buffer.concat(compiler.source.substring(compiler.lastPos, argument.end));
+            compiler.lastPos = argument.end;
+        }
+    }
+    if (node.parameters) for (var i = 0; i < node.parameters.length; ++i)
+    {
+        var parameter = node.parameters[i];
+        buffer.concat(", ");
+        if (!generate)
+            compiler.lastPos = parameter.start;
+        c(parameter, st, "Expression");
+        if (!generate) {
+            buffer.concat(compiler.source.substring(compiler.lastPos, parameter.end));
+            compiler.lastPos = parameter.end;
+        }
+    }
+    buffer.concat(")");
+    if (!generate) compiler.lastPos = node.end;
+},
+SelectorLiteralExpression: function(node, st, c) {
+    var compiler = st.compiler,
+        buffer = compiler.jsBuffer,
+        generate = compiler.generate;
+    if (!generate) {
+        buffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        buffer.concat(" ");
+    }
+    buffer.concat("sel_getUid(\"");
+    buffer.concat(node.selector);
+    buffer.concat("\")");
+    if (!generate) compiler.lastPos = node.end;
+},
+Reference: function(node, st, c) {
+    var compiler = st.compiler,
+        buffer = compiler.jsBuffer,
+        generate = compiler.generate;
+    if (!generate) {
+        buffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        buffer.concat(" ");
+    }
+    buffer.concat("function(__input) { if (arguments.length) return ");
+    buffer.concat(node.element.name);
+    buffer.concat(" = __input; return ");
+    buffer.concat(node.element.name);
+    buffer.concat("; }");
+    if (!generate) compiler.lastPos = node.end;
+},
+Dereference: function(node, st, c) {
+    var compiler = st.compiler,
+        generate = compiler.generate;
+    checkCanDereference(st, node.expr);
+    if (!generate) {
+        compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.expr.start;
+    }
+    c(node.expr, st, "Expression");
+    if (!generate) compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.expr.end));
+    compiler.jsBuffer.concat("()");
+    if (!generate) compiler.lastPos = node.end;
+},
+ClassStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (!compiler.generate) {
+        compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.start;
+        compiler.jsBuffer.concat("//");
+    }
+    var className = node.id.name;
+    if (!compiler.getClassDef(className)) {
+        classDef = {"className": className};
+        compiler.classDefs[className] = classDef;
+    }
+    st.vars[node.id.name] = {type: "class", node: node.id};
+},
+GlobalStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (!compiler.generate) {
+        compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+        compiler.lastPos = node.start;
+        compiler.jsBuffer.concat("//");
+    }
+    st.rootScope().vars[node.id.name] = {type: "global", node: node.id};
+},
+PreprocessStatement: function(node, st, c) {
+    var compiler = st.compiler;
+    if (!compiler.generate) {
+      compiler.jsBuffer.concat(compiler.source.substring(compiler.lastPos, node.start));
+      compiler.lastPos = node.start;
+      compiler.jsBuffer.concat("//");
+    }
+}
+});
 function FileDependency( aURL, isLocal)
 {
     this._URL = aURL;
@@ -3642,14 +7566,16 @@ var ExecutableUnloadedFileDependencies = 0,
     ExecutableLoadingFileDependencies = 1,
     ExecutableLoadedFileDependencies = 2,
     AnonymousExecutableCount = 0;
-function Executable( aCode, fileDependencies, aURL, aFunction)
+function Executable( aCode, fileDependencies, aURL, aFunction, aCompiler, aFilenameTranslateDictionary)
 {
     if (arguments.length === 0)
         return this;
     this._code = aCode;
-    this._function = aFunction || NULL;
+    this._function = aFunction || null;
     this._URL = makeAbsoluteURL(aURL || new CFURL("(Anonymous" + (AnonymousExecutableCount++) + ")"));
+    this._compiler = aCompiler || null;
     this._fileDependencies = fileDependencies;
+    this._filenameTranslateDictionary = aFilenameTranslateDictionary;
     if (fileDependencies.length)
     {
         this._fileDependencyStatus = ExecutableUnloadedFileDependencies;
@@ -3659,7 +7585,8 @@ function Executable( aCode, fileDependencies, aURL, aFunction)
         this._fileDependencyStatus = ExecutableLoadedFileDependencies;
     if (this._function)
         return;
-    this.setCode(aCode);
+    if (!aCompiler)
+        this.setCode(aCode);
 }
 exports.Executable = Executable;
 Executable.prototype.path = function()
@@ -3685,6 +7612,23 @@ Executable.prototype.functionArguments = function()
 Executable.prototype.functionArguments.displayName = "Executable.prototype.functionArguments";
 Executable.prototype.execute = function()
 {
+    if (this._compiler)
+    {
+        var fileDependencies = this.fileDependencies(),
+            index = 0,
+            count = fileDependencies.length;
+        this._compiler.pushImport(this.URL().lastPathComponent());
+        for (; index < count; ++index)
+        {
+            var fileDependency = fileDependencies[index],
+                isQuoted = fileDependency.isLocal(),
+                URL = fileDependency.URL();
+            this.fileExecuter()(URL, isQuoted);
+        }
+        this._compiler.popImport();
+        this.setCode(this._compiler.compilePass2());
+        this._compiler = null;
+    }
     var oldContextBundle = CONTEXT_BUNDLE;
     CONTEXT_BUNDLE = CFBundle.bundleContainingURL(this.URL());
     var result = this._function.apply(global, this.functionArguments());
@@ -3866,10 +7810,28 @@ Executable.fileImporterForURL = function( aURL)
 Executable.fileImporterForURL.displayName = "Executable.fileImporterForURL";
 var cachedFileExecutableSearchers = { },
     cachedFileExecutableSearchResults = { };
+function countProp(x) {
+    var count = 0;
+    for (var k in x) {
+        if (x.hasOwnProperty(k)) {
+            ++count;
+        }
+    }
+    return count;
+}
+Executable.resetCachedFileExecutableSearchers = function()
+{
+    cachedFileExecutableSearchers = { };
+    cachedFileExecutableSearchResults = { };
+    cachedFileImporters = { };
+    cachedFileExecuters = { };
+    fileDependencyMarkers = { };
+}
 Executable.fileExecutableSearcherForURL = function( referenceURL)
 {
     var referenceURLString = referenceURL.absoluteString(),
         cachedFileExecutableSearcher = cachedFileExecutableSearchers[referenceURLString],
+        aFilenameTranslateDictionary = Executable.filenameTranslateDictionary ? Executable.filenameTranslateDictionary() : null;
         cachedSearchResults = { };
     if (!cachedFileExecutableSearcher)
     {
@@ -3884,16 +7846,19 @@ Executable.fileExecutableSearcherForURL = function( referenceURL)
             {
                 if (!isAbsoluteURL)
                     aURL = new CFURL(aURL, referenceURL);
-                StaticResource.resolveResourceAtURL(aURL, NO, completed);
+                StaticResource.resolveResourceAtURL(aURL, NO, completed, aFilenameTranslateDictionary);
             }
             else
                 StaticResource.resolveResourceAtURLSearchingIncludeURLs(aURL, completed);
             function completed( aStaticResource)
             {
                 if (!aStaticResource)
-                    throw new Error("Could not load file at " + aURL);
+                {
+                    var compilingFileUrl = ObjJAcornCompiler ? ObjJAcornCompiler.currentCompileFile : null;
+                    throw new Error("Could not load file at " + aURL + (compilingFileUrl ? " when compiling " + compilingFileUrl : ""));
+                }
                 cachedFileExecutableSearchResults[cacheUID] = aStaticResource;
-                success(new FileExecutable(aStaticResource.URL()));
+                success(new FileExecutable(aStaticResource.URL(), aFilenameTranslateDictionary));
             }
         };
         cachedFileExecutableSearchers[referenceURLString] = cachedFileExecutableSearcher;
@@ -3902,7 +7867,7 @@ Executable.fileExecutableSearcherForURL = function( referenceURL)
 }
 Executable.fileExecutableSearcherForURL.displayName = "Executable.fileExecutableSearcherForURL";
 var FileExecutablesForURLStrings = { };
-function FileExecutable( aURL)
+function FileExecutable( aURL, aFilenameTranslateDictionary)
 {
     aURL = makeAbsoluteURL(aURL);
     var URLString = aURL.absoluteString(),
@@ -3912,18 +7877,23 @@ function FileExecutable( aURL)
     FileExecutablesForURLStrings[URLString] = this;
     var fileContents = StaticResource.resourceAtURL(aURL).contents(),
         executable = NULL,
-        extension = aURL.pathExtension();
+        extension = aURL.pathExtension().toLowerCase();
     if (fileContents.match(/^@STATIC;/))
         executable = decompile(fileContents, aURL);
-    else if (extension === "j" || !extension)
-        executable = exports.preprocess(fileContents, aURL, Preprocessor.Flags.IncludeDebugSymbols);
+    else if ((extension === "j" || !extension) && !fileContents.match(/^{/))
+        executable = exports.ObjJAcornCompiler.compileFileDependencies(fileContents, aURL, ObjJAcornCompiler.Flags.IncludeDebugSymbols);
     else
         executable = new Executable(fileContents, [], aURL);
-    Executable.apply(this, [executable.code(), executable.fileDependencies(), aURL, executable._function]);
+    Executable.apply(this, [executable.code(), executable.fileDependencies(), aURL, executable._function, executable._compiler, aFilenameTranslateDictionary]);
     this._hasExecuted = NO;
 }
 exports.FileExecutable = FileExecutable;
 FileExecutable.prototype = new Executable();
+FileExecutable.resetFileExecutables = function()
+{
+    FileExecutablesForURLStrings = { };
+    FunctionCache = { };
+}
 FileExecutable.prototype.execute = function( shouldForce)
 {
     if (this._hasExecuted && !shouldForce)
@@ -3953,7 +7923,7 @@ function decompile( aString, aURL)
         else if (marker === MARKER_IMPORT_LOCAL)
             dependencies.push(new FileDependency(new CFURL(text), YES));
     }
-    var fn = FileExecutable._lookupCachedFunction(aURL)
+    var fn = FileExecutable._lookupCachedFunction(aURL);
     if (fn)
         return new Executable(code, dependencies, aURL, fn);
     return new Executable(code, dependencies, aURL);
@@ -3978,14 +7948,12 @@ objj_ivar = function( aName, aType)
     this.name = aName;
     this.type = aType;
 }
-objj_ivar.displayName = "objj_ivar";
 objj_method = function( aName, anImplementation, types)
 {
     this.name = aName;
     this.method_imp = anImplementation;
     this.types = types;
 }
-objj_method.displayName = "objj_method";
 objj_class = function(displayName)
 {
     this.isa = NULL;
@@ -4003,40 +7971,34 @@ objj_class = function(displayName)
     eval("this.allocator = function " + (displayName || "OBJJ_OBJECT").replace(/\W/g, "_") + "() { }");
     this._UID = -1;
 }
-objj_class.displayName = "objj_class";
 objj_object = function()
 {
     this.isa = NULL;
     this._UID = -1;
 }
-objj_object.displayName = "objj_object";
 class_getName = function( aClass)
 {
     if (aClass == Nil)
         return "";
     return aClass.name;
 }
-class_getName.displayName = "class_getName";
 class_isMetaClass = function( aClass)
 {
     if (!aClass)
         return NO;
     return ((aClass.info & (CLS_META)));
 }
-class_isMetaClass.displayName = "class_isMetaClass";
 class_getSuperclass = function( aClass)
 {
     if (aClass == Nil)
         return Nil;
     return aClass.super_class;
 }
-class_getSuperclass.displayName = "class_getSuperclass"
 class_setSuperclass = function( aClass, aSuperClass)
 {
     aClass.super_class = aSuperClass;
     aClass.isa.super_class = aSuperClass.isa;
 }
-class_setSuperclass.displayName = "class_setSuperclass";
 class_addIvar = function( aClass, aName, aType)
 {
     var thePrototype = aClass.allocator.prototype;
@@ -4048,7 +8010,6 @@ class_addIvar = function( aClass, aName, aType)
     thePrototype[aName] = NULL;
     return YES;
 }
-class_addIvar.displayName = "class_addIvar";
 class_addIvars = function( aClass, ivars)
 {
     var index = 0,
@@ -4066,12 +8027,10 @@ class_addIvars = function( aClass, ivars)
         }
     }
 }
-class_addIvars.displayName = "class_addIvars";
 class_copyIvarList = function( aClass)
 {
     return aClass.ivar_list.slice(0);
 }
-class_copyIvarList.displayName = "class_copyIvarList";
 class_addMethod = function( aClass, aName, anImplementation, types)
 {
     var method = new objj_method(aName, anImplementation, types);
@@ -4082,7 +8041,6 @@ class_addMethod = function( aClass, aName, anImplementation, types)
         class_addMethod((((aClass.info & (CLS_META))) ? aClass : aClass.isa), aName, anImplementation, types);
     return YES;
 }
-class_addMethod.displayName = "class_addMethod";
 class_addMethods = function( aClass, methods)
 {
     var index = 0,
@@ -4099,7 +8057,6 @@ class_addMethods = function( aClass, methods)
     if (!((aClass.info & (CLS_META))) && (((aClass.info & (CLS_META))) ? aClass : aClass.isa).isa === (((aClass.info & (CLS_META))) ? aClass : aClass.isa))
         class_addMethods((((aClass.info & (CLS_META))) ? aClass : aClass.isa), methods);
 }
-class_addMethods.displayName = "class_addMethods";
 class_getInstanceMethod = function( aClass, aSelector)
 {
     if (!aClass || !aSelector)
@@ -4107,7 +8064,6 @@ class_getInstanceMethod = function( aClass, aSelector)
     var method = aClass.method_dtable[aSelector];
     return method ? method : NULL;
 }
-class_getInstanceMethod.displayName = "class_getInstanceMethod";
 class_getInstanceVariable = function( aClass, aName)
 {
     if (!aClass || !aName)
@@ -4115,7 +8071,6 @@ class_getInstanceVariable = function( aClass, aName)
     var variable = aClass.ivar_dtable[aName];
     return variable;
 }
-class_getInstanceVariable.displayName = "class_getInstanceVariable";
 class_getClassMethod = function( aClass, aSelector)
 {
     if (!aClass || !aSelector)
@@ -4123,27 +8078,22 @@ class_getClassMethod = function( aClass, aSelector)
     var method = (((aClass.info & (CLS_META))) ? aClass : aClass.isa).method_dtable[aSelector];
     return method ? method : NULL;
 }
-class_getClassMethod.displayName = "class_getClassMethod";
 class_respondsToSelector = function( aClass, aSelector)
 {
     return class_getClassMethod(aClass, aSelector) != NULL;
 }
-class_respondsToSelector.displayName = "class_respondsToSelector";
 class_copyMethodList = function( aClass)
 {
     return aClass.method_list.slice(0);
 }
-class_copyMethodList.displayName = "class_copyMethodList";
 class_getVersion = function( aClass)
 {
     return aClass.version;
 }
-class_getVersion.displayName = "class_getVersion";
 class_setVersion = function( aClass, aVersion)
 {
     aClass.version = parseInt(aVersion, 10);
 }
-class_setVersion.displayName = "class_setVersion";
 class_replaceMethod = function( aClass, aSelector, aMethodImplementation)
 {
     if (!aClass || !aSelector)
@@ -4155,7 +8105,6 @@ class_replaceMethod = function( aClass, aSelector, aMethodImplementation)
     method.method_imp = aMethodImplementation;
     return method_imp;
 }
-class_replaceMethod.displayName = "class_replaceMethod";
 var _class_initialize = function( aClass)
 {
     var meta = (((aClass.info & (CLS_META))) ? aClass : aClass.isa);
@@ -4216,7 +8165,6 @@ class_getMethodImplementation = function( aClass, aSelector)
     if (!((((aClass.info & (CLS_META))) ? aClass : aClass.isa).info & (CLS_INITIALIZED))) _class_initialize(aClass); var method = aClass.method_dtable[aSelector]; var implementation = method ? method.method_imp : _objj_forward;;
     return implementation;
 }
-class_getMethodImplementation.displayName = "class_getMethodImplementation";
 var REGISTERED_CLASSES = { };
 objj_allocateClassPair = function( superclass, aName)
 {
@@ -4247,7 +8195,6 @@ objj_allocateClassPair = function( superclass, aName)
     metaClassObject._UID = objj_generateObjectUID();
     return classObject;
 }
-objj_allocateClassPair.displayName = "objj_allocateClassPair";
 var CONTEXT_BUNDLE = nil;
 objj_registerClassPair = function( aClass)
 {
@@ -4255,7 +8202,13 @@ objj_registerClassPair = function( aClass)
     REGISTERED_CLASSES[aClass.name] = aClass;
     addClassToBundle(aClass, CONTEXT_BUNDLE);
 }
-objj_registerClassPair.displayName = "objj_registerClassPair";
+objj_resetRegisterClasses = function()
+{
+    for (var key in REGISTERED_CLASSES)
+        delete global[key];
+    REGISTERED_CLASSES = {};
+    resetBundle();
+}
 class_createInstance = function( aClass)
 {
     if (!aClass)
@@ -4265,7 +8218,6 @@ class_createInstance = function( aClass)
     object._UID = objj_generateObjectUID();
     return object;
 }
-class_createInstance.displayName = "class_createInstance";
 var prototype_bug = function() { }
 prototype_bug.prototype.member = false;
 with (new prototype_bug())
@@ -4300,13 +8252,11 @@ object_getClassName = function( anObject)
     var theClass = anObject.isa;
     return theClass ? class_getName(theClass) : "";
 }
-object_getClassName.displayName = "object_getClassName";
 objj_lookUpClass = function( aName)
 {
     var theClass = REGISTERED_CLASSES[aName];
     return theClass ? theClass : Nil;
 }
-objj_lookUpClass.displayName = "objj_lookUpClass";
 objj_getClass = function( aName)
 {
     var theClass = REGISTERED_CLASSES[aName];
@@ -4315,23 +8265,29 @@ objj_getClass = function( aName)
     }
     return theClass ? theClass : Nil;
 }
-objj_getClass.displayName = "objj_getClass";
+objj_getClassList = function( buffer, bufferLen)
+{
+    for (var aName in REGISTERED_CLASSES)
+    {
+        buffer.push(REGISTERED_CLASSES[aName]);
+        if (bufferLen && --bufferLen === 0)
+            break;
+    }
+    return buffer.length;
+}
 objj_getMetaClass = function( aName)
 {
     var theClass = objj_getClass(aName);
     return (((theClass.info & (CLS_META))) ? theClass : theClass.isa);
 }
-objj_getMetaClass.displayName = "objj_getMetaClass";
 ivar_getName = function(anIvar)
 {
     return anIvar.name;
 }
-ivar_getName.displayName = "ivar_getName";
 ivar_getTypeEncoding = function(anIvar)
 {
     return anIvar.type;
 }
-ivar_getTypeEncoding.displayName = "ivar_getTypeEncoding";
 objj_msgSend = function( aReceiver, aSelector)
 {
     if (aReceiver == nil)
@@ -4346,7 +8302,6 @@ objj_msgSend = function( aReceiver, aSelector)
     }
     return implementation.apply(aReceiver, arguments);
 }
-objj_msgSend.displayName = "objj_msgSend";
 objj_msgSendSuper = function( aSuper, aSelector)
 {
     var super_class = aSuper.super_class;
@@ -4354,24 +8309,20 @@ objj_msgSendSuper = function( aSuper, aSelector)
     if (!((((super_class.info & (CLS_META))) ? super_class : super_class.isa).info & (CLS_INITIALIZED))) _class_initialize(super_class); var method = super_class.method_dtable[aSelector]; var implementation = method ? method.method_imp : _objj_forward;;
     return implementation.apply(aSuper.receiver, arguments);
 }
-objj_msgSendSuper.displayName = "objj_msgSendSuper";
 method_getName = function( aMethod)
 {
     return aMethod.name;
 }
-method_getName.displayName = "method_getName";
 method_getImplementation = function( aMethod)
 {
     return aMethod.method_imp;
 }
-method_getImplementation.displayName = "method_getImplementation";
 method_setImplementation = function( aMethod, anImplementation)
 {
     var oldImplementation = aMethod.method_imp;
     aMethod.method_imp = anImplementation;
     return oldImplementation;
 }
-method_setImplementation.displayName = "method_setImplementation";
 method_exchangeImplementations = function( lhs, rhs)
 {
     var lhs_imp = method_getImplementation(lhs),
@@ -4379,27 +8330,22 @@ method_exchangeImplementations = function( lhs, rhs)
     method_setImplementation(lhs, rhs_imp);
     method_setImplementation(rhs, lhs_imp);
 }
-method_exchangeImplementations.displayName = "method_exchangeImplementations";
 sel_getName = function(aSelector)
 {
     return aSelector ? aSelector : "<null selector>";
 }
-sel_getName.displayName = "sel_getName";
 sel_getUid = function( aName)
 {
     return aName;
 }
-sel_getUid.displayName = "sel_getUid";
 sel_isEqual = function( lhs, rhs)
 {
     return lhs === rhs;
 }
-sel_isEqual.displayName = "sel_isEqual";
 sel_registerName = function( aName)
 {
     return aName;
 }
-sel_registerName.displayName = "sel_registerName";
 objj_class.prototype.toString = objj_object.prototype.toString = function()
 {
     var isa = this.isa;
@@ -4503,7 +8449,7 @@ objj_backtrace_decorator = function(msgSend)
         {
             objj_backtrace.pop();
         }
-    }
+    };
 }
 objj_supress_exceptions_decorator = function(msgSend)
 {
@@ -4518,7 +8464,7 @@ objj_supress_exceptions_decorator = function(msgSend)
         {
             CPLog.warn("Exception " + anException + " in " + objj_debug_message_format(aReceiver, aSelector));
         }
-    }
+    };
 }
 var objj_typechecks_reported = {},
     objj_typecheck_prints_backtrace = NO;
@@ -4563,7 +8509,7 @@ objj_typecheck_decorator = function(msgSend)
             }
         }
         return result;
-    }
+    };
 }
 objj_debug_typecheck = function(expectedType, object)
 {
@@ -4674,7 +8620,7 @@ function resolveMainBundleURL()
 var documentLoaded = NO;
 function afterDocumentLoad( aFunction)
 {
-    if (documentLoaded)
+    if (documentLoaded || document.readyState === "complete")
         return aFunction();
     if (window.addEventListener)
         window.addEventListener("load", aFunction, NO);
