@@ -19,7 +19,27 @@
  */
 @implementation DebuggerWindowController : CPWindowController 
 {
+	id _id;
+	id _interpreterAPI;
 }
 
+- (id) interpreterAPI
+{
+	return _interpreterAPI;
+}
 
+- (void) interpreterAPI: anInterpreterAPI
+{
+	_interpreterAPI = anInterpreterAPI;
+}
+
+- (void) id: anID
+{
+	_id = anID;
+}
+
+- (id) id
+{
+	return _id;
+}
 @end

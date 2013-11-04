@@ -17,7 +17,7 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation AddLoggerWindowController : CPWindowController 
+@implementation ElementAPIWindowController : CPWindowController 
 {
 	id _elementAPI;
 }

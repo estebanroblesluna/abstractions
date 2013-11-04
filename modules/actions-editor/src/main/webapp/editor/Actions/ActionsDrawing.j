@@ -28,7 +28,6 @@
   id _statusFigure;
   id _openInNewWindowFigure;
 
-  CPDictionary _debugFigures;
   CPDictionary _processorFigures;
   CPDictionary _toolboxes;
 }
@@ -41,7 +40,6 @@
 - (id) initWith: (id) aContextId
 {
 	_dirty = false;
-	_debugFigures = [CPDictionary dictionary];
 	_processorFigures = [CPDictionary dictionary];
 	_toolboxes = [CPDictionary dictionary];
 	
@@ -189,76 +187,21 @@
 
 - (void) initiateMessageSendFrom: (id) aProcessorFigure
 {
-	var myController = [[CPWindowController alloc] initWithWindowCibName: "SendMessageWindow"];
+	var myController = [[InterpreterAPIWindowController alloc] initWithWindowCibName: "SendMessageWindow"];
 	[myController showWindow: nil];
-
-//	var debugWindow = [DebugWindow
-//						newAt: [aProcessorFigure frameOrigin]
-//						contextId: [self contextId]
-//						elementId: [aProcessorFigure elementId]
-//						drawing: self];
-						
-//	[debugWindow orderFront:self];
+	
+	var interpreterAPI = [InterpreterAPI 
+		newIn: [self contextId] 
+		elementId: [aProcessorFigure elementId]];
+	[interpreterAPI delegate: self];
+	[interpreterAPI createInterpreter];
+	
+	[myController interpreterAPI: interpreterAPI];
 }
 
 - (void) setupNotifications
 {
-	[self setStatus: @"Connecting..."];
-	
-      var socket = $.atmosphere;
-      var request = { url: '../atmo/' + [self contextId],
-                      contentType : "application/json",
-                      logLevel : 'debug',
-                      transport : 'websocket' ,
-                      fallbackTransport: 'long-polling'};
-  
-  
-      request.onOpen = function(response) {
-          [self setStatus: @"Connected"];
-      };
-  
-      request.onMessage = function (response) {
-          var message = $.parseJSON(response.responseBody);
-          
-          if ([message.interpreterId != nil]) {
-          	  [self processDebugMessage: message];
-          } else {
-	          [self receiveMessage: message];
-          }
-      };
-  
-      request.onError = function(response) {
-          [self receiveMessage: @"Error connecting to the server"];
-      };
-  
-      var subSocket = socket.subscribe(request);
-}
-
-- (void) processDebugMessage: (id) message
-{
-	var id = message.interpreterId + "#" + message.threadId;
-	var debugFigure = [_debugFigures objectForKey: id];
-	
-	if (debugFigure == nil) {
-		//could be a different thread so create a new window
-		var processorId = message.processorId;
-		var processorFigure = [self processorFor: processorId];
-		
-		CPLog.debug("[ActionsDrawing] Processing debug message for processor id " + processorId + " figure: " + processorFigure + " thread id " + id);
-		var debugWindow = [DebugWindow
-							newAt: [processorFigure frameOrigin]
-							contextId: [self contextId]
-							elementId: [processorFigure elementId]
-							drawing: self
-							interpreterId: message.interpreterId
-							threadId: message.threadId];
-						
-		[debugWindow orderFront: self];
-		[self registerDebug: debugWindow for: id];
-		debugFigure = debugWindow;
-	}
-
-	[debugFigure process: message];
+	[[Actions controller] setupNotifications];
 }
 
 - (id) generator
@@ -269,11 +212,6 @@
 - (id) generator: (id) aGenerator
 {
 	_generator = aGenerator;
-}
-
-- (void) registerDebug: (id) aDebugFigure for: (id) anInterpreterIdAndThreadId
-{
-	[_debugFigures setObject: aDebugFigure forKey: anInterpreterIdAndThreadId];
 }
 
 - (void) registerElement: (id) anElementFigure for: (id) anElementId
@@ -289,5 +227,20 @@
 	}
 	var processorFigure = [_processorFigures objectForKey: aProcessorId];
 	return processorFigure;
+}
+
++ (id) createMultilineText: (id) aFrame
+{
+    var multiline = [[LPMultiLineTextField alloc] initWithFrame: aFrame];
+    
+    [multiline setFrameOrigin: CGPointMake(0.0, 0.0)];
+    [multiline setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [multiline setBordered: YES];
+    [multiline setScrollable: YES];
+    [multiline setEditable: YES];
+    [multiline setDrawsBackground: YES];
+    [multiline setBezeled: YES];
+    
+    return multiline;
 }
 @end

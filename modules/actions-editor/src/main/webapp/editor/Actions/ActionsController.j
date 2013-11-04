@@ -21,7 +21,8 @@
 {
 	id _drawing;
 	CPDictionary _interpreters;
-	CPDictionary _interpretersWindows;
+	CPDictionary _interpretersControllers;
+	CPDictionary _interpretersDelegates;
 }
 
 + (id) drawing: (id) aDrawing
@@ -33,7 +34,8 @@
 {
 	_drawing = aDrawing;
 	_interpreters = [CPDictionary dictionary]; 
-	_interpretersWindows = [CPDictionary dictionary]; 
+	_interpretersControllers = [CPDictionary dictionary]; 
+	_interpretersDelegates = [CPDictionary dictionary]; 
 	
 	[self setupNotifications];
 	
@@ -57,7 +59,6 @@
 - (void) createInterpreter: anInterpreterId with: anInterpreterAPI
 {
 	[_interpreters setObject: anInterpreterAPI forKey: anInterpreterId];
-	//create the controller but don't show it yet
 }
 
 - (void) setStatus: (id) aMessage
@@ -76,7 +77,7 @@
 	[self setStatus: @"Connecting..."];
 	
     var socket = $.atmosphere;
-    var request = { url: '../atmo/' + [self contextId],
+    var request = { url: '../atmo/' + [_drawing contextId],
                       contentType : "application/json",
                       logLevel : 'debug',
                       transport : 'websocket' ,
@@ -106,56 +107,43 @@
 
 - (void) processDebugMessage: (id) aMessage
 {
-	var id = message.interpreterId + "#" + message.threadId;
-	var debugFigure = [_debugFigures objectForKey: id];
+	var id = aMessage.interpreterId + "#" + aMessage.threadId;
+	var interpreterAPI = [_interpreters objectForKey: aMessage.interpreterId];
+	var controller = [_interpretersControllers objectForKey: id];
 	
-	if (debugFigure == nil) {
-		//could be a different thread so create a new window
-		var processorId = message.processorId;
-		var processorFigure = [self processorFor: processorId];
-		
-		CPLog.debug("[ActionsDrawing] Processing debug message for processor id " + processorId + " figure: " + processorFigure + " thread id " + id);
-		var debugWindow = [DebugWindow
-							newAt: [processorFigure frameOrigin]
-							contextId: [self contextId]
-							elementId: [processorFigure elementId]
-							drawing: self
-							interpreterId: message.interpreterId
-							threadId: message.threadId];
-						
-		[debugWindow orderFront: self];
-		[self registerDebug: debugWindow for: id];
-		debugFigure = debugWindow;
+	if (controller == nil) {
+		controller = [[DebuggerWindowController alloc] initWithWindowCibName: "DebuggerWindow"];
+		[controller id: id];
+		[controller interpreterAPI: interpreterAPI];
+		[_interpretersControllers setObject: controller forKey: id];
 	}
-
-	[debugFigure process: message];
+	 
+	[controller showWindow: nil];
 	
-	var interpreterId = aMessage.interpreterId;
+	var delegate = [_interpretersDelegates objectForKey: id];
+	[delegate process: aMessage];
+	
 	var eventType = aMessage.eventType;
-	var currentMessage = aMessage.currentMessage;
-	var processorId = aMessage.processorId;
-	var jsonCurrentMessage = JSON.stringify(aMessage);
-	var exception = aMessage.exception;
-
-	CPLog.debug("[ActionsController] Processor id " + processorId);
-	CPLog.debug("[ActionsController] " + jsonCurrentMessage);
-
-	[_label setStringValue: jsonCurrentMessage];
-    [_label sizeToFit];
+	var interpreterId = aMessage.interpreterId;
 	
-	if ([eventType isEqualToString: "breakpoint"]) {
-		[self processBreakpoint: currentMessage processorId: processorId];
-	} else if ([eventType isEqualToString: "before-step"]) {
-		[self processBeforeStep: currentMessage processorId: processorId];
-	} else if ([eventType isEqualToString: "after-step"]) {
-		[self processAfterStep: currentMessage processorId: processorId];
-	} else if ([eventType isEqualToString: "uncaught-exception"]) {
-		[self processUncaughtException: currentMessage processorId: processorId exception: exception];
+	if ([eventType isEqualToString: "uncaught-exception"]) {
+		[_interpreters removeObjectForKey: interpreterId];
+		[_interpretersControllers removeObjectForKey: id];
 	} else if ([eventType isEqualToString: "finish-interpretation"]) {
 		[_interpreters removeObjectForKey: interpreterId];
-		var window = [_interpretersWindows objectForKey: interpreterId];
-		[window close];
-		[_interpretersWindows removeObjectForKey: interpreterId];
+		[_interpretersControllers removeObjectForKey: id];
 	}
+}
+
+- (void) register: aDebuggerDelegate asDebugDelegateFor: anID
+{
+	[_interpretersDelegates setObject: aDebuggerDelegate forKey: anID];
+}
+
+- (void) evaluationResult: (id) result currentMessage: (id) aMessage
+{
+	var id = aMessage.interpreterId + "#" + aMessage.threadId;
+	var delegate = [_interpretersDelegates objectForKey: id];
+	[delegate evaluationResult: result];
 }
 @end

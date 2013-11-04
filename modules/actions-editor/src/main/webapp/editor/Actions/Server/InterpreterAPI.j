@@ -63,7 +63,7 @@
 		_interpreterId = result.id;
 		_threadId = "1";
 		CPLog.debug("Interpreter created with id:" + _interpreterId);
-		[_delegate createInterpreter: _interpreterId];
+		[_delegate createInterpreter: _interpreterId with: self];
 	});
 	
 	return self;
@@ -144,7 +144,7 @@
 		
 		[_delegate 
 			evaluationResult: result.evaluationResult 
-			currentMessage: result.currentMessage];
+			currentMessage: result];
 		CPLog.debug("Evaluated expression in " + _interpreterId + " thread " + _threadId);
 	});
 	

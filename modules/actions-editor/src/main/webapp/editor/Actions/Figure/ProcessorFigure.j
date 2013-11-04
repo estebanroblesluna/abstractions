@@ -52,7 +52,8 @@
 
 - (void) sendMessage:(id) sender 
 { 
-    [[self drawing] initiateMessageSendFrom: self];
+	[[Actions controller]
+		initiateMessageSendFrom: self];
 }
 
 - (void) addProfiler: (id) sender
@@ -67,16 +68,9 @@
 
 - (void) addLogger: (id) sender
 {
-	var myController = [[AddLoggerWindowController alloc] initWithWindowCibName: "AddLoggerWindow"];
+	var myController = [[ElementAPIWindowController alloc] initWithWindowCibName: "AddLoggerWindow"];
 	[myController showWindow: nil];
 	[myController elementAPI: [[self model] api]];
-
-
-	//var addLoggerWindow = [AddLoggerWindow
-	//					newAt: [self frameOrigin]
-	//					elementAPI: [[self model] api]];
-						
-	//[addLoggerWindow orderFront:self];
 }
 
 - (void) removeLogger: (id) sender
@@ -117,5 +111,13 @@
 - (id) acceptsNewStartingChain
 {
 	 return ([_outConnections count] == 0) || (![self hasNextInChainConnections]);
+}
+
+- (void) highlight
+{
+}
+
+- (void) unhighlight
+{
 }
 @end
