@@ -41,6 +41,8 @@ public class HttpReceiverAsyncListener implements AsyncListener {
 					IOUtils.write((String)result, response.getWriter());
 				} else if (result instanceof byte[]) {
 					response.getOutputStream().write((byte[])result);
+				} else {
+					IOUtils.write(result.toString(), response.getWriter());
 				}
 			}
 		}

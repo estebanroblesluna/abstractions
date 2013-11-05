@@ -170,12 +170,12 @@ public class ActionsServer {
 	}
 
 	/**
-	 * Stops the context definition under contextId if it has been started
+	 * Stops the application definition under applicationId if it has been started
 	 * 
 	 * @param definitionId
 	 */
-	public void stop(String contextId) {
-		CompositeTemplate definition = this.definitions.remove(contextId);
+	public void stop(String applicationId) {
+		CompositeTemplate definition = this.definitions.remove(applicationId);
 		
 		if (definition != null) {
 			definition.terminate();
@@ -183,40 +183,40 @@ public class ActionsServer {
 	}
 
 	/**
-	 * Returns whether the context id is running in this server
+	 * Returns whether the application id is running in this server
 	 * 
-	 * @param contextId the id of the context
+	 * @param applicationId the id of the context
 	 * @return whether it is running or not
 	 */
-	public boolean isRunning(String contextId) {
-		CompositeTemplate definition = this.definitions.get(contextId);
+	public boolean isRunning(String applicationId) {
+		CompositeTemplate definition = this.definitions.get(applicationId);
 		return definition != null;
 	}
 	
-	public ProfilingInfo getProfilingInfo(String contextId) {
+	public ProfilingInfo getProfilingInfo(String applicationId) {
 		ProfilingInfo info = new ProfilingInfo();
 		
-		List<PerformanceProcessor> profilers = this.getProfilers(contextId);
+		List<PerformanceProcessor> profilers = this.getProfilers(applicationId);
 		for (PerformanceProcessor profiler : profilers) {
 			info.addAverage(this.wrapperToObjectIdMapping.get(profiler), profiler.getAverage());
 		}
 		return info;
 	}
 
-	private List<PerformanceProcessor> getProfilers(String contextId) {
-		if (!this.profilers.containsKey(contextId)) {
+	private List<PerformanceProcessor> getProfilers(String applicationId) {
+		if (!this.profilers.containsKey(applicationId)) {
 			synchronized (this.profilers) {
-				if (!this.profilers.containsKey(contextId)) {
-					this.profilers.put(contextId, new ArrayList<PerformanceProcessor>());
+				if (!this.profilers.containsKey(applicationId)) {
+					this.profilers.put(applicationId, new ArrayList<PerformanceProcessor>());
 				}
 			}
 		}
 		
-		return this.profilers.get(contextId);
+		return this.profilers.get(applicationId);
 	}
 
-	public void addProfiler(String contextId, String objectId) {
-		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+	public void addProfiler(String applicationId, String objectId) {
+		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
 		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor)  
@@ -224,28 +224,37 @@ public class ActionsServer {
 			Processor processor = (Processor) object;
 			PerformanceProcessor wrapper = new PerformanceProcessor(processor);
 			objectDefinition.overrideObject(wrapper);
-			this.getProfilers(contextId).add(wrapper);
+			this.getProfilers(applicationId).add(wrapper);
 			this.wrapperToObjectIdMapping.put(wrapper, objectId);
 		}
 	}
 
-	public void removeProfiler(String contextId, String objectId) {
-		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+	public void removeProfiler(String applicationId, String objectId) {
+		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
 		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class)) {
 			ProcessorWrapper wrapper = (ProcessorWrapper) object;
 			Processor processor = wrapper.unwrap(PerformanceProcessor.class);
 			objectDefinition.overrideObject(processor);
-			this.getProfilers(contextId).remove(wrapper);
+			this.getProfilers(applicationId).remove(wrapper);
 			this.wrapperToObjectIdMapping.remove(wrapper);
 		}
 	}
 
 	
-	public void addLogger(String contextId, String objectId, String beforeExpression, String afterExpression) {
-		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
-		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
+	public void addLogger(
+			String applicationId, 
+			String objectId, 
+			String beforeExpression, 
+			String afterExpression, 
+			boolean isBeforeConditional, 
+			boolean isAfterConditional, 
+			String beforeConditionalExpressionValue, 
+			String afterConditionalExpressionValue) {
+		
+		CompositeTemplate compositeTemplate = this.definitions.get(applicationId);
+		ElementTemplate objectDefinition = compositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor) 
 				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class))) {
@@ -254,41 +263,48 @@ public class ActionsServer {
 			wrapper.setBeforeExpression(beforeExpression);
 			wrapper.setAfterExpression(afterExpression);
 			
+			if (isBeforeConditional) {
+				wrapper.setBeforeConditionExpression(beforeConditionalExpressionValue);
+			}
+			if (isAfterConditional) {
+				wrapper.setAfterConditionExpression(afterConditionalExpressionValue);
+			}
+			
 			objectDefinition.overrideObject(wrapper);
-			this.getLoggers(contextId).add(wrapper);
+			this.getLoggers(applicationId).add(wrapper);
 			this.wrapperToObjectIdMapping.put(wrapper, objectId);
 			this.objectIdLogs.put(objectId, wrapper);
 		}
 	}
 	
-	public void removeLogger(String contextId, String objectId) {
-		CompositeTemplate CompositeTemplate = this.definitions.get(contextId);
+	public void removeLogger(String applicationId, String objectId) {
+		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
 		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
 		Object object = objectDefinition.getInstance();
 		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class)) {
 			ProcessorWrapper wrapper = (ProcessorWrapper) object;
 			Processor processor = wrapper.unwrap(LogProcessorWrapper.class);
 			objectDefinition.overrideObject(processor);
-			this.getLoggers(contextId).remove(wrapper);
+			this.getLoggers(applicationId).remove(wrapper);
 			this.wrapperToObjectIdMapping.remove(wrapper);
 			this.objectIdLogs.remove(objectId);
 		}
 	}
 	
-	private List<LogProcessorWrapper> getLoggers(String contextId) {
-		if (!this.logs.containsKey(contextId)) {
+	private List<LogProcessorWrapper> getLoggers(String applicationId) {
+		if (!this.logs.containsKey(applicationId)) {
 			synchronized (this.logs) {
-				if (!this.logs.containsKey(contextId)) {
-					this.logs.put(contextId, new ArrayList<LogProcessorWrapper>());
+				if (!this.logs.containsKey(applicationId)) {
+					this.logs.put(applicationId, new ArrayList<LogProcessorWrapper>());
 				}
 			}
 		}
 		
-		return this.logs.get(contextId);
+		return this.logs.get(applicationId);
 	}
 
-	public LogInfo getLogInfo(String contextId) {
-		List<LogProcessorWrapper> logs = this.getLoggers(contextId);
+	public LogInfo getLogInfo(String applicationId) {
+		List<LogProcessorWrapper> logs = this.getLoggers(applicationId);
 		LogInfo info = new LogInfo();
 		for (LogProcessorWrapper log : logs) {
 			List<String> lines = log.lines();
@@ -297,7 +313,7 @@ public class ActionsServer {
 		return info;
 	}
 
-	public List<String> getLogLines(String contextId, String objectId) {
+	public List<String> getLogLines(String applicationId, String objectId) {
 		LogProcessorWrapper wrapper = this.objectIdLogs.get(objectId);
 		if (wrapper == null) {
 			return new ArrayList<String>();
@@ -307,14 +323,14 @@ public class ActionsServer {
 	}
 
 	public void addLazyComputedCache(
-			String contextId, 
+			String applicationId, 
 			String objectId,
 			String memcachedURL, 
 			String keyExpression, 
 			String cacheExpressions,
 			int ttl) {
 
-		CompositeTemplate context = this.definitions.get(contextId);
+		CompositeTemplate context = this.definitions.get(applicationId);
 		LazyComputedCacheTransformation transformation = new LazyComputedCacheTransformation(
 				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
 		
@@ -322,14 +338,14 @@ public class ActionsServer {
 	}
 	
 	public void addLazyAutorefreshableCache(
-			String contextId, 
+			String applicationId, 
 			String objectId,
 			String memcachedURL, 
 			String keyExpression, 
 			String cacheExpressions,
 			int ttl) {
 
-		CompositeTemplate context = this.definitions.get(contextId);
+		CompositeTemplate context = this.definitions.get(applicationId);
 		LazyAutorefreshableCacheTransformation transformation = new LazyAutorefreshableCacheTransformation(
 				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
 		

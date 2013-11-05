@@ -146,13 +146,24 @@
 	});
 }
 
-- (id) addLogger: (id) beforeExpression afterExpression: (id) afterExpression
+- (id) addLogger: (id) beforeExpression afterExpression: (id) afterExpression beforeConditionalExpressionValue: beforeConditionalExpressionValue afterConditionalExpressionValue: afterConditionalExpressionValue
 {
 	CPLog.debug("Adding logger to element " + _elementId);
 	_state = @"NOT_IN_SYNC";
+
+	var isBeforeConditional = beforeConditionalExpressionValue != nil;
+	var isAfterConditional = afterConditionalExpressionValue != nil;
+
 	$.ajax({
 		type: "POST",
-		data: {"beforeExpression" : beforeExpression, "afterExpression": afterExpression},
+		data: {
+			"beforeExpression" : beforeExpression, 
+			"afterExpression": afterExpression,
+			"isBeforeConditional": isBeforeConditional,
+			"isAfterConditional": isAfterConditional,
+			"beforeConditionalExpressionValue": beforeConditionalExpressionValue,
+			"afterConditionalExpressionValue": afterConditionalExpressionValue
+		},
 		url: "../service/element/" + _contextId + "/" + _elementId + "/logger/" + [Actions deploymentId]
 	}).done(function( result ) {
 		_state = @"SYNCED";

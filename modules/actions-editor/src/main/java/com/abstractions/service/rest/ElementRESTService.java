@@ -105,9 +105,23 @@ public class ElementRESTService {
 			@PathParam("elementId") String elementId,
 			@PathParam("deploymentId") long deploymentId,
 			@FormParam("beforeExpression") String beforeExpression,
-			@FormParam("afterExpression") String afterExpression)
+			@FormParam("afterExpression") String afterExpression,
+			@FormParam("isBeforeConditional") boolean isBeforeConditional,
+			@FormParam("isAfterConditional") boolean isAfterConditional,
+			@FormParam("beforeConditionalExpressionValue") String beforeConditionalExpressionValue,
+			@FormParam("afterConditionalExpressionValue") String afterConditionalExpressionValue
+			)
 	{
-		this.deploymentService.addLogger(deploymentId, contextId, elementId, beforeExpression, afterExpression);
+		this.deploymentService.addLogger(
+				deploymentId, 
+				contextId, 
+				elementId, 
+				beforeExpression, 
+				afterExpression,
+				isBeforeConditional,
+				isAfterConditional,
+				beforeConditionalExpressionValue,
+				afterConditionalExpressionValue);
 		return ResponseUtils.ok();
 	}
 	

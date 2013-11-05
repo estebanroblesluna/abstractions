@@ -37,15 +37,22 @@ public class ServerRESTService {
 	public Response ping(@FormParam("server-key") String serverKey) {
 		this.service.updateServerStatusWithKey(serverKey);
 		Server server = this.service.getServer(serverKey);
-		List<Long> pendingDeployments = this.deploymentService.getPendingDeploymentIdsFor(server.getId());
+		List<Object[]> pendingDeployments = this.deploymentService.getPendingDeploymentIdsFor(server.getId());
 		
 		JSONArray array = new JSONArray();
-		for (Long deploymentId : pendingDeployments) {
-			array.put(deploymentId);
+		for (Object[] data : pendingDeployments) {
+			JSONObject deploymentJSON = new JSONObject();
+			try {
+				deploymentJSON.put("deploymentId", data[0]);
+				deploymentJSON.put("applicationId", data[1]);
+				array.put(deploymentJSON);
+			} catch (JSONException e) {
+				return ResponseUtils.fail("Error writing json");
+			}
 		}
 		
 		return ResponseUtils
-				.ok("deploymentIds", array);
+				.ok("deployments", array);
 	}
 
 	@POST

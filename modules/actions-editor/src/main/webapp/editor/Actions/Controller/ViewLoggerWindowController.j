@@ -40,6 +40,8 @@
 
 - (void) windowDidLoad
 {
-	[_logText setStringValue: [self lines]];
+	var lines = [self lines];
+	var log = lines.join('\n');
+	[_logText setStringValue: log];
 }
 @end
