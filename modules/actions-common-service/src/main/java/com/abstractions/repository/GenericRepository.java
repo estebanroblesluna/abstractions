@@ -69,23 +69,13 @@ public class GenericRepository {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public List<Long> getPendingDeploymentIdsFor(long serverId) {
-		List<Long> result = new ArrayList<Long>();
-		
+	public List<Object[]> getPendingDeploymentIdsFor(long serverId) {
 		List queryResults =  this.sessionFactory.getCurrentSession()
-			.createSQLQuery("SELECT deployment_id FROM deployment_to_server WHERE server_id = ? AND deployment_state = ?")
+			.createSQLQuery("SELECT deployment_to_server.deployment_id as deploy_id, application_snapshot.application_id FROM deployment_to_server INNER JOIN deployment ON deployment_to_server.deployment_id = deployment.deployment_id INNER JOIN application_snapshot ON application_snapshot.application_snapshot_id = deployment.application_snapshot_id  WHERE deployment_to_server.server_id = ? AND deployment_to_server.deployment_state = ?")
 			.setLong(0, serverId)
 			.setString(1, "PENDING")
 			.list();
 		
-		for (Object o : queryResults) {
-			if (o instanceof Object[]) {
-				result.add((Long) ((Object[]) o)[0]);
-			} else {
-				result.add(Long.valueOf(o.toString()));
-			}
-		}
-		
-		return result;
+		return queryResults;
 	}
 }

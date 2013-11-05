@@ -12,6 +12,7 @@ import com.abstractions.api.Message;
 import com.abstractions.api.Processor;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.utils.ExpressionUtils;
 
 public class LogProcessorWrapper extends ProcessorWrapper {
 
@@ -39,11 +40,12 @@ public class LogProcessorWrapper extends ProcessorWrapper {
 
 			log = false;
 			if (this.beforeConditionExpression != null) {
-				Object beforeConditionValue = this.beforeConditionExpression.evaluate(message);
-				log = (beforeConditionValue instanceof Boolean) && ((Boolean) beforeConditionValue);
+				log = ExpressionUtils.evaluateNoFail(this.beforeConditionExpression, message, false);
+			} else {
+				log = true;
 			}
 
-			if (log) {
+			if (log && this.beforeExpression != null) {
 				Object beforeValue = this.beforeExpression.evaluate(message);
 				this.append("[INFO] " + beforeValue);
 			}
@@ -57,11 +59,12 @@ public class LogProcessorWrapper extends ProcessorWrapper {
 			
 			log = false;
 			if (this.afterConditionExpression != null) {
-				Object afterConditionValue = this.afterConditionExpression.evaluate(message);
-				log = (afterConditionValue instanceof Boolean) && ((Boolean) afterConditionValue);
+				log = ExpressionUtils.evaluateNoFail(this.afterConditionExpression, message, false);
+			} else {
+				log = true;
 			}
 
-			if (log) {
+			if (log && this.afterExpression != null) {
 				Object afterValue = this.afterExpression.evaluate(message);
 				this.append("[INFO] " + afterValue);
 			}

@@ -66,9 +66,22 @@ public class ActionsServerRest {
 			@PathParam("contextId") String contextId,
 			@PathParam("objectId") String objectId,
 			@FormParam("beforeExpression") String beforeExpression,
-			@FormParam("afterExpression") String afterExpression) {
+			@FormParam("afterExpression") String afterExpression,
+			@FormParam("isBeforeConditional") boolean isBeforeConditional,
+			@FormParam("isAfterConditional") boolean isAfterConditional,
+			@FormParam("beforeConditionalExpressionValue") String beforeConditionalExpressionValue,
+			@FormParam("afterConditionalExpressionValue") String afterConditionalExpressionValue
+			) {
 
-		this.server.addLogger(contextId, objectId, beforeExpression, afterExpression);
+		this.server.addLogger(
+				contextId, 
+				objectId, 
+				beforeExpression, 
+				afterExpression,
+				isBeforeConditional,
+				isAfterConditional,
+				beforeConditionalExpressionValue,
+				afterConditionalExpressionValue);
 		return ResponseUtils.ok();
 	}
 	
