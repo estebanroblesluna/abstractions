@@ -32,3 +32,5 @@ modules/actions-server/src/main/resources/server.properties
 nbactions.xml
 
 config/.DS_Store
+
+config/.DS_Store

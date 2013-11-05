@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
+import com.abstractions.common.Icon;
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.instance.common.ScriptingProcessor;
 import com.abstractions.model.PropertyDefinition;
@@ -28,7 +29,7 @@ public abstract class ElementDefinition {
 	protected long id;
 	private String name;
 	private String displayName;
-	private String icon;
+	private Icon icon;
 	private List<PropertyDefinition> properties;
 	private String implementation;
 	private boolean isScript;
@@ -75,13 +76,17 @@ public abstract class ElementDefinition {
 
 	public abstract ElementDefinitionType getType();
 
-	public String getIcon() {
+	public Icon getIcon() {
 		return icon;
 	}
 
-	public void setIcon(String icon) {
+	public void setIcon(Icon icon) {
 		this.icon = icon;
 	}
+        
+        public void setIcon(String icon) {
+            
+        }
 
 	public void setClassName(String aClassName) {
 		this.implementation = aClassName;

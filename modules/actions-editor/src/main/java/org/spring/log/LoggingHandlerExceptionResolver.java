@@ -2,6 +2,8 @@ package org.spring.log;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.*;
 import org.springframework.web.servlet.*;
 
@@ -13,6 +15,8 @@ import org.springframework.web.servlet.*;
 public class LoggingHandlerExceptionResolver 
 implements HandlerExceptionResolver, Ordered {
     
+    private static final Log log = LogFactory.getLog(LoggingHandlerExceptionResolver.class);
+    
     @Override
     public int getOrder() {
         return Integer.MIN_VALUE; 
@@ -23,7 +27,7 @@ implements HandlerExceptionResolver, Ordered {
         HttpServletRequest aReq, HttpServletResponse aRes,
         Object aHandler, Exception anExc
     ) {
-        anExc.printStackTrace(); 
+        log.error("Error in the request: ", anExc);
         return null; // trigger other HandlerExceptionResolver's
     }
 }
