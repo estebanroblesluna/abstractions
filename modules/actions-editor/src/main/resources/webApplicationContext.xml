@@ -77,6 +77,10 @@
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="libraryService" />
   </bean>
+  
+  <bean id="iconService" class="com.abstractions.service.IconService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
    
  <bean id="multipartResolver"  
   class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> 

@@ -31,7 +31,6 @@ public class MessageSourceDefinitionController {
     
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String add(@ModelAttribute("form") AddMessageSourceDefinitionForm form, @PathVariable("libraryId") long libraryId) {
-        ElementDefinitionController.uploadFile(form.getIcon());
         MessageSourceDefinition messageSourceDefinition = new MessageSourceDefinition(form.getName());
         messageSourceDefinition = (MessageSourceDefinition) ElementDefinitionController.createElementDefinition(form, messageSourceDefinition);
         Library l = this.libraryService.get(libraryId);

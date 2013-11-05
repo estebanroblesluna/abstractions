@@ -55,6 +55,6 @@
                         <div class="form-group">
                             <label for="inputIcon" class="col-lg-2 control-label">Icon</label>
                             <div class="col-lg-10">
-                                <img src="/editor/${definition.icon}" alt="...">
+                                <img src="/icon/${definition.icon.id}" alt="...">
                             </div>
                         </div>

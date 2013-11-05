@@ -31,7 +31,6 @@ public class RouterDefinitionController {
     
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String add(@ModelAttribute("form") AddRouterDefinitionForm form, @PathVariable("libraryId") long libraryId) {
-        ElementDefinitionController.uploadFile(form.getIcon());
         RouterDefinition routerDefinition = new RouterDefinition(form.getName());
         routerDefinition = (RouterDefinition) ElementDefinitionController.createElementDefinition(form, routerDefinition);
         routerDefinition.setRouterEvaluatorImplementation(form.getRouterEvaluatorImplementation());
