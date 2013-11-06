@@ -343,11 +343,11 @@ public class ActionsServer {
 			String memcachedURL, 
 			String keyExpression, 
 			String cacheExpressions,
-			int ttl) {
+			int oldCacheEntryInMills) {
 
 		CompositeTemplate context = this.definitions.get(applicationId);
 		LazyAutorefreshableCacheTransformation transformation = new LazyAutorefreshableCacheTransformation(
-				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, this.mapping);
+				objectId, memcachedURL, keyExpression, cacheExpressions, oldCacheEntryInMills, this.mapping);
 		
 		transformation.transform(context);
 

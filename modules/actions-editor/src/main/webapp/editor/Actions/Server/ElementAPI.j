@@ -116,14 +116,41 @@
 	});
 }
 
-- (id) addCache
+- (id) addLazyComputedCache: (id) memcachedURL ttl: (id) ttl keyExpression: (id) keyExpression cacheExpressions: (id) cacheExpressions
+{
+	CPLog.debug("Adding cache to element " + _elementId);
+	_state = @"NOT_IN_SYNC";
+
+	$.ajax({
+		type: "POST",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/cache/computed/" + [Actions deploymentId],
+		data: {
+			"memcachedURL" : memcachedURL, 
+			"ttl" : ttl, 
+			"keyExpression" : keyExpression, 
+			"cacheExpressions" : cacheExpressions 
+		}
+	}).done(function( result ) {
+		_state = @"SYNCED";
+		[self changed];
+		CPLog.debug("Cache added to " + _elementId);
+	});
+}
+
+- (id) addLazyAutorefreshableCache: (id) memcachedURL oldCacheEntryInMills: (id) oldCacheEntryInMills keyExpression: (id) keyExpression cacheExpressions: (id) cacheExpressions
 {
 	CPLog.debug("Adding cache to element " + _elementId);
 	_state = @"NOT_IN_SYNC";
 	
 	$.ajax({
-		type: "PUT",
-		url: "../service/element/" + _contextId + "/" + _elementId + "/cache/" + [Actions deploymentId]
+		type: "POST",
+		url: "../service/element/" + _contextId + "/" + _elementId + "/cache/autorefreshable/" + [Actions deploymentId],
+		data: {
+			"memcachedURL" : memcachedURL, 
+			"oldCacheEntryInMills" : oldCacheEntryInMills, 
+			"keyExpression" : keyExpression, 
+			"cacheExpressions" : cacheExpressions 
+		}
 	}).done(function( result ) {
 		_state = @"SYNCED";
 		[self changed];

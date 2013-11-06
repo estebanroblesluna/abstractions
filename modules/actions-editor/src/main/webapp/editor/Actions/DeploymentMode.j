@@ -109,12 +109,12 @@
 	var contextMenu = [[CPMenu alloc] init]; 
     [contextMenu setDelegate: anElementConnection]; 
 
-    var cacheMenu = [[CPMenuItem alloc] initWithTitle: @"Add cache (lazy compute)" action: @selector(addCache) keyEquivalent:@""]; 
+    var cacheMenu = [[CPMenuItem alloc] initWithTitle: @"Add cache (lazy compute)" action: @selector(addLazyComputedCache) keyEquivalent:@""]; 
     [cacheMenu setTarget: anElementConnection]; 
     [cacheMenu setEnabled: YES]; 
     [contextMenu addItem: cacheMenu]; 
     
-    var cache2Menu = [[CPMenuItem alloc] initWithTitle: @"Add cache (async lazy compute)" action: @selector(addCache) keyEquivalent:@""]; 
+    var cache2Menu = [[CPMenuItem alloc] initWithTitle: @"Add cache (async lazy compute)" action: @selector(addLazyAutorefreshableCache) keyEquivalent:@""]; 
     [cache2Menu setTarget: anElementConnection]; 
     [cache2Menu setEnabled: YES]; 
     [contextMenu addItem: cache2Menu]; 
