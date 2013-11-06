@@ -280,4 +280,9 @@ public class CompositeTemplate extends ElementTemplate {
 	public void setVersion(int version) {
 		this.version = version;
 	}
+
+	@Override
+	public CompositeElement getInstance() {
+		return (CompositeElement) super.getInstance();
+	}
 }

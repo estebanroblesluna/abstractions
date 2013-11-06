@@ -138,9 +138,23 @@ public class ActionsServerRest {
 		return ResponseUtils.ok();
 	}
 	
-	@Path("/{contextId}/cache/{objectId}/")
+	@Path("/{contextId}/cache/autorefreshable/{objectId}/")
 	@POST
-	public Response addCache(
+	public Response addLazyAutorefreshableCache(
+			@PathParam("contextId") String contextId,
+			@PathParam("objectId") String objectId,
+			@FormParam("memcachedURL") String memcachedURL,
+			@FormParam("keyExpression") String keyExpression,
+			@FormParam("cacheExpressions") String cacheExpressions,
+			@FormParam("oldCacheEntryInMills") int oldCacheEntryInMills) {
+		
+		this.server.addLazyAutorefreshableCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, oldCacheEntryInMills);
+		return ResponseUtils.ok();
+	}
+
+	@Path("/{contextId}/cache/computed/{objectId}/")
+	@POST
+	public Response addLazyComputedCache(
 			@PathParam("contextId") String contextId,
 			@PathParam("objectId") String objectId,
 			@FormParam("memcachedURL") String memcachedURL,
@@ -148,7 +162,7 @@ public class ActionsServerRest {
 			@FormParam("cacheExpressions") String cacheExpressions,
 			@FormParam("ttl") int ttl) {
 		
-		this.server.addLazyAutorefreshableCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, ttl);
+		this.server.addLazyComputedCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, ttl);
 		return ResponseUtils.ok();
 	}
 }

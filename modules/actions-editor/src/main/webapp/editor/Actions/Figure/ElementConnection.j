@@ -45,9 +45,18 @@
    [self removeMyself];
 }
 
-- (void) addCache
+- (void) addLazyAutorefreshableCache
 {
-	[[self model] addCache];
+	var myController = [[ElementAPIWindowController alloc] initWithWindowCibName: "AddLazyAutorefreshableCacheWindow"];
+	[myController showWindow: nil];
+	[myController elementAPI: [[self model] api]];
+}
+
+- (void) addLazyComputedCache
+{
+	var myController = [[ElementAPIWindowController alloc] initWithWindowCibName: "AddLazyComputedCacheWindow"];
+	[myController showWindow: nil];
+	[myController elementAPI: [[self model] api]];
 }
 
 - (id) elementId

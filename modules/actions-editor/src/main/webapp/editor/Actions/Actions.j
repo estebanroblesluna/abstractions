@@ -31,6 +31,8 @@
 @import "Controller/SendMessageDelegate.j"
 @import "Controller/DebuggerDelegate.j"
 
+@import "Controller/AddLazyAutorefreshableCacheDelegate.j"
+@import "Controller/AddLazyComputedCacheDelegate.j"
 
 
 @import "Model/ElementModel.j"
