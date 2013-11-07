@@ -175,13 +175,6 @@ CREATE TABLE library (
   primary key (library_id)
 );
 
-DROP TABLE IF EXISTS `icon`;
-CREATE TABLE icon (
-  `icon_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  image blob NULL,
-  primary key (icon_id)
-);
-
 DROP TABLE IF EXISTS `element_definition`;
 CREATE TABLE element_definition (
   `element_definition_id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -190,13 +183,10 @@ CREATE TABLE element_definition (
   icon varchar(200) NULL,
   implementation varchar(200) NULL,
   `library_id` bigint(20) DEFAULT NULL,
-  `icon_id` bigint(20),
   is_script boolean NULL,
   primary key (element_definition_id),
   KEY `FK_ouwdmllmcrsympjv9o04i0hgr` (`library_id`),
-  KEY `FK_icon` (`icon_id`),
-  CONSTRAINT `FK_ouwdmllmcrsympjv9o04i0hgr` FOREIGN KEY (`library_id`) REFERENCES `library` (`library_id`),
-  CONSTRAINT `FK_icon` FOREIGN KEY (`icon_id`) REFERENCES `icon` (`icon_id`)
+  CONSTRAINT `FK_ouwdmllmcrsympjv9o04i0hgr` FOREIGN KEY (`library_id`) REFERENCES `library` (`library_id`)
 );
 
 

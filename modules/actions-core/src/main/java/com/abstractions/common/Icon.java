@@ -1,7 +1,6 @@
 package com.abstractions.common;
 
 import java.io.Serializable;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
  *
@@ -12,7 +11,7 @@ public class Icon implements Serializable {
     private long id;
     private byte[] image;
     
-    public Icon() {} //Hibernate needs this
+    protected Icon() {} //Hibernate needs this
     
     public Icon(byte[] image) {
        this.setImage(image);

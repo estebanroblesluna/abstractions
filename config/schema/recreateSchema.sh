@@ -18,3 +18,6 @@ mysql -u root < $BASEDIR/migration/0.1/resource-based-dust-renderer.sql
 mysql -u root < $BASEDIR/migration/0.1/add-server-stats.sql
 
 mysql -u root < $BASEDIR/migration/0.1/class-rename.sql
+
+mysql -u root < $BASEDIR/migration/0.1/add-icons-table.sql
+mysql -u root < $BASEDIR/migration/0.1/update-icons-3.sql
