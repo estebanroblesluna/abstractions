@@ -120,26 +120,65 @@ public class DeploymentService {
 	}
 
 	@Transactional
-	public void addCache(long deploymentId, String contextId, String elementId) {
+	public void addLazyComputedCache(
+			long deploymentId, 
+			String contextId, 
+			String elementId,
+			String memcachedURL,
+			String ttl,
+			String keyExpression,
+			String cacheExpressions) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/cache/" + elementId;
+					+ "/service/server/" + applicationId + "/cache/computed/" + elementId;
 			HttpPost method = new HttpPost(url);
 			
 			try {
 				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-				//TODO set the parameters
-				urlParameters.add(new BasicNameValuePair("memcachedURL", "127.0.0.1:11211"));
-				urlParameters.add(new BasicNameValuePair("keyExpression", "message.properties['actions.http.productId']"));
-				urlParameters.add(new BasicNameValuePair("cacheExpressions", "message.payload"));
-				urlParameters.add(new BasicNameValuePair("ttl", "30"));
+				urlParameters.add(new BasicNameValuePair("memcachedURL", memcachedURL));
+				urlParameters.add(new BasicNameValuePair("keyExpression", keyExpression)); //"message.properties['actions.http.productId']"
+				urlParameters.add(new BasicNameValuePair("cacheExpressions", cacheExpressions)); //"message.payload"
+				urlParameters.add(new BasicNameValuePair("ttl", ttl));
 				method.setEntity(new UrlEncodedFormEntity(urlParameters));
 
 				this.execute(method);
 			} catch (Exception e) {
-				log.warn("Error removing profiler", e);
+				log.warn("Error adding computed cache", e);
+			}
+		}
+	}
+
+	@Transactional
+	public void addLazyAutorefreshableCache(
+			long deploymentId, 
+			String contextId, 
+			String elementId,
+			String memcachedURL,
+			String oldCacheEntryInMills,
+			String keyExpression,
+			String cacheExpressions) {
+		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
+		
+		for (Server server : deployment.getServers()) {
+			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
+					+ "/service/server/" + applicationId + "/cache/autorefreshable/" + elementId;
+			HttpPost method = new HttpPost(url);
+			
+			try {
+				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+				urlParameters.add(new BasicNameValuePair("memcachedURL", memcachedURL));
+				urlParameters.add(new BasicNameValuePair("keyExpression", keyExpression)); //"message.properties['actions.http.productId']"
+				urlParameters.add(new BasicNameValuePair("cacheExpressions", cacheExpressions)); //"message.payload"
+				urlParameters.add(new BasicNameValuePair("oldCacheEntryInMills", oldCacheEntryInMills));
+				method.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+				this.execute(method);
+			} catch (Exception e) {
+				log.warn("Error adding Autorefreshable cache", e);
 			}
 		}
 	}
@@ -147,10 +186,11 @@ public class DeploymentService {
 	@Transactional
 	public void addProfiler(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/profile/" + elementId;
+					+ "/service/server/" + applicationId + "/profile/" + elementId;
 			HttpPut method = new HttpPut(url);
 			try {
 				this.execute(method);
@@ -163,10 +203,11 @@ public class DeploymentService {
 	@Transactional
 	public void removeProfiler(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/profile/" + elementId;
+					+ "/service/server/" + applicationId + "/profile/" + elementId;
 			HttpDelete method = new HttpDelete(url);
 			try {
 				this.execute(method);
@@ -179,12 +220,13 @@ public class DeploymentService {
 	@Transactional
 	public JSONObject getProfilingInfo(long deploymentId, String contextId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
 		JSONArray partialResults = new JSONArray();
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/profilingInfo";
+					+ "/service/server/" + applicationId + "/profilingInfo";
 			
 			HttpGet method = new HttpGet(url);
 			InputStream is = null;
@@ -219,17 +261,27 @@ public class DeploymentService {
 			String contextId,
 			String elementId, 
 			String beforeExpression, 
-			String afterExpression) {
+			String afterExpression, 
+			Boolean isBeforeConditional, 
+			Boolean isAfterConditional, 
+			String beforeConditionalExpressionValue, 
+			String afterConditionalExpressionValue) {
+		
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
 
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/log/" + elementId;
+					+ "/service/server/" + applicationId + "/log/" + elementId;
 			HttpPost method = new HttpPost(url);
 			
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			urlParameters.add(new BasicNameValuePair("beforeExpression", beforeExpression));
 			urlParameters.add(new BasicNameValuePair("afterExpression", afterExpression));
+			urlParameters.add(new BasicNameValuePair("isBeforeConditional", isBeforeConditional.toString()));
+			urlParameters.add(new BasicNameValuePair("isAfterConditional", isAfterConditional.toString()));
+			urlParameters.add(new BasicNameValuePair("beforeConditionalExpressionValue", beforeConditionalExpressionValue));
+			urlParameters.add(new BasicNameValuePair("afterConditionalExpressionValue", afterConditionalExpressionValue));
 
 			try {
 				method.setEntity(new UrlEncodedFormEntity(urlParameters));
@@ -243,10 +295,11 @@ public class DeploymentService {
 	@Transactional
 	public void removeLogger(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
+		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/log/" + elementId;
+					+ "/service/server/" + applicationId + "/log/" + elementId;
 			HttpDelete method = new HttpDelete(url);
 			try {
 				this.execute(method);
@@ -259,12 +312,13 @@ public class DeploymentService {
 	@Transactional
 	public JSONObject getLogger(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		
+		long applicationId = deployment.getSnapshot().getApplication().getId();
+
 		JSONArray partialResults = new JSONArray();
 		
 		for (Server server : deployment.getServers()) {
 			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + contextId + "/log/" + elementId;
+					+ "/service/server/" + applicationId + "/log/" + elementId;
 			
 			HttpGet method = new HttpGet(url);
 			InputStream is = null;
@@ -332,7 +386,7 @@ public class DeploymentService {
 	}
 	
 	@Transactional
-	public List<Long> getPendingDeploymentIdsFor(long serverId) {
+	public List<Object[]> getPendingDeploymentIdsFor(long serverId) {
 		return this.repository.getPendingDeploymentIdsFor(serverId);
 	}
 }

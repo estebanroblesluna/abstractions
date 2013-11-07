@@ -17,31 +17,29 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation ViewLoggerWindowController : CPWindowController 
+@implementation AddLazyComputedCacheDelegate : CPObject 
 {
-	id _lines;
-	id _logText;
+	@outlet CPWindow _window;
+
+	@outlet id _memcachedURLTF;
+	@outlet id _ttlTF;
+	@outlet id _keyExpressionTF;
+	@outlet id _cacheExpressionsTF;
 }
 
-- (id) lines
+- (IBAction) add: (id) aSender
 {
-	return _lines;
-}
-
-- (void) lines: aLines
-{
-	_lines = aLines;
-}
-
-- (void) logText: aLogText
-{
-	_logText = aLogText;
-}
-
-- (void) windowDidLoad
-{
-	var lines = [self lines];
-	var log = lines.join('\n');
-	[_logText setStringValue: log];
+	var memcachedURL = [_memcachedURLTF stringValue];
+	var ttl = [_ttlTF stringValue];
+	var keyExpression = [_keyExpressionTF stringValue];
+	var cacheExpressions = [_cacheExpressionsTF stringValue];
+	
+	[[[_window windowController] elementAPI]
+		addLazyComputedCache: memcachedURL 
+		ttl: ttl 
+		keyExpression: keyExpression 
+		cacheExpressions: cacheExpressions];
+	
+	[_window close];
 }
 @end

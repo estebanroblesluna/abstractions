@@ -18,11 +18,21 @@
 @import <AppKit/CPTextField.j>
 
 @import "Util/DataUtil.j"
+@import "ActionsController.j"
+
+
+@import "Controller/DebuggerWindowController.j"
+@import "Controller/ElementAPIWindowController.j"
+@import "Controller/InterpreterAPIWindowController.j"
 
 @import "Controller/AddLoggerController.j"
-@import "Controller/AddLoggerWindowController.j"
 @import "Controller/ViewLoggerDelegate.j"
 @import "Controller/ViewLoggerWindowController.j"
+@import "Controller/SendMessageDelegate.j"
+@import "Controller/DebuggerDelegate.j"
+
+@import "Controller/AddLazyAutorefreshableCacheDelegate.j"
+@import "Controller/AddLazyComputedCacheDelegate.j"
 
 
 @import "Model/ElementModel.j"
@@ -69,6 +79,7 @@
 
 var _actionsDrawingMode = [EditionMode new];
 var _drawing;
+var _controller;
 
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
@@ -92,9 +103,15 @@ var _drawing;
 	return _drawing;
 }
 
++ (id) controller
+{
+	return _controller;
+}
+
 + (void) drawing: (id) aDrawing
 {
 	_drawing = aDrawing;
+	_controller = [ActionsController drawing: _drawing];
 }
 
 + (id) mode

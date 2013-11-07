@@ -17,31 +17,18 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation ViewLoggerWindowController : CPWindowController 
+@implementation ElementAPIWindowController : CPWindowController 
 {
-	id _lines;
-	id _logText;
+	id _elementAPI;
 }
 
-- (id) lines
+- (id) elementAPI
 {
-	return _lines;
+	return _elementAPI;
 }
 
-- (void) lines: aLines
+- (void) elementAPI: anElementAPI
 {
-	_lines = aLines;
-}
-
-- (void) logText: aLogText
-{
-	_logText = aLogText;
-}
-
-- (void) windowDidLoad
-{
-	var lines = [self lines];
-	var log = lines.join('\n');
-	[_logText setStringValue: log];
+	_elementAPI = anElementAPI;
 }
 @end

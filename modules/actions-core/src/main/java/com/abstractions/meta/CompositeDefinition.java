@@ -91,23 +91,32 @@ public abstract class CompositeDefinition extends ElementDefinition {
 		
 		synchronized (composite.getDefinitions()) {
 			//wire them all together
-			for (ElementTemplate definition : composite.getDefinitions().values())
-			{
-				try {
-					if (!definition.isInstantiated()) {
-						Element element = definition.instantiate(compositeElement, mapping);
-						if (element instanceof IdentificableMutable) {
-							((IdentificableMutable) element).setId(definition.getId());
-						}
-						composite.afterInstantiation(element, definition);
-					}
-					definition.initialize(compositeElement, mapping);
+			this.initializeTemplates(composite, compositeElement, mapping, composite.getDefinitions().values());		
+		}
+	}
 
-					composite.afterScan(definition.getInstance(), definition);
-				} catch (ServiceException e) {
-					log.warn("Error initializing object", e);
+	public void initializeTemplates(
+			CompositeTemplate templatesContainer, 
+			CompositeElement parent, 
+			NamesMapping mapping, 
+			Collection<ElementTemplate> templates) {
+		
+		for (ElementTemplate definition : templates)
+		{
+			try {
+				if (!definition.isInstantiated()) {
+					Element element = definition.instantiate(parent, mapping);
+					if (element instanceof IdentificableMutable) {
+						((IdentificableMutable) element).setId(definition.getId());
+					}
+					templatesContainer.afterInstantiation(element, definition);
 				}
-			}		
+				definition.initialize(parent, mapping);
+
+				templatesContainer.afterScan(definition.getInstance(), definition);
+			} catch (ServiceException e) {
+				log.warn("Error initializing object", e);
+			}
 		}
 	}
 

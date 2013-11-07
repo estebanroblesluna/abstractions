@@ -24,6 +24,8 @@
 	@outlet id _payloadTF;
 	@outlet id _isExpressionCB;
 	@outlet id _tableView;
+	
+	@outlet id _nameColumn; 
 
 	id _propertiesKeys;
 	id _propertiesValues;
@@ -57,19 +59,21 @@
 
 - (id) interpreterAPI
 {
-	//TODO
+	return [[_window windowController] interpreterAPI];
 }
 
 - (IBAction) run: (id) aSender
 {
 	var initialMessage = [self buildJsonMessage];
 	[[self interpreterAPI] run: initialMessage];
+	[_window close];
 }
 
 - (IBAction) debug: (id) aSender
 {
 	var initialMessage = [self buildJsonMessage];
 	[[self interpreterAPI] debug: initialMessage];
+	[_window close];
 }
 
 - (IBAction) addProperty: (id) aSender
