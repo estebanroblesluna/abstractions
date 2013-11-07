@@ -83,10 +83,6 @@ public abstract class ElementDefinition {
 	public void setIcon(Icon icon) {
 		this.icon = icon;
 	}
-        
-        public void setIcon(String icon) {
-            
-        }
 
 	public void setClassName(String aClassName) {
 		this.implementation = aClassName;

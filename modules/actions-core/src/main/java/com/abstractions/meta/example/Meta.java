@@ -50,7 +50,6 @@ public class Meta {
 	public static ElementDefinition createChoiceRouter() {
 		RouterDefinition definition = new RouterDefinition("CHOICE");
 		definition.setDisplayName("Choice router");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.abstractions.instance.routing.ChoiceRouter");
 		
 		definition.addProperty(createNameProperty("New choice router"));
@@ -63,7 +62,6 @@ public class Meta {
 	public static ElementDefinition createAllRouter() {
 		RouterDefinition definition = new RouterDefinition("ALL");
 		definition.setDisplayName("All router");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.abstractions.instance.routing.AllRouter");
 		
 		definition.addProperty(createNameProperty("New all router"));
@@ -76,7 +74,6 @@ public class Meta {
 	public static ElementDefinition createWireTapRouter() {
 		RouterDefinition definition = new RouterDefinition("WIRE_TAP");
 		definition.setDisplayName("Wire tap router");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.abstractions.instance.routing.WireTapRouter");
 		
 		definition.addProperty(createNameProperty("New wire tap router"));
@@ -89,7 +86,6 @@ public class Meta {
 	public static ElementDefinition createNextInChainConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("NEXT_IN_CHAIN_CONNECTION");
 		definition.setDisplayName("Next in chain connection");
-		definition.setIcon("Resources/nextInChainConnection.png");
 		definition.setClassName("com.abstractions.instance.core.NextInChainConnection");
 
 		definition.setColor("777777");
@@ -107,7 +103,6 @@ public class Meta {
 	public static ElementDefinition createChoiceConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("CHOICE_CONNECTION");
 		definition.setDisplayName("Choice connection");
-		definition.setIcon("Resources/choiceConnection.png");
 		definition.setClassName("com.abstractions.instance.core.ChoiceConnection");
 
 		definition.setColor("0000BB");
@@ -131,7 +126,6 @@ public class Meta {
 	public static ElementDefinition createAllConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("ALL_CONNECTION");
 		definition.setDisplayName("All connection");
-		definition.setIcon("Resources/allConnection.png");
 		definition.setClassName("com.abstractions.instance.core.AllConnection");
 
 		definition.setColor("00BB00");
@@ -155,7 +149,6 @@ public class Meta {
 	public static ElementDefinition createWireTapConnection() {
 		ConnectionDefinition definition = new ConnectionDefinition("WIRE_TAP_CONNECTION");
 		definition.setDisplayName("Wire tap connection");
-		definition.setIcon("Resources/wireTapConnection.png");
 		definition.setClassName("com.abstractions.instance.core.WireTapConnection");
 
 		definition.setColor("AA00BB");
@@ -173,7 +166,6 @@ public class Meta {
 	public static ElementDefinition createGroovyProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("GROOVY");
 		definition.setDisplayName("Groovy");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.abstractions.instance.common.ScriptingProcessor");
 		
 		definition.addProperty(createNameProperty("New script"));
@@ -187,7 +179,6 @@ public class Meta {
 	public static ElementDefinition createLogProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("LOG");
 		definition.setDisplayName("Logger");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.abstractions.instance.common.LogProcessor");
 		
 		definition.addProperty(createNameProperty("New log"));
@@ -200,7 +191,6 @@ public class Meta {
 	public static ElementDefinition createHttpFetcherProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("HTTP_FETCHER");
 		definition.setDisplayName("Http fetcher");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.modules.http.HttpFetcherProcessor");
 		
 		definition.addProperty(createNameProperty("New http fetcher"));
@@ -214,7 +204,6 @@ public class Meta {
 	public static ElementDefinition createFileReaderProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("FILE_READER");
 		definition.setDisplayName("File reader");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.modules.file.FileReaderProcessor");
 		
 		definition.addProperty(createNameProperty("New file reader"));
@@ -227,7 +216,6 @@ public class Meta {
 	public static ElementDefinition createDustRendererProcessor() {
 		ElementDefinition definition = new ProcessorDefinition("DUST_RENDERER");
 		definition.setDisplayName("Dust renderer");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.modules.dust.DustRendererProcessor");
 		
 		definition.addProperty(createNameProperty("New dust renderer"));
@@ -240,7 +228,6 @@ public class Meta {
 	public static ElementDefinition createHttpMessageSource() {
 		ElementDefinition definition = new MessageSourceDefinition("HTTP_MESSAGE_SOURCE");
 		definition.setDisplayName("Http message source");
-		definition.setIcon("Resources/groovy.gif");
 		definition.setClassName("com.modules.http.HttpMessageSource");
 
 		definition.addProperty(createNameProperty("New http message source"));

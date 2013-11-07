@@ -20,6 +20,7 @@ import com.abstractions.generalization.UnconnectedDefinitionsException;
 import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.service.DeploymentService;
+import com.abstractions.service.IconService;
 import com.abstractions.service.LibraryService;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
@@ -35,6 +36,7 @@ public class ContextRESTService {
 	private String serverId;
 	private DeploymentService deploymentService;
 	private LibraryService libraryService;
+        private IconService iconService;
 	
 	public ContextRESTService(
 			DevelopmentContextHolder holder, 
@@ -104,8 +106,7 @@ public class ContextRESTService {
 		try {
 			AbstractionDefinition abstraction = abstracter.abstractFrom(name, application, elementUrns);
 			abstraction.setDisplayName(displayName);
-			abstraction.setIcon("Resources/groovy.gif");
-			
+			abstraction.setIcon(iconService.get(12)); //sets groovy icon
 			this.libraryService.addTo(3, abstraction);
 			this.mapping.addMapping(abstraction.getName(), abstraction);
 			

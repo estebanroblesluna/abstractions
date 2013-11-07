@@ -3,6 +3,7 @@ package com.abstractions.web;
 import com.abstractions.common.Icon;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.service.ElementDefinitionService;
+import com.abstractions.service.IconService;
 import com.abstractions.service.LibraryService;
 import java.io.IOException;
 import java.util.ArrayList;
