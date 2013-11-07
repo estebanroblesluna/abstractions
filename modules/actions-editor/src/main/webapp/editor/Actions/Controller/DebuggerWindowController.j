@@ -17,31 +17,29 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation ViewLoggerWindowController : CPWindowController 
+@implementation DebuggerWindowController : CPWindowController 
 {
-	id _lines;
-	id _logText;
+	id _id;
+	id _interpreterAPI;
 }
 
-- (id) lines
+- (id) interpreterAPI
 {
-	return _lines;
+	return _interpreterAPI;
 }
 
-- (void) lines: aLines
+- (void) interpreterAPI: anInterpreterAPI
 {
-	_lines = aLines;
+	_interpreterAPI = anInterpreterAPI;
 }
 
-- (void) logText: aLogText
+- (void) id: anID
 {
-	_logText = aLogText;
+	_id = anID;
 }
 
-- (void) windowDidLoad
+- (id) id
 {
-	var lines = [self lines];
-	var log = lines.join('\n');
-	[_logText setStringValue: log];
+	return _id;
 }
 @end

@@ -74,11 +74,49 @@ public class ElementRESTService {
 		return ResponseUtils.ok("deleted", deleted);
 	}
 
-	@PUT
-	@Path("/{contextId}/{elementId}/cache/{deploymentId}")
-	public Response addCache(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId, @PathParam("deploymentId") long deploymentId)
+	@POST
+	@Path("/{contextId}/{elementId}/cache/computed/{deploymentId}")
+	public Response addLazyComputedCache(
+			@PathParam("contextId") String contextId, 
+			@PathParam("elementId") String elementId, 
+			@PathParam("deploymentId") long deploymentId,
+			@FormParam("memcachedURL") String memcachedURL,
+			@FormParam("ttl") String ttl,
+			@FormParam("keyExpression") String keyExpression,
+			@FormParam("cacheExpressions") String cacheExpressions)
 	{
-		this.deploymentService.addCache(deploymentId, contextId, elementId);
+		this.deploymentService.addLazyComputedCache(
+				deploymentId, 
+				contextId, 
+				elementId,
+				memcachedURL,
+				ttl,
+				keyExpression,
+				cacheExpressions);
+		
+		return ResponseUtils.ok();
+	}
+	
+	@POST
+	@Path("/{contextId}/{elementId}/cache/autorefreshable/{deploymentId}")
+	public Response addLazyAutorefreshableCache(
+			@PathParam("contextId") String contextId, 
+			@PathParam("elementId") String elementId, 
+			@PathParam("deploymentId") long deploymentId,
+			@FormParam("memcachedURL") String memcachedURL,
+			@FormParam("oldCacheEntryInMills") String oldCacheEntryInMills,
+			@FormParam("keyExpression") String keyExpression,
+			@FormParam("cacheExpressions") String cacheExpressions)
+	{
+		this.deploymentService.addLazyAutorefreshableCache(
+				deploymentId, 
+				contextId, 
+				elementId,
+				memcachedURL,
+				oldCacheEntryInMills,
+				keyExpression,
+				cacheExpressions);
+		
 		return ResponseUtils.ok();
 	}
 	
@@ -105,9 +143,23 @@ public class ElementRESTService {
 			@PathParam("elementId") String elementId,
 			@PathParam("deploymentId") long deploymentId,
 			@FormParam("beforeExpression") String beforeExpression,
-			@FormParam("afterExpression") String afterExpression)
+			@FormParam("afterExpression") String afterExpression,
+			@FormParam("isBeforeConditional") boolean isBeforeConditional,
+			@FormParam("isAfterConditional") boolean isAfterConditional,
+			@FormParam("beforeConditionalExpressionValue") String beforeConditionalExpressionValue,
+			@FormParam("afterConditionalExpressionValue") String afterConditionalExpressionValue
+			)
 	{
-		this.deploymentService.addLogger(deploymentId, contextId, elementId, beforeExpression, afterExpression);
+		this.deploymentService.addLogger(
+				deploymentId, 
+				contextId, 
+				elementId, 
+				beforeExpression, 
+				afterExpression,
+				isBeforeConditional,
+				isAfterConditional,
+				beforeConditionalExpressionValue,
+				afterConditionalExpressionValue);
 		return ResponseUtils.ok();
 	}
 	

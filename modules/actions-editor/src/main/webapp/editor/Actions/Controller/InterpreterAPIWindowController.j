@@ -17,18 +17,18 @@
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
-@implementation AddLoggerWindowController : CPWindowController 
+@implementation InterpreterAPIWindowController : CPWindowController 
 {
-	id _elementAPI;
+	id _interpreterAPI;
 }
 
-- (id) elementAPI
+- (id) interpreterAPI
 {
-	return _elementAPI;
+	return _interpreterAPI;
 }
 
-- (void) elementAPI: anElementAPI
+- (void) interpreterAPI: anInterpreterAPI
 {
-	_elementAPI = anElementAPI;
+	_interpreterAPI = anInterpreterAPI;
 }
 @end

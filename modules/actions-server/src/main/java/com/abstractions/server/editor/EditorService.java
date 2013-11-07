@@ -2,7 +2,6 @@ package com.abstractions.server.editor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -10,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,7 +45,7 @@ public class EditorService {
 					.post(this.editorUrl + "/statistics")
 					.addFormParam("server-key", this.serverKey)
 					.addFormParam("statistics", statisticsAsJson)
-					.execute();
+					.executeAndClose();
 		} catch (ClientProtocolException e) {
 			log.warn("Error sending statistics");
 		} catch (IOException e) {
@@ -96,13 +94,15 @@ public class EditorService {
 			
 			String json = IOUtils.toString(response.getEntity().getContent());
 			JSONObject object = new JSONObject(json);
-			String key = "deploymentIds";
+			String key = "deployments";
 			
 			if (object.has(key)) {
 				JSONArray array = object.getJSONArray(key);
 				for (int i = 0; i < array.length(); i++) {
-					long deploymentId = array.getLong(i);
-					this.startDeployment(deploymentId);
+					JSONObject deployment = array.getJSONObject(i);
+					long deploymentId = deployment.getLong("deploymentId");
+					long applicationId = deployment.getLong("applicationId");
+					this.startDeployment(deploymentId, applicationId);
 				}
 			}
 		} catch (ClientProtocolException e) {
@@ -120,8 +120,9 @@ public class EditorService {
 	/**
 	 * Starts the deployment of deploymentId
 	 * @param deploymentId
+	 * @param applicationId 
 	 */
-	private void startDeployment(Long deploymentId) {
+	private void startDeployment(Long deploymentId, Long applicationId) {
 		HttpResponse response = null;
 		try {
 			response = this.strategy
@@ -130,7 +131,7 @@ public class EditorService {
 					.execute();
 			
 			InputStream io = response.getEntity().getContent();
-			this.actionsServer.start(deploymentId.toString(), io); //TODO this should be the application id
+			this.actionsServer.start(applicationId.toString(), io); 
 			this.notifySuccess(deploymentId);
 
 		} catch (ClientProtocolException e) {

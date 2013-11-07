@@ -14,7 +14,7 @@ public class DebuggableThread extends Thread {
 		super(interpreter, source, message, id);
 
 		this.stopOnBreakpoints = true;
-		this.delay = 500;
+		this.delay = 0;
 	}
 
 	public void run() {
@@ -33,16 +33,20 @@ public class DebuggableThread extends Thread {
 	
 	public void step() {
 		this.basicStep();
+		this.notifyStopped();
 	}
 	
 	protected void afterStep(ElementTemplate currentDefinition) {
 		this.delayIfNecessary();
-		this.interpreter.getDelegate().afterStep(
-				this.interpreter.getId(),
-				this.getId().toString(), 
-				this.getComposite().getId(), 
-				currentDefinition, 
-				this.currentMessage.clone());
+		if (this.hasNext()) {
+			//put after step if it is not the last one
+			this.interpreter.getDelegate().afterStep(
+					this.interpreter.getId(),
+					this.getId().toString(), 
+					this.getComposite().getId(), 
+					currentDefinition, 
+					this.currentMessage.clone());
+		}
 	}
 
 	protected void beforeStep(ElementTemplate currentDefinition) {
