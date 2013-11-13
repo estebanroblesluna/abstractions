@@ -23,6 +23,7 @@ import com.abstractions.instance.common.PerformanceProcessor;
 import com.abstractions.instance.common.ProcessorWrapper;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ResourceService;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
@@ -45,13 +46,17 @@ public class ActionsServer {
 	private final NamesMapping mapping;
 	
 	private final String applicationDirectory;
+
+	private ResourceService resourceService;
 	
-	public ActionsServer(String applicationDirectory, NamesMapping mapping) {
+	public ActionsServer(String applicationDirectory, NamesMapping mapping, ResourceService resourceService) {
 		Validate.notNull(mapping);
 		Validate.notNull(applicationDirectory);
+		Validate.notNull(resourceService);
 
 		this.mapping = mapping;
 		this.applicationDirectory = applicationDirectory;
+		this.resourceService = resourceService;
 		
 		this.marshaller = new CompositeTemplateMarshaller(mapping);
 		this.definitions = new ConcurrentHashMap<String, CompositeTemplate>();
@@ -123,6 +128,7 @@ public class ActionsServer {
 	}
 
 	private void saveFile(String applicationId, ZipEntry zipEntry, ZipInputStream zipInputStream) throws IOException {
+		// TODO use the save method in the ResourceService
 		File file = new File(this.applicationDirectory + "/" + applicationId + "/" + zipEntry.getName());
 		FileUtils.writeByteArrayToFile(file, IOUtils.toByteArray(zipInputStream));
 	}

@@ -7,7 +7,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.modules.dust.JsonBuilder;
+import com.abstractions.utils.JsonBuilder;
 import com.modules.dust.Template;
 
 public class TemplateSqlKeyValueStore extends GenericSqlKeyValueStore<Template> {

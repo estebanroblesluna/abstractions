@@ -1,4 +1,4 @@
-package com.modules.dust;
+package com.abstractions.utils;
 
 import java.io.IOException;
 import java.io.StringWriter;

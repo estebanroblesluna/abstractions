@@ -25,6 +25,6 @@ public class IconController {
     @ResponseBody 
     public byte[] show(@PathVariable("id") long id) {
         Icon icon = this.service.get(id);
-        return icon.getImage();
-    }
+		return icon.getImage();
+	}
 }
