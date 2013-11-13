@@ -16,7 +16,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.modules.dust.JsonBuilder;
+import com.abstractions.utils.JsonBuilder;
 import com.modules.dust.Template;
 import com.modules.dust.store.TemplateStore;
 

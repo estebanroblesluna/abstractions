@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.abstractions.service.core.ResourceService;
-import com.modules.dust.JsonBuilder;
+import com.abstractions.utils.JsonBuilder;
 
 @Component
 @Path("/fileStore")

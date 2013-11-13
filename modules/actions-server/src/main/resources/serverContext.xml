@@ -34,6 +34,11 @@
   <bean id="actionsServer" class="com.abstractions.server.core.ActionsServer">
     <constructor-arg value="${server.apps.directory}" />
     <constructor-arg ref="namesMapping" />
+    <constructor-arg>
+	  	<bean class="com.abstractions.service.core.FilesystemResourceService">
+	    	<constructor-arg index="0" value="${server.apps.directory}" />
+	  	</bean>
+    </constructor-arg>
   </bean>
 
   <task:scheduled-tasks scheduler="myScheduler">
@@ -46,5 +51,6 @@
   <bean id="actionsRESTServer" class="com.abstractions.server.rest.ActionsServerRest">
     <constructor-arg index="0" ref="actionsServer" />
   </bean>
+  
   
 </beans>
