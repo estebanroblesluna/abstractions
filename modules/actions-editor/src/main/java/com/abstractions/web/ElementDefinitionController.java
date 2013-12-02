@@ -23,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Guido J. Celada
  */
+//TODO: Refactor this to make a hierarchy of ElementDefinition controllers
+
 @Controller
 @RequestMapping("/libraries/{libraryId}/definitions")
 public class ElementDefinitionController {
