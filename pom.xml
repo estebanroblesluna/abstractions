@@ -48,6 +48,12 @@
       <name>OpenCV Repository for Maven</name>
       <url>http://maven2.javacv.googlecode.com/git/</url>
     </repository>
+
+    <repository>
+      <id>repository.springsource.milestone</id>
+      <name>SpringSource Milestone Repository</name>
+      <url>http://repo.springsource.org/milestone</url>
+    </repository>
   </repositories>
 
   <dependencyManagement>

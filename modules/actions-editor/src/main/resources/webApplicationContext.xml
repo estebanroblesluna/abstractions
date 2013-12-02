@@ -86,5 +86,14 @@
   class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> 
     
  <bean class="org.spring.log.LoggingHandlerExceptionResolver"/>
+ 
+ <bean id="messageSource"
+	class="org.springframework.context.support.ResourceBundleMessageSource">
+	<property name="basenames">
+	    <list>
+		<value>mymessages</value>
+	    </list>
+	</property>
+  </bean>
 
 </beans>
