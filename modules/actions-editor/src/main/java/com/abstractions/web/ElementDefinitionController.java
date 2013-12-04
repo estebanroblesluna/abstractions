@@ -3,9 +3,7 @@ package com.abstractions.web;
 import com.abstractions.common.Icon;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.service.ElementDefinitionService;
-import com.abstractions.service.IconService;
 import com.abstractions.service.LibraryService;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
