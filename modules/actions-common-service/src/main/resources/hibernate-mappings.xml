@@ -278,5 +278,5 @@
     
     <property name="image" type="binary" column="image" />
   </class>
-
+      
 </hibernate-mapping>
