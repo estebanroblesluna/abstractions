@@ -9,14 +9,14 @@
     <div class="text-center">
         <h1>Abstractions</h1>
         <p class="lead">Login page</p>
-        
+
         <c:if test="${not empty param.error}">
             <div class="alert alert-danger">
                 <strong>Error: </strong>
                 ${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
             </div>
         </c:if>
-        
+
         <div class="well">
             <div class="panel panel-default" style="width: 450px; margin-left: auto; margin-right: auto;">
                 <div class="panel-heading" style='color: #FFF;background-color: #2B2B2B;'>
@@ -45,9 +45,15 @@
                         </div>
                     </form>
                 </div>
+                <div> --- OR --- </div>
+                <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
+                    <input type="hidden" name="scope" value="publish_stream,offline_access" />
+                    <button type="submit"  class="btn btn-primary" style="margin:20px;">
+                        Login with Facebook
+                    </button>
+                </form>
             </div>
         </div>
-    </div>
-
+    </div>                      
 </body>
 </html>
