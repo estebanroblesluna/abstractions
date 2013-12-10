@@ -1,7 +1,6 @@
 package com.abstractions.web;
 
 import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UserProfile;
@@ -26,7 +25,7 @@ public class UserConnectionSignUp implements ConnectionSignUp {
         ConnectionRepository cr = repository.createConnectionRepository(profile.getUsername());
         MultiValueMap connections = cr.findAllConnections();
         if (connections.isEmpty())
-            cr.addConnection(connection);        
+            cr.addConnection(connection);     
         return profile.getUsername();
     }
 

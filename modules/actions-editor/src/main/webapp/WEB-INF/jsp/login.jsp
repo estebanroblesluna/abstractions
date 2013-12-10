@@ -5,6 +5,11 @@
 </jsp:include>
 
 <body>
+    <script>
+        function loading() {
+            document.getElementById("panel-body").innerHTML = "<img src='static/img/loading.gif' />";
+        }
+    </script>
     <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
     <div class="text-center">
         <h1>Abstractions</h1>
@@ -18,16 +23,16 @@
         </c:if>
 
         <div class="well">
-            <div class="panel panel-default" style="width: 450px; margin-left: auto; margin-right: auto;">
+            <div class="panel panel-default" style="width: 450px; margin-left: auto; margin-right: auto;" >
                 <div class="panel-heading" style='color: #FFF;background-color: #2B2B2B;'>
                     <h3 class="panel-title">User Login</h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body" id='panel-body'>
                     <form class="form-horizontal" role="form" name='f' action="<c:url value='j_spring_security_check'/>" method="POST" >
                         <div class="form-group">
                             <label for="inputEmail3" class="col-sm-2 control-label">Username</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="Email" name='j_username'>
+                                <input type="text" class="form-control" id="inputEmail3" placeholder="Username" name='j_username'>
                             </div>
                         </div>
                         <div class="form-group">
@@ -40,18 +45,20 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-1 col-sm-10">
-                                <input class="btn btn-default" name="submit" type="submit" value="Submit" />
+                                <input class="btn btn-default" name="submit" type="submit" value="Submit" onclick="loading();"/>
                             </div>
                         </div>
                     </form>
+
+                    <div> --- OR --- </div>
+
+                    <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
+                        <input type="hidden" name="scope" value="publish_stream,offline_access" />
+                        <button type="submit"  class="btn btn-primary" style="margin:20px;" onclick="loading();">
+                            Login with Facebook
+                        </button>
+                    </form>
                 </div>
-                <div> --- OR --- </div>
-                <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
-                    <input type="hidden" name="scope" value="publish_stream,offline_access" />
-                    <button type="submit"  class="btn btn-primary" style="margin:20px;">
-                        Login with Facebook
-                    </button>
-                </form>
             </div>
         </div>
     </div>                      
