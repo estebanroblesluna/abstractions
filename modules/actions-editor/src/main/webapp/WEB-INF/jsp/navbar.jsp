@@ -10,7 +10,7 @@
             <li id ="teams"><a href="/teams/">Home</a></li>
             <li id="libraries"><a href="/libraries/">Libraries</a></li> 
         </ul>
-        <sec:authorize access=" isAuthenticated()">
+        <sec:authorize access="isAuthenticated()">
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><sec:authentication property="principal.username" /> <b class="caret"></b></a>
