@@ -6,8 +6,10 @@
 
 <body>
     <script>
-        function loading() {
-            document.getElementById("panel-body").innerHTML = "<img src='static/img/loading.gif' />";
+        function loadLoadingImage() {
+            $("#panel-form-body").hide();
+            $("#loading").show();
+            return true;
         }
     </script>
     <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
@@ -28,36 +30,39 @@
                     <h3 class="panel-title">User Login</h3>
                 </div>
                 <div class="panel-body" id='panel-body'>
-                    <form class="form-horizontal" role="form" name='f' action="<c:url value='j_spring_security_check'/>" method="POST" >
-                        <div class="form-group">
-                            <label for="inputEmail3" class="col-sm-2 control-label">Username</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="Username" name='j_username'>
+                    <img src='static/img/loading.gif' alt='Loading...' id='loading' style='display:none;'/>
+                    <div id="panel-form-body">
+                        <form class="form-horizontal" role="form" name='f' action="<c:url value='j_spring_security_check'/>" method="POST" >
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-2 control-label">Username</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inputEmail3" placeholder="Username" name='j_username'>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-2 control-label" >Password</label>
-                            <div class="col-sm-10">
-                                <input type="password" class="form-control" id="inputPassword3" placeholder="Password" name='j_password'>
+                            <div class="form-group">
+                                <label for="inputPassword3" class="col-sm-2 control-label" >Password</label>
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" id="inputPassword3" placeholder="Password" name='j_password'>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-1 col-sm-10">
-                                <input class="btn btn-default" name="submit" type="submit" value="Submit" onclick="loading();"/>
+                            <div class="form-group">
                             </div>
-                        </div>
-                    </form>
+                            <div class="form-group">
+                                <div class="col-sm-offset-1 col-sm-10">
+                                    <input class="btn btn-default" name="submit" type="submit" value="Submit" onclick="loadLoadingImage();"/>
+                                </div>
+                            </div>
+                        </form>
 
-                    <div> --- OR --- </div>
+                        <div> --- OR --- </div>
 
-                    <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
-                        <input type="hidden" name="scope" value="publish_stream,offline_access" />
-                        <button type="submit"  class="btn btn-primary" style="margin:20px;" onclick="loading();">
-                            Login with Facebook
-                        </button>
-                    </form>
+                        <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
+                            <input type="hidden" name="scope" value="publish_stream,offline_access" />
+                            <button type="submit"  class="btn btn-primary" style="margin:20px;" onclick="loadLoadingImage();">
+                                Login with Facebook
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
