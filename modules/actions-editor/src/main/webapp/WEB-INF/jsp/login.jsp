@@ -58,8 +58,16 @@
 
                         <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
                             <input type="hidden" name="scope" value="publish_stream,offline_access" />
-                            <button type="submit"  class="btn btn-primary" style="margin:20px;" onclick="loadLoadingImage();">
+
+                            <button type="submit"  class="btn btn-primary" style="margin:20px; padding: 0px 10px 0px 0px; background-color:#3a589b;" onclick="loadLoadingImage();">
+                                <img src="/static/img/facebook.png" style="width:40px" />
                                 Login with Facebook
+                            </button>
+                        </form>
+                        <form id="tw_signin" action="<c:url value="/signin/twitter"/>" method="POST">
+                            <button type="submit"  class="btn btn-primary" style="margin:20px; padding: 0px 10px 0px 0px; background-color:#598dca;" onclick="loadLoadingImage();">
+                                <img src="/static/img/twitter.png" style="width:40px" />
+                                Login with Twitter
                             </button>
                         </form>
                     </div>
