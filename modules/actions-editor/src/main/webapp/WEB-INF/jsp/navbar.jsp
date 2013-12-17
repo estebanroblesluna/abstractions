@@ -5,10 +5,10 @@
 
 <script>
     $(".circular").ready(function() {
-    <sec:authorize access="hasRole('ROLE_SOCIAL_USER')">
-        var user = "<sec:authentication property='principal.username' />";
-        user = $('<div/>').html(user).text();
-        $(".circular").css("background-image", "url(http://graph.facebook.com/"+ user +"/picture?type=square)");
+    <sec:authorize access="hasRole('ROLE_SOCIAL')">
+        var image = "<sec:authentication property='principal.password' />";
+        image = $('<div/>').html(image).text();
+        $(".circular").css("background-image", "url("+image+")");
     </sec:authorize>
         });
 </script>

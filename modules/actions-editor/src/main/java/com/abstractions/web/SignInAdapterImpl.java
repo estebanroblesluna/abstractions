@@ -10,6 +10,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.web.SignInAdapter;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.security.SocialAuthenticationToken;
+import org.springframework.social.security.SocialUser;
+import org.springframework.social.security.SocialUserDetailsService;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -27,10 +32,9 @@ public class SignInAdapterImpl implements SignInAdapter {
         //Create a UsernamePasswordAuthenticationToken
         ArrayList<GrantedAuthorityImpl> auths = new ArrayList<GrantedAuthorityImpl>();
         auths.add(new GrantedAuthorityImpl("ROLE_USER"));
-        auths.add(new GrantedAuthorityImpl("ROLE_SOCIAL_USER"));
-        User user = new User(userId, "", true, true, true, true, auths);
+        auths.add(new GrantedAuthorityImpl("ROLE_SOCIAL"));
+        User user = new SocialUser(userId, connection.getImageUrl() , true, true, true, true, auths);
         UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(user, "", auths);
-        upat.setDetails(new WebAuthenticationDetails(request.getNativeRequest(HttpServletRequest.class)));
         
         //Set it up on the context
         SecurityContextHolder.getContext().setAuthentication(upat);
