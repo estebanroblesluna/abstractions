@@ -14,6 +14,7 @@
 <script src="${staticResourcesUrl}js/alert.js"></script>
 <link rel="stylesheet" href="${staticResourcesUrl}css/codemirror.css">
 <link rel="stylesheet" href="${staticResourcesUrl}css/bootstrap.min.css">
+<link rel="stylesheet" href="${staticResourcesUrl}css/editor.css">
 <style>
 	#alerts {
 		height: 63px;
