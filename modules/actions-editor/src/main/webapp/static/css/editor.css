@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+.open-folder > img{
+	content: url("../img/folder-open.png");
+}
+
+.closed-folder > img{
+	content: url("../img/folder-close.png");
+}
+
+.tree-file-bullet{
+	content: url("../img/file.png");
+}
+
+.tree-folder ul{
+	padding-left: 20px;
+	list-style: none;
+}
+
+#fileTree a{
+	cursor: pointer;
+}
+
+.delete-button{
+	margin-left: 2px;
+	margin-right: 5px;
+	content: url("../img/del.png");
+}
