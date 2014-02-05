@@ -4,12 +4,12 @@
 <jsp:include page="/WEB-INF/jsp/fileEditorHeader.jsp" />
 <body>
   <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
-
   <script type="text/javascript">
     var templateEditor;
     var currentFilename = null;
     var newFile = false;
     var applicationId = ${applicationId};
+    var fileTree = new Folder("");
     
     var extensionModeMappings = {
     	js: "javascript",
@@ -54,22 +54,25 @@
     	folder = file[depth-1]
     	path = file.slice(0,depth).join("/");
     	html = $("<li class='tree-folder open-folder' name='"+folder+"' path='"+path+"'/>");
-    	bullet = $("<img class='tree-folder-bullet'/>");
+    	bullet = $("<span class='glyphicon glyphicon-folder-open'></span>");
     	anchor = $("<a>"+folder+"</a>");
     	html.append(bullet);
     	html.append(anchor);
     	html.append($("<ul class='folder-list'/>"));
     	html.append($("<ul class='file-list'/>"));
     	root.append(html);
+    	bullet.button();
     	//Expand/collapse con click
     	bullet.click(function(){
     		p=$(this).parent();
-    		status = p.attr("class").split(" ")[1];
-    		if(status == "open-folder") {
+    		status = p.attr("class");
+    		if(status == "tree-folder open-folder") {
     			p.attr("class","tree-folder closed-folder");
+    			$("> span", p).attr("class","glyphicon glyphicon-folder-close");
     			$("> ul",p).hide(500);
     		} else {
     			p.attr("class","tree-folder open-folder");
+    			$("> span", p).attr("class","glyphicon glyphicon-folder-open");
     			$("> ul",p).show(500);
     		}
     	});
@@ -81,7 +84,7 @@
     	path = file.join("/");
     	filename = file[file.length-1];
     	html = $("<li class='tree-file' path='"+path+"'/>");
-    	bullet = $("<img class='tree-file-bullet'/>");
+    	bullet = $("<span class='glyphicon glyphicon-file'></span>");
     	anchor = $("<a path='"+path+"'>"+filename+"</a>");
     	anchor.click(function(e){
     		var self = this;
@@ -91,7 +94,7 @@
               fileSelected(filename, response)
              }});
     	});
-    	delButton = $("<img class='delete-button' />")
+    	delButton = $("<span class='glyphicon glyphicon-remove'></span>")
     	delButton.click(function(e){
     		path = $(this).parent().attr("path");
     		self = this;
@@ -130,6 +133,7 @@
     
     function addFileToList(filename) {
     	filename = filename[0] == '/' ? filename.substring(1) : filename;
+    	fileTree.addFile(filename);
     	addPathToTree(filename.split("/"),0,$("#fileTree"));
     	/*
         var html = "<li>";
