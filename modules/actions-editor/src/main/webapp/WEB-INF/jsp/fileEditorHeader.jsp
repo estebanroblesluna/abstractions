@@ -12,7 +12,10 @@
 <script src="${staticResourcesUrl}js/jquery.min.js"></script>
 <script src="${staticResourcesUrl}js/bootstrap.min.js"></script>
 <script src="${staticResourcesUrl}js/alert.js"></script>
-<script src="${staticResourcesUrl}js/tree.js"></script>
+<script src="${staticResourcesUrl}js/util/functionalTools.js"></script>
+<script src="${staticResourcesUrl}js/util/tree.js"></script>
+<script src="${staticResourcesUrl}js/util/fileTree.js"></script>
+<script src="${staticResourcesUrl}js/util/fileEditor.js"></script>
 <link rel="stylesheet" href="${staticResourcesUrl}css/codemirror.css">
 <link rel="stylesheet" href="${staticResourcesUrl}css/bootstrap.min.css">
 <link rel="stylesheet" href="${staticResourcesUrl}css/editor.css">
