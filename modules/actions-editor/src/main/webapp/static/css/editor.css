@@ -3,13 +3,43 @@
 .tree-folder ul{
 	padding-left: 20px;
 	list-style: none;
+	margin-bottom: 0px;
 }
 
 .tree-folder a{
 	margin-left: 4px;
 }
 
+.tree-folder span{
+	margin-left: 4px;
+	font-weight: bold;
+}
+
 #fileTree a{
 	margin-left: 4px;
 	cursor: pointer;
+}
+
+html, body, .container, #editor-container, #tree-container {
+	height: 100%;
+}
+
+#tree-container{
+	background-color: rgb(241, 241, 241);
+}
+
+#fileTree {
+	padding-top: 20px;
+}
+
+#toolbar {
+	background-color: #101010;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#filename-container {
+	margin-top: 5px;
+	width: 100%;
+	background-color: white;
 }
