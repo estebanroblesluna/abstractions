@@ -12,8 +12,10 @@
 <script src="${staticResourcesUrl}js/jquery.min.js"></script>
 <script src="${staticResourcesUrl}js/bootstrap.min.js"></script>
 <script src="${staticResourcesUrl}js/alert.js"></script>
+<script src="${staticResourcesUrl}js/tree.js"></script>
 <link rel="stylesheet" href="${staticResourcesUrl}css/codemirror.css">
 <link rel="stylesheet" href="${staticResourcesUrl}css/bootstrap.min.css">
+<link rel="stylesheet" href="${staticResourcesUrl}css/editor.css">
 <style>
 	#alerts {
 		height: 63px;

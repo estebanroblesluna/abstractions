@@ -4,12 +4,12 @@
 <jsp:include page="/WEB-INF/jsp/fileEditorHeader.jsp" />
 <body>
   <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
-
   <script type="text/javascript">
     var templateEditor;
     var currentFilename = null;
     var newFile = false;
     var applicationId = ${applicationId};
+    var fileTree = new Folder("");
     
     var extensionModeMappings = {
     	js: "javascript",
@@ -50,7 +50,92 @@
     	}
     }
     
+    function addFolderToTree(file,depth,root){
+    	folder = file[depth-1]
+    	path = file.slice(0,depth).join("/");
+    	html = $("<li class='tree-folder open-folder' name='"+folder+"' path='"+path+"'/>");
+    	bullet = $("<span class='glyphicon glyphicon-folder-open'></span>");
+    	anchor = $("<a>"+folder+"</a>");
+    	html.append(bullet);
+    	html.append(anchor);
+    	html.append($("<ul class='folder-list'/>"));
+    	html.append($("<ul class='file-list'/>"));
+    	root.append(html);
+    	bullet.button();
+    	//Expand/collapse con click
+    	bullet.click(function(){
+    		p=$(this).parent();
+    		status = p.attr("class");
+    		if(status == "tree-folder open-folder") {
+    			p.attr("class","tree-folder closed-folder");
+    			$("> span", p).attr("class","glyphicon glyphicon-folder-close");
+    			$("> ul",p).hide(500);
+    		} else {
+    			p.attr("class","tree-folder open-folder");
+    			$("> span", p).attr("class","glyphicon glyphicon-folder-open");
+    			$("> ul",p).show(500);
+    		}
+    	});
+    	//Create dummy file on the new folder
+    	return html;
+    }
+    
+    function addFileToTree(file,root){
+    	path = file.join("/");
+    	filename = file[file.length-1];
+    	html = $("<li class='tree-file' path='"+path+"'/>");
+    	bullet = $("<span class='glyphicon glyphicon-file'></span>");
+    	anchor = $("<a path='"+path+"'>"+filename+"</a>");
+    	anchor.click(function(e){
+    		var self = this;
+    		filename = $(this).attr("path");
+            e.preventDefault();   
+            $.ajax({url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + $(this).attr("path"), type: "GET", success: function(response) {
+              fileSelected(filename, response)
+             }});
+    	});
+    	delButton = $("<span class='glyphicon glyphicon-remove'></span>")
+    	delButton.click(function(e){
+    		path = $(this).parent().attr("path");
+    		self = this;
+    		$.ajax({
+    			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + path,
+    			type: "DELETE", 
+    			success: function(response) {
+                	$(self).parent().hide(500, function() {$(self).parent().remove()});
+               }});
+    	});
+    	html.append(bullet);
+    	html.append(delButton)
+    	html.append(anchor);
+    	root.append(html);
+    }
+    
+    function addPathToTree(file,depth,root){
+    	node = file[depth];
+    	depth += 1
+    	if(file.length == depth){
+    		addFileToTree(file,root.find("> .file-list"));
+    		
+    	} else {
+    		//This is a folder.
+    		//Check whether the folder already exists.
+    		newroot = root.find("> ul > li[name='"+node+"']");
+    		if(newroot.length != 0){
+    			//The folder exists, add the file to it.
+    			addPathToTree(file,depth,newroot);
+    		} else {
+    			newroot = addFolderToTree(file,depth,root.find("> .folder-list"));
+    			addPathToTree(file,depth,newroot);
+    		}
+    	}
+    }
+    
     function addFileToList(filename) {
+    	filename = filename[0] == '/' ? filename.substring(1) : filename;
+    	fileTree.addFile(filename);
+    	addPathToTree(filename.split("/"),0,$("#fileTree"));
+    	/*
         var html = "<li>";
         filename = filename[0] == '/' ? filename.substring(1) : filename;
         var extension = extractExtension(filename);
@@ -77,6 +162,7 @@
             }});
         });
         $("#fileList").append(jHtml);
+        */
     }
     
     $(document).ready(function() {
@@ -147,7 +233,10 @@
     </div>
     <div class="row">
       <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-        <ul id="fileList"></ul>
+        <div class="tree-folder" id="fileTree">
+        	<ul class="folder-list"></ul>
+     	    <ul class="file-list"></ul>
+        </div>
       </div>
       <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
         <div class="row">
