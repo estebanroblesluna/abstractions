@@ -1,0 +1,15 @@
+@CHARSET "UTF-8";
+
+.tree-folder ul{
+	padding-left: 20px;
+	list-style: none;
+}
+
+.tree-folder a{
+	margin-left: 4px;
+}
+
+#fileTree a{
+	margin-left: 4px;
+	cursor: pointer;
+}
