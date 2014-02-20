@@ -22,6 +22,7 @@
  
 	<authentication-manager>
 	  <authentication-provider>
+	  	<password-encoder hash="sha" />
 		<jdbc-user-service data-source-ref="dataSource"
  
 		   users-by-username-query="
