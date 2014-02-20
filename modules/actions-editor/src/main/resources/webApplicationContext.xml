@@ -142,8 +142,10 @@
       <aop:scoped-proxy proxy-target-class="false" />
   </bean>
   
+  
   <bean id="textEncryptor" class="org.springframework.security.crypto.encrypt.Encryptors" 
             factory-method="noOpText" />
+ 
   
   <bean id="signInAdapter"  
   class="com.abstractions.web.SignInAdapterImpl" /> 
