@@ -1,0 +1,17 @@
+.circular {
+	width: 70px;
+	height: 70px;
+	border-radius: 150px;
+	-webkit-border-radius: 150px;
+	-moz-border-radius: 150px;
+        background-position:center; 
+        background-repeat: no-repeat;
+        background-size: 70px;
+        background-color: rgb(180, 180, 180);
+        background-image: url(/static/img/no_profile_picture.png);
+        position: absolute;
+        right: 5px;
+	box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+	}

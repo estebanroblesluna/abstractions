@@ -61,7 +61,7 @@ public class GenericRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T findBy(Class<Server> theClass, String property, Object value) {
+	public <T> T findBy(Class<T> theClass, String property, Object value) {
 		return (T) this.sessionFactory.getCurrentSession()
 			.createCriteria(theClass)
 			.add(Restrictions.eq(property, value))

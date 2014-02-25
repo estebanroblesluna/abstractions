@@ -54,6 +54,20 @@
       <name>SpringSource Milestone Repository</name>
       <url>http://repo.springsource.org/milestone</url>
     </repository>
+    
+    <!-- For Spring security crypto (Twitter oauth1) -->
+    <repository>
+        <id>org.springframework.maven.milestone</id>
+        <name>Spring Maven Milestone Repository</name>
+        <url>http://maven.springframework.org/milestone</url>
+    </repository>
+    
+    <repository>
+        <id>org.springframework.maven.snapshot</id>
+        <name>Spring Maven Snapshot Repository</name>
+        <url>http://maven.springframework.org/snapshot</url>
+    </repository>
+		
   </repositories>
 
   <dependencyManagement>
