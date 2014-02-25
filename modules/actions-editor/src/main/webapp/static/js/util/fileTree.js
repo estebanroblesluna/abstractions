@@ -4,7 +4,9 @@ var Folder = function(name,clickOnFile,clickOnFolder){
 	this.name = name || "";
 	this.newFolderHook = nop;
 	this.newFileHook = nop;
-	this.renderOn = null
+	this.deleteFileHook = nop;
+	this.renderOn = null;
+	this.selected = false;
 	
 	this.getSubFolder = function(name){
 		for(var i=0; i<this.children.length; i++){
@@ -46,6 +48,7 @@ var Folder = function(name,clickOnFile,clickOnFolder){
 		res.append(fileList);
 		return res;
 	}
+	
 	/*
 	 * Returns the requested folder, creating it if it did not exist already.
 	 */
@@ -76,7 +79,7 @@ var Folder = function(name,clickOnFile,clickOnFolder){
 			var file = path[0];
 			var fileNode = this.getFile(file);
 			if(!fileNode){
-				fileNode = new File(file,this.clickOnFile);
+				fileNode = new File(file,this.clickOnFile,this.deleteFileHook);
 				this.addLeaf(fileNode);
 				this.newFileHook(fileNode);
 			}
@@ -89,20 +92,60 @@ var Folder = function(name,clickOnFile,clickOnFolder){
 		}
 	}
 	
+	this.deleteFile = function(filename){
+		var path = filename.split("/");
+		if(path.length == 1){
+			for(i in this.leaves)
+				if(this.leaves[i].name == path[0]){
+					this.leaves[i].deleteFileHook();
+					this.leaves.splice(i,1);
+				}
+		} else {
+			path.splice(0,1);
+			this.deleteFile(path.join("/"));
+		}
+		
+			
+	}
+	
 	this.getPath = function(){
 		if(!this.parent)
 			return this.name;
 		else 
 			return this.parent.getPath() + "/" + this.name; 
+	}
+	
+	this.cleanSelected = function(){
+		$(this.children).each(function(){
+			this.cleanSelected();
+		})
+		$(this.leaves).each(function(){
+			this.cleanSelected();
+		})
+	}
+	
+	this.getSelected = function(){
+		var ret = [];
+		$(this.children).each(function(){
+			ret.concat(this.getSelected());
+			if(this.selected)
+				ret.append(this);
+		})
+		$(this.leaves).each(function(){
+			if(this.selected)
+				ret.append(this);
+		})
 	}
 }
 
 
-var File = function(name,clickOnFile){
+var File = function(name,clickOnFile,deleteFileHook){
 	
-	this.__proto__ = new Leaf()
+	this.__proto__ = new Leaf();
 	this.name = name || "";
-	this.clickOnFile = clickOnFile || nop
+	this.clickOnFile = clickOnFile || nop;
+	this.deleteFileHook = deleteFileHook || nop;
+	this.selected = false;
 	
 	this.getPath = function(){
 		if(!this.parent)
@@ -111,16 +154,13 @@ var File = function(name,clickOnFile){
 			return this.parent.getPath() + "/" + this.name; 
 	}
 	
-	this.html = function(){
-		var res;
-		res = $("<li>");
-		var bullet = $("<span class='glyphicon glyphicon-file'></span>");
-		res.append(bullet);
-		var link = $("<a>"+this.name+"</a>")
-		res.append(link);
-		link.click(partial(this.clickOnFile,this));
-		res.attr("path",this.getPath());
-		return res;
+	this.cleanTreeSelection = function(){
+		var root = this.getRoot();
+		root.cleanSelected();
+	}
+	
+	this.cleanSelected = function(){
+		this.selected = false;
 	}
 }
 
@@ -156,7 +196,7 @@ function FolderView(domRoot, model){
 	
 	function fileAdded(domNode,parentView,model){
 		var res;
-		res = $("<li>");
+		res = $("<li class='file'>");
 		var bullet = $("<span class='glyphicon glyphicon-file'></span>");
 		res.append(bullet);
 		var link = $("<a>"+model.name+"</a>")
@@ -166,6 +206,10 @@ function FolderView(domRoot, model){
 		domNode.append(res);
 	}
 	
+	function fileRemoved(view){
+		filename = this.getPath();
+		$("li [path='"+filename+"']",view.domRoot).remove();
+	}
 	
 	this.domRoot = domRoot;
 	this.subViews = [];
