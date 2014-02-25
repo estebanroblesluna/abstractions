@@ -34,3 +34,9 @@ nbactions.xml
 config/.DS_Store
 
 config/.DS_Store
+
+modules/actions-server/nb-configuration.xml
+
+.metadata/
+
+Servers/
