@@ -9,11 +9,22 @@ var Tree = function(){
 		leaf.parent = this;
 		this.leaves.push(leaf);
 	}
-	this.parent = undefined;
+	this.getRoot = function(){
+		if(this.parent)
+			return this.parent.getRoot();
+		return this;
+	}
+	this.parent = null;
 }
 
 var Leaf = function(){
-	this.parent = undefined;
+	this.parent = null;
+	
+	this.getRoot = function(){
+		if(this.parent)
+			return this.parent.getRoot();
+		return this;
+	}
 }
 
 
