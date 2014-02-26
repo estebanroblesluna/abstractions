@@ -43,3 +43,7 @@ html, body, .container, #editor-container, #tree-container {
 	width: 100%;
 	background-color: white;
 }
+
+.selectedFile {
+	background-color: red;
+}

@@ -17,6 +17,13 @@
   
 	//File tree functions
   	function selectFile(node, e){
+		if(!e.ctrlKey)
+		{
+			$(".selectedFile").attr("class","file");
+			node.cleanTreeSelection();
+		}
+		node.selected = true;
+		$(this).attr("class","file selectedFile");
 		filename = node.getPath();
         e.preventDefault(); 
   		$.ajax({
@@ -45,6 +52,8 @@
     } 
 	
     function saveFile(filename,content){
+    	if(filename[0] != "/")
+    		filename = "/"+filename;
 	    $.ajax({
 	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files" + filename,
 	    	type: "PUT",
@@ -97,9 +106,27 @@
             if (filename[0] == '/') {
             	filename = filename.substring(1);
             }
-            fileSelected(filename, "");
+            editor.setFile(filename, "");
             newFile = true;
          });
+        
+        $("#deleteFile").click(function(e){
+        	e.preventDefault();
+        	$(".selectedFile").each(function(){
+        		var filename = $(this).parent().attr("path");
+        		var self = this;
+        		$.ajax({
+           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files" + filename,
+           			type: "DELETE",
+           			dataType: 'html',
+           			success: function() {
+           				fileTreeView.model.deleteFile(filename);
+           				$(self).parent().remove();
+               		}
+        		});
+        		fileTreeView.model.deleteFile(filename);
+        	})
+        });
         
     });
     
@@ -113,6 +140,7 @@
           <input id="zipFile" type="file" name="file" style="display: none" />
           <button id="uploadZip" class="btn" title="Uppload zip file"><span class="glyphicon glyphicon-upload"></span></button>
           <button id="newFile" class="btn" title="New file"><span class="glyphicon glyphicon-file"></span></button>
+          <button id="deleteFile" class="btn" title="Delete file"><span class="glyphicon glyphicon-remove"></span></button>
         </form>
       </div>
     </div>
