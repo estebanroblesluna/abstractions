@@ -8,15 +8,6 @@
     <constructor-arg index="0" ref="sessionFactory" />
   </bean>
   
-  <bean id="libraryService" class="com.abstractions.service.LibraryService">
-    <constructor-arg index="0" ref="repository" />
-  </bean>
-
-  <bean class="com.abstractions.service.MappingInitializer" init-method="initializeMapping">
-    <property name="mapping" ref="namesMapping" />
-    <property name="libraryService" ref="libraryService" />
-  </bean>
-  
   <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
     <property name="sessionFactory" ref="sessionFactory" />
   </bean>

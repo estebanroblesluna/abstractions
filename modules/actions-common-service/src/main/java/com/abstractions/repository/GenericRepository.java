@@ -1,6 +1,5 @@
 package com.abstractions.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,8 +11,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Repository;
-
-import com.abstractions.model.Server;
 
 @Repository
 public class GenericRepository {

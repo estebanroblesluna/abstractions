@@ -31,6 +31,12 @@
     </dependency>
     
     <dependency>
+      <groupId>com.actions</groupId>
+      <artifactId>actions-common-service</artifactId>
+      <version>${version}</version>
+    </dependency>
+    
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>

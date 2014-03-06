@@ -1,7 +1,7 @@
 package com.abstractions.web;
 
 import com.abstractions.model.Library;
-import com.abstractions.service.LibraryService;
+import com.abstractions.service.core.LibraryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

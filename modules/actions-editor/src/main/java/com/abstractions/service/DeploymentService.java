@@ -41,7 +41,6 @@ import com.abstractions.model.Flow;
 import com.abstractions.model.Server;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
-import com.abstractions.service.core.ResourceService;
 
 @Service
 public class DeploymentService {
@@ -54,7 +53,6 @@ public class DeploymentService {
 	private SnapshotService snapshotService;
 	private UserService userService;
 	private ServerService serverService;
-	private ResourceService fileService;
 	
 	public DeploymentService() {
 		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
@@ -74,20 +72,17 @@ public class DeploymentService {
 			GenericRepository repository, 
 			SnapshotService snapshotService, 
 			UserService userService, 
-			ServerService serverService,
-			ResourceService fileService) {
+			ServerService serverService) {
 		this();
 		Validate.notNull(repository);
 		Validate.notNull(snapshotService);
 		Validate.notNull(userService);
 		Validate.notNull(serverService);
-		Validate.notNull(fileService);
 
 		this.repository = repository;
 		this.snapshotService = snapshotService;
 		this.userService = userService;
 		this.serverService = serverService;
-		this.fileService = fileService;
 	}
 
 	@Transactional
@@ -360,7 +355,7 @@ public class DeploymentService {
 		toServer.setState(DeploymentState.STARTED);
 		this.repository.save(toServer);
 		
-		String filename = this.fileService.buildSnapshotPath(
+		String filename = this.snapshotService.buildSnapshotPath(
 				deployment.getSnapshot().getApplication().getId(), 
 				deployment.getSnapshot().getId());
 		return filename;
