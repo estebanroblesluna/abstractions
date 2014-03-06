@@ -87,8 +87,9 @@
     <constructor-arg index="3" ref="serverService" />
   </bean>
 
-  <bean id="fileService" class="com.abstractions.service.core.FilesystemResourceService">
-    <constructor-arg index="0" value="./files" />
+  <bean id="fileService" class="com.abstractions.service.core.DatabaseResourceService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" value="public" />
   </bean>
   
   <bean id="elementDefinitionService" class="com.abstractions.service.ElementDefinitionService">
