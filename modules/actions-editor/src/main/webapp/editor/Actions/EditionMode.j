@@ -133,7 +133,7 @@
 
 	[commonToolbox addTool: [SelectionTool drawing: drawing] withTitle: @"Selection" image: @"Resources/Selection.png"];
 	[commonToolbox addCommand: [SaveActionsCommand class] withTitle: @"Save" image: @"Resources/Save.gif"];
-	[commonToolbox addCommand: [AbstractCommand class] withTitle: @"Abstract" image: @"Resources/Save.gif"];
+	[commonToolbox addCommand: [AbstractCommand class] withTitle: @"Abstract" image: @"Resources/abstract.png"];
 
     [commonToolbox addCommand: [GroupCommand class] withTitle: @"Group" image: @"Resources/Group.gif"];
     [commonToolbox addCommand: [UngroupCommand class] withTitle: @"Ungroup" image: @"Resources/Ungroup.gif"];

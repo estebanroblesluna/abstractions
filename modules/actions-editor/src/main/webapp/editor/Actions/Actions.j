@@ -90,7 +90,7 @@ var _controller;
 
 + (id) isDevelopment
 {
-	return false;
+	return location.hostname == "localhost";
 }
 
 + (void) mode: (id) aMode

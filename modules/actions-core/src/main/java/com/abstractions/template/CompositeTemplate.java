@@ -245,7 +245,11 @@ public class CompositeTemplate extends ElementTemplate {
 	
 	public ExecutorService getExecutorServiceFor(ElementTemplate definition) {
 		if (!this.executorServices.containsKey(definition)) {
-			this.executorServices.put(definition, Executors.newFixedThreadPool(10));
+			synchronized (this.executorServices) {
+				if (!this.executorServices.containsKey(definition)) {
+					this.executorServices.put(definition, Executors.newFixedThreadPool(80));
+				}				
+			}
 		}
 		
 		return this.executorServices.get(definition);
