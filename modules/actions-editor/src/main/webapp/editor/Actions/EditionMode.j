@@ -2,9 +2,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,13 +23,13 @@
 {
 	var topRight = [aProcessorFigure topRight];
 	var _breakpointFigure = [ImageFigure initializeWithImage: @"Resources/stop.gif" x: topRight.x y: topRight.y];
-	[aProcessorFigure setBreakpointFigure: _breakpointFigure]; 
+	[aProcessorFigure setBreakpointFigure: _breakpointFigure];
 	var hasBreakpoint = [[aProcessorFigure model] hasBreakpoint];
 	[_breakpointFigure setHidden: !hasBreakpoint];
     var magnet = [Magnet newWithSource: aProcessorFigure target: _breakpointFigure selector: @selector(topRight)];
 
 	var drawing = [aProcessorFigure drawing];
-	
+
 	[drawing addFigure:	_breakpointFigure];
 }
 
@@ -45,55 +45,55 @@
 
 - (void) createMessageSourceFigureMenu: (id) aMessageSourceFigure menu: (CPMenu) contextMenu
 {
-    var startMenu = [[CPMenuItem alloc] initWithTitle:@"Start" action: @selector(start:) keyEquivalent:@""]; 
-    [startMenu setTarget: aMessageSourceFigure]; 
-    [startMenu setEnabled: YES]; 
-    [contextMenu addItem: startMenu]; 
+    var startMenu = [[CPMenuItem alloc] initWithTitle:@"Start" action: @selector(start:) keyEquivalent:@""];
+    [startMenu setTarget: aMessageSourceFigure];
+    [startMenu setEnabled: YES];
+    [contextMenu addItem: startMenu];
 
-    var stopMenu = [[CPMenuItem alloc] initWithTitle:@"Stop" action: @selector(stop:) keyEquivalent:@""]; 
-    [stopMenu setTarget: aMessageSourceFigure]; 
-    [stopMenu setEnabled: YES]; 
-    [contextMenu addItem: stopMenu]; 
+    var stopMenu = [[CPMenuItem alloc] initWithTitle:@"Stop" action: @selector(stop:) keyEquivalent:@""];
+    [stopMenu setTarget: aMessageSourceFigure];
+    [stopMenu setEnabled: YES];
+    [contextMenu addItem: stopMenu];
 }
 
 - (void) createProcessorFigureMenu: (id) aProcessorFigure menu: (CPMenu) contextMenu
 {
-    var sendMessageMenu = [[CPMenuItem alloc] initWithTitle:@"Send message" action: @selector(sendMessage:) keyEquivalent:@""]; 
-    [sendMessageMenu setTarget: aProcessorFigure]; 
-    [sendMessageMenu setEnabled: YES]; 
-    [contextMenu addItem: sendMessageMenu]; 
+    var sendMessageMenu = [[CPMenuItem alloc] initWithTitle:@"Send message" action: @selector(sendMessage:) keyEquivalent:@""];
+    [sendMessageMenu setTarget: aProcessorFigure];
+    [sendMessageMenu setEnabled: YES];
+    [contextMenu addItem: sendMessageMenu];
 
-    var setBreakpointMenu = [[CPMenuItem alloc] initWithTitle:@"Set breakpoint" action: @selector(setBreakpoint:) keyEquivalent:@""]; 
-    [setBreakpointMenu setTarget: aProcessorFigure]; 
-    [setBreakpointMenu setEnabled: YES]; 
-    [contextMenu addItem: setBreakpointMenu]; 
+    var setBreakpointMenu = [[CPMenuItem alloc] initWithTitle:@"Set breakpoint" action: @selector(setBreakpoint:) keyEquivalent:@""];
+    [setBreakpointMenu setTarget: aProcessorFigure];
+    [setBreakpointMenu setEnabled: YES];
+    [contextMenu addItem: setBreakpointMenu];
 }
 
 - (void) createElementFigureMenu: (id) anElementFigure
 {
-    var contextMenu = [[CPMenu alloc] init]; 
-    [contextMenu setDelegate: anElementFigure]; 
+    var contextMenu = [[CPMenu alloc] init];
+    [contextMenu setDelegate: anElementFigure];
 
 	[anElementFigure beforeDeleteMenu: contextMenu];
-	
-    var deleteMenu = [[CPMenuItem alloc] initWithTitle:@"Delete" action: @selector(deleteFromServer) keyEquivalent:@""]; 
-    [deleteMenu setTarget: anElementFigure]; 
-    [deleteMenu setEnabled: YES]; 
-    [contextMenu addItem: deleteMenu]; 
-    
+
+    var deleteMenu = [[CPMenuItem alloc] initWithTitle:@"Delete" action: @selector(deleteFromServer) keyEquivalent:@""];
+    [deleteMenu setTarget: anElementFigure];
+    [deleteMenu setEnabled: YES];
+    [contextMenu addItem: deleteMenu];
+
 	[anElementFigure setMenu: contextMenu];
 }
 
 - (void) createElementConnectionMenu: (id) anElementConnection
 {
-	var contextMenu = [[CPMenu alloc] init]; 
-    [contextMenu setDelegate: anElementConnection]; 
+	var contextMenu = [[CPMenu alloc] init];
+    [contextMenu setDelegate: anElementConnection];
 
-    var deleteMenu = [[CPMenuItem alloc] initWithTitle: @"Delete" action: @selector(deleteFromServer) keyEquivalent:@""]; 
-    [deleteMenu setTarget: anElementConnection]; 
-    [deleteMenu setEnabled: YES]; 
-    [contextMenu addItem: deleteMenu]; 
-    
+    var deleteMenu = [[CPMenuItem alloc] initWithTitle: @"Delete" action: @selector(deleteFromServer) keyEquivalent:@""];
+    [deleteMenu setTarget: anElementConnection];
+    [deleteMenu setEnabled: YES];
+    [contextMenu addItem: deleteMenu];
+
 	[anElementConnection setMenu: contextMenu];
 }
 
@@ -102,12 +102,12 @@
 	[self loadCommonToolbars: aDrawing];
 	[self loadLibraries: aDrawing];
 	[self loadDiagramElements: aDrawing]
-	
-	var timer = [CPTimer 
-				scheduledTimerWithTimeInterval: 5 
-				target: aDrawing 
-				selector: @selector(update:) 
-				userInfo: nil 
+
+	var timer = [CPTimer
+				scheduledTimerWithTimeInterval: 5
+				target: aDrawing
+				selector: @selector(update:)
+				userInfo: nil
 				repeats: YES];
 
 	[aDrawing timer: timer];
@@ -175,12 +175,12 @@
 {
 	CPLog.debug("Libraries received");
 	CPLog.debug(aJSON);
-	
+
 	//var libraries = aJSON.libraries.libraries;
 	var libraries = aJSON.libraries;
 	var generator = [DynamicModelGenerator new];
 	[aDrawing generator: generator];
-	
+
 	//INITIALIZE MODEL GENERATOR
 	for (var i = 0; i < libraries.length; i++) {
 		var library = libraries[i];
@@ -190,26 +190,28 @@
 
 		[generator addDefinitions: elements];
 	}
-	
+
 	//CREATE THE TOOLBOXES
 	var initialX = 20;
 	for (var i = 0; i < libraries.length; i++) {
 		var library = libraries[i];
-
-		var toolbox = [ToolboxFigure initializeWith: aDrawing at: CGPointMake(initialX, 25)];
-		[toolbox columns: 2];
 		var elements = library.elements;
-		
+		var toolbox = [ToolboxFigure initializeWith: aDrawing at: CGPointMake(initialX, 25)];
+
+
+		if (elements.length == 0)
+			[toolbox setAlphaValue: 0];
+
 		for (var j = 0; j < elements.length; j++) {
 			var element = elements[j];
 			if (element.type == "PROCESSOR" || element.type == "ROUTER" || element.type == "ABSTRACTION") {
-				[toolbox 
-					addTool: [CreateProcessorTool drawing: aDrawing elementName: element.name generator: generator] 
+				[toolbox
+					addTool: [CreateProcessorTool drawing: aDrawing elementName: element.name generator: generator]
 					withTitle: element.displayName
 					image: element.icon];
 			} else if (element.type == "MESSAGE_SOURCE") {
-				[toolbox 
-					addTool: [CreateMessageSourceTool drawing: aDrawing elementName: element.name generator: generator] 
+				[toolbox
+					addTool: [CreateMessageSourceTool drawing: aDrawing elementName: element.name generator: generator]
 					withTitle: element.displayName
 					image: element.icon];
 			} else if (element.type == "CONNECTION") {
@@ -227,22 +229,24 @@
 					var types = element.acceptedTargetTypes.split(',');
 					acceptedTargetTypes = [CPSet setWithArray: types];
 				}
-				
-				[toolbox 
-					addTool: [CreateElementConnectionTool				
+
+				[toolbox
+					addTool: [CreateElementConnectionTool
 						drawing: aDrawing
 						acceptedSourceTypes: acceptedSourceTypes
-						acceptedSourceMax: acceptedSourceMax 
+						acceptedSourceMax: acceptedSourceMax
 						acceptedTargetTypes: acceptedTargetTypes
-						acceptedTargetMax: acceptedTargetMax 
+						acceptedTargetMax: acceptedTargetMax
 						elementName: element.name]
 					withTitle: element.displayName
 					image: element.icon];
 			}
 		}
-		
+
+
 		[aDrawing addToolbox: toolbox withId: library.name];
 		initialX = initialX + 80;
+
 	}
 }
 
