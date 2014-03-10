@@ -2,12 +2,9 @@ package com.abstractions.service.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -19,9 +16,6 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 public class FilesystemResourceService implements ResourceService {
 
@@ -29,7 +23,6 @@ public class FilesystemResourceService implements ResourceService {
 	
 	private static final String ENCODED_PATH_SEPARATOR = "___";
 	private static final String FILES_DIRECTORY = "files";
-	private static final String SNAPSHOTS_DIRECTORY = "snapshots";
 	private String rootPath;
 	private File rootDir;
 
@@ -140,59 +133,18 @@ public class FilesystemResourceService implements ResourceService {
 	private String buildFilesPath(long applicationId, String path) {
 		return this.getRootPath() + File.separator + applicationId + File.separator + FILES_DIRECTORY + File.separator + this.encodePath(path);
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.abstractions.service.core.ResourceService#getContentsOfSnapshot(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public InputStream getContentsOfSnapshot(String applicationId, String snapshotId) {
-		try {
-			return new FileInputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.abstractions.service.core.ResourceService#getSnapshotOutputStream(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public OutputStream getSnapshotOutputStream(String applicationId, String snapshotId) {
-		try {
-			File snapshotsDirectory = new File(this.buildSnapshotPath(Long.parseLong(applicationId), null));
-			if (!snapshotsDirectory.exists()) {
-				snapshotsDirectory.mkdirs();
-			}
-			return new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	/* (non-Javadoc)
-	 * @see com.abstractions.service.core.ResourceService#buildSnapshotPath(java.lang.Long, java.lang.Long)
+	 * @see com.abstractions.service.core.ResourceService#resourceExists(long, java.lang.String)
 	 */
 	@Override
-	public String buildSnapshotPath(Long applicationId, Long snapshotId) {
-		if (snapshotId == null) {
-			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY;
-		} else {
-			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY + File.separator + "___snapshot_" + snapshotId;
-		}
+	public boolean resourceExists(long applicationId, String path) {
+		return new File(this.buildFilesPath(applicationId, path)).exists();
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.abstractions.service.core.ResourceService#storeSnapshot(java.lang.String, java.lang.String, java.io.InputStream)
-	 */
+
 	@Override
-	public void storeSnapshot(String applicationId, String snapshotId, InputStream content) {
-		try {
-			IOUtils.copy(content, new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId))));
-		} catch (Exception e) {
-			log.error("Error storing snapshot", e);
-		}
+	public long getResourceLastModifiedDate(long applicationId, String path) {
+		return new File(this.buildFilesPath(applicationId, path)).lastModified();
 	}
 	
 	public String getRootPath() {
@@ -210,18 +162,4 @@ public class FilesystemResourceService implements ResourceService {
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
 	}
-
-	/* (non-Javadoc)
-	 * @see com.abstractions.service.core.ResourceService#resourceExists(long, java.lang.String)
-	 */
-	@Override
-	public boolean resourceExists(long applicationId, String path) {
-		return new File(this.buildFilesPath(applicationId, path)).exists();
-	}
-
-	@Override
-	public long getResourceLastModifiedDate(long applicationId, String path) {
-		return new File(this.buildFilesPath(applicationId, path)).lastModified();
-	}
-
-}
+}	

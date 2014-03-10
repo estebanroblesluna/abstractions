@@ -27,7 +27,7 @@ import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.FlowService;
-import com.abstractions.service.LibraryService;
+import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.TeamService;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.repository.MarshallingException;
