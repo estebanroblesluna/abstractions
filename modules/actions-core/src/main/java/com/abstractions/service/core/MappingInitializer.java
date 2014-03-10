@@ -1,4 +1,4 @@
-package com.abstractions.service;
+package com.abstractions.service.core;
 
 import java.util.List;
 

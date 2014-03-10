@@ -1,16 +1,16 @@
 package com.abstractions.repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Repository;
-
-import com.abstractions.model.Server;
 
 @Repository
 public class GenericRepository {
@@ -59,6 +59,23 @@ public class GenericRepository {
 			.add(Restrictions.eq("a.id", anID))
 			.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> List<T> findAllBy(Class<T> theClass, Map<String,Object> restrictions){
+		Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(theClass);
+		for(Entry<String,Object> entry : restrictions.entrySet()){
+			criteria.add(Restrictions.eq(entry.getKey(), entry.getValue()));
+		}
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> List<T> findAllBy(Class<T> theClass, String property, Object value){
+		return  this.sessionFactory.getCurrentSession()
+				.createCriteria(theClass)
+				.add(Restrictions.eq(property, value))
+				.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T findBy(Class<T> theClass, String property, Object value) {
@@ -66,6 +83,15 @@ public class GenericRepository {
 			.createCriteria(theClass)
 			.add(Restrictions.eq(property, value))
 			.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T findBy(Class<T> theClass, Map<String,Object> restrictions){
+		Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(theClass);
+		for(Entry<String,Object> entry : restrictions.entrySet()){
+			criteria.add(Restrictions.eq(entry.getKey(), entry.getValue()));
+		}
+		return (T) criteria.uniqueResult();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -79,7 +105,9 @@ public class GenericRepository {
 		return queryResults;
 	}      
         
-        public void update(Object o) {
-            this.sessionFactory.getCurrentSession().update(o);
-        }
+    public void update(Object o) {
+        this.sessionFactory.getCurrentSession().update(o);
+    }
+    
+   
 }

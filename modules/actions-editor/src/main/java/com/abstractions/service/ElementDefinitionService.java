@@ -2,6 +2,8 @@ package com.abstractions.service;
 
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.service.core.LibraryService;
+
 import java.util.List;
 import org.jsoup.helper.Validate;
 import org.springframework.transaction.annotation.Transactional;

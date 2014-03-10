@@ -46,10 +46,17 @@
     <constructor-arg index="2" ref="namesMapping" />
     <constructor-arg index="3" ref="contextHolder" />
   </bean>
-
-  <bean id="libraryService" class="com.abstractions.service.LibraryService">
+  
+  <bean id="libraryService" class="com.abstractions.service.core.LibraryService">
     <constructor-arg index="0" ref="repository" />
   </bean>
+  
+  <bean class="com.abstractions.service.core.MappingInitializer" init-method="initializeMapping">
+    <property name="mapping" ref="namesMapping" />
+    <property name="libraryService" ref="libraryService" />
+  </bean>
+
+
 
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
@@ -57,6 +64,7 @@
     <constructor-arg index="2" ref="fileService" />
     <constructor-arg index="3" ref="dustTemplateFileProcessor" />
     <constructor-arg index="4" ref="resourceBasedDustTemplateCompiler" />
+    <constructor-arg index="5" value="./files" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">
@@ -77,11 +85,11 @@
     <constructor-arg index="1" ref="snapshotService" />
     <constructor-arg index="2" ref="userService" />
     <constructor-arg index="3" ref="serverService" />
-    <constructor-arg index="4" ref="fileService" />
   </bean>
 
-  <bean id="fileService" class="com.abstractions.service.core.FilesystemResourceService">
-    <constructor-arg index="0" value="./files" />
+  <bean id="fileService" class="com.abstractions.service.core.DatabaseResourceService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" value="public" />
   </bean>
   
   <bean id="elementDefinitionService" class="com.abstractions.service.ElementDefinitionService">

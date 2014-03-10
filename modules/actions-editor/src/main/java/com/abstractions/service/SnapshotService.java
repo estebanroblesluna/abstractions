@@ -1,13 +1,19 @@
 package com.abstractions.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +40,10 @@ import com.modules.dust.ResourceBasedDustTemplateCompiler;
 public class SnapshotService {
 
 	private static final Log log = LogFactory.getLog(SnapshotService.class);
+	private static final String SNAPSHOTS_DIRECTORY = "snapshots";
 	
+	private String rootPath;
+	private File rootDir;
 	private GenericRepository repository;
 	private ApplicationService applicationService;
 	private ResourceService resourceService;
@@ -44,19 +53,47 @@ public class SnapshotService {
 	@Autowired
 	private NamesMapping namesMapping;
 	
+	private void initializeDirectory() {
+		try {
+			this.setRootDir(new File(this.getRootPath()));
+			FileUtils.forceMkdir(this.getRootDir());
+		} catch (IOException e) {
+			log.error("Error intializing root directory", e);
+		}
+	}
+	
+	public String getRootPath() {
+		return rootPath;
+	}
+
+	public void setRootPath(String rootPath) {
+		this.rootPath = rootPath;
+	}
+
+	private File getRootDir() {
+		return rootDir;
+	}
+
+	private void setRootDir(File rootDir) {
+		this.rootDir = rootDir;
+	}
+	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService fileService, ResourceProcessor fileProcessor, ResourceBasedDustTemplateCompiler dustCompiler) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService fileService, ResourceProcessor fileProcessor, ResourceBasedDustTemplateCompiler dustCompiler, String rootPath) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
 		Validate.notNull(fileService);
 		Validate.notNull(fileProcessor);
+		Validate.notNull(rootPath);
 		
 		this.repository = repository;
 		this.applicationService = applicationService;
 		this.resourceService = fileService;
 		this.resourceProcessor = fileProcessor;
 		this.dustCompiler = dustCompiler;
+		this.setRootPath(rootPath);
+		this.initializeDirectory();
 	}
 	
 	@Transactional
@@ -101,7 +138,7 @@ public class SnapshotService {
 	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) throws MarshallingException {
 		try {
 			this.processResources(application, snapshot);
-			ZipOutputStream zipOutputStream = new ZipOutputStream(this.resourceService.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
+			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
 			for (String filename : this.resourceService.listResources(application.getId())) {
 				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
 				List<ResourceChange> changes = this.resourceProcessor.process(filename, inputStream);
@@ -176,5 +213,43 @@ public class SnapshotService {
 
 	public ApplicationSnapshot getSnapshot(long snapshotId) {
 		return this.repository.get(ApplicationSnapshot.class, snapshotId);
+	}
+	
+	public InputStream getContentsOfSnapshot(String applicationId, String snapshotId) {
+		try {
+			return new FileInputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public OutputStream getSnapshotOutputStream(String applicationId, String snapshotId) {
+		try {
+			File snapshotsDirectory = new File(this.buildSnapshotPath(Long.parseLong(applicationId), null));
+			if (!snapshotsDirectory.exists()) {
+				snapshotsDirectory.mkdirs();
+			}
+			return new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String buildSnapshotPath(Long applicationId, Long snapshotId) {
+		if (snapshotId == null) {
+			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY;
+		} else {
+			return this.getRootPath() + File.separator + applicationId + File.separator + SNAPSHOTS_DIRECTORY + File.separator + "___snapshot_" + snapshotId;
+		}
+	}
+
+	public void storeSnapshot(String applicationId, String snapshotId, InputStream content) {
+		try {
+			IOUtils.copy(content, new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId))));
+		} catch (Exception e) {
+			log.error("Error storing snapshot", e);
+		}
 	}
 }

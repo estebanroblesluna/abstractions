@@ -21,7 +21,7 @@ import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.service.DeploymentService;
 import com.abstractions.service.IconService;
-import com.abstractions.service.LibraryService;
+import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
