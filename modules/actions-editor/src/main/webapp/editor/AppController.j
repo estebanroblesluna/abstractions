@@ -27,7 +27,9 @@
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
-    CPLogRegister(CPLogPopup);
+	if ([Actions isDevelopment]) {
+    	CPLogRegister(CPLogPopup);
+	}
 	var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
         contentView = [theWindow contentView];
 

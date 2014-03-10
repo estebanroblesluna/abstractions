@@ -125,8 +125,8 @@
                   <constructor-arg value="059d820acb20cab2e783654cacc70e1a" />	<!-- clientSecret -->			
               </bean>
               <bean class="org.springframework.social.twitter.connect.TwitterConnectionFactory">
-                <constructor-arg value="CxeP3SwkdM1jHqSoR8FQ" /> <!-- consumerKey -->
-                <constructor-arg value="ViL6jlqTbkKGpmaT8qNkdGLbfAoPWlnDA5Xh1Ls" /> <!-- consumerSecret -->		
+                <constructor-arg value="iFIDlvm64vz0pJLmSwVkA" /> <!-- consumerKey -->
+                <constructor-arg value="qdLASAxOqcWO7GrTJk4m0RxJlkokiaByjvxwVpXOC8" /> <!-- consumerSecret -->		
             </bean>
           </list>
       </property>
