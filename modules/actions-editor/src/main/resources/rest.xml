@@ -10,11 +10,12 @@
   </bean>
   
   <bean id="contextRest" class="com.abstractions.service.rest.ContextRESTService">
-    <constructor-arg index="0" ref="contextHolder" />
-    <constructor-arg index="1" ref="namesMapping" />
-    <constructor-arg index="2" value="1" />
-    <constructor-arg index="3" ref="deploymentService" />
-    <constructor-arg index="4" ref="libraryService" />
+    <constructor-arg ref="contextHolder" />
+    <constructor-arg ref="namesMapping" />
+    <constructor-arg value="1" />
+    <constructor-arg ref="deploymentService" />
+    <constructor-arg ref="libraryService" />
+    <constructor-arg ref="iconService" />
   </bean>
 
   <bean id="elementRest" class="com.abstractions.service.rest.ElementRESTService">
