@@ -84,12 +84,14 @@ public class GenericRepository {
 			.add(Restrictions.eq(property, value))
 			.uniqueResult();
 	}
-	 
+	
+	@SuppressWarnings("unchecked")
 	public <T> T findBy(Class<T> theClass, Map<String,Object> restrictions){
-		List<T> result = this.findAllBy(theClass, restrictions);
-		if(result.size() > 0)
-			return result.get(0);
-		return null;
+		Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(theClass);
+		for(Entry<String,Object> entry : restrictions.entrySet()){
+			criteria.add(Restrictions.eq(entry.getKey(), entry.getValue()));
+		}
+		return (T) criteria.uniqueResult();
 	}
 
 	@SuppressWarnings("rawtypes")

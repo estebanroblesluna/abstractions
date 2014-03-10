@@ -35,8 +35,9 @@
     <constructor-arg value="${server.apps.directory}" />
     <constructor-arg ref="namesMapping" />
     <constructor-arg>
-	  	<bean class="com.abstractions.service.core.FilesystemResourceService">
-	    	<constructor-arg index="0" value="${server.apps.directory}" />
+	  	<bean class="com.abstractions.service.core.DatabaseResourceService">
+	    	<constructor-arg index="0" ref="repository" />
+	    	<constructor-arg index="1" value="public" />
 	  	</bean>
     </constructor-arg>
   </bean>
