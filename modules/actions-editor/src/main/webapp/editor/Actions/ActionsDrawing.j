@@ -151,7 +151,7 @@
 	var path = location.pathname;
 	var url = "http://" + host + path + "?contextId=" + aContextId
 	
-	[_openInNewWindowFigure setText: url];
+	//[_openInNewWindowFigure setText: url];
 	[self setupNotifications];	
 }
 

@@ -11,6 +11,7 @@
                 <intercept-url pattern="/static/**" filters="none" />
                 <intercept-url pattern="/static/img/**" filters="none" />
                 <intercept-url pattern="/signin/**" filters="none" />
+                <intercept-url pattern="/service/**" filters="none" />
                 <intercept-url pattern="/login" filters="none" />
               
 		<form-login login-page="/login" default-target-url="/teams/"
