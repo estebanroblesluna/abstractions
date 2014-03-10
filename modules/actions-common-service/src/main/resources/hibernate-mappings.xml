@@ -271,6 +271,19 @@
     <property name="defaultValue" column="default_value" />
   </class>  
   
+  <class name="com.abstractions.model.Resource" table="resource">
+    <id name="id" type="long" column="resource_id" access="field">
+      <generator class="native" />
+    </id>
+    
+    <property name="data" type="binary" column="data" />
+    <property name="path" column="path" />
+    <property name="lastModifiedDate" column="last_modified_date" />
+    <property name="applicationId" column="application_id" />
+    <property name="type" column="type" />
+  </class>
+  
+  
   <class name="com.abstractions.common.Icon" table="icon">
     <id name="id" type="long" column="icon_id" access="field">
       <generator class="native" />
