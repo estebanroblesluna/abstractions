@@ -15,7 +15,7 @@ import com.abstractions.model.Deployment;
 import com.abstractions.model.Flow;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.DeploymentService;
-import com.abstractions.service.LibraryService;
+import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.ServerService;
 import com.abstractions.service.TeamService;
 

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.abstractions.service.SnapshotService;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.utils.JsonBuilder;
 
@@ -26,6 +27,8 @@ public class FileRESTService {
 	
 	@Autowired
 	private ResourceService fileService;
+	@Autowired
+	private SnapshotService snapshotService;
 
 	public FileRESTService() {
 	}
@@ -80,7 +83,7 @@ public class FileRESTService {
 	@GET
 	@Path("{applicationId}/snapshots/{snapshotId}")
 	public Response getSnapshot(@PathParam("applicationId") String applicationId, @PathParam("snapshotId") String snapshotId) {
-		InputStream result = this.fileService.getContentsOfSnapshot(applicationId, snapshotId);
+		InputStream result = this.snapshotService.getContentsOfSnapshot(applicationId, snapshotId);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
