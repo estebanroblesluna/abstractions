@@ -50,12 +50,24 @@
 	var saveUrl = $.url().param('saveUrl');
 	
 	CPLog.debug("Saving context " + contextId);
+	
 	$.ajax({
 		type: "POST",
 		url: saveUrl,
-		data: { "name": contextId, "json" : jsonAsString }
-	}).done(function( result ) {
-		CPLog.debug("Context saved " + contextId);
+		data: { "name": contextId, "json" : jsonAsString },
+		cache: false,
+        success: function(response) {
+	        var newAlert = [[CPAlert alloc] init];
+	        [newAlert setMessageText: @"Saved"];
+	        [newAlert setAlertStyle: CPInformationalAlertStyle];
+	        [newAlert setTitle: @"Message"];
+	        [newAlert runModal];
+        },
+        error: function() {
+	        var newAlert = [CPAlert alertWithError: @"Error saving"];
+	        [newAlert setTitle: @"Message"];
+	        [newAlert runModal];
+        }
 	});
 }
 @end

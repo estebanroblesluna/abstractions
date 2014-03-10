@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.meta.AbstractionDefinition;
@@ -154,7 +155,7 @@ public class FlowController {
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/save", method = RequestMethod.POST, produces = { "application/json" })
-	public String addFlow(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
+	public @ResponseBody String addFlow(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
 		CompositeTemplate context = this.holder.get(form.getName());
 		
 		JSONObject result = new JSONObject();
@@ -291,7 +292,7 @@ public class FlowController {
 		elementDefinitionJSON.put("name", element.getName());
 		elementDefinitionJSON.put("displayName", element.getDisplayName());
 		elementDefinitionJSON.put("type", element.getType());
-		elementDefinitionJSON.put("icon", element.getIcon());
+		elementDefinitionJSON.put("icon", "/icon/" + element.getIcon().getId());
 
 		//Add extra properties
 		element.accept(new ElementDefinitionVisitor() {
