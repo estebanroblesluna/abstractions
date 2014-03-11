@@ -200,7 +200,7 @@
 
 
 		if (elements.length == 0)
-			[toolbox setAlphaValue: 0];
+			[toolbox setHidden: true];
 
 		for (var j = 0; j < elements.length; j++) {
 			var element = elements[j];
