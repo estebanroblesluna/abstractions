@@ -2099,7 +2099,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("newAt:"), function $Re
     return widget;
 }
 ,["RectangleFigure","id"])]);
-}p;15;ToolboxFigure.jt;5209;@STATIC;1.0;t;5190;{var the_class = objj_allocateClassPair(Figure, "ToolboxFigure"),
+}p;15;ToolboxFigure.jt;5150;@STATIC;1.0;t;5131;{var the_class = objj_allocateClassPair(Figure, "ToolboxFigure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_drawing"), new objj_ivar("_buttonsMapping"), new objj_ivar("_currentColumn"), new objj_ivar("_maxColumn"), new objj_ivar("_currentY")]);objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initializeWith:at:"), function $ToolboxFigure__initializeWith_at_(self, _cmd, aDrawing, aPoint)
 {
@@ -2158,7 +2158,6 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initializeWith:at:"), f
     objj_msgSend(button, "setFrameOrigin:", origin);
     var icon = objj_msgSend(objj_msgSend(CPImage, "alloc"), "initWithContentsOfFile:", url);
     objj_msgSend(button, "setImage:", icon);
-    objj_msgSend(button, "setButtonType:", CPOnOffButton);
     objj_msgSend(button, "setBordered:", YES);
     objj_msgSend(button, "setBezelStyle:", CPRegularSquareBezelStyle);
     objj_msgSend(button, "setFrameSize:", CGSizeMake(buttonWidth, buttonHeight));
