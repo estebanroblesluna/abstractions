@@ -55,7 +55,7 @@
 	var toolbox = [_drawing toolboxWithId: "user-defined"];
 
 	[toolbox setHidden: false];
-	[toolbox setNeedsDisplay: true];
+	[toolbox invalidate];
 
 
 	//add the definition to the generator
