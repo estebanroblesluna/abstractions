@@ -54,7 +54,8 @@
 	//TODO change this number to the internal user toolbox
 	var toolbox = [_drawing toolboxWithId: "user-defined"];
 
-	[toolbox setAlphaValue: 1];
+	[toolbox setHidden: false];
+	[toolbox setNeedsDisplay: true];
 
 
 	//add the definition to the generator
