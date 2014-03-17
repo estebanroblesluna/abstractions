@@ -13,6 +13,7 @@ import com.abstractions.model.Server;
 import com.abstractions.model.ServerGroup;
 import com.abstractions.model.ServerStats;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.utils.IdGenerator;
 
 @Service
 public class ServerService {
@@ -36,6 +37,7 @@ public class ServerService {
 		ServerGroup serverGroup = this.serverGroupService.getServerGroup(serverGroupId);
 		Server server = new Server(name, ipDNS);
 		server.setPort(port);
+		server.setKey(IdGenerator.getNewId());
 		
 		serverGroup.addServer(server);
 		this.repository.save(server);

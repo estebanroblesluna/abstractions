@@ -11,6 +11,7 @@ public class Server {
 	private int port;
 	private String key;
 	private Date lastUpdate;
+	private transient String amiScript;
 
 	protected Server() {
 		this.port = -1;
@@ -64,5 +65,13 @@ public class Server {
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	public String getAmiScript() {
+		return amiScript;
+	}
+
+	public void setAmiScript(String amiScript) {
+		this.amiScript = amiScript;
 	}
 }

@@ -55,7 +55,14 @@ public class ActionsServer {
 		Validate.notNull(resourceService);
 
 		this.mapping = mapping;
-		this.applicationDirectory = applicationDirectory;
+		
+		if (System.getenv("server_apps_directory") != null) {
+			log.info("Found server_apps_directory set to: " + System.getenv("server_apps_directory"));
+			this.applicationDirectory = System.getenv("server_apps_directory");
+		} else {
+			this.applicationDirectory = applicationDirectory;
+		}
+
 		this.resourceService = resourceService;
 		
 		this.marshaller = new CompositeTemplateMarshaller(mapping);
@@ -71,13 +78,16 @@ public class ActionsServer {
 
 	private void startApplications() {
 		File applicationDirectory = new File(this.applicationDirectory + "/");
-		for (Object fileAsObject : applicationDirectory.listFiles()) {
-			if (fileAsObject instanceof File && ((File) fileAsObject).isDirectory()) {
-				File file = (File) fileAsObject;
-				try {
-					this.startApplicationFromFiles(file.getName());
-				} catch (Exception e) {
-					log.error("Error starting application " + file.getName());
+		File[] files = applicationDirectory.listFiles();
+		if (files != null) {
+			for (Object fileAsObject : files) {
+				if (fileAsObject instanceof File && ((File) fileAsObject).isDirectory()) {
+					File file = (File) fileAsObject;
+					try {
+						this.startApplicationFromFiles(file.getName());
+					} catch (Exception e) {
+						log.error("Error starting application " + file.getName());
+					}
 				}
 			}
 		}

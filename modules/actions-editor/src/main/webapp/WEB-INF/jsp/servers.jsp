@@ -9,6 +9,27 @@
 <body>
   <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
 
+  <script>
+    $(document).ready(function() {
+      $('.showScript').click(function() {
+   		var data = $(this).children().first().html();
+   		$('#AMIScript').html(data);
+   		$('#AMIScriptModal').modal('show');
+      });
+    });
+  </script>
+    <!-- Modal -->
+  <div id="AMIScriptModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width: 800px; margin-left: -400px; display: none;">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+      <h3 id="myModalLabel" style="margin-top: 0px;">AMI script</h3>
+    </div>
+    <div class="modal-body" id="AMIScript" style="font-size: 10px;">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-info" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+  </div>
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
@@ -36,6 +57,7 @@
             <th>IP/DNS</th>
             <th>Status</th>
             <th>Last update</th>
+            <th>AMI script</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +81,9 @@
                   </c:otherwise>
                 </c:choose>
               <td><fmt:formatDate type="date" value="${server.getLastUpdate()}" pattern="yyyy-MM-dd hh:mm:ss"/>  </td>
+              <td>
+              <div class="btn btn-info showScript"><div style="display:none;">${server.getAmiScript()}</div>Show script</div>
+              </td>
             </tr>
           </c:forEach>
         </tbody>

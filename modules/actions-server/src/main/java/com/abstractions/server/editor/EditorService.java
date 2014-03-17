@@ -28,8 +28,20 @@ public class EditorService {
 	
 	public EditorService(HttpStrategy strategy, String editorUrl, String serverKey, ActionsServer actionsServer) {
 		this.strategy = strategy;
-		this.editorUrl = editorUrl;
-		this.serverKey = serverKey;
+		
+		if (System.getenv("server_editor_url") == null) {
+			this.editorUrl = editorUrl;
+		} else {
+			log.info("Found server_editor_url set to: " + System.getenv("server_editor_url"));
+			this.editorUrl = System.getenv("server_editor_url");
+		}
+		
+		if (System.getenv("server_key") == null) {
+			this.serverKey = serverKey;
+		} else {
+			this.serverKey = System.getenv("server_key");
+		}
+		
 		this.actionsServer = actionsServer;
 	}
 	
@@ -47,9 +59,9 @@ public class EditorService {
 					.addFormParam("statistics", statisticsAsJson)
 					.executeAndClose();
 		} catch (ClientProtocolException e) {
-			log.warn("Error sending statistics");
+			log.warn("Error sending statistics " + this.editorUrl);
 		} catch (IOException e) {
-			log.warn("Error sending statistics");
+			log.warn("Error sending statistics " + this.editorUrl);
 		} catch (JSONException e) {
 			log.warn("Error sending statistics. Creating JSON");
 		}
@@ -106,11 +118,11 @@ public class EditorService {
 				}
 			}
 		} catch (ClientProtocolException e) {
-			log.warn("Error pinging server");
+			log.warn("Error pinging server " + this.editorUrl);
 		} catch (IOException e) {
-			log.warn("Error pinging server");
+			log.warn("Error pinging server " + this.editorUrl);
 		} catch (JSONException e) {
-			log.warn("Error pinging server");
+			log.warn("Error pinging server " + this.editorUrl);
 		} finally {
 			this.strategy.close(response);
 		}
