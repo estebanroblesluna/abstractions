@@ -104,6 +104,7 @@
     <property name="port" />
     <property name="lastUpdate" column="last_update" />
     <property name="key" column="server_key" />
+    <property name="externalId" column="external_id" />
   </class>
 
 

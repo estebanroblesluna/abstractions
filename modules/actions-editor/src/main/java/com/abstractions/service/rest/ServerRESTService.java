@@ -34,20 +34,23 @@ public class ServerRESTService {
 	
 	@POST
 	@Path("/status")
-	public Response ping(@FormParam("server-key") String serverKey) {
-		this.service.updateServerStatusWithKey(serverKey);
-		Server server = this.service.getServer(serverKey);
-		List<Object[]> pendingDeployments = this.deploymentService.getPendingDeploymentIdsFor(server.getId());
-		
+	public Response ping(@FormParam("server-id") String serverId, @FormParam("server-key") String serverKey) {
+		this.service.updateServerStatusWithKey(serverId, serverKey);
+		Server server = this.service.getServer(serverId, serverKey);
 		JSONArray array = new JSONArray();
-		for (Object[] data : pendingDeployments) {
-			JSONObject deploymentJSON = new JSONObject();
-			try {
-				deploymentJSON.put("deploymentId", data[0]);
-				deploymentJSON.put("applicationId", data[1]);
-				array.put(deploymentJSON);
-			} catch (JSONException e) {
-				return ResponseUtils.fail("Error writing json");
+
+		if (server != null) {
+			List<Object[]> pendingDeployments = this.deploymentService.getPendingDeploymentIdsFor(server.getId());
+			
+			for (Object[] data : pendingDeployments) {
+				JSONObject deploymentJSON = new JSONObject();
+				try {
+					deploymentJSON.put("deploymentId", data[0]);
+					deploymentJSON.put("applicationId", data[1]);
+					array.put(deploymentJSON);
+				} catch (JSONException e) {
+					return ResponseUtils.fail("Error writing json");
+				}
 			}
 		}
 		
@@ -58,10 +61,9 @@ public class ServerRESTService {
 	@POST
 	@Path("/statistics")
 	public Response getStatistics(
+			@FormParam("server-id") String serverId, 
 			@FormParam("server-key") String serverKey,
 			@FormParam("statistics") String statisticsAsJSON) {
-		
-		Server server = this.service.getServer(serverKey);
 		
 		try {
 			JSONObject root = new JSONObject(statisticsAsJSON);
@@ -80,7 +82,7 @@ public class ServerRESTService {
 					receivedMessages.put(messageSourceId, messagesReceived);
 				}
 
-				this.service.updateStatistics(serverKey, contextId, date, uncaughtExceptions, receivedMessages);
+				this.service.updateStatistics(serverId, serverKey, contextId, date, uncaughtExceptions, receivedMessages);
 			}
 			
 			return ResponseUtils
@@ -93,18 +95,22 @@ public class ServerRESTService {
 	
 	@POST
 	@Path("/deployment/{deploymentId}/start")
-	public Response startDeployment(@PathParam("deploymentId") long deploymentId, @FormParam("server-key") String serverKey) {
-		String filename = this.deploymentService.startDeployment(deploymentId, serverKey);
-		File fileToSend = new File(filename);
-		return Response
-				.ok(fileToSend, "application/zip")
-				.build();
+	public Response startDeployment(@PathParam("deploymentId") long deploymentId, @FormParam("server-id") String serverId, @FormParam("server-key") String serverKey) {
+		String filename = this.deploymentService.startDeployment(deploymentId, serverId, serverKey);
+		if (filename != null) {
+			File fileToSend = new File(filename);
+			return Response
+					.ok(fileToSend, "application/zip")
+					.build();
+		} else {
+			return Response.serverError().build();
+		}
 	}
 
 	@POST
 	@Path("/deployment/{deploymentId}/end-success")
-	public Response endDeploymentSuccess(@PathParam("deploymentId") long deploymentId, @FormParam("server-key") String serverKey) {
-		this.deploymentService.endDeploymentSuccessfully(deploymentId, serverKey);
+	public Response endDeploymentSuccess(@PathParam("deploymentId") long deploymentId, @FormParam("server-id") String serverId, @FormParam("server-key") String serverKey) {
+		this.deploymentService.endDeploymentSuccessfully(deploymentId, serverId, serverKey);
 		return Response
 				.ok()
 				.build();
@@ -112,8 +118,8 @@ public class ServerRESTService {
 
 	@POST
 	@Path("/deployment/{deploymentId}/end-failure")
-	public Response endDeploymentErrors(@PathParam("deploymentId") long deploymentId, @FormParam("server-key") String serverKey) {
-		this.deploymentService.endDeploymentWithErrors(deploymentId, serverKey);
+	public Response endDeploymentErrors(@PathParam("deploymentId") long deploymentId, @FormParam("server-id") String serverId, @FormParam("server-key") String serverKey) {
+		this.deploymentService.endDeploymentWithErrors(deploymentId, serverId, serverKey);
 		return Response
 				.ok()
 				.build();

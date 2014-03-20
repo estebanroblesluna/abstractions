@@ -23,25 +23,17 @@ public class EditorService {
 	
 	private final HttpStrategy strategy;
 	private final String editorUrl;
+	private final String serverId;
 	private final String serverKey;
 	private final ActionsServer actionsServer;
 	
-	public EditorService(HttpStrategy strategy, String editorUrl, String serverKey, ActionsServer actionsServer) {
+	public EditorService(HttpStrategy strategy, String editorUrl, String serverId, String serverKey, ActionsServer actionsServer) {
 		this.strategy = strategy;
 		
-		if (System.getenv("server_editor_url") == null) {
-			this.editorUrl = editorUrl;
-		} else {
-			log.info("Found server_editor_url set to: " + System.getenv("server_editor_url"));
-			this.editorUrl = System.getenv("server_editor_url");
-		}
-		
-		if (System.getenv("server_key") == null) {
-			this.serverKey = serverKey;
-		} else {
-			this.serverKey = System.getenv("server_key");
-		}
-		
+		this.editorUrl = editorUrl;
+		this.serverKey = serverKey;
+		this.serverId = serverId;
+
 		this.actionsServer = actionsServer;
 	}
 	
@@ -55,6 +47,7 @@ public class EditorService {
 			String statisticsAsJson = this.toJSON(statisticsPerApplication).toString();
 			this.strategy
 					.post(this.editorUrl + "/statistics")
+					.addFormParam("server-id", this.serverId)
 					.addFormParam("server-key", this.serverKey)
 					.addFormParam("statistics", statisticsAsJson)
 					.executeAndClose();
@@ -101,6 +94,7 @@ public class EditorService {
 		try {
 			response = this.strategy
 				.post(this.editorUrl + "/status")
+				.addFormParam("server-id", this.serverId)
 				.addFormParam("server-key", this.serverKey)
 				.execute();
 			
@@ -139,6 +133,7 @@ public class EditorService {
 		try {
 			response = this.strategy
 					.post(this.editorUrl + "/deployment/" + deploymentId + "/start")
+					.addFormParam("server-id", this.serverId)
 					.addFormParam("server-key", this.serverKey)
 					.execute();
 			
@@ -161,6 +156,7 @@ public class EditorService {
 		try {
 			this.strategy
 					.post(this.editorUrl + "/deployment/" + deploymentId + "/end-failure")
+					.addFormParam("server-id", this.serverId)
 					.addFormParam("server-key", this.serverKey)
 					.executeAndClose();
 		} catch (ClientProtocolException e) {
@@ -174,6 +170,7 @@ public class EditorService {
 		try {
 			this.strategy
 					.post(this.editorUrl + "/deployment/" + deploymentId + "/end-success")
+					.addFormParam("server-id", this.serverId)
 					.addFormParam("server-key", this.serverKey)
 					.executeAndClose();
 		} catch (ClientProtocolException e) {
