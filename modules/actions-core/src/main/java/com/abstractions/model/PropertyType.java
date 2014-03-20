@@ -7,5 +7,6 @@ public enum PropertyType {
 	BOOLEAN,
 	ENUM,
 	EXPRESSION,
-	REFERENCE
+	REFERENCE,
+	SCRIPT
 }

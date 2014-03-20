@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
@@ -158,7 +159,7 @@
 	[alignToolbox addCommand: [AlignMiddleCommand class] withTitle: @"Align middle" image: @"Resources/AlignMiddle.gif"];
 	[alignToolbox addCommand: [AlignBottomCommand class] withTitle: @"Align bottom" image: @"Resources/AlignBottom.gif"];
 
-	var properties = [PropertiesFigure newAt: CGPointMake(20, 420) drawing: drawing];
+	var properties = [AdvancedPropertiesFigure newAt: CGPointMake(20, 420) drawing: drawing];
 
 	[drawing toolbox: commonToolbox];
 	[drawing addFigure: alignToolbox];
@@ -192,6 +193,7 @@
 	}
 
 	//CREATE THE TOOLBOXES
+	//TODO: add tooltips
 	var initialX = 20;
 	for (var i = 0; i < libraries.length; i++) {
 		var library = libraries[i];
