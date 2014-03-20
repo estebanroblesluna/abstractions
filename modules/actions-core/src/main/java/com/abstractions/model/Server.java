@@ -2,6 +2,8 @@ package com.abstractions.model;
 
 import java.util.Date;
 
+import com.abstractions.utils.IdGenerator;
+
 public class Server {
 
 	private long id;
@@ -9,12 +11,14 @@ public class Server {
 	private String name;
 	private String ipDNS;
 	private int port;
+	private String externalId;
 	private String key;
 	private Date lastUpdate;
 	private transient String amiScript;
 
 	protected Server() {
 		this.port = -1;
+		this.getExternalId();
 	}
 	
 	public Server(String name, String ipDNS) {
@@ -73,5 +77,16 @@ public class Server {
 
 	public void setAmiScript(String amiScript) {
 		this.amiScript = amiScript;
+	}
+
+	public String getExternalId() {
+		if (this.externalId == null) {
+			this.externalId = IdGenerator.getNewId();
+		}
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 }

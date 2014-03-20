@@ -62,6 +62,7 @@ public class ServerController {
 			String serverScript = script.replaceAll("\n", "<br>");
 			serverScript = serverScript.replaceAll("\\$\\$\\$server.apps.directory\\$\\$\\$", this.defaultServerAppDirectory);
 			serverScript = serverScript.replaceAll("\\$\\$\\$server.editor.url\\$\\$\\$", this.defaultEditorUrl);
+			serverScript = serverScript.replaceAll("\\$\\$\\$server.id\\$\\$\\$", server.getExternalId());
 			serverScript = serverScript.replaceAll("\\$\\$\\$server.key\\$\\$\\$", server.getKey());
 
 			server.setAmiScript(serverScript);

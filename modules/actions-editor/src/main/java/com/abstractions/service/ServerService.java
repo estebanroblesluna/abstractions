@@ -64,8 +64,8 @@ public class ServerService {
 	}
 
 	@Transactional
-	public void updateServerStatusWithKey(String serverKey) {
-		Server server = this.getServer(serverKey);
+	public void updateServerStatusWithKey(String serverId, String serverKey) {
+		Server server = this.getServer(serverId, serverKey);
 		if (server != null) {
 			server.setLastUpdate(new Date());
 			this.repository.save(server);
@@ -73,16 +73,16 @@ public class ServerService {
 	}
 
 	@Transactional
-	public Server getServer(String serverKey) {
-		Server server = this.repository.findBy(Server.class, "key", serverKey);
+	public Server getServer(String serverId, String serverKey) {
+		Server server = this.repository.findByAnd(Server.class, "externalId", serverId, "key", serverKey);
 		return server;
 	}
 
 	@Transactional
-	public void updateStatistics(String serverKey, String contextId, Date date,
+	public void updateStatistics(String serverId, String serverKey, String contextId, Date date,
 			long uncaughtExceptions, Map<String, Long> receivedMessages) {
 
-		Server server = this.getServer(serverKey);
+		Server server = this.getServer(serverId, serverKey);
 		if (server != null) {
 			ServerStats stats = new ServerStats(server, contextId, date, uncaughtExceptions, receivedMessages);
 			this.repository.save(stats);

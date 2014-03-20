@@ -347,37 +347,43 @@ public class DeploymentService {
 	}
 
 	@Transactional
-	public String startDeployment(long deploymentId, String serverKey) {
+	public String startDeployment(long deploymentId, String serverId, String serverKey) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		Server server = this.serverService.getServer(serverKey);
+		Server server = this.serverService.getServer(serverId, serverKey);
 		
-		DeploymentToServer toServer = deployment.getToServer(server.getId());
-		toServer.setState(DeploymentState.STARTED);
-		this.repository.save(toServer);
-		
-		String filename = this.snapshotService.buildSnapshotPath(
-				deployment.getSnapshot().getApplication().getId(), 
-				deployment.getSnapshot().getId());
-		return filename;
+		if (server != null) {
+			DeploymentToServer toServer = deployment.getToServer(server.getId());
+			toServer.setState(DeploymentState.STARTED);
+			this.repository.save(toServer);
+			
+			String filename = this.snapshotService.buildSnapshotPath(
+					deployment.getSnapshot().getApplication().getId(), 
+					deployment.getSnapshot().getId());
+			return filename;
+		} else {
+			return null;
+		}
 	}
 	
 	@Transactional
-	public void endDeploymentWithErrors(long deploymentId, String serverKey) {
-		this.setStateToServer(deploymentId, serverKey, DeploymentState.FINISH_WITH_ERRORS);
+	public void endDeploymentWithErrors(long deploymentId, String serverId, String serverKey) {
+		this.setStateToServer(deploymentId, serverId, serverKey, DeploymentState.FINISH_WITH_ERRORS);
 	}
 
 	@Transactional
-	public void endDeploymentSuccessfully(long deploymentId, String serverKey) {
-		this.setStateToServer(deploymentId, serverKey, DeploymentState.FINISH_SUCCESSFULLY);
+	public void endDeploymentSuccessfully(long deploymentId, String serverId, String serverKey) {
+		this.setStateToServer(deploymentId, serverId, serverKey, DeploymentState.FINISH_SUCCESSFULLY);
 	}
 
-	private void setStateToServer(long deploymentId, String serverKey, DeploymentState state) {
+	private void setStateToServer(long deploymentId, String serverId, String serverKey, DeploymentState state) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		Server server = this.serverService.getServer(serverKey);
+		Server server = this.serverService.getServer(serverId, serverKey);
 		
-		DeploymentToServer toServer = deployment.getToServer(server.getId());
-		toServer.setState(state);
-		this.repository.save(toServer);		
+		if (server != null) {
+			DeploymentToServer toServer = deployment.getToServer(server.getId());
+			toServer.setState(state);
+			this.repository.save(toServer);		
+		}
 	}
 	
 	@Transactional

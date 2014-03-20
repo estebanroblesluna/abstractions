@@ -27,6 +27,7 @@
   <bean id="editorService" class="com.abstractions.server.editor.EditorService">
     <constructor-arg ref="httpStrategy" />
     <constructor-arg value="${server.editor.url}" />
+    <constructor-arg value="${server.id}" />
     <constructor-arg value="${server.key}" />
     <constructor-arg ref="actionsServer" />
   </bean>

@@ -57,6 +57,8 @@
             <th>IP/DNS</th>
             <th>Status</th>
             <th>Last update</th>
+            <th>External id</th>
+            <th>Key</th>
             <th>AMI script</th>
           </tr>
         </thead>
@@ -81,6 +83,8 @@
                   </c:otherwise>
                 </c:choose>
               <td><fmt:formatDate type="date" value="${server.getLastUpdate()}" pattern="yyyy-MM-dd hh:mm:ss"/>  </td>
+              <td>${server.externalId}</td>
+              <td>${server.key}</td>
               <td>
               <div class="btn btn-info showScript"><div style="display:none;">${server.getAmiScript()}</div>Show script</div>
               </td>
