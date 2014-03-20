@@ -7,14 +7,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.abstractions.api.Element;
 import com.abstractions.api.Expression;
 import com.abstractions.api.Message;
-import com.abstractions.api.Processor;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.utils.ExpressionUtils;
 
-public class LogProcessorWrapper extends ProcessorWrapper {
+public class LogInterceptor implements ElementInterceptor {
 
 	private Expression beforeExpression;
 	private Expression afterExpression;
@@ -27,18 +27,16 @@ public class LogProcessorWrapper extends ProcessorWrapper {
 	private final AtomicLong linesSize;
 	private final int maxLines = 40;
 	
-	public LogProcessorWrapper(Processor processor) {
-		super(processor);
+	public LogInterceptor() {
 		this.logLines = new ConcurrentLinkedQueue<String>();
 		this.linesSize = new AtomicLong(0);
 	}
 	
+	
 	@Override
-	public Message process(Message message) {
-		boolean log = true;
+	public void beforeEvaluating(Element element, Message message) {
+		boolean log = false;
 		try {
-
-			log = false;
 			if (this.beforeConditionExpression != null) {
 				log = ExpressionUtils.evaluateNoFail(this.beforeConditionExpression, message, false);
 			} else {
@@ -51,13 +49,13 @@ public class LogProcessorWrapper extends ProcessorWrapper {
 			}
 		} catch (Exception e) {
 			this.append("[WARN] Error evaluating BEFORE expression: " + this.beforeExpressionAsString);
-		}
-		
-		message = super.process(message);
+		}		
+	}
 
+	@Override
+	public void afterEvaluating(Element element, Message message) {
+		boolean log = false;
 		try {
-			
-			log = false;
 			if (this.afterConditionExpression != null) {
 				log = ExpressionUtils.evaluateNoFail(this.afterConditionExpression, message, false);
 			} else {
@@ -70,11 +68,9 @@ public class LogProcessorWrapper extends ProcessorWrapper {
 			}
 		} catch (Exception e) {
 			this.append("[WARN] Error evaluating AFTER expression: " + this.afterExpressionAsString);
-		}
-
-		return message;
+		}		
 	}
-
+	
 	private void append(String line) {
 		synchronized (this.linesSize) {
 			while (this.linesSize.get() > this.maxLines) {

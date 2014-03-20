@@ -22,6 +22,15 @@
   <import resource="classpath:hibernate.xml" />
   <import resource="classpath:applicationContext.xml" />
 
+  <bean id="libraryService" class="com.abstractions.service.core.LibraryService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
+  
+  <bean class="com.abstractions.service.core.MappingInitializer" init-method="initializeMapping">
+    <property name="mapping" ref="namesMapping" />
+    <property name="libraryService" ref="libraryService" />
+  </bean>
+  
   <bean id="httpStrategy" class="com.abstractions.http.HttpStrategy" />
 
   <bean id="editorService" class="com.abstractions.server.editor.EditorService">
