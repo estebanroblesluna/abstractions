@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,8 @@ import com.abstractions.api.Element;
 import com.abstractions.api.Identificable;
 import com.abstractions.api.Startable;
 import com.abstractions.api.Terminable;
+import com.abstractions.instance.common.ElementInterceptor;
+import com.abstractions.instance.common.PerformanceInterceptor;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
@@ -42,27 +45,44 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 	protected volatile boolean dirty;
 	protected volatile boolean hasBreakpoint;
 	
-	protected ElementTemplate() { }
+	protected List<ElementInterceptor> interceptors;
+	
+	protected ElementTemplate() {
+		this.properties = new ConcurrentHashMap<String, String>();
+		this.interceptors = new CopyOnWriteArrayList<ElementInterceptor>();
+		this.dirty = false;
+		this.hasBreakpoint = false;
+	}
 	
 	public ElementTemplate(ElementDefinition metaElementDefinition) {
+		this();
 		Validate.notNull(metaElementDefinition);
 
 		this.id = IdGenerator.getNewId();
-		this.dirty = false;
-		this.hasBreakpoint = false;
-		this.properties = new ConcurrentHashMap<String, String>();
 		this.metaElementDefinition = metaElementDefinition;
 	}
 
 	public ElementTemplate(String id, ElementDefinition metaElementDefinition) {
+		this();
 		Validate.notNull(metaElementDefinition);
 
 		this.id = (id == null) ? IdGenerator.getNewId() : id;
-		this.dirty = false;
 		this.properties = new ConcurrentHashMap<String, String>();
 		this.metaElementDefinition = metaElementDefinition;
 	}
 
+	public void evaluateUsing(com.abstractions.runtime.interpreter.Thread thread) {
+		for (ElementInterceptor interceptor : this.interceptors) {
+			interceptor.beforeEvaluating(this.getInstance(), thread.getCurrentMessage());
+		}
+		
+		this.getMeta().evaluateUsing(thread);		
+
+		for (ElementInterceptor interceptor : this.interceptors) {
+			interceptor.afterEvaluating(this.getInstance(), thread.getCurrentMessage());
+		}
+	}
+	
 	public synchronized Element sync(CompositeElement container, NamesMapping mapping) throws ServiceException {
 		if (this.object == null) {
 			this.instantiate(container, mapping);
@@ -278,5 +298,25 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 	 */
 	public void overrideObject(Element newInstance) {
 		this.object = newInstance;
+	}
+	
+	public void addInterceptor(ElementInterceptor interceptor) {
+		Validate.notNull(interceptor);
+		this.interceptors.add(interceptor);
+	}
+	
+	public void removeInterceptor(ElementInterceptor interceptor) {
+		Validate.notNull(interceptor);
+		this.interceptors.remove(interceptor);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T getFirstInterceptorOfClass(Class<?> aClass) {
+		for (ElementInterceptor interceptor : this.interceptors) {
+			if (aClass.isAssignableFrom(interceptor.getClass())) {
+				return (T) interceptor;
+			}
+		}
+		return null;
 	}
 }
