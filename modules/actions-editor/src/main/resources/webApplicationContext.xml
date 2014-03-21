@@ -25,6 +25,10 @@
 
   <context:component-scan base-package="com.abstractions.service.rest" />
   
+  <bean id="cloudFrontService" class="com.abstractions.service.core.CloudFrontService">
+  	<constructor-arg index="0" ref="resourceService" />
+  </bean>
+  
   <bean id="applicationService" class="com.abstractions.service.ApplicationService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="teamService" />
@@ -61,7 +65,7 @@
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
-    <constructor-arg index="2" ref="fileService" />
+    <constructor-arg index="2" ref="resourceService" />
     <constructor-arg index="3" ref="dustTemplateFileProcessor" />
     <constructor-arg index="4" ref="resourceBasedDustTemplateCompiler" />
     <constructor-arg index="5" value="./files" />
@@ -87,7 +91,7 @@
     <constructor-arg index="3" ref="serverService" />
   </bean>
 
-  <bean id="fileService" class="com.abstractions.service.core.DatabaseResourceService">
+  <bean id="resourceService" class="com.abstractions.service.core.DatabaseResourceService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" value="public" />
   </bean>
