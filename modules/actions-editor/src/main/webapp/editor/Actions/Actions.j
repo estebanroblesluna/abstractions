@@ -75,6 +75,7 @@
 
 @import "Extension/ScriptFieldView.j"
 @import "Extension/ScriptWebView.j"
+@import "Extension/ToolboxTooltipFigure.j"
 
 @import "ActionsDrawing.j"
 @import "EditionMode.j"
