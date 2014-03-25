@@ -15,20 +15,20 @@
 /**
  * @author "Guido José Celada <celadaguido@gmail.com>"
  */
+
+
 @implementation ScriptFieldView : CPControl
 {
+    var buttonBar; //TODO: move this to scriptWebView
 	var _script @accessors(property=script);
 	var _button @accessors(property=button);
+    var _scriptWebView @accessors(property=scriptWebView);
 }
-
 
 -(id) initWithFrame:(CGRect) aFrame {
     self = [super initWithFrame: aFrame];
     if (self) {
         _script = [CPTextField new];
-       // [_script setEditable: YES];
-       // [_script setTextColor:[CPColor grayColor]];
-       // [self addSubview: _script];
 
         _button = [CPButton new];
         [_button setTitle:"Edit script"];
@@ -42,20 +42,14 @@
 
 - (void)setObjectValue:(id)anObject {
 	object = anObject;
-    [[self script] setStringValue:[object]];
 
-    [[self script] sizeToFit];
+    [_script setStringValue:[object]];
+
+    [_script sizeToFit];
 }
 
 - (void)editScript:(id)sender { //called when the edit button is clicked
-	var oldScriptDiv = document.getElementById("scriptString");
-	if ( oldScriptDiv != null)
-		oldScriptDiv.parentNode.removeChild(oldScriptDiv);
-
-	var oldIframe = document.getElementById("simple-editor-iframe");
-	if ( oldIframe != null)
-		oldIframe.parentNode.removeChild(oldIframe);
-
+    //create a hidden div so that the simple-editor can get the script
 	var scriptString = [_script stringValue];
 	scriptStringDiv = document.createElement("div");
     scriptStringDiv.style.display = "none";
@@ -63,22 +57,47 @@
     scriptStringDiv.setAttribute("text", scriptString);
     document.body.appendChild(scriptStringDiv);
 
-	ifrm = document.createElement("iframe");
-    ifrm.setAttribute("src", "/simple-editor/");
-    ifrm.style.width = 640+"px";
-    ifrm.style.height = 480+"px";
-    ifrm.style.frameBorder = "0";
-    ifrm.setAttribute("id", "simple-editor-iframe");
-    document.body.appendChild(ifrm);
-    //TODO: make the iframe movable
+    //create a window for the script iframe
+    _scriptWebView = [[CPWebView alloc] init];
+    [_scriptWebView setFrame:CGRectMake(20, 20, 640, 480)];
+    [_scriptWebView setMainFrameURL:"/simple-editor/"]
+
+    //add a button bar with save and close buttons
+    buttonBar = [CPButtonBar new];
+    [buttonBar setHasResizeControl:NO];
+    [buttonBar setFrame:CGRectMake(20, 20, 640, 26)];
+
+    var closeButton = [CPButton buttonWithTitle: "X"];
+    [closeButton setAction:@selector(closeEditor)];
+    [closeButton setTarget:self];
+    [closeButton setEnabled:YES];
+
+    var saveButton = [CPButton buttonWithTitle:"Save"];
+    [saveButton setAction:@selector(saveEditorContent)];
+    [saveButton setTarget:self];
+    [saveButton setEnabled:YES];
+
+    [buttonBar setButtons:[closeButton, saveButton]];
+
+
+    var drawing = [[[[[self superview] superview] superview] superview] superview];
+    [drawing addFigure: _scriptWebView];
+    [drawing addFigure: buttonBar]
 }
 
-/*
-function saveScript() {
-    var newScriptDiv = document.getElementById("newScriptString");
-    newScriptDiv.parentNode.removeChild(newScriptDiv);
-} */
+- (void) closeEditor { //called when the user clicks the close button on the script editor
+    [_scriptWebView close];
+    [_scriptWebView removeFromSuperview];
+    [buttonBar removeFromSuperview];
+    var scriptString = document.getElementById("scriptString");
+    scriptString.parentNode.removeChild(scriptString);
+}
 
+- (void) saveEditorContent { //called when the user clicks the save button on the script editor
+    var scriptString = [_scriptWebView stringByEvaluatingJavaScriptFromString: "myCodeMirror.getValue()"];
+    var propertiesFigure = [[[[self superview] superview] superview] superview];
+    [propertiesFigure saveScript: scriptString];
+}
 
 @end
 

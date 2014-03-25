@@ -74,6 +74,7 @@
 @import "Server/LibraryAPI.j"
 
 @import "Extension/ScriptFieldView.j"
+@import "Extension/ScriptWebView.j"
 
 @import "ActionsDrawing.j"
 @import "EditionMode.j"

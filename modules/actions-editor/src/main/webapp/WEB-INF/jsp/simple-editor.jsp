@@ -127,17 +127,18 @@
 <body>
 	<div class="toolbar">
 		<div class="nav">
-			<a class="close" href="javascript: close() ">&nbsp;</a>
+			<a class="close" href="#">&nbsp;</a>
 			<!--<a class="minimize" href="#">&nbsp;</a>
 			<a class="expand" href="#">&nbsp;</a> -->
 		</div>
 			Groovy Script Editor</a>
 		<div id='save'>
-			<a href="javascript: save()"> Save </a>
+			<a href="#"> Save </a>
 		</div>
 	</div>
 
 	<script>
+
 		var myScript = parent.document.getElementById('scriptString').getAttribute("text");
 		var myCodeMirror = CodeMirror(document.body, {
 		  value: myScript,
@@ -146,9 +147,11 @@
 		  lineWrapping: true,
 		  lineNumbers: true
 		});
+		
 
+/*
 		function close() {
-			var parentIframe = parent.document.getElementById('simple-editor-iframe');
+		var parentIframe = parent.document.getElementById('simple-editor-iframe');
 			parentIframe.parentNode.removeChild(parentIframe);
 		}
 
@@ -165,7 +168,7 @@
 		    parent.document.body.appendChild(newScriptStringDiv);
 
 		    parent.saveScript();
-		}
+		} */
 	</script>
 
 </body>
