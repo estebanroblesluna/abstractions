@@ -47,7 +47,8 @@
 
 		        	view = editableView;
 				} else if ([_model propertyNameAt: aRowIndex] == "script") { //TODO: Change this with PropertyTypeScript
-					view = [ScriptFieldView new];
+					var scriptView = [ScriptFieldView new];
+					view = scriptView;
 				} else {
 					view = [aTableColumn _newDataView];
 				}
@@ -71,12 +72,12 @@
 	return view;
 }
 
-
-//debug method that calls father
-- (void) tableView: (CPTableView) aTableView setObjectValue: (id) aValue forTableColumn: (CPTableColumn) aTableColumn row: (int) rowIndex
+- (void) saveScript: (CPString) script
 {
-	alert("ENTRO");
-	[super tableView: aTableView setObjectValue: aValue forTableColumn: aTableColumn];
+	var model = [_selectedFigure model];
+	[model propertyValue: @"script" be: script];
 }
+
+
 
 @end
