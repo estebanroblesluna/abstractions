@@ -30,7 +30,7 @@ public class EmbeddedEditorController {
 	public ModelAndView home() {
         ModelAndView mv = new ModelAndView("simple-editor");
         mv.addObject("staticResourcesUrl", this.staticResourcesUrl);
-	    return mv;
+        return mv;
 	}
 
 }

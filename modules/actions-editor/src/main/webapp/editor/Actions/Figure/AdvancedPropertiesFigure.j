@@ -12,11 +12,12 @@
  * limitations under the License.
  */
 
-//PropertyTypeScript  = @"TYPE_SCRIPT";
-
 /**
  * @author "Guido José Celada <celadaguido@gmail.com>"
  */
+
+PropertyTypeScript = @"TYPE_SCRIPT";
+
 
 @implementation AdvancedPropertiesFigure : PropertiesFigure
 {
@@ -46,7 +47,7 @@
 		        	[_checkboxMapping setObject: aRowIndex forKey: editableView];
 
 		        	view = editableView;
-				} else if ([_model propertyNameAt: aRowIndex] == "script") { //TODO: Change this with PropertyTypeScript
+				} else if (([propertyType isEqual: PropertyTypeScript])) {
 					var scriptView = [ScriptFieldView new];
 					view = scriptView;
 				} else {

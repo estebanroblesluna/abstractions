@@ -4,6 +4,7 @@
 
 <body>
   <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
+  
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
