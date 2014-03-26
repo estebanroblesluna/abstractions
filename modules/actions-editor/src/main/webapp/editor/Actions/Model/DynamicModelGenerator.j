@@ -70,7 +70,8 @@
 			[newModel
 				addProperty: property.name
 				displayName: property.displayName
-				value: property.defaultValue];
+				value: property.defaultValue
+				type: "TYPE_" + property.type];
 	    }
 
 	    if (properties != nil) {

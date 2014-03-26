@@ -65,7 +65,7 @@
     //add a button bar with save and close buttons
     buttonBar = [CPButtonBar new];
     [buttonBar setHasResizeControl:NO];
-    [buttonBar setFrame:CGRectMake(20, 20, 640, 26)];
+    [buttonBar setFrame:CGRectMake(0, 0, 640, 26)];
 
     var closeButton = [CPButton buttonWithTitle: "X"];
     [closeButton setAction:@selector(closeEditor)];
@@ -78,11 +78,11 @@
     [saveButton setEnabled:YES];
 
     [buttonBar setButtons:[closeButton, saveButton]];
-
+    [_scriptWebView addSubview: buttonBar]
 
     var drawing = [[[[[self superview] superview] superview] superview] superview];
     [drawing addFigure: _scriptWebView];
-    [drawing addFigure: buttonBar]
+
 }
 
 - (void) closeEditor { //called when the user clicks the close button on the script editor
