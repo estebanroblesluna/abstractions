@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
  */
@@ -128,7 +129,7 @@
 
 - (void) loadCommonToolbars: (id) drawing
 {
-	var commonToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(800, 25)];
+	var commonToolbox = [ToolboxTooltipFigure initializeWith: drawing at: CGPointMake(800, 25)];
 	[commonToolbox columns: 2];
 
 	[commonToolbox addTool: [SelectionTool drawing: drawing] withTitle: @"Selection" image: @"Resources/Selection.png"];
@@ -148,7 +149,7 @@
 
 	[commonToolbox addSeparator];
 
-	var alignToolbox = [ToolboxFigure initializeWith: drawing at: CGPointMake(880, 25)];
+	var alignToolbox = [ToolboxTooltipFigure initializeWith: drawing at: CGPointMake(880, 25)];
 	[alignToolbox columns: 3];
 
 	[alignToolbox addCommand: [AlignLeftCommand class] withTitle: @"Align left" image: @"Resources/AlignLeft.gif"];
@@ -158,7 +159,7 @@
 	[alignToolbox addCommand: [AlignMiddleCommand class] withTitle: @"Align middle" image: @"Resources/AlignMiddle.gif"];
 	[alignToolbox addCommand: [AlignBottomCommand class] withTitle: @"Align bottom" image: @"Resources/AlignBottom.gif"];
 
-	var properties = [PropertiesFigure newAt: CGPointMake(20, 420) drawing: drawing];
+	var properties = [AdvancedPropertiesFigure newAt: CGPointMake(20, 420) drawing: drawing];
 
 	[drawing toolbox: commonToolbox];
 	[drawing addFigure: alignToolbox];
@@ -196,7 +197,7 @@
 	for (var i = 0; i < libraries.length; i++) {
 		var library = libraries[i];
 		var elements = library.elements;
-		var toolbox = [ToolboxFigure initializeWith: aDrawing at: CGPointMake(initialX, 25)];
+		var toolbox = [ToolboxTooltipFigure initializeWith: aDrawing at: CGPointMake(initialX, 25)];
 
 
 		if (elements.length == 0)
@@ -249,5 +250,6 @@
 
 	}
 }
+
 
 @end

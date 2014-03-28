@@ -39,6 +39,7 @@ import com.abstractions.model.DeploymentState;
 import com.abstractions.model.DeploymentToServer;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Server;
+import com.abstractions.model.ServerCommand;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
 
@@ -181,34 +182,28 @@ public class DeploymentService {
 	@Transactional
 	public void addProfiler(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/profile/" + elementId;
-			HttpPut method = new HttpPut(url);
-			try {
-				this.execute(method);
-			} catch (Exception e) {
-				log.warn("Error removing profiler", e);
-			}
+		for (DeploymentToServer toServer : deployment.getToServers()) {
+			ServerCommand command = new ServerCommand("ADD_PROFILER", toServer);
+			command.addArgument("deploymentId", Long.valueOf(deploymentId).toString());
+			command.addArgument("contextId", contextId);
+			command.addArgument("elementId", elementId);
+			
+			this.repository.save(command);
 		}
 	}
 
 	@Transactional
 	public void removeProfiler(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
-		
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/profile/" + elementId;
-			HttpDelete method = new HttpDelete(url);
-			try {
-				this.execute(method);
-			} catch (Exception e) {
-				log.warn("Error removing profiler", e);
-			}
+
+		for (DeploymentToServer toServer : deployment.getToServers()) {
+			ServerCommand command = new ServerCommand("REMOVE_PROFILER", toServer);
+			command.addArgument("deploymentId", Long.valueOf(deploymentId).toString());
+			command.addArgument("contextId", contextId);
+			command.addArgument("elementId", elementId);
+			
+			this.repository.save(command);
 		}
 	}
 	
@@ -263,44 +258,35 @@ public class DeploymentService {
 			String afterConditionalExpressionValue) {
 		
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
 
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/log/" + elementId;
-			HttpPost method = new HttpPost(url);
-			
-			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("beforeExpression", beforeExpression));
-			urlParameters.add(new BasicNameValuePair("afterExpression", afterExpression));
-			urlParameters.add(new BasicNameValuePair("isBeforeConditional", isBeforeConditional.toString()));
-			urlParameters.add(new BasicNameValuePair("isAfterConditional", isAfterConditional.toString()));
-			urlParameters.add(new BasicNameValuePair("beforeConditionalExpressionValue", beforeConditionalExpressionValue));
-			urlParameters.add(new BasicNameValuePair("afterConditionalExpressionValue", afterConditionalExpressionValue));
+		for (DeploymentToServer toServer : deployment.getToServers()) {
+			ServerCommand command = new ServerCommand("ADD_LOGGER", toServer);
+			command.addArgument("deploymentId", Long.valueOf(deploymentId).toString());
+			command.addArgument("contextId", contextId);
+			command.addArgument("elementId", elementId);
 
-			try {
-				method.setEntity(new UrlEncodedFormEntity(urlParameters));
-				this.execute(method);
-			} catch (Exception e) {
-				log.warn("Error adding logger", e);
-			}
+			command.addArgument("beforeExpression", beforeExpression);
+			command.addArgument("afterExpression", afterExpression);
+			command.addArgument("isBeforeConditional", isBeforeConditional.toString());
+			command.addArgument("isAfterConditional", isAfterConditional.toString());
+			command.addArgument("beforeConditionalExpressionValue", beforeConditionalExpressionValue);
+			command.addArgument("afterConditionalExpressionValue", afterConditionalExpressionValue);
+
+			this.repository.save(command);
 		}
 	}
 
 	@Transactional
 	public void removeLogger(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/log/" + elementId;
-			HttpDelete method = new HttpDelete(url);
-			try {
-				this.execute(method);
-			} catch (Exception e) {
-				log.warn("Error removing logger", e);
-			}
+		for (DeploymentToServer toServer : deployment.getToServers()) {
+			ServerCommand command = new ServerCommand("REMOVE_LOGGER", toServer);
+			command.addArgument("deploymentId", Long.valueOf(deploymentId).toString());
+			command.addArgument("contextId", contextId);
+			command.addArgument("elementId", elementId);
+
+			this.repository.save(command);
 		}		
 	}
 
@@ -347,37 +333,43 @@ public class DeploymentService {
 	}
 
 	@Transactional
-	public String startDeployment(long deploymentId, String serverKey) {
+	public String startDeployment(long deploymentId, String serverId, String serverKey) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		Server server = this.serverService.getServer(serverKey);
+		Server server = this.serverService.getServer(serverId, serverKey);
 		
-		DeploymentToServer toServer = deployment.getToServer(server.getId());
-		toServer.setState(DeploymentState.STARTED);
-		this.repository.save(toServer);
-		
-		String filename = this.snapshotService.buildSnapshotPath(
-				deployment.getSnapshot().getApplication().getId(), 
-				deployment.getSnapshot().getId());
-		return filename;
+		if (server != null) {
+			DeploymentToServer toServer = deployment.getToServer(server.getId());
+			toServer.setState(DeploymentState.STARTED);
+			this.repository.save(toServer);
+			
+			String filename = this.snapshotService.buildSnapshotPath(
+					deployment.getSnapshot().getApplication().getId(), 
+					deployment.getSnapshot().getId());
+			return filename;
+		} else {
+			return null;
+		}
 	}
 	
 	@Transactional
-	public void endDeploymentWithErrors(long deploymentId, String serverKey) {
-		this.setStateToServer(deploymentId, serverKey, DeploymentState.FINISH_WITH_ERRORS);
+	public void endDeploymentWithErrors(long deploymentId, String serverId, String serverKey) {
+		this.setStateToServer(deploymentId, serverId, serverKey, DeploymentState.FINISH_WITH_ERRORS);
 	}
 
 	@Transactional
-	public void endDeploymentSuccessfully(long deploymentId, String serverKey) {
-		this.setStateToServer(deploymentId, serverKey, DeploymentState.FINISH_SUCCESSFULLY);
+	public void endDeploymentSuccessfully(long deploymentId, String serverId, String serverKey) {
+		this.setStateToServer(deploymentId, serverId, serverKey, DeploymentState.FINISH_SUCCESSFULLY);
 	}
 
-	private void setStateToServer(long deploymentId, String serverKey, DeploymentState state) {
+	private void setStateToServer(long deploymentId, String serverId, String serverKey, DeploymentState state) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		Server server = this.serverService.getServer(serverKey);
+		Server server = this.serverService.getServer(serverId, serverKey);
 		
-		DeploymentToServer toServer = deployment.getToServer(server.getId());
-		toServer.setState(state);
-		this.repository.save(toServer);		
+		if (server != null) {
+			DeploymentToServer toServer = deployment.getToServer(server.getId());
+			toServer.setState(state);
+			this.repository.save(toServer);		
+		}
 	}
 	
 	@Transactional

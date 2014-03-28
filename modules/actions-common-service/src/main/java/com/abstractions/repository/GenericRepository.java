@@ -84,6 +84,15 @@ public class GenericRepository {
 			.add(Restrictions.eq(property, value))
 			.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T findByAnd(Class<T> theClass, String property, Object value, String property2, Object value2) {
+		return (T) this.sessionFactory.getCurrentSession()
+			.createCriteria(theClass)
+			.add(Restrictions.eq(property, value))
+			.add(Restrictions.eq(property2, value2))
+			.uniqueResult();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public <T> T findBy(Class<T> theClass, Map<String,Object> restrictions){
@@ -108,6 +117,14 @@ public class GenericRepository {
     public void update(Object o) {
         this.sessionFactory.getCurrentSession().update(o);
     }
+
+	public List getCommands(long serverId, Object state) {
+		return this.sessionFactory.getCurrentSession()
+				.createQuery("SELECT sc FROM ServerCommand sc INNER JOIN sc.deploymentToServer as toServer INNER JOIN toServer.server as server WHERE sc.state = :state AND server.id = :serverId")
+				.setString("state", state.toString())
+				.setLong("serverId", serverId)
+				.list();
+	}
     
    
 }

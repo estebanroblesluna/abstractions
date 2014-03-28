@@ -25,5 +25,12 @@ public class EmbeddedEditorController {
         mv.addObject("file", file);
 	    return mv;
 	}
+	
+	@RequestMapping("/simple-editor/")
+	public ModelAndView home() {
+        ModelAndView mv = new ModelAndView("simple-editor");
+        mv.addObject("staticResourcesUrl", this.staticResourcesUrl);
+        return mv;
+	}
 
 }

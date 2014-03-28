@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Server;
+import com.abstractions.model.ServerCommand;
+import com.abstractions.model.ServerCommandState;
 import com.abstractions.model.ServerGroup;
 import com.abstractions.model.ServerStats;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.utils.IdGenerator;
 
 @Service
 public class ServerService {
@@ -36,6 +39,7 @@ public class ServerService {
 		ServerGroup serverGroup = this.serverGroupService.getServerGroup(serverGroupId);
 		Server server = new Server(name, ipDNS);
 		server.setPort(port);
+		server.setKey(IdGenerator.getNewId());
 		
 		serverGroup.addServer(server);
 		this.repository.save(server);
@@ -62,8 +66,8 @@ public class ServerService {
 	}
 
 	@Transactional
-	public void updateServerStatusWithKey(String serverKey) {
-		Server server = this.getServer(serverKey);
+	public void updateServerStatusWithKey(String serverId, String serverKey) {
+		Server server = this.getServer(serverId, serverKey);
 		if (server != null) {
 			server.setLastUpdate(new Date());
 			this.repository.save(server);
@@ -71,19 +75,30 @@ public class ServerService {
 	}
 
 	@Transactional
-	public Server getServer(String serverKey) {
-		Server server = this.repository.findBy(Server.class, "key", serverKey);
+	public Server getServer(String serverId, String serverKey) {
+		Server server = this.repository.findByAnd(Server.class, "externalId", serverId, "key", serverKey);
 		return server;
 	}
 
 	@Transactional
-	public void updateStatistics(String serverKey, String contextId, Date date,
+	public void updateStatistics(String serverId, String serverKey, String contextId, Date date,
 			long uncaughtExceptions, Map<String, Long> receivedMessages) {
 
-		Server server = this.getServer(serverKey);
+		Server server = this.getServer(serverId, serverKey);
 		if (server != null) {
 			ServerStats stats = new ServerStats(server, contextId, date, uncaughtExceptions, receivedMessages);
 			this.repository.save(stats);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<ServerCommand> getPendingCommands(String serverId, String serverKey) {
+		Server server = this.getServer(serverId, serverKey);
+		if (server != null) {
+			return this.repository.getCommands(server.getId(), ServerCommandState.PENDING);
+		} else {
+			throw new IllegalArgumentException("Invalid server");
 		}
 	}
 }
