@@ -22,11 +22,21 @@
   <import resource="classpath:hibernate.xml" />
   <import resource="classpath:applicationContext.xml" />
 
+  <bean id="libraryService" class="com.abstractions.service.core.LibraryService">
+    <constructor-arg index="0" ref="repository" />
+  </bean>
+  
+  <bean class="com.abstractions.service.core.MappingInitializer" init-method="initializeMapping">
+    <property name="mapping" ref="namesMapping" />
+    <property name="libraryService" ref="libraryService" />
+  </bean>
+  
   <bean id="httpStrategy" class="com.abstractions.http.HttpStrategy" />
 
   <bean id="editorService" class="com.abstractions.server.editor.EditorService">
     <constructor-arg ref="httpStrategy" />
     <constructor-arg value="${server.editor.url}" />
+    <constructor-arg value="${server.id}" />
     <constructor-arg value="${server.key}" />
     <constructor-arg ref="actionsServer" />
   </bean>
@@ -43,8 +53,10 @@
   </bean>
 
   <task:scheduled-tasks scheduler="myScheduler">
-      <task:scheduled ref="editorService" method="ping" fixed-delay="1000"/>
+      <task:scheduled ref="editorService" method="ping" fixed-delay="5000"/>
       <task:scheduled ref="editorService" method="sendStatistics" fixed-delay="60000"/>
+      <task:scheduled ref="editorService" method="sendProfiling" fixed-delay="3000"/>
+      <task:scheduled ref="editorService" method="sendLogging" fixed-delay="5000"/>
   </task:scheduled-tasks>
   
   <task:scheduler id="myScheduler" pool-size="10"/>

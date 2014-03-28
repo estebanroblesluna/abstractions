@@ -66,7 +66,7 @@ public class Thread {
 			ElementTemplate definition = this.currentElement;
 			log.info("[Thread" + this.id + "] " + "START Running step for: " + StringUtils.defaultString(definition.getProperty(ElementTemplate.NAME)));
 	
-			this.currentElement.getMeta().evaluateUsing(this);
+			this.currentElement.evaluateUsing(this);
 			this.hasNextProcessor.set(this.currentElement != null);
 	
 			log.info("[Thread" + this.id + "] " + "END Running step for: " + StringUtils.defaultString(definition.getProperty(ElementTemplate.NAME))

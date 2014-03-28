@@ -25,7 +25,8 @@
 			var templateEditor = CodeMirror($("#editor")[0], {
 			  value: "Hello world, {name}",
 			  mode:  "dust",
-			  lineNumbers: true
+			  lineNumbers: true,
+			  theme: "monokai"
 			});
 			templateEditor.setSize(700, 500);
 			
