@@ -53,8 +53,10 @@
   </bean>
 
   <task:scheduled-tasks scheduler="myScheduler">
-      <task:scheduled ref="editorService" method="ping" fixed-delay="1000"/>
+      <task:scheduled ref="editorService" method="ping" fixed-delay="5000"/>
       <task:scheduled ref="editorService" method="sendStatistics" fixed-delay="60000"/>
+      <task:scheduled ref="editorService" method="sendProfiling" fixed-delay="3000"/>
+      <task:scheduled ref="editorService" method="sendLogging" fixed-delay="5000"/>
   </task:scheduled-tasks>
   
   <task:scheduler id="myScheduler" pool-size="10"/>

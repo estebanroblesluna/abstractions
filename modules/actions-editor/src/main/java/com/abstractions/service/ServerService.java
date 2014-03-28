@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Server;
+import com.abstractions.model.ServerCommand;
+import com.abstractions.model.ServerCommandState;
 import com.abstractions.model.ServerGroup;
 import com.abstractions.model.ServerStats;
 import com.abstractions.repository.GenericRepository;
@@ -86,6 +88,17 @@ public class ServerService {
 		if (server != null) {
 			ServerStats stats = new ServerStats(server, contextId, date, uncaughtExceptions, receivedMessages);
 			this.repository.save(stats);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<ServerCommand> getPendingCommands(String serverId, String serverKey) {
+		Server server = this.getServer(serverId, serverKey);
+		if (server != null) {
+			return this.repository.getCommands(server.getId(), ServerCommandState.PENDING);
+		} else {
+			throw new IllegalArgumentException("Invalid server");
 		}
 	}
 }
