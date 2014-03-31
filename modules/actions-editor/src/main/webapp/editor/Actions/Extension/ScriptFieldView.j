@@ -23,6 +23,7 @@
 	var _script @accessors(property=script);
 	var _button @accessors(property=button);
     var _scriptWebView @accessors(property=scriptWebView);
+    CPPanel _panel @accessors(property=panel);
 }
 
 -(id) initWithFrame:(CGRect) aFrame {
@@ -58,39 +59,41 @@
     document.body.appendChild(scriptStringDiv);
 
     //create a window for the script iframe
+    _panel = [[CPWindow alloc]
+    initWithContentRect:CGRectMake(70, 40, 640, 480)
+    styleMask:CPClosableWindowMask | CPClosableWindowMask];
+    [_panel orderFront:self];
+    [_panel setTitle: "Edit groovy script"];
+    [_panel setDelegate: self];
+
+    //set the script editor iframe
     _scriptWebView = [[CPWebView alloc] init];
-    [_scriptWebView setFrame:CGRectMake(20, 20, 640, 480)];
+    [_scriptWebView setFrame:CGRectMake(0, 0, 640, 480)];
     [_scriptWebView setMainFrameURL:"/simple-editor/"]
+    [_scriptWebView setBackgroundColor:[CPColor blackColor]];
 
-    //add a button bar with save and close buttons
-    buttonBar = [CPButtonBar new];
-    [buttonBar setHasResizeControl:NO];
-    [buttonBar setFrame:CGRectMake(0, 0, 640, 26)];
-
-    var closeButton = [CPButton buttonWithTitle: "X"];
-    [closeButton setAction:@selector(closeEditor)];
-    [closeButton setTarget:self];
-    [closeButton setEnabled:YES];
-
-    var saveButton = [CPButton buttonWithTitle:"Save"];
+    //set the save button
+    var saveButton = [[CPButton alloc] initWithFrame:CGRectMake(0,448,638,30)];
+    [saveButton setTitle:"Save"]
+    [saveButton setValue:[CPColor grayColor] forThemeAttribute:@"bezel-color"]
+    [saveButton setValue:[CPColor blackColor] forThemeAttribute:@"text-color"]
     [saveButton setAction:@selector(saveEditorContent)];
     [saveButton setTarget:self];
     [saveButton setEnabled:YES];
 
-    [buttonBar setButtons:[closeButton, saveButton]];
-    [_scriptWebView addSubview: buttonBar]
+    [_scriptWebView addSubview: saveButton]
+
+    [_panel setContentView:_scriptWebView];
 
     var drawing = [[[[[self superview] superview] superview] superview] superview];
-    [drawing addFigure: _scriptWebView];
+    [drawing addFigure: _panel];
 
 }
 
-- (void) closeEditor { //called when the user clicks the close button on the script editor
-    [_scriptWebView close];
-    [_scriptWebView removeFromSuperview];
-    [buttonBar removeFromSuperview];
+- (BOOL)windowShouldClose: (id)aWindow { //called when the user clicks the close button on the script editor (delegate method)
     var scriptString = document.getElementById("scriptString");
     scriptString.parentNode.removeChild(scriptString);
+    return true;
 }
 
 - (void) saveEditorContent { //called when the user clicks the save button on the script editor
