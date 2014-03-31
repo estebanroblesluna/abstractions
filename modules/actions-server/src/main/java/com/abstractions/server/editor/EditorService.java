@@ -2,9 +2,12 @@ package com.abstractions.server.editor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -100,17 +103,8 @@ public class EditorService {
 			
 			String json = IOUtils.toString(response.getEntity().getContent());
 			JSONObject object = new JSONObject(json);
-			String key = "deployments";
-			
-			if (object.has(key)) {
-				JSONArray array = object.getJSONArray(key);
-				for (int i = 0; i < array.length(); i++) {
-					JSONObject deployment = array.getJSONObject(i);
-					long deploymentId = deployment.getLong("deploymentId");
-					long applicationId = deployment.getLong("applicationId");
-					this.startDeployment(deploymentId, applicationId);
-				}
-			}
+			this.processPendingDeployments(object);
+			this.processPendingCommands(object);
 		} catch (ClientProtocolException e) {
 			log.warn("Error pinging server " + this.editorUrl);
 		} catch (IOException e) {
@@ -119,6 +113,94 @@ public class EditorService {
 			log.warn("Error pinging server " + this.editorUrl);
 		} finally {
 			this.strategy.close(response);
+		}
+	}
+	
+	public void sendProfiling() {
+	}
+
+	public void sendLogging() {
+	}
+
+	private void processPendingCommands(JSONObject object) throws JSONException {
+		String commandsKey = "commands";
+		
+		if (object.has(commandsKey)) {
+			JSONArray array = object.getJSONArray(commandsKey);
+			for (int i = 0; i < array.length(); i++) {
+				JSONObject command = array.getJSONObject(i);
+				String name = command.getString("name");
+
+				Map<String, String> args = new HashMap<String, String>();
+				JSONObject argsJSON = command.getJSONObject("args");
+				for (Iterator iterator = argsJSON.keys(); iterator.hasNext();) {
+					String key = (String) iterator.next();
+					String value = argsJSON.getString(key);
+					args.put(key, value);
+				}
+				
+				this.executeCommand(name, args);
+			}
+		}
+	}
+
+	private void executeCommand(String name, Map<String, String> args) {
+		if (StringUtils.equals(name, "ADD_PROFILER")) {
+			String objectId = args.get("elementId");
+			String contextId = args.get("contextId");
+			this.actionsServer.addProfiler(contextId, objectId);
+			
+		} else if (StringUtils.equals(name, "REMOVE_PROFILER")) {
+			String objectId = args.get("elementId");
+			String contextId = args.get("contextId");
+			this.actionsServer.removeProfiler(contextId, objectId);
+
+		} else if (StringUtils.equals(name, "ADD_LOGGER")) {
+			String elementId = args.get("elementId");
+			String contextId = args.get("contextId");
+			String beforeExpression = args.get("beforeExpression");
+			String afterExpression = args.get("afterExpression");
+			boolean isBeforeConditional = false;
+			boolean isAfterConditional = false;
+
+			try {
+				isBeforeConditional = Boolean.valueOf(args.get("isBeforeConditional"));
+			} catch (Exception e) {
+				//IGNORE
+			}
+
+			try {
+				isAfterConditional = Boolean.valueOf(args.get("isAfterConditional"));
+			} catch (Exception e) {
+				//IGNORE
+			}
+			
+			String beforeConditionalExpressionValue = args.get("beforeConditionalExpressionValue");
+			String afterConditionalExpressionValue = args.get("afterConditionalExpressionValue");
+			
+			this.actionsServer.addLogger(contextId, elementId, beforeExpression, afterExpression, isBeforeConditional, isAfterConditional, beforeConditionalExpressionValue, afterConditionalExpressionValue);
+
+		} else if (StringUtils.equals(name, "REMOVE_LOGGER")) {
+			String objectId = args.get("elementId");
+			String contextId = args.get("contextId");
+			this.actionsServer.removeLogger(contextId, objectId);
+			
+		} else {
+			log.warn("Unrecognized command " + StringUtils.defaultString(name));
+		}
+	}
+
+	public void processPendingDeployments(JSONObject object) throws JSONException {
+		String key = "deployments";
+		
+		if (object.has(key)) {
+			JSONArray array = object.getJSONArray(key);
+			for (int i = 0; i < array.length(); i++) {
+				JSONObject deployment = array.getJSONObject(i);
+				long deploymentId = deployment.getLong("deploymentId");
+				long applicationId = deployment.getLong("applicationId");
+				this.startDeployment(deploymentId, applicationId);
+			}
 		}
 	}
 	
