@@ -125,6 +125,12 @@ public class GenericRepository {
 				.setLong("serverId", serverId)
 				.list();
 	}
-    
-   
+
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getLastProfilingOf(String applicationId) {
+		return this.sessionFactory.getCurrentSession()
+				.createSQLQuery("SELECT * FROM (SELECT element_id, average, date FROM actions.profiling_info INNER JOIN profiling_info_averages ON profiling_info_averages.profiling_info_id = profiling_info.profiling_info_id WHERE average > 0 AND application_id = ? ORDER BY date DESC) AS averages GROUP BY averages.element_id")
+				.setString(0, applicationId)
+				.list();
+	}
 }

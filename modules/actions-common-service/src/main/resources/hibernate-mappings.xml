@@ -157,8 +157,23 @@
     
     <map name="arguments" table="server_commands_arguments" lazy="false">
       <key column="server_command_id" />
-      <map-key column="key" type="string" />
-      <element column="value" type="string" />
+      <map-key column="arg_key" type="string" />
+      <element column="arg_value" type="string" />
+    </map>
+  </class>
+  
+  <class name="com.abstractions.model.ProfilingInfo" table="profiling_info">
+    <id name="id" type="long" column="profiling_info_id">
+      <generator class="native" />
+    </id>
+
+    <property name="date" />
+    <property name="applicationId" column="application_id" />
+    
+    <map name="averages" table="profiling_info_averages" lazy="false">
+      <key column="profiling_info_id" />
+      <map-key column="element_id" type="string" />
+      <element column="average" type="double" />
     </map>
   </class>
   

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +18,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
-import com.abstractions.api.Processor;
 import com.abstractions.instance.common.LogInterceptor;
 import com.abstractions.instance.common.PerformanceInterceptor;
 import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.model.ProfilingInfo;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.service.core.ServiceException;
@@ -209,12 +210,13 @@ public class ActionsServer {
 	}
 	
 	public ProfilingInfo getProfilingInfo(String applicationId) {
-		ProfilingInfo info = new ProfilingInfo();
+		ProfilingInfo info = new ProfilingInfo(applicationId);
 		
 		List<PerformanceInterceptor> profilers = this.getProfilers(applicationId);
 		for (PerformanceInterceptor profiler : profilers) {
-			info.addAverage(this.wrapperToObjectIdMapping.get(profiler), profiler.getAverage());
+			info.addAverage(profiler.getElementId(), profiler.getAverageAndReset());
 		}
+		
 		return info;
 	}
 
@@ -231,12 +233,13 @@ public class ActionsServer {
 	}
 
 	public void addProfiler(String applicationId, String objectId) {
-		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
-		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
+		CompositeTemplate compositeTemplate = this.definitions.get(applicationId);
+		ElementTemplate objectDefinition = compositeTemplate.getDefinition(objectId);
 		PerformanceInterceptor existingInterceptor = objectDefinition.getFirstInterceptorOfClass(PerformanceInterceptor.class);
 		
 		if (existingInterceptor == null) {
 			PerformanceInterceptor interceptor = new PerformanceInterceptor();
+			interceptor.setElementId(objectId);
 			this.getProfilers(applicationId).add(interceptor);
 			this.wrapperToObjectIdMapping.put(interceptor, objectId);
 			objectDefinition.addInterceptor(interceptor);
@@ -272,6 +275,7 @@ public class ActionsServer {
 		
 		if (existingInterceptor == null) {
 			LogInterceptor interceptor = new LogInterceptor();
+			interceptor.setElementId(objectId);
 			
 			interceptor.setBeforeExpression(beforeExpression);
 			interceptor.setAfterExpression(afterExpression);
@@ -373,5 +377,9 @@ public class ActionsServer {
 		}
 		
 		return stats;
+	}
+	
+	public Collection<String> getApplicationIds() {
+		return this.profilers.keySet();
 	}
 }

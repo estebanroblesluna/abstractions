@@ -79,7 +79,7 @@ public class FlowController {
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/save/{flowId}", method = RequestMethod.POST, produces = { "application/json" })
-	public String editFlowOnSave(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
+	public @ResponseBody String editFlowOnSave(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
 		CompositeTemplate context = this.holder.get(form.getName());
 		
 		JSONObject result = new JSONObject();
