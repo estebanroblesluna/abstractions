@@ -33,6 +33,28 @@ public class ResponseUtils {
 		}
 	}
 	
+	public static Response okJsons(Map.Entry<String, JSONObject>... entries) {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("result", "success");
+			for (int i = 0; i < entries.length; i++) {
+				Map.Entry<String, JSONObject> entry = entries[i];
+				json.put(entry.getKey(), entry.getValue());
+			}
+			String output = json.toString();
+			return Response
+					.status(200)
+					.entity(output)
+					.type(MediaType.APPLICATION_JSON)
+					.build();
+		} catch (JSONException e) {
+			return Response
+					.status(500)
+					.entity("Error creating response")
+					.build();
+		}
+	}
+	
 	public static Response fail(String message) {
 		return Response
 				.status(500)

@@ -142,6 +142,26 @@
     </map>
   </class>
   
+  <class name="com.abstractions.model.ServerCommand" table="server_commands">
+    <id name="id" type="long" column="server_command_id">
+      <generator class="native" />
+    </id>
+    
+    <many-to-one name="deploymentToServer" column="deployment_to_server_id" />
+    <property name="name" />
+    <property name="state" column="state">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.ServerCommandState</param>
+       </type>
+    </property>    
+    
+    <map name="arguments" table="server_commands_arguments" lazy="false">
+      <key column="server_command_id" />
+      <map-key column="key" type="string" />
+      <element column="value" type="string" />
+    </map>
+  </class>
+  
   <class name="com.abstractions.model.Team" table="team">
     <id name="id" type="long" column="team_id" access="field">
       <generator class="native" />

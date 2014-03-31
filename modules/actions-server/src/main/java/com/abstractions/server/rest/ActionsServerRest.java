@@ -3,11 +3,9 @@ package com.abstractions.server.rest;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -60,42 +58,6 @@ public class ActionsServerRest {
 		return ResponseUtils.ok("logger", result);
 	}
 	
-	@Path("/{contextId}/log/{objectId}/")
-	@POST
-	public Response addLogger(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@FormParam("beforeExpression") String beforeExpression,
-			@FormParam("afterExpression") String afterExpression,
-			@FormParam("isBeforeConditional") boolean isBeforeConditional,
-			@FormParam("isAfterConditional") boolean isAfterConditional,
-			@FormParam("beforeConditionalExpressionValue") String beforeConditionalExpressionValue,
-			@FormParam("afterConditionalExpressionValue") String afterConditionalExpressionValue
-			) {
-
-		this.server.addLogger(
-				contextId, 
-				objectId, 
-				beforeExpression, 
-				afterExpression,
-				isBeforeConditional,
-				isAfterConditional,
-				beforeConditionalExpressionValue,
-				afterConditionalExpressionValue);
-		return ResponseUtils.ok();
-	}
-	
-	@Path("/{contextId}/log/{objectId}")
-	@DELETE
-	public Response removeLogger(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId) {
-		
-		this.server.removeLogger(contextId, objectId);
-		return ResponseUtils.ok();
-	}
-	
-	
 	@Path("/{contextId}/profilingInfo")
 	@GET
 	public Response getProfilers(
@@ -116,26 +78,6 @@ public class ActionsServerRest {
 		}
 		
 		return ResponseUtils.ok("profilingInfo", result);
-	}
-	
-	@Path("/{contextId}/profile/{objectId}/")
-	@PUT
-	public Response addProfiler(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId) {
-		
-		this.server.addProfiler(contextId, objectId);
-		return ResponseUtils.ok();
-	}
-	
-	@Path("/{contextId}/profile/{objectId}/")
-	@DELETE
-	public Response removeProfiler(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId) {
-		
-		this.server.removeProfiler(contextId, objectId);
-		return ResponseUtils.ok();
 	}
 	
 	@Path("/{contextId}/cache/autorefreshable/{objectId}/")
