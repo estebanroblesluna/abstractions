@@ -17,6 +17,6 @@ CREATE  TABLE `actions`.`server_commands` (
 
 CREATE  TABLE `actions`.`server_commands_arguments` (
   `server_command_id` INT NULL ,
-  `key` VARCHAR(80) NOT NULL ,
-  `value` VARCHAR(255) NULL ,
-  PRIMARY KEY (`server_command_id`, `key`) );
+  `arg_key` VARCHAR(80) NOT NULL ,
+  `arg_value` VARCHAR(255) NULL ,
+  PRIMARY KEY (`server_command_id`, `arg_key`) );
