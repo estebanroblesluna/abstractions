@@ -2,6 +2,7 @@ package com.abstractions.server.editor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,8 +18,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.abstractions.http.HttpStrategy;
+import com.abstractions.model.ProfilingInfo;
+import com.abstractions.model.ProfilingInfoJSONMarshaller;
 import com.abstractions.server.core.ActionsServer;
 import com.abstractions.server.core.StatisticsInfo;
+import com.abstractions.service.rest.ResponseUtils;
 
 public class EditorService {
 
@@ -117,6 +121,45 @@ public class EditorService {
 	}
 	
 	public void sendProfiling() {
+		Collection<String> applicationIds = this.actionsServer.getApplicationIds();
+
+		JSONObject profilingInfo = new JSONObject();
+		JSONArray infos = new JSONArray();
+
+		try {
+			for (String applicationId : applicationIds) {
+				ProfilingInfo info = this.actionsServer.getProfilingInfo(applicationId);
+				info.setApplicationId(applicationId);
+				JSONObject applicationJSON = ProfilingInfoJSONMarshaller.toJSON(info);
+				infos.put(applicationJSON);
+			}
+			
+			profilingInfo.put("profiling", infos);
+		} catch (JSONException e) {
+			log.warn("Error generating json", e);
+		}
+		
+		
+		HttpResponse response = null;
+		try {
+			response = this.strategy
+				.post(this.editorUrl + "/profiling")
+				.addFormParam("server-id", this.serverId)
+				.addFormParam("server-key", this.serverKey)
+				.addFormParam("profiling-info", profilingInfo.toString())
+				.execute();
+			
+			String json = IOUtils.toString(response.getEntity().getContent());
+			JSONObject object = new JSONObject(json);
+		} catch (ClientProtocolException e) {
+			log.warn("Error sending profiling info " + this.editorUrl);
+		} catch (IOException e) {
+			log.warn("Error sending profiling info " + this.editorUrl);
+		} catch (JSONException e) {
+			log.warn("Error sending profiling info " + this.editorUrl);
+		} finally {
+			this.strategy.close(response);
+		}
 	}
 
 	public void sendLogging() {
@@ -145,19 +188,19 @@ public class EditorService {
 	}
 
 	private void executeCommand(String name, Map<String, String> args) {
+		String applicationId = args.get("applicationId");
+		String elementId = args.get("elementId");
+		String objectId = args.get("elementId");
+		String contextId = args.get("contextId");
+		String deploymentId = args.get("deploymentId");
+
 		if (StringUtils.equals(name, "ADD_PROFILER")) {
-			String objectId = args.get("elementId");
-			String contextId = args.get("contextId");
-			this.actionsServer.addProfiler(contextId, objectId);
+			this.actionsServer.addProfiler(applicationId, objectId);
 			
 		} else if (StringUtils.equals(name, "REMOVE_PROFILER")) {
-			String objectId = args.get("elementId");
-			String contextId = args.get("contextId");
-			this.actionsServer.removeProfiler(contextId, objectId);
+			this.actionsServer.removeProfiler(applicationId, objectId);
 
 		} else if (StringUtils.equals(name, "ADD_LOGGER")) {
-			String elementId = args.get("elementId");
-			String contextId = args.get("contextId");
 			String beforeExpression = args.get("beforeExpression");
 			String afterExpression = args.get("afterExpression");
 			boolean isBeforeConditional = false;
@@ -178,12 +221,10 @@ public class EditorService {
 			String beforeConditionalExpressionValue = args.get("beforeConditionalExpressionValue");
 			String afterConditionalExpressionValue = args.get("afterConditionalExpressionValue");
 			
-			this.actionsServer.addLogger(contextId, elementId, beforeExpression, afterExpression, isBeforeConditional, isAfterConditional, beforeConditionalExpressionValue, afterConditionalExpressionValue);
+			this.actionsServer.addLogger(applicationId, elementId, beforeExpression, afterExpression, isBeforeConditional, isAfterConditional, beforeConditionalExpressionValue, afterConditionalExpressionValue);
 
 		} else if (StringUtils.equals(name, "REMOVE_LOGGER")) {
-			String objectId = args.get("elementId");
-			String contextId = args.get("contextId");
-			this.actionsServer.removeLogger(contextId, objectId);
+			this.actionsServer.removeLogger(applicationId, objectId);
 			
 		} else {
 			log.warn("Unrecognized command " + StringUtils.defaultString(name));

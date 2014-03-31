@@ -9,6 +9,7 @@ import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.abstractions.model.ProfilingInfo;
 import com.abstractions.model.Server;
 import com.abstractions.model.ServerCommand;
 import com.abstractions.model.ServerCommandState;
@@ -100,5 +101,11 @@ public class ServerService {
 		} else {
 			throw new IllegalArgumentException("Invalid server");
 		}
+	}
+
+	@Transactional
+	public void addProfilingInfo(Server server, ProfilingInfo info) {
+		info.setServerId(server.getExternalId());
+		this.repository.save(info);
 	}
 }

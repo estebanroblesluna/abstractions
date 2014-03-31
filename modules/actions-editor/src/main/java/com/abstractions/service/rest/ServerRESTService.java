@@ -14,10 +14,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.abstractions.model.ProfilingInfo;
+import com.abstractions.model.ProfilingInfoJSONMarshaller;
 import com.abstractions.model.Server;
 import com.abstractions.model.ServerCommand;
 import com.abstractions.service.DeploymentService;
@@ -26,6 +31,8 @@ import com.abstractions.service.ServerService;
 @Path("/server")
 public class ServerRESTService {
 
+	private static final Log log = LogFactory.getLog(ServerRESTService.class);
+	
 	private ServerService service;
 	private DeploymentService deploymentService;
 	
@@ -33,7 +40,37 @@ public class ServerRESTService {
 		this.service = service;
 		this.deploymentService = deploymentService;
 	}
-	
+
+	@POST
+	@Path("/profiling")
+	public Response receiveProfiling(
+			@FormParam("server-id") String serverId, 
+			@FormParam("server-key") String serverKey,
+			@FormParam("profiling-info") String profilingInfoJSON) {
+		
+		Server server = this.service.getServer(serverId, serverKey);
+		if (server != null) {
+			try {
+				JSONObject root = new JSONObject(profilingInfoJSON);
+				JSONArray profilings = root.getJSONArray("profiling");
+				
+				for (int i = 0; i < profilings.length(); i++) {
+					JSONObject applicationProfiling = profilings.getJSONObject(i);
+					
+					ProfilingInfo info = ProfilingInfoJSONMarshaller.fromJSON(applicationProfiling);
+					
+					this.service.addProfilingInfo(server, info);
+				}
+			} catch (JSONException e) {
+				log.warn("Error parsing json of server id " + StringUtils.defaultString(serverId));
+			}
+		} else {
+			log.warn("No server found to store profiling of " + StringUtils.defaultString(serverId));
+		}
+		
+		return ResponseUtils.ok();
+	}
+
 	@POST
 	@Path("/status")
 	public Response ping(@FormParam("server-id") String serverId, @FormParam("server-key") String serverKey) {

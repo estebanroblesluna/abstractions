@@ -16,8 +16,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.model.ProfilingInfo;
 import com.abstractions.server.core.ActionsServer;
-import com.abstractions.server.core.ProfilingInfo;
 import com.abstractions.service.rest.ResponseUtils;
 
 @Path("server")
@@ -56,28 +56,6 @@ public class ActionsServerRest {
 		}
 		
 		return ResponseUtils.ok("logger", result);
-	}
-	
-	@Path("/{contextId}/profilingInfo")
-	@GET
-	public Response getProfilers(
-			@PathParam("contextId") String contextId) {
-		
-		ProfilingInfo info = this.server.getProfilingInfo(contextId);
-		
-		JSONObject result = new JSONObject();
-		try {
-			result.put("date", info.getDate().getTime());
-			JSONObject averages = new JSONObject();
-			for (Map.Entry<String, Double> entry : info.getAverages().entrySet()) {
-				averages.put(entry.getKey(), entry.getValue());
-			}
-			result.put("averages", averages);
-		} catch (JSONException e) {
-			log.warn("Error generating json", e);
-		}
-		
-		return ResponseUtils.ok("profilingInfo", result);
 	}
 	
 	@Path("/{contextId}/cache/autorefreshable/{objectId}/")
