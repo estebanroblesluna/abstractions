@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.ws.rs.FormParam;
+import javax.ws.rs.PathParam;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -225,7 +228,33 @@ public class EditorService {
 
 		} else if (StringUtils.equals(name, "REMOVE_LOGGER")) {
 			this.actionsServer.removeLogger(applicationId, objectId);
+
+		} else if (StringUtils.equals(name, "ADD_LAZY_COMPUTED_CACHE")) {
+			String memcachedURL = args.get("memcachedURL");
+			String keyExpression = args.get("keyExpression");
+			String cacheExpressions = args.get("cacheExpressions");
+			int ttl = 1000 * 60;
+			try {
+				ttl = Integer.valueOf(args.get("ttl"));
+			} catch (Exception e) {
+				//IGNORE
+			}
 			
+			this.actionsServer.addLazyComputedCache(applicationId, objectId, memcachedURL, keyExpression, cacheExpressions, ttl);
+
+		} else if (StringUtils.equals(name, "ADD_LAZY_AUTOREFRESHABLE_CACHE")) {
+			String memcachedURL = args.get("memcachedURL");
+			String keyExpression = args.get("keyExpression");
+			String cacheExpressions = args.get("cacheExpressions");
+			int oldCacheEntryInMills = 1000 * 60;
+			try {
+				oldCacheEntryInMills = Integer.valueOf(args.get("oldCacheEntryInMills"));
+			} catch (Exception e) {
+				//IGNORE
+			}
+			
+			this.actionsServer.addLazyAutorefreshableCache(applicationId, objectId, memcachedURL, keyExpression, cacheExpressions, oldCacheEntryInMills);
+
 		} else {
 			log.warn("Unrecognized command " + StringUtils.defaultString(name));
 		}

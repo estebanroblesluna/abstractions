@@ -126,25 +126,20 @@ public class DeploymentService {
 			String keyExpression,
 			String cacheExpressions) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
 		
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/cache/computed/" + elementId;
-			HttpPost method = new HttpPost(url);
-			
-			try {
-				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-				urlParameters.add(new BasicNameValuePair("memcachedURL", memcachedURL));
-				urlParameters.add(new BasicNameValuePair("keyExpression", keyExpression)); //"message.properties['actions.http.productId']"
-				urlParameters.add(new BasicNameValuePair("cacheExpressions", cacheExpressions)); //"message.payload"
-				urlParameters.add(new BasicNameValuePair("ttl", ttl));
-				method.setEntity(new UrlEncodedFormEntity(urlParameters));
+		for (DeploymentToServer toServer : deployment.getToServers()) {
+			ServerCommand command = new ServerCommand("ADD_LAZY_COMPUTED_CACHE", toServer);
+			command.addArgument("applicationId", Long.valueOf(deployment.getSnapshot().getApplication().getId()).toString());
+			command.addArgument("deploymentId", Long.valueOf(deploymentId).toString());
+			command.addArgument("contextId", contextId);
+			command.addArgument("elementId", elementId);
 
-				this.execute(method);
-			} catch (Exception e) {
-				log.warn("Error adding computed cache", e);
-			}
+			command.addArgument("memcachedURL", memcachedURL);
+			command.addArgument("ttl", ttl);
+			command.addArgument("keyExpression", keyExpression);
+			command.addArgument("cacheExpressions", cacheExpressions);
+
+			this.repository.save(command);
 		}
 	}
 
@@ -158,25 +153,20 @@ public class DeploymentService {
 			String keyExpression,
 			String cacheExpressions) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
-		
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/cache/autorefreshable/" + elementId;
-			HttpPost method = new HttpPost(url);
-			
-			try {
-				List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-				urlParameters.add(new BasicNameValuePair("memcachedURL", memcachedURL));
-				urlParameters.add(new BasicNameValuePair("keyExpression", keyExpression)); //"message.properties['actions.http.productId']"
-				urlParameters.add(new BasicNameValuePair("cacheExpressions", cacheExpressions)); //"message.payload"
-				urlParameters.add(new BasicNameValuePair("oldCacheEntryInMills", oldCacheEntryInMills));
-				method.setEntity(new UrlEncodedFormEntity(urlParameters));
 
-				this.execute(method);
-			} catch (Exception e) {
-				log.warn("Error adding Autorefreshable cache", e);
-			}
+		for (DeploymentToServer toServer : deployment.getToServers()) {
+			ServerCommand command = new ServerCommand("ADD_LAZY_AUTOREFRESHABLE_CACHE", toServer);
+			command.addArgument("applicationId", Long.valueOf(deployment.getSnapshot().getApplication().getId()).toString());
+			command.addArgument("deploymentId", Long.valueOf(deploymentId).toString());
+			command.addArgument("contextId", contextId);
+			command.addArgument("elementId", elementId);
+
+			command.addArgument("memcachedURL", memcachedURL);
+			command.addArgument("oldCacheEntryInMills", oldCacheEntryInMills);
+			command.addArgument("keyExpression", keyExpression);
+			command.addArgument("cacheExpressions", cacheExpressions);
+
+			this.repository.save(command);
 		}
 	}
 	
