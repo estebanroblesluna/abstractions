@@ -14,7 +14,7 @@ import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
 import com.abstractions.utils.ExpressionUtils;
 
-public class LogInterceptor implements ElementInterceptor {
+public class LogInterceptor extends AbstractElementInterceptor {
 
 	private Expression beforeExpression;
 	private Expression afterExpression;

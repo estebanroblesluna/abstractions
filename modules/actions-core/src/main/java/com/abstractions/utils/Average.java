@@ -18,10 +18,21 @@ public class Average {
 		return this.averageSoFar.get();
 	}
 	
+	public synchronized double averageAndReset() {
+		double average = this.averageSoFar.get();
+		this.averageSoFar.set(0);
+		this.count.set(0);
+		return average;
+	}
+	
 	public synchronized void append(double value) {
 		long newCount = this.count.incrementAndGet();
 		double plus = value / newCount;
 		double before = this.averageSoFar.get() * ((newCount - 1d) / newCount);
 		this.averageSoFar.set(before + plus);
+	}
+	
+	public long getCount() {
+		return this.count.get();
 	}
 }
