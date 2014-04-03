@@ -52,6 +52,7 @@ public class SnapshotService {
 	
 	@Autowired
 	private NamesMapping namesMapping;
+
 	
 	private void initializeDirectory() {
 		try {
@@ -100,7 +101,7 @@ public class SnapshotService {
 	public void generateSnapshot(long applicationId) {
 		Application application = this.applicationService.getApplication(applicationId);
 		
-		ApplicationSnapshot snapshot = new ApplicationSnapshot();
+		ApplicationSnapshot snapshot = new ApplicationSnapshot(application);
 		
 		//clone all properties
 		for (Property property : application.getProperties()) {
@@ -125,20 +126,23 @@ public class SnapshotService {
 		}
 		
 		application.addSnapshot(snapshot);
-		this.repository.save(snapshot);
 		this.repository.save(application);
+		this.repository.save(snapshot);
 		
 		try {
 			this.persistSnapshot(application, snapshot);
 		} catch (MarshallingException e) {
 			log.error("Error when marshalling application snapshot", e);
 		}
+		CloudFrontService cf = new CloudFrontService(this);
+		cf.distributeResources(snapshot.getId());
+
 	}
 
 	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) throws MarshallingException {
 		try {
 			this.processResources(application, snapshot);
-			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(new Long(application.getId()).toString(), new Long(snapshot.getId()).toString()));
+			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(application.getId(),snapshot.getId()));
 			for (String filename : this.resourceService.listResources(application.getId())) {
 				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
 				List<ResourceChange> changes = this.resourceProcessor.process(filename, inputStream);
@@ -215,22 +219,22 @@ public class SnapshotService {
 		return this.repository.get(ApplicationSnapshot.class, snapshotId);
 	}
 	
-	public InputStream getContentsOfSnapshot(String applicationId, String snapshotId) {
+	public InputStream getContentsOfSnapshot(long applicationId, long snapshotId) {
 		try {
-			return new FileInputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
+			return new FileInputStream(this.buildSnapshotPath(applicationId, snapshotId));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public OutputStream getSnapshotOutputStream(String applicationId, String snapshotId) {
+	public OutputStream getSnapshotOutputStream(long applicationId, long snapshotId) {
 		try {
-			File snapshotsDirectory = new File(this.buildSnapshotPath(Long.parseLong(applicationId), null));
+			File snapshotsDirectory = new File(this.buildSnapshotPath(applicationId, null));
 			if (!snapshotsDirectory.exists()) {
 				snapshotsDirectory.mkdirs();
 			}
-			return new FileOutputStream(this.buildSnapshotPath(Long.parseLong(applicationId), Long.parseLong(snapshotId)));
+			return new FileOutputStream(this.buildSnapshotPath(applicationId, snapshotId));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
