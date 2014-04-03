@@ -24,10 +24,7 @@
   <import resource="dust.xml" />
 
   <context:component-scan base-package="com.abstractions.service.rest" />
-  
-  <bean id="cloudFrontService" class="com.abstractions.service.core.CloudFrontService">
-  	<constructor-arg index="0" ref="resourceService" />
-  </bean>
+
   
   <bean id="applicationService" class="com.abstractions.service.ApplicationService">
     <constructor-arg index="0" ref="repository" />

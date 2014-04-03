@@ -109,4 +109,10 @@ public class Resource {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public Resource clone(Resource toClone){
+		Resource clone = new Resource(this.applicationId,this.path,this.data,this.type);
+		clone.lastModifiedDate = this.lastModifiedDate;
+		return clone;
+	}
 }

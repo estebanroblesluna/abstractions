@@ -16,10 +16,15 @@ public class ApplicationSnapshot {
 	private List<Property> properties;
 	private Application application;
 
-	public ApplicationSnapshot() {
+	public ApplicationSnapshot(){
+		
+	}
+	
+	public ApplicationSnapshot(Application application) {
 		this.date = new Date();
 		this.flows = new ArrayList<Flow>();
 		this.properties = new ArrayList<Property>();
+		this.application = application;
 	}
 
 	public void addProperty(Property property) {
