@@ -1,7 +1,6 @@
 package com.abstractions.server.rest;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -14,10 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.jsoup.nodes.Attribute;
 
 import com.abstractions.server.core.ActionsServer;
-import com.abstractions.server.core.ProfilingInfo;
 import com.abstractions.service.rest.ResponseUtils;
 
 @Path("server")
@@ -29,15 +26,6 @@ public class ActionsServerRest {
 	
 	public ActionsServerRest(ActionsServer server) {
 		this.server = server;
-	}
-	
-	@Path("/{contextId}/running")
-	@GET
-	public Response isRunning(@PathParam("contextId") String contextId) {
-		Boolean isRunning = this.server.isRunning(contextId);
-		
-		return ResponseUtils.ok(
-				new Attribute("isRunning", isRunning.toString()));
 	}
 	
 	@Path("/{contextId}/log/{objectId}/")
@@ -56,55 +44,5 @@ public class ActionsServerRest {
 		}
 		
 		return ResponseUtils.ok("logger", result);
-	}
-	
-	@Path("/{contextId}/profilingInfo")
-	@GET
-	public Response getProfilers(
-			@PathParam("contextId") String contextId) {
-		
-		ProfilingInfo info = this.server.getProfilingInfo(contextId);
-		
-		JSONObject result = new JSONObject();
-		try {
-			result.put("date", info.getDate().getTime());
-			JSONObject averages = new JSONObject();
-			for (Map.Entry<String, Double> entry : info.getAverages().entrySet()) {
-				averages.put(entry.getKey(), entry.getValue());
-			}
-			result.put("averages", averages);
-		} catch (JSONException e) {
-			log.warn("Error generating json", e);
-		}
-		
-		return ResponseUtils.ok("profilingInfo", result);
-	}
-	
-	@Path("/{contextId}/cache/autorefreshable/{objectId}/")
-	@POST
-	public Response addLazyAutorefreshableCache(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@FormParam("memcachedURL") String memcachedURL,
-			@FormParam("keyExpression") String keyExpression,
-			@FormParam("cacheExpressions") String cacheExpressions,
-			@FormParam("oldCacheEntryInMills") int oldCacheEntryInMills) {
-		
-		this.server.addLazyAutorefreshableCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, oldCacheEntryInMills);
-		return ResponseUtils.ok();
-	}
-
-	@Path("/{contextId}/cache/computed/{objectId}/")
-	@POST
-	public Response addLazyComputedCache(
-			@PathParam("contextId") String contextId,
-			@PathParam("objectId") String objectId,
-			@FormParam("memcachedURL") String memcachedURL,
-			@FormParam("keyExpression") String keyExpression,
-			@FormParam("cacheExpressions") String cacheExpressions,
-			@FormParam("ttl") int ttl) {
-		
-		this.server.addLazyComputedCache(contextId, objectId, memcachedURL, keyExpression, cacheExpressions, ttl);
-		return ResponseUtils.ok();
 	}
 }
