@@ -89,7 +89,7 @@ public class ResourceRESTService {
 	
 	@GET
 	@Path("{applicationId}/snapshots/{snapshotId}")
-	public Response getSnapshot(@PathParam("applicationId") String applicationId, @PathParam("snapshotId") String snapshotId) {
+	public Response getSnapshot(@PathParam("applicationId") long applicationId, @PathParam("snapshotId") long snapshotId) {
 		InputStream result = this.snapshotService.getContentsOfSnapshot(applicationId, snapshotId);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
