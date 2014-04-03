@@ -6,7 +6,7 @@ import com.abstractions.api.Element;
 import com.abstractions.api.Message;
 import com.abstractions.utils.Average;
 
-public class PerformanceInterceptor implements ElementInterceptor {
+public class PerformanceInterceptor extends AbstractElementInterceptor {
 
 	private static final AtomicLong performanceIds = new AtomicLong(0);
 	
@@ -38,5 +38,9 @@ public class PerformanceInterceptor implements ElementInterceptor {
 	
 	public double getAverage() {
 		return this.average.average();
+	}
+	
+	public double getAverageAndReset() {
+		return this.average.averageAndReset();
 	}
 }
