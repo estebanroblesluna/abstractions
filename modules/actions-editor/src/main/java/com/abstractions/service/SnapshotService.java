@@ -135,7 +135,7 @@ public class SnapshotService {
 			log.error("Error when marshalling application snapshot", e);
 		}
 		CloudFrontService cf = new CloudFrontService(this);
-		cf.distributeResources(snapshot.getId());
+		//cf.distributeResources(snapshot.getId());
 
 	}
 
