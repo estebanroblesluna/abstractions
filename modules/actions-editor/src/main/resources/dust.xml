@@ -17,7 +17,7 @@
   	<constructor-arg index="0" ref="publicResourceService" />
   	<constructor-arg index="1" ref="privateResourceService" />
   	<constructor-arg index="2"><bean class="com.modules.dust.DustConnector" /></constructor-arg>
-  </bean>
+</bean>
   
 <!-- 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">

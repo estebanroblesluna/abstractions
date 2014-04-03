@@ -1,0 +1,13 @@
+[ {
+  "@type" : "ProcessorDefinition",
+  "id" : 0,
+  "name" : "testing",
+  "displayName" : null,
+  "icon" : null,
+  "properties" : [ ],
+  "implementation" : null,
+  "type" : "PROCESSOR",
+  "className" : "testing",
+  "script" : false,
+  "connection" : false
+} ]
