@@ -24,3 +24,5 @@ mysql -u root < $BASEDIR/migration/0.1/add-external-id-server.sql
 
 mysql -u root < $BASEDIR/migration/0.1/add-server-command.sql
 mysql -u root < $BASEDIR/migration/0.1/add-profiling-info.sql
+
+mysql -u root < $BASEDIR/migration/0.1/optimize-resource-table.sql

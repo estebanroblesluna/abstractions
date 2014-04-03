@@ -25,7 +25,7 @@ public class DatabaseResourceService implements ResourceService{
 	private String resourceType;
 	private GenericRepository repository;
 	
-	private HashMap<String,Object> MakeSearchRestrictions(long applicationId, String path){
+	private HashMap<String,Object> makeSearchRestrictions(long applicationId, String path){
 		HashMap<String, Object> restrictions = new HashMap<String,Object>();
 		restrictions.put("applicationId", applicationId);
 		restrictions.put("path",path);
@@ -56,7 +56,7 @@ public class DatabaseResourceService implements ResourceService{
 	@Transactional(readOnly=true)
 	public InputStream getContentsOfResource(long applicationId, String path){
 		Resource resource = this.repository.findBy(Resource.class,
-				this.MakeSearchRestrictions(applicationId, path));
+				this.makeSearchRestrictions(applicationId, path));
 		return new ByteArrayInputStream(resource.getData());
 	}
 	
@@ -97,19 +97,19 @@ public class DatabaseResourceService implements ResourceService{
 	public void deleteResource(long applicationId, String path)
 	{
 		Resource toDelete = this.repository.findBy(Resource.class,
-				this.MakeSearchRestrictions(applicationId, path));
+				this.makeSearchRestrictions(applicationId, path));
 		if(toDelete != null)
 			this.repository.delete(Resource.class,toDelete.getId());
 	}
 	
 	public boolean resourceExists(long applicationId, String path){
 		return this.repository.findBy(Resource.class,
-				this.MakeSearchRestrictions(applicationId, path)) != null;
+				this.makeSearchRestrictions(applicationId, path)) != null;
 	}
 	
 	public long getResourceLastModifiedDate(long applicationId, String path){
 		return this.repository.findBy(Resource.class,
-				this.MakeSearchRestrictions(applicationId, path)).getLastModifiedDate().getTime();
+				this.makeSearchRestrictions(applicationId, path)).getLastModifiedDate().getTime();
 	}
 	
 }
