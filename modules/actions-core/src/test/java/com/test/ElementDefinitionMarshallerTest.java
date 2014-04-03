@@ -105,7 +105,6 @@ public class ElementDefinitionMarshallerTest extends TestCase {
 		try {
 			definitionsResult = (ArrayList<ElementDefinition>) ElementDefinitionMarshaller.unmarshall(complexJSON.toString());
 		} catch (Exception e) {
-			e.printStackTrace();
 			fail("Exception when trying to unmarshall definitions");
 		}
 		
