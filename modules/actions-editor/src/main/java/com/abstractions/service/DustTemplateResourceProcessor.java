@@ -18,11 +18,11 @@ public class DustTemplateResourceProcessor implements ResourceProcessor {
 
 	private static Log log = LogFactory.getLog(DustTemplateResourceProcessor.class);
 	
-	private ResourceService fileService;
+	private ResourceService resourceService;
 	private DustConnector dustConnector;
 
-	public DustTemplateResourceProcessor(ResourceService fileService, DustConnector dustConnector) {
-		this.fileService = fileService;
+	public DustTemplateResourceProcessor(ResourceService resourceService, DustConnector dustConnector) {
+		this.resourceService = resourceService;
 		this.dustConnector = dustConnector;
 	}
 
@@ -50,12 +50,12 @@ public class DustTemplateResourceProcessor implements ResourceProcessor {
 		});
 	}
 
-	public ResourceService getFileService() {
-		return fileService;
+	public ResourceService getResourceService() {
+		return resourceService;
 	}
 
-	public void setFileService(ResourceService fileService) {
-		this.fileService = fileService;
+	public void setResourceService(ResourceService resourceService) {
+		this.resourceService = resourceService;
 	}
 
 	public DustConnector getDustConnector() {

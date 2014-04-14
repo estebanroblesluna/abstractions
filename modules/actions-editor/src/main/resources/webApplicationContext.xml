@@ -24,6 +24,7 @@
   <import resource="dust.xml" />
 
   <context:component-scan base-package="com.abstractions.service.rest" />
+
   
   <bean id="applicationService" class="com.abstractions.service.ApplicationService">
     <constructor-arg index="0" ref="repository" />
@@ -56,12 +57,13 @@
     <property name="libraryService" ref="libraryService" />
   </bean>
 
-
+  <bean class="com.abstractions.utils.ApplicationContextHolder">
+  </bean>
 
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
-    <constructor-arg index="2" ref="fileService" />
+    <constructor-arg index="2" ref="publicResourceService" />
     <constructor-arg index="3" ref="dustTemplateFileProcessor" />
     <constructor-arg index="4" ref="resourceBasedDustTemplateCompiler" />
     <constructor-arg index="5" value="./files" />
@@ -87,9 +89,14 @@
     <constructor-arg index="3" ref="serverService" />
   </bean>
 
-  <bean id="fileService" class="com.abstractions.service.core.DatabaseResourceService">
+  <bean id="publicResourceService" class="com.abstractions.service.core.DatabaseResourceService">
     <constructor-arg index="0" ref="repository" />
-    <constructor-arg index="1" value="public" />
+    <constructor-arg index="1" value="P" />
+  </bean>
+  
+  <bean id="privateResourceService" class="com.abstractions.service.core.DatabaseResourceService">
+    <constructor-arg index="0" ref="repository" />
+    <constructor-arg index="1" value="R" />
   </bean>
   
   <bean id="elementDefinitionService" class="com.abstractions.service.ElementDefinitionService">

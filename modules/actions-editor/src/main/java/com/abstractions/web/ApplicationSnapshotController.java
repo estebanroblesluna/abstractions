@@ -20,10 +20,10 @@ public class ApplicationSnapshotController {
 	@Autowired
 	SnapshotService service;
 	
-        @Autowired
+    @Autowired
 	ApplicationService applicationService;
         
-        @Autowired
+    @Autowired
 	TeamService teamService;
         
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots", method = RequestMethod.GET)
