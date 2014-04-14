@@ -41,7 +41,7 @@ public class ApplicationSnapshotController {
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/generate", method = RequestMethod.GET)
-	public String addContact(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
+	public String generateSnapshot(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
 		this.service.generateSnapshot(applicationId);
 		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/snapshots/";
 	}

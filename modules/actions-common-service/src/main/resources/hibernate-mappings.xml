@@ -177,6 +177,21 @@
     </map>
   </class>
   
+  <class name="com.abstractions.model.LoggingInfo" table="logging_info">
+    <id name="id" type="long" column="logging_info_id">
+      <generator class="native" />
+    </id>
+
+    <property name="date" />
+    <property name="applicationId" column="application_id" />
+    
+    <map name="logs" table="logging_info_logs" lazy="false">
+      <key column="logging_info_id" />
+      <map-key column="element_id" type="string" />
+      <element column="log" type="string" />
+    </map>
+  </class>
+  
   <class name="com.abstractions.model.Team" table="team">
     <id name="id" type="long" column="team_id" access="field">
       <generator class="native" />

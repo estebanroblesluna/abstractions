@@ -25,7 +25,7 @@ public class LogInterceptor extends AbstractElementInterceptor {
 
 	private final ConcurrentLinkedQueue<String> logLines;
 	private final AtomicLong linesSize;
-	private final int maxLines = 40;
+	private final int maxLines = Integer.MAX_VALUE;
 	
 	public LogInterceptor() {
 		this.logLines = new ConcurrentLinkedQueue<String>();
@@ -115,5 +115,22 @@ public class LogInterceptor extends AbstractElementInterceptor {
 
 	public List<String> lines() {
 		return new ArrayList<String>(this.logLines);
+	}
+
+
+	public String getLogAndReset() {
+		StringBuilder builder = new StringBuilder();
+
+		synchronized (this.linesSize) {
+			for (String line : this.logLines) {
+				builder.append(line);
+				builder.append("\n");
+			}
+			
+			this.logLines.clear();
+			this.linesSize.set(0);
+		}
+		
+		return builder.toString();
 	}
 }
