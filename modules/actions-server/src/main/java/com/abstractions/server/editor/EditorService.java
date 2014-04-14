@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.ws.rs.FormParam;
-import javax.ws.rs.PathParam;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,11 +20,12 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.abstractions.http.HttpStrategy;
+import com.abstractions.model.LoggingInfo;
+import com.abstractions.model.LoggingInfoJSONMarshaller;
 import com.abstractions.model.ProfilingInfo;
 import com.abstractions.model.ProfilingInfoJSONMarshaller;
 import com.abstractions.server.core.ActionsServer;
 import com.abstractions.server.core.StatisticsInfo;
-import com.abstractions.service.rest.ResponseUtils;
 
 public class EditorService {
 
@@ -166,15 +166,58 @@ public class EditorService {
 	}
 
 	public void sendLogging() {
+		Collection<String> applicationIds = this.actionsServer.getApplicationIds();
+
+		JSONObject loggingInfo = new JSONObject();
+		JSONArray infos = new JSONArray();
+
+		try {
+			for (String applicationId : applicationIds) {
+				LoggingInfo info = this.actionsServer.getLoggingInfo(applicationId);
+				info.setApplicationId(applicationId);
+				JSONObject applicationJSON = LoggingInfoJSONMarshaller.toJSON(info);
+				infos.put(applicationJSON);
+			}
+			
+			loggingInfo.put("logs", infos);
+		} catch (JSONException e) {
+			log.warn("Error generating json", e);
+		}
+		
+		
+		HttpResponse response = null;
+		try {
+			response = this.strategy
+				.post(this.editorUrl + "/logs")
+				.addFormParam("server-id", this.serverId)
+				.addFormParam("server-key", this.serverKey)
+				.addFormParam("logs", loggingInfo.toString())
+				.execute();
+			
+			String json = IOUtils.toString(response.getEntity().getContent());
+			JSONObject object = new JSONObject(json);
+		} catch (ClientProtocolException e) {
+			log.warn("Error sending logging info " + this.editorUrl);
+		} catch (IOException e) {
+			log.warn("Error sending logging info " + this.editorUrl);
+		} catch (JSONException e) {
+			log.warn("Error sending logging info " + this.editorUrl);
+		} finally {
+			this.strategy.close(response);
+		}
 	}
 
 	private void processPendingCommands(JSONObject object) throws JSONException {
 		String commandsKey = "commands";
-		
+
+		Set<Long> successCommands = new HashSet<Long>();
+		Set<Long> failedCommands = new HashSet<Long>();
+
 		if (object.has(commandsKey)) {
 			JSONArray array = object.getJSONArray(commandsKey);
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject command = array.getJSONObject(i);
+				long id = command.getLong("id");
 				String name = command.getString("name");
 
 				Map<String, String> args = new HashMap<String, String>();
@@ -185,8 +228,18 @@ public class EditorService {
 					args.put(key, value);
 				}
 				
-				this.executeCommand(name, args);
+				try {
+					this.executeCommand(name, args);
+					successCommands.add(id);
+				} catch (Exception e) {
+					log.warn("Error processing command", e);
+					failedCommands.add(id);
+				}
 			}
+		}
+		
+		if (!successCommands.isEmpty() || !failedCommands.isEmpty()) {
+			this.sendCommandsStats(successCommands, failedCommands);
 		}
 	}
 
@@ -260,6 +313,27 @@ public class EditorService {
 		}
 	}
 
+	private void sendCommandsStats(Set<Long> successCommands, Set<Long> failedCommands) {
+		HttpResponse response = null;
+		try {
+			response = this.strategy
+					.post(this.editorUrl + "/commands")
+					.addFormParam("server-id", this.serverId)
+					.addFormParam("server-key", this.serverKey)
+					.addFormParam("success-ids", StringUtils.join(successCommands, ','))
+					.addFormParam("failed-ids", StringUtils.join(failedCommands, ','))
+					.execute();
+			
+			InputStream io = response.getEntity().getContent();
+		} catch (ClientProtocolException e) {
+			log.warn("Error sending command stats", e);
+		} catch (IOException e) {
+			log.warn("Error sending command stats", e);
+		} finally {
+			this.strategy.close(response);
+		}
+	}
+	
 	public void processPendingDeployments(JSONObject object) throws JSONException {
 		String key = "deployments";
 		

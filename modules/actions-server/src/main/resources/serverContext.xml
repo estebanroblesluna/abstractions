@@ -60,10 +60,4 @@
   </task:scheduled-tasks>
   
   <task:scheduler id="myScheduler" pool-size="10"/>
-
-  <bean id="actionsRESTServer" class="com.abstractions.server.rest.ActionsServerRest">
-    <constructor-arg index="0" ref="actionsServer" />
-  </bean>
-  
-  
 </beans>

@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -21,6 +23,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.abstractions.model.LoggingInfo;
+import com.abstractions.model.LoggingInfoJSONMarshaller;
 import com.abstractions.model.ProfilingInfo;
 import com.abstractions.model.ProfilingInfoJSONMarshaller;
 import com.abstractions.model.Server;
@@ -49,6 +53,7 @@ public class ServerRESTService {
 			@FormParam("profiling-info") String profilingInfoJSON) {
 		
 		Server server = this.service.getServer(serverId, serverKey);
+		
 		if (server != null) {
 			try {
 				JSONObject root = new JSONObject(profilingInfoJSON);
@@ -66,6 +71,37 @@ public class ServerRESTService {
 			}
 		} else {
 			log.warn("No server found to store profiling of " + StringUtils.defaultString(serverId));
+		}
+		
+		return ResponseUtils.ok();
+	}
+	
+	@POST
+	@Path("/logs")
+	public Response receiveLogs(
+			@FormParam("server-id") String serverId, 
+			@FormParam("server-key") String serverKey,
+			@FormParam("logs") String logsJSON) {
+		
+		Server server = this.service.getServer(serverId, serverKey);
+		
+		if (server != null) {
+			try {
+				JSONObject root = new JSONObject(logsJSON);
+				JSONArray logs = root.getJSONArray("logs");
+				
+				for (int i = 0; i < logs.length(); i++) {
+					JSONObject applicationLogs = logs.getJSONObject(i);
+					
+					LoggingInfo info = LoggingInfoJSONMarshaller.fromJSON(applicationLogs);
+					
+					this.service.addLoggingInfo(server, info);
+				}
+			} catch (JSONException e) {
+				log.warn("Error parsing json of server id " + StringUtils.defaultString(serverId));
+			}
+		} else {
+			log.warn("No server found to store logging of " + StringUtils.defaultString(serverId));
 		}
 		
 		return ResponseUtils.ok();
@@ -99,6 +135,7 @@ public class ServerRESTService {
 				JSONObject commandJSON = new JSONObject();
 				JSONObject argsJSON = new JSONObject();
 				try {
+					commandJSON.put("id", command.getId());
 					commandJSON.put("name", command.getName());
 					for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
 						argsJSON.put(entry.getKey(), entry.getValue());
@@ -181,5 +218,41 @@ public class ServerRESTService {
 		return Response
 				.ok()
 				.build();
+	}
+	
+	
+	@POST
+	@Path("/commands")
+	public Response receiveCommandStatus(
+			@FormParam("server-id") String serverId, 
+			@FormParam("server-key") String serverKey,
+			@FormParam("success-ids") String successIdsCSV,
+			@FormParam("failed-ids") String failedIdsCSV) {
+		
+		successIdsCSV = StringUtils.defaultString(successIdsCSV);
+		failedIdsCSV = StringUtils.defaultString(failedIdsCSV);
+		
+		Set<Long> successIds = new HashSet<Long>();
+		Set<Long> failedIds = new HashSet<Long>();
+		
+		for (String id : StringUtils.split(successIdsCSV, ',')) {
+			try {
+				successIds.add(Long.valueOf(id));
+			} catch (Exception e) {
+				log.warn("Error parsing id " + StringUtils.defaultString(id), e);
+			}
+		}
+		
+		for (String id : StringUtils.split(failedIdsCSV, ',')) {
+			try {
+				failedIds.add(Long.valueOf(id));
+			} catch (Exception e) {
+				log.warn("Error parsing id " + StringUtils.defaultString(id), e);
+			}
+		}
+		
+		this.service.updateCommandStatus(serverId, serverKey, successIds, failedIds);
+
+		return ResponseUtils.ok();
 	}
 }

@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -21,6 +23,7 @@ import org.jsoup.helper.Validate;
 import com.abstractions.instance.common.LogInterceptor;
 import com.abstractions.instance.common.PerformanceInterceptor;
 import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.model.LoggingInfo;
 import com.abstractions.model.ProfilingInfo;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
@@ -29,6 +32,7 @@ import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
+import com.google.common.collect.Sets;
 
 public class ActionsServer {
 
@@ -209,6 +213,17 @@ public class ActionsServer {
 		return definition != null;
 	}
 	
+	public LoggingInfo getLoggingInfo(String applicationId) {
+		LoggingInfo info = new LoggingInfo(applicationId);
+		
+		List<LogInterceptor> logs = this.getLoggers(applicationId);
+		for (LogInterceptor log : logs) {
+			info.addLog(log.getElementId(), log.getLogAndReset());
+		}
+		
+		return info;
+	}
+	
 	public ProfilingInfo getProfilingInfo(String applicationId) {
 		ProfilingInfo info = new ProfilingInfo(applicationId);
 		
@@ -380,6 +395,9 @@ public class ActionsServer {
 	}
 	
 	public Collection<String> getApplicationIds() {
-		return this.profilers.keySet();
+		Set<String> applicationIds = new HashSet<String>();
+		applicationIds.addAll(this.profilers.keySet());
+		applicationIds.addAll(this.logs.keySet());
+		return applicationIds;
 	}
 }

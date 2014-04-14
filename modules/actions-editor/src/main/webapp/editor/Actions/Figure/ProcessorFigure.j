@@ -91,12 +91,9 @@
 	//}
 
 	var elementId = [self elementId];
-	var serverInfo = loggerInfo.logger.servers[0];
-	var lines;
-	if (serverInfo === undefined) {
+	var lines = loggerInfo.logger.lines;
+	if (lines === undefined) {
 		lines = "No log yet";
-	} else {
-		lines = serverInfo.logger[elementId];
 	}
 						
 	var myController = [[ViewLoggerWindowController alloc] initWithWindowCibName: "ViewLoggerWindow"];
