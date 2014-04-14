@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 @Controller
 @RequestMapping("/libraries/{libraryId}/definitions/addProcessor")

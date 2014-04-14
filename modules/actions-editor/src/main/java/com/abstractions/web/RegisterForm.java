@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 
 /**
-* @author Guido J. Celada
+* @author Guido J. Celada (celadaguido@gmail.com)
 */
 public class RegisterForm {
 	
