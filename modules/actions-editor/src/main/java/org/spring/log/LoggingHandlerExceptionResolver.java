@@ -10,7 +10,7 @@ import org.springframework.web.servlet.*;
 /**
  *This class logs any errors of spring to the console
  * 
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 public class LoggingHandlerExceptionResolver 
 implements HandlerExceptionResolver, Ordered {

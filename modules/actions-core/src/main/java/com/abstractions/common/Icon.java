@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 public class Icon implements Serializable {
     

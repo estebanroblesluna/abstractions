@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 
 /**
 *
-* @author Guido J. Celada
+* @author Guido J. Celada (celadaguido@gmail.com)
 */
 public class ElementDefinitionMarshallerTest extends TestCase {
 	private ArrayList<ElementDefinition> definitions;

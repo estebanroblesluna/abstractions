@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
  * to put json important info for serialization/deserialization
  * but without touching the actual class (ElementDefinition)
  * 
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  *
  */
 @JsonTypeInfo(use=JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property="@type")

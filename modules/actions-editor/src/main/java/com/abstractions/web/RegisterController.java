@@ -22,7 +22,7 @@ import com.abstractions.service.CustomJdbcUserDetailsManager;
 
 /**
  * Controller for Register user
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 @Controller
 public class RegisterController {

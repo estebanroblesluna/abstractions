@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.User;
 
 /**
  * 
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  *
  */
 public class CustomUser extends User {

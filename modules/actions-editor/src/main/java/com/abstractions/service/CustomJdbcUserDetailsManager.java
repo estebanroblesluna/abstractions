@@ -24,7 +24,7 @@ import com.abstractions.web.UsernameExistsException;
 
 /**
  * 
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  *
  */
 public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {

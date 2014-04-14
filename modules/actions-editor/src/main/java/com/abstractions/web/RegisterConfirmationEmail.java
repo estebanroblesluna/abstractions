@@ -10,7 +10,7 @@ import com.abstractions.service.CustomJdbcUserDetailsManager;
 
 /**
  * 
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 public class RegisterConfirmationEmail {
 	
