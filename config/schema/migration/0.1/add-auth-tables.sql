@@ -1,38 +1,43 @@
 USE `actions`;
 
-DROP TABLE IF EXISTS `abstraction_user`;
+DROP TABLE IF EXISTS `abstraction_user`; 
+DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `user_roles`;
+DROP TABLE IF EXISTS `authorities`;
 
-
-CREATE TABLE `user_roles` (
-  `user_role_id` INT(20) UNSIGNED NOT NULL,
-  `authority` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`user_role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `abstraction_user` (
-  `user_id` INT(20) UNSIGNED NOT NULL,
-  `username` VARCHAR(45) NOT NULL,
+CREATE TABLE `users` (
+  `username` VARCHAR(45) NOT NULL PRIMARY KEY,
   `password` VARCHAR(45) NOT NULL,
-  `enabled` tinyint(1) NOT NULL,
-  `user_role_id` INT(20) UNSIGNED NOT NULL,
-  PRIMARY KEY (`user_id`),
-  KEY `FK_user_role_id` (`user_role_id`),
-  CONSTRAINT `FK_user_role_id` FOREIGN KEY (`user_role_id`) REFERENCES `user_roles` (`user_role_id`)
+  `enabled` boolean NOT NULL,
+  `confirmed` boolean NOT NULL,
+  `email` VARCHAR(100) NOT NULL UNIQUE,
+  `full_name` VARCHAR(200),
+  `creation_date` TIMESTAMP NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `authorities` (
+  `username` VARCHAR(50) NOT NULL,
+  `authority` VARCHAR(50) NOT NULL,
+  foreign key (username) references users (username),
+  unique index authorities_idx_1 (username, authority)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
-INSERT INTO `user_roles` (`user_role_id`, `authority`)
+INSERT INTO `users` (`username`, `password`, `enabled`,`confirmed`, `email`, `full_name`, `creation_date`)
 VALUES
-  (1, 'ROLE_ADMIN'),
-  (2, 'ROLE_USER');
+  ('admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 1, "admin@admin.com", "admin admin", NOW()),
+  ('guido', 'adfc8f0aec273eace2629141317c1eac53923f28', 1, 1, "admin1@admin.com", "admin admin", NOW()),
+  ('esteban', '431ef4c5da9a59cbbe78df77a53fcc737a3b78fa', 1, 1, "admin2@admin.com", "admin admin", NOW()),
+  ('matias', 'dbc6bbe3b711e3f58f25638428fdfc12e34c8c38', 1, 1, "admin3@admin.com", "admin admin", NOW()),
+  ('disabled', '07596f183f5e91b1778d5e47b2752b8d42aa763d', 0, 1, "admin4@admin.com", "admin admin", NOW()),
+  ('grayfox', 'd8eafdf804a8d4f3894f1b10430f176418b251bf', 1, 1, "admin5@admin.com", "admin admin", NOW());
 
-INSERT INTO `abstraction_user` (`user_id`, `username`, `password`, `enabled`, `user_role_id`)
+
+INSERT INTO `authorities` (`username`, `authority`)
 VALUES
-  (1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 1),
-  (2, 'guido', 'adfc8f0aec273eace2629141317c1eac53923f28', 1, 2),
-  (3, 'esteban', '431ef4c5da9a59cbbe78df77a53fcc737a3b78fa', 1, 2),
-  (4, 'matias', 'dbc6bbe3b711e3f58f25638428fdfc12e34c8c38', 1, 2),
-  (5, 'disabled', '07596f183f5e91b1778d5e47b2752b8d42aa763d', 0, 2),
-  (6, 'grayfox', 'd8eafdf804a8d4f3894f1b10430f176418b251bf', 1, 2);
+  ('admin', 'ROLE_ADMIN'),
+  ('esteban', 'ROLE_USER'),
+  ('matias', 'ROLE_USER'),
+  ('disabled', 'ROLE_USER'),
+  ('grayfox', 'ROLE_USER'),
+  ('guido', 'ROLE_USER');

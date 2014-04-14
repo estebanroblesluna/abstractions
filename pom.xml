@@ -68,6 +68,11 @@
         <url>http://maven.springframework.org/snapshot</url>
     </repository>
 		
+    <!-- javax.mail -->
+    <repository>
+      <id>Java.Net</id>
+      <url>http://download.java.net/maven/2/</url>
+    </repository>
   </repositories>
 
   <dependencyManagement>
