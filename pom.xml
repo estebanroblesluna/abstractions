@@ -8,6 +8,8 @@
   <name>Actions</name>
   <description>Actions - Parent project</description>
 
+
+
   <properties>
     <spring.version>3.2.4.RELEASE</spring.version>
     <hibernate.version>4.2.5.Final</hibernate.version>
