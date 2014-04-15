@@ -1,5 +1,10 @@
 package com.abstractions.web;
 
+/**
+ * 
+ * @author Guido J. Celada (celadaguido@gmail.com)
+ *
+ */
 public class EmailExistsException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

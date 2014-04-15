@@ -8,6 +8,8 @@ import javax.mail.internet.AddressException;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.stereotype.Controller;
@@ -27,11 +29,13 @@ import com.abstractions.service.CustomJdbcUserDetailsManager;
 @Controller
 public class RegisterController {
 	
+	private static Log log = LogFactory.getLog(RegisterController.class);
+	
 	@Autowired
 	CustomJdbcUserDetailsManager userManager; 
 	
 	@Autowired
-	RegisterConfirmationEmail confirmationEmail;
+	EmailService confirmationEmail;
 	
 	@RequestMapping(value="/register", method = RequestMethod.GET)
 	public ModelAndView register() {
@@ -49,7 +53,7 @@ public class RegisterController {
 		boolean confirmed = false;
 		String sha1password = DigestUtils.shaHex(form.getPassword());
 		ArrayList<GrantedAuthorityImpl> auths = new ArrayList<GrantedAuthorityImpl>();
-        auths.add(new GrantedAuthorityImpl("ROLE_USER"));
+		auths.add(new GrantedAuthorityImpl("ROLE_USER"));
         
 		CustomUser newUser = new CustomUser(form.getUsername(), sha1password, form.getEmail(), form.getFullName(), new Date(), enabled, confirmed, auths);
 		
@@ -66,9 +70,9 @@ public class RegisterController {
 		try {
 			confirmationEmail.sendRegistrationMail(newUser);
 		} catch (AddressException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (MessagingException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		
 		return new ModelAndView("redirect:/login/");
@@ -79,7 +83,7 @@ public class RegisterController {
 		try {
 			userManager.confirmUser(username, token);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return "redirect:/login/";
 	}

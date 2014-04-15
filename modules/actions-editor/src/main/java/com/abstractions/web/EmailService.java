@@ -5,14 +5,20 @@ import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import com.abstractions.service.CustomJdbcUserDetailsManager;
 
 /**
  * 
  * @author Guido J. Celada (celadaguido@gmail.com)
  */
-public class RegisterConfirmationEmail {
+public class EmailService {
+	
+	private static Log log = LogFactory.getLog(EmailService.class);
 	
 	@Value("${register.confirmationEmail.username}")
 	String username;
@@ -28,16 +34,30 @@ public class RegisterConfirmationEmail {
 	
 	@Value("${register.confirmationEmail.usesTSL}")
 	boolean usesTSL;
+	
+	@Value("${register.webhost}")
+	String host;
+	
+	private ThreadPoolTaskExecutor taskExecutor;
+	
+    public EmailService() {
+        this.taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.setQueueCapacity(100);
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        taskExecutor.afterPropertiesSet();
+    }
 			 
 	public void sendRegistrationMail(CustomUser user) throws AddressException, MessagingException {
 		 
-        final String host = "http://localhost:8123/";
+        
         
         Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", usesTSL);
-		props.put("mail.smtp.host", emailHost);
-		props.put("mail.smtp.port", emailPort);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", usesTSL);
+        props.put("mail.smtp.host", emailHost);
+        props.put("mail.smtp.port", emailPort);
 		
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
@@ -66,12 +86,10 @@ public class RegisterConfirmationEmail {
             	try {
 					Transport.send(message);
 				} catch (MessagingException e) {
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
             }
         };
-        new Thread(r).start(); //background task
+        taskExecutor.execute(r);
     }
-	
-	
 }

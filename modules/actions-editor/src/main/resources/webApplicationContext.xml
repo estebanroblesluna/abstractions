@@ -178,6 +178,5 @@
         <property name="dataSource" ref="dataSource"/>
    </bean>
    
-   <bean id="registerConfirmationEmail"  
-  class="com.abstractions.web.RegisterConfirmationEmail" /> 
+   <bean id="registerConfirmationEmail" class="com.abstractions.web.EmailService" /> 
 </beans>
