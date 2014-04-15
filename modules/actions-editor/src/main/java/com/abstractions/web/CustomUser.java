@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -27,7 +28,7 @@ public class CustomUser extends User {
     
     public CustomUser(String username, String password, String email, String fullName, Date creationDate, boolean enabled, boolean confirmed, Collection<? extends GrantedAuthority> authorities) {
     	super(username, password, enabled, true, true, true, authorities);
-    	 if (email == null || "".equals(email)) {
+    	 if (StringUtils.isEmpty(email)) {
              throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
          }
     	this.setConfirmed(confirmed);

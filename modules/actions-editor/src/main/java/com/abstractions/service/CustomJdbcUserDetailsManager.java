@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -54,13 +55,14 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
     private String usersByUsernameQuery = DEF_USERS_BY_USERNAME_QUERY;
     private String userExistsSql = DEF_USER_EXISTS_SQL;
     private String emailExistsSql = DEF_EMAIL_EXISTS_SQL;
+    
+    @Value("${register.salt}")
+	static String salt;
         
 	public CustomJdbcUserDetailsManager(){
         super();
     }
 	
-	  //~ UserDetailsManager implementation ==============================================================================
-
     public void createUser(final UserDetails user) throws UsernameExistsException, EmailExistsException {
         final CustomUser customUser = validateUserDetails(user);
         
@@ -126,7 +128,7 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
         return users.size() == 1;
     }
 
-	public void confirmUser(String username, String token) throws Exception {
+    public void confirmUser(String username, String token) throws Exception {
 		CustomUser user = loadUserByUsernameWithoutAuths(username);
 		if (generateConfirmationToken(user).equals(token))
 			getJdbcTemplate().update(confirmSql, username);		
@@ -134,7 +136,7 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
 			throw new Exception("Invalid confirmation token");
 	}
 	
-	public void enableUser(String username) {
+    public void enableUser(String username) {
 		getJdbcTemplate().update(enableSql, username);		
 	}
 	
@@ -158,7 +160,6 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
     }
 	
     public static String generateConfirmationToken(CustomUser user) {
-    	String salt = "Th1sI5MyS@lt!";
 		return DigestUtils.shaHex(user.getUsername() + user.getCreationDate() + salt);
 	}
 }
