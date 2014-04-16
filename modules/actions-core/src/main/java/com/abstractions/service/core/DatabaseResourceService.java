@@ -30,6 +30,15 @@ public class DatabaseResourceService implements ResourceService{
 		restrictions.put("applicationId", applicationId);
 		restrictions.put("path",path);
 		restrictions.put("type", this.resourceType);
+		restrictions.put("isSnapshot", false);
+		return restrictions;
+	}
+	
+	private HashMap<String,Object> MakeSearchRestrictions(long applicationId){
+		HashMap<String, Object> restrictions = new HashMap<String,Object>();
+		restrictions.put("applicationId", applicationId);
+		restrictions.put("type", this.resourceType);
+		restrictions.put("isSnapshot", false);
 		return restrictions;
 	}
 	
@@ -63,7 +72,7 @@ public class DatabaseResourceService implements ResourceService{
 	@Override
 	@Transactional(readOnly=true)
 	public List<String> listResources(long applicationId){
-		List<Resource> resources = this.repository.findAllBy(Resource.class, "applicationId", applicationId);
+		List<Resource> resources = this.repository.findAllBy(Resource.class, this.MakeSearchRestrictions(applicationId));
 		List<String> ret = new ArrayList<String>();
 		for(Resource res : resources)
 			ret.add(res.getPath());
@@ -110,6 +119,12 @@ public class DatabaseResourceService implements ResourceService{
 	public long getResourceLastModifiedDate(long applicationId, String path){
 		return this.repository.findBy(Resource.class,
 				this.MakeSearchRestrictions(applicationId, path)).getLastModifiedDate().getTime();
+	}
+
+	@Override
+	public Resource getResource(long applicationId, String path) {
+		return this.repository.findBy(Resource.class,
+				this.MakeSearchRestrictions(applicationId, path));
 	}
 	
 }

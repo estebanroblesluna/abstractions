@@ -27,6 +27,7 @@ import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
+import com.abstractions.model.Resource;
 import com.abstractions.repository.GenericRepository;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
@@ -125,6 +126,16 @@ public class SnapshotService {
 			}
 		}
 		
+		//clone all resources
+		Resource cloned;
+		Resource original;
+		for(String resourceName : resourceService.listResources(applicationId)){
+			 original = resourceService.getResource(applicationId, resourceName);
+			 cloned = original.makeSnapshot();
+			 repository.save(cloned);
+			 snapshot.addResource(cloned);
+		}
+		
 		application.addSnapshot(snapshot);
 		this.repository.save(application);
 		this.repository.save(snapshot);
@@ -135,7 +146,7 @@ public class SnapshotService {
 			log.error("Error when marshalling application snapshot", e);
 		}
 		CloudFrontService cf = new CloudFrontService(this);
-		//cf.distributeResources(snapshot.getId());
+		cf.distributeResources(snapshot.getId());
 
 	}
 

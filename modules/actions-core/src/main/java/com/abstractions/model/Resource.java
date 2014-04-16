@@ -10,7 +10,7 @@ public class Resource {
 	private Date lastModifiedDate;
 	private String path;
 	private String type;
-	
+	private boolean isSnapshot;
 	protected Resource() {}; //Hibernate needs this
 	
 	/**
@@ -22,6 +22,7 @@ public class Resource {
 		this.setPath(path);
 		this.setLastModifiedDate(new Date());
 		this.setType(type);
+		this.setSnapshot(false);
 	}
 
 	/**
@@ -109,10 +110,25 @@ public class Resource {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	public Resource clone(Resource toClone){
+
+	/**
+	 * @return the isSnapshot
+	 */
+	public boolean isSnapshot() {
+		return isSnapshot;
+	}
+
+	/**
+	 * @param isSnapshot the isSnapshot to set
+	 */
+	public void setSnapshot(boolean isSnapshot) {
+		this.isSnapshot = isSnapshot;
+	}
+
+	public Resource makeSnapshot(){
 		Resource clone = new Resource(this.applicationId,this.path,this.data,this.type);
 		clone.lastModifiedDate = this.lastModifiedDate;
+		clone.isSnapshot = true;
 		return clone;
 	}
 }

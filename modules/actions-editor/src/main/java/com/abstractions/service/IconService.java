@@ -3,7 +3,6 @@ package com.abstractions.service;
 import com.abstractions.common.Icon;
 import com.abstractions.repository.GenericRepository;
 import org.jsoup.helper.Validate;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
