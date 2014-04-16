@@ -15,6 +15,7 @@ public class ApplicationSnapshot {
 	private List<Flow> flows;
 	private List<Property> properties;
 	private Application application;
+	private List<Resource> resources;
 
 	public ApplicationSnapshot(){
 		
@@ -25,6 +26,7 @@ public class ApplicationSnapshot {
 		this.flows = new ArrayList<Flow>();
 		this.properties = new ArrayList<Property>();
 		this.application = application;
+		this.resources = new ArrayList<Resource>();
 	}
 
 	public void addProperty(Property property) {
@@ -53,6 +55,14 @@ public class ApplicationSnapshot {
 
 	public long getId() {
 		return id;
+	}
+	
+	public List<Resource> getResources(){
+		return Collections.unmodifiableList(this.resources);
+	}
+	
+	public void addResource(Resource resource){
+		this.resources.add(resource);
 	}
 
 	public Application getApplication() {
