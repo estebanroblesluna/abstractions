@@ -68,10 +68,19 @@
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
-    <constructor-arg index="2" ref="publicResourceService" />
-    <constructor-arg index="3" ref="dustTemplateFileProcessor" />
-    <constructor-arg index="4" ref="resourceBasedDustTemplateCompiler" />
-    <constructor-arg index="5" value="./files" />
+    <constructor-arg index="2" ref="privateResourceService" />
+    <constructor-arg index="3">
+    	<list>
+    		<bean class="com.abstractions.service.StringMapResourceAppender">
+    			<constructor-arg>
+    				<map>
+    					<entry key="testResource" value="testResourceContent" />
+    				</map>
+    			</constructor-arg>
+    		</bean>
+    	</list>
+    </constructor-arg>
+    <constructor-arg index="4" value="./files" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">

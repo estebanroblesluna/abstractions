@@ -1,5 +1,6 @@
 package com.abstractions.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,6 +28,7 @@ import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
+import com.abstractions.model.Resource;
 import com.abstractions.repository.GenericRepository;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
@@ -34,7 +36,6 @@ import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
-import com.modules.dust.ResourceBasedDustTemplateCompiler;
 
 @Service
 public class SnapshotService {
@@ -45,10 +46,9 @@ public class SnapshotService {
 	private String rootPath;
 	private File rootDir;
 	private GenericRepository repository;
-	private ApplicationService applicationService;
 	private ResourceService resourceService;
-	private ResourceProcessor resourceProcessor;
-	private ResourceBasedDustTemplateCompiler dustCompiler;
+	private ApplicationService applicationService;
+	private List<ResourceAppender> resourceAppenders;
 	
 	@Autowired
 	private NamesMapping namesMapping;
@@ -81,18 +81,17 @@ public class SnapshotService {
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService fileService, ResourceProcessor fileProcessor, ResourceBasedDustTemplateCompiler dustCompiler, String rootPath) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService resourceService, List<ResourceAppender> resourceAppenders, String rootPath) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
-		Validate.notNull(fileService);
-		Validate.notNull(fileProcessor);
+		Validate.notNull(resourceService);
+		Validate.notNull(resourceAppenders);
 		Validate.notNull(rootPath);
 		
 		this.repository = repository;
+		this.resourceAppenders = resourceAppenders;
 		this.applicationService = applicationService;
-		this.resourceService = fileService;
-		this.resourceProcessor = fileProcessor;
-		this.dustCompiler = dustCompiler;
+		this.resourceService = resourceService;
 		this.setRootPath(rootPath);
 		this.initializeDirectory();
 	}
@@ -145,16 +144,13 @@ public class SnapshotService {
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(application.getId(),snapshot.getId()));
 			for (String filename : this.resourceService.listResources(application.getId())) {
 				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
-				List<ResourceChange> changes = this.resourceProcessor.process(filename, inputStream);
-				for (ResourceChange change : changes) {
-					if (change.getAction().equals(ResourceAction.CREATE_OR_UPDATE)) {
-						zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
-						IOUtils.copy(change.getInputStream(), zipOutputStream);
-						change.getInputStream().close();
-					}
-				}
-				if (inputStream == null) {
-					continue;
+				zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
+				IOUtils.copy(inputStream, zipOutputStream);
+			}
+			for (ResourceAppender resourceAppender : this.resourceAppenders) {
+				for (Resource resource : resourceAppender.getResources()) {
+					zipOutputStream.putNextEntry(new ZipEntry("files/" + resource.getPath()));
+					IOUtils.copy(new ByteArrayInputStream(resource.getData()), zipOutputStream);
 				}
 			}
 			for (Flow flow : application.getFlows()) {
@@ -175,6 +171,7 @@ public class SnapshotService {
 			while (elementIterator.hasNext()) {
 				ElementTemplate element = elementIterator.next();
 				if (element.getMeta().getName().equals("RESOURCE_DUST_RENDERER")) {
+					/*
 					this.dustCompiler.mergeAndCompile(
 						application.getId(),
 						"http://localhost:8080/service/fileStore/2/files/",
@@ -182,6 +179,7 @@ public class SnapshotService {
 						element.getProperty("bodyTemplatePath"),
 						element.getProperty("resourcesList"),
 						element.getProperty("templateRenderingList"));
+					*/
 				}
 			}				
 		}
