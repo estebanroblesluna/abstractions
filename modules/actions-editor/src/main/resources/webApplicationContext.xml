@@ -71,12 +71,8 @@
     <constructor-arg index="2" ref="privateResourceService" />
     <constructor-arg index="3">
     	<list>
-    		<bean class="com.abstractions.service.StringMapResourceAppender">
-    			<constructor-arg>
-    				<map>
-    					<entry key="testResource" value="testResourceContent" />
-    				</map>
-    			</constructor-arg>
+    		<bean class="com.abstractions.service.DefinitionsResourceAppender">
+    			<constructor-arg ref="elementDefinitionService" />
     		</bean>
     	</list>
     </constructor-arg>

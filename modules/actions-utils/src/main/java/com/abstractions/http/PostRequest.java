@@ -1,6 +1,7 @@
 package com.abstractions.http;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class PostRequest extends HttpRequest {
 	@Override
 	protected HttpUriRequest buildRequest() throws UnsupportedEncodingException {
 		HttpPost method = new HttpPost(this.url);
-		method.setEntity(new UrlEncodedFormEntity(this.urlParameters));
+		method.setEntity(new UrlEncodedFormEntity(this.urlParameters, Charset.forName("UTF8")));
 		return method;
 	}
 
