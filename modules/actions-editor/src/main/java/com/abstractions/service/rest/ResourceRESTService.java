@@ -58,8 +58,18 @@ public class ResourceRESTService {
 
 	@GET
 	@Path("{applicationId}/files/{filePath:.+}")
-	public Response getFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
+	public Response getPrivateFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
 		InputStream result = this.privateResourceService.getContentsOfResource(applicationId, path);
+		if (result == null) {
+			return Response.status(404).entity("File not found").build();
+		}
+		return Response.ok(result).build();
+	}
+	
+	@GET
+	@Path("{applicationId}/publicFiles/{filePath:.+}")
+	public Response getPublicFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
+		InputStream result = this.publicResourceService.getContentsOfResource(applicationId, path);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}

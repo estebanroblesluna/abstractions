@@ -46,10 +46,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	
 	public ResourceBasedDustRendererProcessor() {
 		this.setName(IdGenerator.getNewId());
-		this.templateCompiler = new ResourceBasedDustTemplateCompiler(
-				DustApplicationContext.getInstance().getPublicResourceService(), 
-				DustApplicationContext.getInstance().getPrivateResourceService(),
-				new DustConnector());
+		this.templateCompiler = DustApplicationContext.getInstance().geResourceBasedDustTemplateCompiler();
 	}
 	
 	/**
