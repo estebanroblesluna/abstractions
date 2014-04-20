@@ -9,9 +9,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,7 +28,11 @@ public class FileRESTService {
 	private static Log log = LogFactory.getLog(FileRESTService.class);
 	
 	@Autowired
-	private ResourceService resourceService;
+	@Qualifier("publicResourceService")
+	private ResourceService publicResourceService;
+	@Autowired
+	@Qualifier("privateResourceService")
+	private ResourceService privateResourceService;
 	@Autowired
 	private SnapshotService snapshotService;
 
@@ -34,11 +40,12 @@ public class FileRESTService {
 	}
 
 	@GET
-	@Path("{applicationId}/files/")
-	public Response getAllFiles(@PathParam("applicationId") long applicationId) {
+	@Path("{applicationId}/files/{resourceType}/")
+	public Response getAllFiles(@PathParam("applicationId") long applicationId, @PathParam("resourceType") String resourceType) {
+		ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
 		try {
 			JsonBuilder builder = JsonBuilder.newWithArray("files");
-			for (String filename : this.resourceService.listResources(applicationId)) {
+			for (String filename : resourceService.listResources(applicationId)) {
 				builder.string(filename);
 			}
 			builder.endArray();
@@ -50,9 +57,10 @@ public class FileRESTService {
 	}
 
 	@GET
-	@Path("{applicationId}/files/{filePath:.+}")
-	public Response getFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
-		InputStream result = this.resourceService.getContentsOfResource(applicationId, path);
+	@Path("{applicationId}/files/{resourceType}/{filePath:.+}")
+	public Response getFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @PathParam("resourceType") String resourceType) {
+		ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
+		InputStream result = resourceService.getContentsOfResource(applicationId, path);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
@@ -60,23 +68,26 @@ public class FileRESTService {
 	}
 	
 	@DELETE
-	@Path("{applicationId}/files/{filePath:.+}")
-	public Response deleteFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path) {
-		this.resourceService.deleteResource(applicationId, path);
+	@Path("{applicationId}/files/{resourceType}/{filePath:.+}")
+	public Response deleteFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @PathParam("resourceType") String resourceType) {
+		ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
+		resourceService.deleteResource(applicationId, path);
 		return Response.ok("File deleted").build();
 	}
 
 	@PUT
-	@Path("{applicationId}/files/{filePath:.+}")
-	public Response putFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @RequestBody InputStream stream) {
-		this.resourceService.storeResource(applicationId, path, stream);
+	@Path("{applicationId}/files/{resourceType}/{filePath:.+}")
+	public Response putFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @RequestBody InputStream stream, @PathParam("resourceType") String resourceType) {
+		ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
+		resourceService.storeResource(applicationId, path, stream);
 		return Response.ok("File stored").build();
 	}
 
 	@PUT
-	@Path("{applicationId}/files/compressed")
-	public Response postCompressedFiles(@PathParam("applicationId") long applicationId, @RequestBody InputStream stream) {
-		this.resourceService.uncompressContent(applicationId, stream);
+	@Path("{applicationId}/files/{resourceType}/compressed")
+	public Response postCompressedFiles(@PathParam("applicationId") long applicationId, @RequestBody InputStream stream, @PathParam("resourceType") String resourceType) {
+		ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
+		resourceService.uncompressContent(applicationId, stream);
 		return Response.ok("Files uncompressed").build();
 	}
 	

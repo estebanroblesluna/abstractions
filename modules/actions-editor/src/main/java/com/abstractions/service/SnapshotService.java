@@ -154,7 +154,21 @@ public class SnapshotService {
 		try {
 			this.processResources(application, snapshot);
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(application.getId(),snapshot.getId()));
-			for (String filename : this.resourceService.listResources(application.getId())) {
+			for(Resource resource : snapshot.getResources()){
+				InputStream inputStream = resource.getInputStream();
+				List<ResourceChange> changes = this.resourceProcessor.process(resource.getPath(), inputStream);
+				for (ResourceChange change : changes) {
+					if (change.getAction().equals(ResourceAction.CREATE_OR_UPDATE)) {
+						zipOutputStream.putNextEntry(new ZipEntry("files/"+ resource.getType()+"/"+ resource.getPath()));
+						IOUtils.copy(change.getInputStream(), zipOutputStream);
+						change.getInputStream().close();
+					}
+				}
+				if (inputStream == null) {
+					continue;
+				}
+			}
+			/*for (String filename : this.resourceService.listResources(application.getId())) {
 				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
 				List<ResourceChange> changes = this.resourceProcessor.process(filename, inputStream);
 				for (ResourceChange change : changes) {
@@ -167,7 +181,7 @@ public class SnapshotService {
 				if (inputStream == null) {
 					continue;
 				}
-			}
+			}*/
 			for (Flow flow : application.getFlows()) {
 				zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
 				IOUtils.write(flow.getJson(), zipOutputStream);

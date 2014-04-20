@@ -3,6 +3,7 @@ package com.abstractions.service;
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.lang.Validate;
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.model.Resource;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
@@ -27,6 +28,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
+import java.io.ByteArrayInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -45,12 +47,22 @@ public class CloudFrontService {
 	}
 	
 	private void uploadResources(ApplicationSnapshot snapshot, AWSCredentials credentials){
-		//TODO Get bucket name from application properties
 		String bucketName = buildSnapshotBucketName(snapshot);
 		AmazonS3Client s3 = new AmazonS3Client(credentials);
 		s3.setRegion(Region.getRegion(Regions.US_WEST_2));
 		s3.createBucket(bucketName);
-		ZipInputStream zip = new ZipInputStream(snapshotService.getContentsOfSnapshot(snapshot.getApplication().getId(), snapshot.getId()));
+		for(Resource res : snapshot.getResources()){
+			if(res.getType().equals("public")){
+				try{
+					s3.putObject(new PutObjectRequest(bucketName,"files/public/"+res.getType(),new ByteArrayInputStream(res.getData()),null)
+							.withCannedAcl(CannedAccessControlList.PublicRead));
+				} catch (Exception e) {
+					//TODO: Fix this
+				}
+			}
+			
+		}
+		/*ZipInputStream zip = new ZipInputStream(snapshotService.getContentsOfSnapshot(snapshot.getApplication().getId(), snapshot.getId()));
 		ZipEntry entry = null;
 		while(true){
 			try {
@@ -69,7 +81,7 @@ public class CloudFrontService {
 					
 				}
 			}
-		}
+		}*/
 	}
 	
 	private String buildSnapshotBucketName(ApplicationSnapshot snapshot){

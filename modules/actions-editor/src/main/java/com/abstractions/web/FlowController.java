@@ -57,10 +57,10 @@ public class FlowController {
 		ModelAndView mv = new ModelAndView("flows");
 		String applicationName = this.applicationService.getApplication(applicationId).getName();
 		List<Flow> flows = this.service.getFlows(teamId, applicationId);
-                String teamName = this.teamService.getTeam(teamId).getName();
+        String teamName = this.teamService.getTeam(teamId).getName();
 		mv.addObject("teamName", teamName);
 		mv.addObject("flows", flows);
-                mv.addObject("applicationName", applicationName);
+        mv.addObject("applicationName", applicationName);
 
 		return mv;
 	}
