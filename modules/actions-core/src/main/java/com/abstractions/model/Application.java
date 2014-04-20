@@ -90,7 +90,7 @@ public class Application {
 		return team;
 	}
 	
-	public String GetProperty(String propertyName){
+	public String getProperty(String propertyName){
 		for(Property property : this.getProperties()){
 			if(property.getName().equals(propertyName))
 				return property.getValue();
