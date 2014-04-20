@@ -1,12 +1,9 @@
 package com.test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
@@ -20,7 +17,7 @@ import junit.framework.TestCase;
 
 /**
 *
-* @author Guido J. Celada
+* @author Guido J. Celada (celadaguido@gmail.com)
 */
 public class ElementDefinitionMarshallerTest extends TestCase {
 	private ArrayList<ElementDefinition> definitions;
@@ -37,8 +34,7 @@ public class ElementDefinitionMarshallerTest extends TestCase {
 		//setup simpleJSON
 		String JSONstring = null;
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("jsonString1")));
-			JSONstring = in.readLine();
+			JSONstring = IOUtils.toString(this.getClass().getResourceAsStream("jsonString1.json")).replace("\n","");
 		} catch (IOException e1) {
 			fail("JSONException when opening resource file jsonString");
 		}
@@ -51,8 +47,7 @@ public class ElementDefinitionMarshallerTest extends TestCase {
 		//setup complexJSON
 		String JSONstring2 = null;
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("jsonString2")));
-			JSONstring2 = in.readLine();
+ 			JSONstring2 = IOUtils.toString(this.getClass().getResourceAsStream("jsonString2.json")).replace("\n","");
 		} catch (IOException e) {
 			fail("JSONException when opening resource file jsonString2");
 		}
@@ -81,7 +76,6 @@ public class ElementDefinitionMarshallerTest extends TestCase {
 		} catch (JSONException e) {
 			fail("JSONException when trying to parse string to a JSONArray");
 		}
-		
 		assertEquals(simpleJSON, resultJSON);
 		
 	}

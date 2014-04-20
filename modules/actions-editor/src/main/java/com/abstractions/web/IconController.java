@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 @Controller
 @RequestMapping("/icon")

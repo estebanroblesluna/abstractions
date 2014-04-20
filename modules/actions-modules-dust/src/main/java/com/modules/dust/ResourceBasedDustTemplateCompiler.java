@@ -10,21 +10,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.service.core.ResourceService;
 
 public class ResourceBasedDustTemplateCompiler {
 
-	private ResourceService resourceService;
+	private ResourceService publicResourceService;
+	private ResourceService privateResourceService;
 	private DustConnector dustConnector;
 	
-	public ResourceBasedDustTemplateCompiler(ResourceService fileService, DustConnector dustConnector) {
-		this.resourceService = fileService;
+	public ResourceBasedDustTemplateCompiler() {
+		
+	}
+	
+	public ResourceBasedDustTemplateCompiler(ResourceService publicResourceService, ResourceService privateResourceService, DustConnector dustConnector) {
+		this.publicResourceService = publicResourceService;
+		this.privateResourceService = privateResourceService;
 		this.dustConnector = dustConnector;
 	}
 
+	@Transactional
 	public void mergeAndCompileTemplatesAndJsResources(long applicationId, List<String> paths, String destPath) throws IOException {
-		if (!this.resourceService.resourceExists(applicationId, destPath)) {
+		if (!this.privateResourceService.resourceExists(applicationId, destPath)) {
 			StringBuilder compiledContent = new StringBuilder();
 			List<String> templatesToCompile = new ArrayList<String>();
 			for (String path : paths) {
@@ -32,31 +40,32 @@ public class ResourceBasedDustTemplateCompiler {
 					if (!compiledContent.toString().isEmpty()) {
 						compiledContent.append(";");
 					}
-					compiledContent.append(IOUtils.toString(this.resourceService.getContentsOfResource(applicationId, path)));
+					compiledContent.append(IOUtils.toString(this.privateResourceService.getContentsOfResource(applicationId, path)));
 				} else if (path.endsWith(".tl")) {
-					String originalTemplate = IOUtils.toString(this.resourceService.getContentsOfResource(applicationId, path));
+					String originalTemplate = IOUtils.toString(this.privateResourceService.getContentsOfResource(applicationId, path));
 					templatesToCompile.add(path);
 					templatesToCompile.addAll(this.findDependentTemplates(originalTemplate));
 				}
 			}
 			for (String path : templatesToCompile) {
 				String templateName = this.getTemplateNameFromPath(path);
-				this.dustConnector.putTemplate(templateName, IOUtils.toString(this.resourceService.getContentsOfResource(applicationId, path)));
+				this.dustConnector.putTemplate(templateName, IOUtils.toString(this.privateResourceService.getContentsOfResource(applicationId, path)));
 				compiledContent.append(this.dustConnector.getCompiledTemplate(templateName));
 			}
-			this.resourceService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
+			this.publicResourceService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
 		}
 	}
 	
+	@Transactional
 	public void mergeAndCompileStylesheets(long applicationId, List<String> paths, String destPath) throws IOException {
-		if (!this.resourceService.resourceExists(applicationId, destPath) && !paths.isEmpty()) {
+		if (!this.privateResourceService.resourceExists(applicationId, destPath) && !paths.isEmpty()) {
 			StringBuilder compiledContent = new StringBuilder();
 			for (String path : paths) {
 				if (path.endsWith(".css")) {
-					compiledContent.append(this.resourceService.getContentsOfResource(applicationId, path));
+					compiledContent.append(this.privateResourceService.getContentsOfResource(applicationId, path));
 				}
 			}
-			this.resourceService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
+			this.publicResourceService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
 		}
 	}
 	
@@ -70,23 +79,25 @@ public class ResourceBasedDustTemplateCompiler {
 		return templates;
 	}
 
+	@Transactional
 	public void mergeAndCompile(long applicationId, String cdnPath, String templateName, String templateBodyPath, String resourceList, String templateRenderingList) throws IOException {
 		TemplateCompilationSpec compilationSpec = new TemplateCompilationSpec(applicationId, cdnPath, templateName, resourceList, templateRenderingList, templateBodyPath);
 		this.buildAndCompileMasterTemplate(compilationSpec);		
 	}
 
+	@Transactional
 	public String buildAndCompileMasterTemplate(TemplateCompilationSpec compilationSpec) throws IOException {
 		String compiledMasterTemplate;
 		String template = this.buildMasterTemplate(compilationSpec);
 		this.dustConnector.putTemplate(compilationSpec.getTemplateName(), template);
 		compiledMasterTemplate = this.dustConnector.getCompiledTemplate(compilationSpec.getTemplateName());
-		this.resourceService.storeResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
+		this.publicResourceService.storeResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
 		return compiledMasterTemplate;
 	}
 	
-	String buildMasterTemplate(TemplateCompilationSpec compilationSpec) throws IOException {
+	private String buildMasterTemplate(TemplateCompilationSpec compilationSpec) throws IOException {
 		String head = "";
-		String body = IOUtils.toString(this.resourceService.getContentsOfResource(compilationSpec.getApplicationId(), compilationSpec.getBodyTemplatePath()));
+		String body = IOUtils.toString(this.privateResourceService.getContentsOfResource(compilationSpec.getApplicationId(), compilationSpec.getBodyTemplatePath()));
 		head = this.addStylesheets(compilationSpec, head, compilationSpec.getStylesheetsPaths());
 		head = this.addJsAndTemplatesFiles(compilationSpec, head, compilationSpec.getJsAndTemplatesPaths());
 		head = this.addRenderingScripts(compilationSpec, head);
@@ -115,20 +126,22 @@ public class ResourceBasedDustTemplateCompiler {
 	}
 
 	private String addRenderingScripts(TemplateCompilationSpec compilationSpec, String head) {
-		head += "<script type=\"text/javascript\">";
-		head += "$(document).ready(function() {";
+		StringBuffer buffer = new StringBuffer(head);
+		buffer.append( "<script type=\"text/javascript\">");
+		buffer.append( "$(document).ready(function() {");
 		for (RenderingSpec spec : compilationSpec.getRenderingList()) {
-			head += "dust.render(\"" + this.getTemplateNameFromPath(spec.getTemplatePath()) + "\", {" + this.getJsonPlaceholderForRenderingSpec(spec) + "|s}, "  +
-					"function(err, out) { $('#" + spec.getRenderingElementId() + "').html(out)});";
+			buffer.append("dust.render(\"" + this.getTemplateNameFromPath(spec.getTemplatePath()) + "\", {" + this.getJsonPlaceholderForRenderingSpec(spec) + "|s}, ");
+			buffer.append("function(err, out) { $('#" + spec.getRenderingElementId() + "').html(out)});");
 		}
-		head += "});";
-		head += "</script>";
-		return head;
+		buffer.append("});");
+		buffer.append("</script>");
+		return buffer.toString();
 	}
 	
+	@Transactional
 	public String getCompiledMasterTemplate(TemplateCompilationSpec compilationSpec) throws IOException {
 		InputStream contents = null;
-		contents = this.resourceService.getContentsOfResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec));
+		contents = this.publicResourceService.getContentsOfResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec));
 		if (contents != null) {
 			return IOUtils.toString(contents);
 		}

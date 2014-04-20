@@ -13,6 +13,8 @@
                 <intercept-url pattern="/signin/**" filters="none" />
                 <intercept-url pattern="/service/**" filters="none" />
                 <intercept-url pattern="/login" filters="none" />
+                <intercept-url pattern="/register" filters="none" />
+                <intercept-url pattern="/register/confirm" filters="none" />
               
 		<form-login login-page="/login" default-target-url="/teams/"
 			authentication-failure-url="/login?error=true" 
@@ -22,19 +24,9 @@
 	</http>
  
 	<authentication-manager>
-	  <authentication-provider>
-	  	<password-encoder hash="sha" />
-		<jdbc-user-service data-source-ref="dataSource"
- 
-		   users-by-username-query="
-		      select username, password, enabled 
-		      from abstraction_user where username=?" 
- 
-		   authorities-by-username-query="
-		      select u.username, ur.authority from abstraction_user u inner join user_roles ur 
-		      on u.user_role_id = ur.user_role_id where u.username =?" 
- 
-		/>
+	  <authentication-provider user-service-ref="authProvider">
+	  	<password-encoder hash="sha">
+	  	</password-encoder>
 	  </authentication-provider>
 	</authentication-manager>
  

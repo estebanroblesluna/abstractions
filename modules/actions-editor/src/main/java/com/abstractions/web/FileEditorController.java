@@ -26,16 +26,22 @@ public class FileEditorController {
 	@Autowired
 	@Qualifier("fileStorageServiceBaseUrl")
 	private String fileStorageServiceBaseUrl;
-
-	@Autowired
-	@Qualifier("publicResourceService")
-	private ResourceService publicResourceService;
 	
 	@Autowired
 	@Qualifier("privateResourceService")
 	private ResourceService privateResourceService;
+	
+	@Autowired
+	@Qualifier("publicResourceService")
+	private ResourceService publicResourceService;
 
 	public FileEditorController() {
+	}
+
+
+	public FileEditorController(ResourceService privateResourceService, ResourceService publicResourceService) {
+		this.privateResourceService = privateResourceService;
+		this.publicResourceService = publicResourceService;
 	}
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/", method = RequestMethod.GET)
@@ -62,6 +68,7 @@ public class FileEditorController {
 		mv.addObject("applicationId", applicationId);
 		
 		List<File> files = new ArrayList<File>();
+
 		for (String filename : this.publicResourceService.listResources(applicationId)) {
 			files.add(new File(filename.substring(1), this.isEditable(filename)));
 		}
@@ -72,6 +79,7 @@ public class FileEditorController {
 	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") long applicationId, FileUploadForm fileUploadForm, BindingResult result) {
 		try {
 			this.publicResourceService.uncompressContent(applicationId, fileUploadForm.getFile().getInputStream());
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

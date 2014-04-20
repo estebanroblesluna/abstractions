@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -276,34 +277,19 @@ public class DeploymentService {
 	@Transactional
 	public JSONObject getLogger(long deploymentId, String contextId, String elementId) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
-		long applicationId = deployment.getSnapshot().getApplication().getId();
+		String applicationId = Long.valueOf(deployment.getSnapshot().getApplication().getId()).toString();
 
 		JSONArray partialResults = new JSONArray();
-		
-		for (Server server : deployment.getServers()) {
-			String url = "http://" + server.getIpDNS() + ":" + server.getPort()
-					+ "/service/server/" + applicationId + "/log/" + elementId;
-			
-			HttpGet method = new HttpGet(url);
-			InputStream is = null;
-			try {
-				HttpResponse response = this.execute(method);
-				int statusCode = response.getStatusLine().getStatusCode();
-				is = response.getEntity().getContent();
-				if (statusCode >= 200 && statusCode < 300) {
-					JSONObject json = new JSONObject(IOUtils.toString(is));
-					partialResults.put(json);
-				}
-			} catch (Exception e) {
-				log.warn("Error getting logger", e);
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
+		List<String> datas = this.repository.getLastLoggingInfoOf(applicationId, elementId);
+
+		for (String data : datas) {
+			String string = StringUtils.defaultString(data);
+			partialResults.put(string);
 		}
 		
 		JSONObject result = new JSONObject();
 		try {
-			result.put("servers", partialResults);
+			result.put("lines", partialResults);
 		} catch (JSONException e) {
 			log.warn("Error writing json", e);
 		}

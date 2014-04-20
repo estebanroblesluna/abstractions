@@ -21,7 +21,7 @@ import org.springframework.web.context.request.RequestAttributes;
 
 /**
  *
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 @Service
 public class SignInAdapterImpl implements SignInAdapter {

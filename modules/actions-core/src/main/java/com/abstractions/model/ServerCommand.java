@@ -50,4 +50,8 @@ public class ServerCommand {
 	public Map<String, String> getArguments() {
 		return Collections.unmodifiableMap(this.arguments);
 	}
+
+	public long getId() {
+		return id;
+	}
 }

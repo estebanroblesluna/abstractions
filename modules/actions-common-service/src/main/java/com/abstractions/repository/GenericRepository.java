@@ -133,4 +133,13 @@ public class GenericRepository {
 				.setString(0, applicationId)
 				.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> getLastLoggingInfoOf(String applicationId, String elementId) {
+		return this.sessionFactory.getCurrentSession()
+				.createSQLQuery("SELECT logging_info_logs.log FROM logging_info_logs INNER JOIN logging_info ON logging_info_logs.logging_info_id = logging_info.logging_info_id WHERE logging_info.application_id = ? AND logging_info_logs.element_id = ? ORDER BY logging_info.date")
+				.setString(0, applicationId)
+				.setString(1, elementId)
+				.list();
+	}
 }

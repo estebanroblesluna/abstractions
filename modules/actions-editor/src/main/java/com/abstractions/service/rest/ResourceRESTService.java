@@ -23,9 +23,9 @@ import com.abstractions.utils.JsonBuilder;
 
 @Component
 @Path("/fileStore")
-public class FileRESTService {
+public class ResourceRESTService {
 
-	private static Log log = LogFactory.getLog(FileRESTService.class);
+	private static Log log = LogFactory.getLog(ResourceRESTService.class);
 	
 	@Autowired
 	@Qualifier("publicResourceService")
@@ -36,7 +36,7 @@ public class FileRESTService {
 	@Autowired
 	private SnapshotService snapshotService;
 
-	public FileRESTService() {
+	public ResourceRESTService() {
 	}
 
 	@GET
@@ -67,6 +67,7 @@ public class FileRESTService {
 		return Response.ok(result).build();
 	}
 	
+	
 	@DELETE
 	@Path("{applicationId}/files/{resourceType}/{filePath:.+}")
 	public Response deleteFile(@PathParam("applicationId") long applicationId, @PathParam("filePath") String path, @PathParam("resourceType") String resourceType) {
@@ -93,13 +94,11 @@ public class FileRESTService {
 	
 	@GET
 	@Path("{applicationId}/snapshots/{snapshotId}")
-	public Response getSnapshot(@PathParam("applicationId") String applicationId, @PathParam("snapshotId") String snapshotId) {
-		InputStream result = this.snapshotService.getContentsOfSnapshot(Long.parseLong(applicationId),Long.parseLong(snapshotId));
+	public Response getSnapshot(@PathParam("applicationId") long applicationId, @PathParam("snapshotId") long snapshotId) {
+		InputStream result = this.snapshotService.getContentsOfSnapshot(applicationId, snapshotId);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
 		return Response.ok(result).build();
 	}
-	
-	
 }
