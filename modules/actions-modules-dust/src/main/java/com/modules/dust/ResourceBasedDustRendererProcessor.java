@@ -12,6 +12,7 @@ import com.abstractions.service.core.ResourceService;
 import com.abstractions.utils.ExpressionUtils;
 import com.abstractions.utils.IdGenerator;
 import com.abstractions.utils.MessageUtils;
+import com.modules.dust.util.DustApplicationContext;
 
 public class ResourceBasedDustRendererProcessor implements Processor {
 
@@ -35,7 +36,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	 */
 	private DustConnector connector;
 	
-	private ResourceService fileService;
+	private ResourceService resourceService;
 
 	private String name;
 
@@ -45,7 +46,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 	
 	public ResourceBasedDustRendererProcessor() {
 		this.setName(IdGenerator.getNewId());
-		this.templateCompiler = new ResourceBasedDustTemplateCompiler(this.getFileService(), new DustConnector());
+		this.templateCompiler = DustApplicationContext.getInstance().geResourceBasedDustTemplateCompiler();
 	}
 	
 	/**
@@ -107,13 +108,6 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 
 	public void setConnector(DustConnector connector) {
 		this.connector = connector;
-	}
-
-	public ResourceService getFileService() {
-		if (this.fileService == null) {
-			this.fileService = new FilesystemResourceService("./files");
-		}
-		return this.fileService;
 	}
 
 	public String getBodyTemplatePath() {

@@ -7,13 +7,16 @@
        xmlns:linkedin="http://www.springframework.org/schema/social/linkedin"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" 
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
                         http://www.springframework.org/schema/social/facebook http://www.springframework.org/schema/social/spring-social-facebook.xsd
                         http://www.springframework.org/schema/social/linkedin http://www.springframework.org/schema/social/spring-social-linkedin.xsd
                         http://www.springframework.org/schema/social/twitter http://www.springframework.org/schema/social/spring-social-twitter.xsd
                         http://www.springframework.org/schema/social http://www.springframework.org/schema/social/spring-social.xsd
-                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                        http://www.springframework.org/schema/mvc
+        				http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
   <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
   <import resource="classpath:common.xml" />
@@ -22,7 +25,9 @@
   <import resource="classpath:applicationContext.xml" />
   <import resource="rest.xml" />
   <import resource="dust.xml" />
-
+  
+  <mvc:annotation-driven />
+  
   <context:component-scan base-package="com.abstractions.service.rest" />
 
   
@@ -57,14 +62,21 @@
     <property name="libraryService" ref="libraryService" />
   </bean>
 
-
+  <bean class="com.abstractions.utils.ApplicationContextHolder">
+  </bean>
 
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
     <constructor-arg index="1" ref="applicationService" />
     <constructor-arg index="2" ref="publicResourceService" />
-    <constructor-arg index="3" ref="dustTemplateFileProcessor" />
-    <constructor-arg index="4" ref="resourceBasedDustTemplateCompiler" />
+    <constructor-arg index="3" ref="privateResourceService" />
+    <constructor-arg index="4">
+    	<list>
+    		<bean class="com.abstractions.service.DefinitionsResourceAppender">
+    			<constructor-arg ref="elementDefinitionService" />
+    		</bean>
+    	</list>
+    </constructor-arg>
     <constructor-arg index="5" value="./files" />
   </bean>
 
@@ -90,12 +102,12 @@
 
   <bean id="publicResourceService" class="com.abstractions.service.core.DatabaseResourceService">
     <constructor-arg index="0" ref="repository" />
-    <constructor-arg index="1" value="public" />
+    <constructor-arg index="1" value="P" />
   </bean>
   
   <bean id="privateResourceService" class="com.abstractions.service.core.DatabaseResourceService">
     <constructor-arg index="0" ref="repository" />
-    <constructor-arg index="1" value="private" />
+    <constructor-arg index="1" value="R" />
   </bean>
   
   <bean id="elementDefinitionService" class="com.abstractions.service.ElementDefinitionService">
@@ -168,5 +180,9 @@
     <!-- relies on by-type autowiring for the constructor-args -->    
   </bean>
   
-  
+   <bean id="authProvider" class="com.abstractions.service.CustomJdbcUserDetailsManager">
+        <property name="dataSource" ref="dataSource"/>
+   </bean>
+   
+   <bean id="registerConfirmationEmail" class="com.abstractions.web.EmailService" /> 
 </beans>

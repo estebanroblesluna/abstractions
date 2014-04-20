@@ -52,7 +52,7 @@ public class CloudFrontService {
 		s3.setRegion(Region.getRegion(Regions.US_WEST_2));
 		s3.createBucket(bucketName);
 		for(Resource res : snapshot.getResources()){
-			if(res.getType().equals("public")){
+			if(res.getType().equals("P")){
 				try{
 					s3.putObject(new PutObjectRequest(bucketName,"files/public/"+res.getType(),new ByteArrayInputStream(res.getData()),null)
 							.withCannedAcl(CannedAccessControlList.PublicRead));
