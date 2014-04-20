@@ -1,5 +1,7 @@
 package com.abstractions.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Date;
 
 public class Resource {
@@ -130,5 +132,9 @@ public class Resource {
 		clone.lastModifiedDate = this.lastModifiedDate;
 		clone.isSnapshot = true;
 		return clone;
+	}
+	
+	public InputStream getInputStream(){
+		return new ByteArrayInputStream(data);
 	}
 }
