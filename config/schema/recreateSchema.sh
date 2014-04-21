@@ -1,3 +1,10 @@
+green='\033[0;32m';
+yellow='\033[0;33m';
+red='\033[0;31m';
+reset='\033[0m';
+
+echo -e "${yellow}Please wait, it may take a few minutes...${reset}";
+
 BASEDIR=$(dirname $0)
 
 mysql -u root < $BASEDIR/common.sql
@@ -29,3 +36,5 @@ mysql -u root < $BASEDIR/migration/0.1/add-logging-info.sql
 mysql -u root < $BASEDIR/migration/0.1/optimize-resource-table.sql
 mysql -u root < $BASEDIR/migration/0.1/extend-resource-blob-type.sql
 mysql -u root < $BASEDIR/migration/0.1/initial-resources.sql
+
+echo -e "${green}Done!${reset}";
