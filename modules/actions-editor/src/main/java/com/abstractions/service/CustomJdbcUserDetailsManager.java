@@ -4,9 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,11 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
             "select username, password, enabled, confirmed, email, full_name, creation_date " +
             "from users " +
             "where username = ?";
+    public static final String DEF_USERS_CONFIRMED_SQL =
+            "select username, password, enabled, confirmed, email, full_name, creation_date " +
+            "from users " +
+            "where confirmed = 1 " +
+            "and enabled = 0";
     public static final String DEF_USER_EXISTS_SQL =
             "select username from users where username = ?";
     public static final String DEF_EMAIL_EXISTS_SQL =
@@ -55,6 +62,7 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
     private String usersByUsernameQuery = DEF_USERS_BY_USERNAME_QUERY;
     private String userExistsSql = DEF_USER_EXISTS_SQL;
     private String emailExistsSql = DEF_EMAIL_EXISTS_SQL;
+    private String usersConfirmedSql = DEF_USERS_CONFIRMED_SQL;
     
     @Value("${register.salt}")
 	static String salt;
@@ -162,4 +170,17 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
     public static String generateConfirmationToken(CustomUser user) {
 		return DigestUtils.shaHex(user.getUsername() + user.getCreationDate() + salt);
 	}
+    
+    @SuppressWarnings({ "rawtypes" })
+	public List<CustomUser> getConfirmedUsers() {
+    	List<CustomUser> users = new ArrayList<CustomUser>();
+    	
+    	List<Map<String, Object>> rows = getJdbcTemplate().queryForList(usersConfirmedSql);
+    	for (Map row : rows) {
+    		CustomUser user = new CustomUser((String)row.get("username"), (String)row.get("password"), (String)row.get("email"), (String)row.get("full_name"), (Date)row.get("creation_date"), (Boolean)row.get("enabled"), (Boolean)row.get("confirmed"), AuthorityUtils.NO_AUTHORITIES);
+    		users.add(user);
+    	}
+    	
+    	return users;
+    }
 }

@@ -15,6 +15,7 @@
                 <intercept-url pattern="/login" filters="none" />
                 <intercept-url pattern="/register" filters="none" />
                 <intercept-url pattern="/register/confirm" filters="none" />
+                <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
               
 		<form-login login-page="/login" default-target-url="/teams/"
 			authentication-failure-url="/login?error=true" 
