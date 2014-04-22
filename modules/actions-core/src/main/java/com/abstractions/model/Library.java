@@ -53,7 +53,7 @@ public class Library {
 
 	public void addBasicDefinitionForClass(String name, String script) {
 		ElementDefinition definition = new ProcessorDefinition(name);
-		definition.setScript(script);
+		definition.setScriptText(script);
 		
 		this.addDefinition(definition);
 	}

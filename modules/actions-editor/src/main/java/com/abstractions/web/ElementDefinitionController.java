@@ -83,7 +83,7 @@ public class ElementDefinitionController {
         elementDefinition.setDisplayName(form.getDisplayName());
         elementDefinition.setIcon(new Icon(form.getIcon().getBytes()));
         if (form.getIsScript()) {
-            elementDefinition.setScript(form.getImplementation());
+            elementDefinition.setScriptText(form.getImplementation());
         } else {
             elementDefinition.setClassName(form.getImplementation());
         }

@@ -44,7 +44,6 @@ public class DatabaseResourceService implements ResourceService {
 	}
 
 	public DatabaseResourceService(GenericRepository repository, String resourceType) {
-		Validate.notNull(repository);
 		this.repository = repository;
 		this.resourceType = resourceType;
 	}
