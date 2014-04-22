@@ -89,4 +89,12 @@ public class Application {
 	public Team getTeam() {
 		return team;
 	}
+	
+	public String getProperty(String propertyName){
+		for(Property property : this.getProperties()){
+			if(property.getName().equals(propertyName))
+				return property.getValue();
+		}
+		return null;
+	}
 }

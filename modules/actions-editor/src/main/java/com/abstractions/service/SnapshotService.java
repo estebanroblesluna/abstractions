@@ -46,7 +46,8 @@ public class SnapshotService {
 	private String rootPath;
 	private File rootDir;
 	private GenericRepository repository;
-	private ResourceService resourceService;
+	private ResourceService publicResourceService;
+	private ResourceService privateResourceService;
 	private ApplicationService applicationService;
 	private List<ResourceAppender> resourceAppenders;
 	
@@ -81,17 +82,19 @@ public class SnapshotService {
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService resourceService, List<ResourceAppender> resourceAppenders, String rootPath) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService publicResourceService, ResourceService privateResourceService, List<ResourceAppender> resourceAppenders, String rootPath) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
-		Validate.notNull(resourceService);
+		Validate.notNull(publicResourceService);
+		Validate.notNull(privateResourceService);
 		Validate.notNull(resourceAppenders);
 		Validate.notNull(rootPath);
 		
 		this.repository = repository;
 		this.resourceAppenders = resourceAppenders;
 		this.applicationService = applicationService;
-		this.resourceService = resourceService;
+		this.publicResourceService = publicResourceService;
+		this.privateResourceService = privateResourceService;
 		this.setRootPath(rootPath);
 		this.initializeDirectory();
 	}
@@ -124,6 +127,23 @@ public class SnapshotService {
 			}
 		}
 		
+		//clone all resources
+		Resource cloned;
+		Resource original;
+		for(String resourceName : publicResourceService.listResources(applicationId)){
+			 original = publicResourceService.getResource(applicationId, resourceName);
+			 cloned = original.makeSnapshot();
+			 repository.save(cloned);
+			 snapshot.addResource(cloned);
+		}
+		
+		for(String resourceName : privateResourceService.listResources(applicationId)){
+			 original = privateResourceService.getResource(applicationId, resourceName);
+			 cloned = original.makeSnapshot();
+			 repository.save(cloned);
+			 snapshot.addResource(cloned);
+		}
+		
 		application.addSnapshot(snapshot);
 		this.repository.save(application);
 		this.repository.save(snapshot);
@@ -134,7 +154,7 @@ public class SnapshotService {
 			log.error("Error when marshalling application snapshot", e);
 		}
 		CloudFrontService cf = new CloudFrontService(this);
-		//cf.distributeResources(snapshot.getId());
+		cf.distributeResources(snapshot.getId());
 
 	}
 
@@ -142,11 +162,25 @@ public class SnapshotService {
 		try {
 			this.processResources(application, snapshot);
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(application.getId(),snapshot.getId()));
+			/*for(Resource resource : snapshot.getResources()){
+				InputStream inputStream = resource.getInputStream();
+				List<ResourceChange> changes = this.resourceProcessor.process(resource.getPath(), inputStream);
+				for (ResourceChange change : changes) {
+					if (change.getAction().equals(ResourceAction.CREATE_OR_UPDATE)) {
+						zipOutputStream.putNextEntry(new ZipEntry("files/"+ resource.getType()+"/"+ resource.getPath()));
+						IOUtils.copy(change.getInputStream(), zipOutputStream);
+						change.getInputStream().close();
+					}
+				}
+				if (inputStream == null) {
+					continue;
+				}
+			}
 			for (String filename : this.resourceService.listResources(application.getId())) {
 				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
 				zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
 				IOUtils.copy(inputStream, zipOutputStream);
-			}
+			}*/
 			for (ResourceAppender resourceAppender : this.resourceAppenders) {
 				for (Resource resource : resourceAppender.getResources()) {
 					zipOutputStream.putNextEntry(new ZipEntry("files/" + resource.getPath()));
