@@ -25,6 +25,8 @@ public class NamesMapping {
 		this.elementInitialProperties = new ConcurrentHashMap<String, Map<String, String>>();
 		this.languageMapping = new ConcurrentHashMap<String, ScriptingLanguage>();
 		this.evaluators = new ConcurrentHashMap<String, Evaluator>();
+		
+		this.addLanguage("groovy", ScriptingLanguage.GROOVY);
 	}
 
 	public void addLanguage(String name, ScriptingLanguage language) {
