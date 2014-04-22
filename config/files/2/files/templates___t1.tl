@@ -1,1 +1,0 @@
-<li>First name: {firstName}</li>

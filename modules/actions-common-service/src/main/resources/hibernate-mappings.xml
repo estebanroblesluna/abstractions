@@ -47,6 +47,10 @@
       <key column="application_snapshot_id" />
       <one-to-many class="com.abstractions.model.Flow" />
     </bag>
+    <bag name="resources" lazy="false" cascade="all">
+      <key column="application_snapshot_id" />
+      <one-to-many class="com.abstractions.model.Resource" />
+    </bag>
   </class>
 
   <class name="com.abstractions.model.Flow" table="flows">
@@ -331,6 +335,7 @@
     <property name="path" column="path" />
     <property name="lastModifiedDate" column="last_modified_date" />
     <property name="applicationId" column="application_id" />
+    <property name="isSnapshot" column="is_snapshot" />
     <property name="type" column="type" />
   </class>
   

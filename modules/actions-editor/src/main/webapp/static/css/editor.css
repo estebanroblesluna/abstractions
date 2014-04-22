@@ -36,6 +36,7 @@ html, body, .container, #editor-container, #tree-container {
 	background-color: #101010;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	padding-left: 5px;
 }
 
 #filename-container {
@@ -46,4 +47,8 @@ html, body, .container, #editor-container, #tree-container {
 
 .selectedFile {
 	background-color: red;
+}
+
+#zipUploadForm {
+	display: inline-block;
 }

@@ -19,6 +19,14 @@
         <ul class="nav navbar-nav">
             <li id ="teams"><a href="/teams/">Home</a></li>
             <li id="libraries"><a href="/libraries/">Libraries</a></li> 
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+		        <li class="dropdown" >
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+		          <ul class="dropdown-menu">
+		            <li><a href="/admin/enable-users">Enable users</a></li>
+		          </ul>
+		        </li>
+		    </sec:authorize>
         </ul>
 
         <sec:authorize access="isAuthenticated()">

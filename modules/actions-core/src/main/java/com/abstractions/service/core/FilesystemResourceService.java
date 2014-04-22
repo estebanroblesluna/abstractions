@@ -13,9 +13,12 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
+
+import com.abstractions.model.Resource;
 
 public class FilesystemResourceService implements ResourceService {
 
@@ -161,5 +164,10 @@ public class FilesystemResourceService implements ResourceService {
 
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
+	}
+
+	@Override
+	public Resource getResource(long applicationId, String path) {
+		throw new NotImplementedException();
 	}
 }	
