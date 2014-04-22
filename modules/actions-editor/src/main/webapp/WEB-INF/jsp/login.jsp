@@ -4,7 +4,7 @@
     <jsp:param name="title" value="Login" />
 </jsp:include>
 <head>
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.css" rel="stylesheet">
 
 
 <body>
@@ -28,7 +28,6 @@
             padding: 0;
             margin-bottom: 0;
             border-bottom: 1px solid #ddd;
-            background-image: url('http://www.abztractionz.com/img/background.jpg');
             background-position: 0px -1000px;
 
         }
@@ -46,7 +45,7 @@
             background-color: #FFF;
             border: 0;
             padding: 200px;
-            background-image: url('http://www.abztractionz.com/img/background.jpg');
+            background-image: url('/static/img/background.jpg');
 
         }
         .col-sm-offset-4{
@@ -113,13 +112,18 @@
             $("#loading").show();
             return true;
         }
+        $( document ).ready(function() {
+            if ($("#alert").length == 0){
+                     $("#pan").height("430px");
+            }
+        });
     </script>
     <div class="text-center">
 
         <div class="well" id="well">
             
 
-            <div class="panel panel-default" style="width: 270px; margin-left: auto; margin-right: auto; height: 480px;" >
+            <div class="panel panel-default" id= "pan" style="width: 270px; margin-left: auto; margin-right: auto; height: 480px;" >
                 
                 <div class="panel-body" id='panel-body'>
                     <img src='static/img/loading.gif' alt='Loading...' id='loading' style='display:none;'/>
@@ -143,7 +147,7 @@
 
                                 <div class="col-sm-offset-3 col-sm-10" >
                                     
-                                    <button class="btn btn-success btn-block" name="submit" id="login" type="submit"  onclick="loadLoadingImage();">
+                                    <button class="btn btn-success btn-block" name="submit" id="login" type="submit"  onclick="loadLoadingImage();" onclick="alto()">
                                         <span>Login</span>
                                         <span class="glyphicon glyphicon-ok-sign"></span>
                                         
@@ -154,14 +158,13 @@
                                
 
                             </div>
-                         <c:if test='${not empty param.error}'>
+                        <c:if test='${not empty param.error}'>
                                 <div class="alert alert-danger" id="alert">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                     <strong>Error: </strong>
                                     ${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
                                 </div>
-
-            </c:if>
+                        </c:if> 
                             
                         </form>
 
