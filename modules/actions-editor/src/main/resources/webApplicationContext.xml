@@ -185,4 +185,6 @@
    </bean>
    
    <bean id="registerConfirmationEmail" class="com.abstractions.web.EmailService"  init-method="init"/> 
+   
+   <bean id="customUserService" class="com.abstractions.service.CustomUserService" />
 </beans>
