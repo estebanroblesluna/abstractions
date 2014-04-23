@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 //TODO: Refactor this to make a hierarchy of ElementDefinition controllers
 

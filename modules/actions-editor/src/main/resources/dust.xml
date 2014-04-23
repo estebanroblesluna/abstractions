@@ -7,16 +7,17 @@
 
   <context:component-scan base-package="com.modules.dust.service" />
   <bean id="dustTemplateFileProcessor" class="com.abstractions.service.DustTemplateResourceProcessor">
-    <constructor-arg index="0" ref="fileService" />
+    <constructor-arg index="0" ref="privateResourceService" />
     <constructor-arg index="1">
       <bean class="com.modules.dust.DustConnector" />
     </constructor-arg>
   </bean>
   
   <bean id="resourceBasedDustTemplateCompiler" class="com.modules.dust.ResourceBasedDustTemplateCompiler">
-  	<constructor-arg index="0" ref="fileService" />
-  	<constructor-arg index="1"><bean class="com.modules.dust.DustConnector" /></constructor-arg>
-  </bean>
+  	<constructor-arg index="0" ref="publicResourceService" />
+  	<constructor-arg index="1" ref="privateResourceService" />
+  	<constructor-arg index="2"><bean class="com.modules.dust.DustConnector" /></constructor-arg>
+</bean>
   
 <!-- 
   <bean id="templateStore" class="com.modules.dust.store.KeyValueBasedTemplateStore">

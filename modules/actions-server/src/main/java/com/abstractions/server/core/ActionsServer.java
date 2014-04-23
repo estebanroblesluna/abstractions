@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -17,11 +20,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
-import com.abstractions.api.Processor;
-import com.abstractions.instance.common.LogProcessorWrapper;
-import com.abstractions.instance.common.PerformanceProcessor;
-import com.abstractions.instance.common.ProcessorWrapper;
+import com.abstractions.instance.common.LogInterceptor;
+import com.abstractions.instance.common.PerformanceInterceptor;
 import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.model.LoggingInfo;
+import com.abstractions.model.ProfilingInfo;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.service.core.ServiceException;
@@ -29,6 +32,7 @@ import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
+import com.google.common.collect.Sets;
 
 public class ActionsServer {
 
@@ -37,9 +41,9 @@ public class ActionsServer {
 	private final CompositeTemplateMarshaller marshaller;
 	private final Map<String, CompositeTemplate> definitions;
 	
-	private final Map<String, List<PerformanceProcessor>> profilers;
-	private final Map<String, List<LogProcessorWrapper>> logs;
-	private final Map<String, LogProcessorWrapper> objectIdLogs;
+	private final Map<String, List<PerformanceInterceptor>> profilers;
+	private final Map<String, List<LogInterceptor>> logs;
+	private final Map<String, LogInterceptor> objectIdLogs;
 	private final Map<String, StatisticsInterpreterDelegate> statistics;
 	private final Map<Object, String> wrapperToObjectIdMapping;
 	
@@ -55,14 +59,21 @@ public class ActionsServer {
 		Validate.notNull(resourceService);
 
 		this.mapping = mapping;
-		this.applicationDirectory = applicationDirectory;
+		
+		if (System.getenv("server_apps_directory") != null) {
+			log.info("Found server_apps_directory set to: " + System.getenv("server_apps_directory"));
+			this.applicationDirectory = System.getenv("server_apps_directory");
+		} else {
+			this.applicationDirectory = applicationDirectory;
+		}
+
 		this.resourceService = resourceService;
 		
 		this.marshaller = new CompositeTemplateMarshaller(mapping);
 		this.definitions = new ConcurrentHashMap<String, CompositeTemplate>();
-		this.profilers = new ConcurrentHashMap<String, List<PerformanceProcessor>>();
-		this.objectIdLogs = new ConcurrentHashMap<String, LogProcessorWrapper>();
-		this.logs = new ConcurrentHashMap<String, List<LogProcessorWrapper>>();
+		this.profilers = new ConcurrentHashMap<String, List<PerformanceInterceptor>>();
+		this.objectIdLogs = new ConcurrentHashMap<String, LogInterceptor>();
+		this.logs = new ConcurrentHashMap<String, List<LogInterceptor>>();
 		this.statistics = new ConcurrentHashMap<String, StatisticsInterpreterDelegate>();
 		this.wrapperToObjectIdMapping = new ConcurrentHashMap<Object, String>();
 		
@@ -71,13 +82,16 @@ public class ActionsServer {
 
 	private void startApplications() {
 		File applicationDirectory = new File(this.applicationDirectory + "/");
-		for (Object fileAsObject : applicationDirectory.listFiles()) {
-			if (fileAsObject instanceof File && ((File) fileAsObject).isDirectory()) {
-				File file = (File) fileAsObject;
-				try {
-					this.startApplicationFromFiles(file.getName());
-				} catch (Exception e) {
-					log.error("Error starting application " + file.getName());
+		File[] files = applicationDirectory.listFiles();
+		if (files != null) {
+			for (Object fileAsObject : files) {
+				if (fileAsObject instanceof File && ((File) fileAsObject).isDirectory()) {
+					File file = (File) fileAsObject;
+					try {
+						this.startApplicationFromFiles(file.getName());
+					} catch (Exception e) {
+						log.error("Error starting application " + file.getName());
+					}
 				}
 			}
 		}
@@ -199,21 +213,33 @@ public class ActionsServer {
 		return definition != null;
 	}
 	
-	public ProfilingInfo getProfilingInfo(String applicationId) {
-		ProfilingInfo info = new ProfilingInfo();
+	public LoggingInfo getLoggingInfo(String applicationId) {
+		LoggingInfo info = new LoggingInfo(applicationId);
 		
-		List<PerformanceProcessor> profilers = this.getProfilers(applicationId);
-		for (PerformanceProcessor profiler : profilers) {
-			info.addAverage(this.wrapperToObjectIdMapping.get(profiler), profiler.getAverage());
+		List<LogInterceptor> logs = this.getLoggers(applicationId);
+		for (LogInterceptor log : logs) {
+			info.addLog(log.getElementId(), log.getLogAndReset());
 		}
+		
+		return info;
+	}
+	
+	public ProfilingInfo getProfilingInfo(String applicationId) {
+		ProfilingInfo info = new ProfilingInfo(applicationId);
+		
+		List<PerformanceInterceptor> profilers = this.getProfilers(applicationId);
+		for (PerformanceInterceptor profiler : profilers) {
+			info.addAverage(profiler.getElementId(), profiler.getAverageAndReset());
+		}
+		
 		return info;
 	}
 
-	private List<PerformanceProcessor> getProfilers(String applicationId) {
+	private List<PerformanceInterceptor> getProfilers(String applicationId) {
 		if (!this.profilers.containsKey(applicationId)) {
 			synchronized (this.profilers) {
 				if (!this.profilers.containsKey(applicationId)) {
-					this.profilers.put(applicationId, new ArrayList<PerformanceProcessor>());
+					this.profilers.put(applicationId, new ArrayList<PerformanceInterceptor>());
 				}
 			}
 		}
@@ -222,29 +248,28 @@ public class ActionsServer {
 	}
 
 	public void addProfiler(String applicationId, String objectId) {
-		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
-		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
-		Object object = objectDefinition.getInstance();
-		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor)  
-				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class))) {
-			Processor processor = (Processor) object;
-			PerformanceProcessor wrapper = new PerformanceProcessor(processor);
-			objectDefinition.overrideObject(wrapper);
-			this.getProfilers(applicationId).add(wrapper);
-			this.wrapperToObjectIdMapping.put(wrapper, objectId);
+		CompositeTemplate compositeTemplate = this.definitions.get(applicationId);
+		ElementTemplate objectDefinition = compositeTemplate.getDefinition(objectId);
+		PerformanceInterceptor existingInterceptor = objectDefinition.getFirstInterceptorOfClass(PerformanceInterceptor.class);
+		
+		if (existingInterceptor == null) {
+			PerformanceInterceptor interceptor = new PerformanceInterceptor();
+			interceptor.setElementId(objectId);
+			this.getProfilers(applicationId).add(interceptor);
+			this.wrapperToObjectIdMapping.put(interceptor, objectId);
+			objectDefinition.addInterceptor(interceptor);
 		}
 	}
 
 	public void removeProfiler(String applicationId, String objectId) {
 		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
 		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
-		Object object = objectDefinition.getInstance();
-		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(PerformanceProcessor.class)) {
-			ProcessorWrapper wrapper = (ProcessorWrapper) object;
-			Processor processor = wrapper.unwrap(PerformanceProcessor.class);
-			objectDefinition.overrideObject(processor);
-			this.getProfilers(applicationId).remove(wrapper);
-			this.wrapperToObjectIdMapping.remove(wrapper);
+		PerformanceInterceptor existingInterceptor = objectDefinition.getFirstInterceptorOfClass(PerformanceInterceptor.class);
+
+		if (existingInterceptor != null) {
+			this.getProfilers(applicationId).remove(existingInterceptor);
+			this.wrapperToObjectIdMapping.remove(existingInterceptor);
+			objectDefinition.removeInterceptor(existingInterceptor);
 		}
 	}
 
@@ -261,47 +286,47 @@ public class ActionsServer {
 		
 		CompositeTemplate compositeTemplate = this.definitions.get(applicationId);
 		ElementTemplate objectDefinition = compositeTemplate.getDefinition(objectId);
-		Object object = objectDefinition.getInstance();
-		if (!(object instanceof ProcessorWrapper) && (object instanceof Processor) 
-				|| (object instanceof ProcessorWrapper && !((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class))) {
-			Processor processor = (Processor) object;
-			LogProcessorWrapper wrapper = new LogProcessorWrapper(processor);
-			wrapper.setBeforeExpression(beforeExpression);
-			wrapper.setAfterExpression(afterExpression);
+		LogInterceptor existingInterceptor = objectDefinition.getFirstInterceptorOfClass(LogInterceptor.class);
+		
+		if (existingInterceptor == null) {
+			LogInterceptor interceptor = new LogInterceptor();
+			interceptor.setElementId(objectId);
+			
+			interceptor.setBeforeExpression(beforeExpression);
+			interceptor.setAfterExpression(afterExpression);
 			
 			if (isBeforeConditional) {
-				wrapper.setBeforeConditionExpression(beforeConditionalExpressionValue);
+				interceptor.setBeforeConditionExpression(beforeConditionalExpressionValue);
 			}
 			if (isAfterConditional) {
-				wrapper.setAfterConditionExpression(afterConditionalExpressionValue);
+				interceptor.setAfterConditionExpression(afterConditionalExpressionValue);
 			}
-			
-			objectDefinition.overrideObject(wrapper);
-			this.getLoggers(applicationId).add(wrapper);
-			this.wrapperToObjectIdMapping.put(wrapper, objectId);
-			this.objectIdLogs.put(objectId, wrapper);
+
+			this.getLoggers(applicationId).add(interceptor);
+			this.wrapperToObjectIdMapping.put(interceptor, objectId);
+			this.objectIdLogs.put(objectId, interceptor);
+			objectDefinition.addInterceptor(interceptor);
 		}
 	}
 	
 	public void removeLogger(String applicationId, String objectId) {
 		CompositeTemplate CompositeTemplate = this.definitions.get(applicationId);
 		ElementTemplate objectDefinition = CompositeTemplate.getDefinition(objectId);
-		Object object = objectDefinition.getInstance();
-		if (object instanceof ProcessorWrapper && ((ProcessorWrapper) object).isWrapWith(LogProcessorWrapper.class)) {
-			ProcessorWrapper wrapper = (ProcessorWrapper) object;
-			Processor processor = wrapper.unwrap(LogProcessorWrapper.class);
-			objectDefinition.overrideObject(processor);
-			this.getLoggers(applicationId).remove(wrapper);
-			this.wrapperToObjectIdMapping.remove(wrapper);
+		LogInterceptor existingInterceptor = objectDefinition.getFirstInterceptorOfClass(LogInterceptor.class);
+
+		if (existingInterceptor != null) {
+			this.getLoggers(applicationId).remove(existingInterceptor);
+			this.wrapperToObjectIdMapping.remove(existingInterceptor);
 			this.objectIdLogs.remove(objectId);
+			objectDefinition.removeInterceptor(existingInterceptor);
 		}
 	}
 	
-	private List<LogProcessorWrapper> getLoggers(String applicationId) {
+	private List<LogInterceptor> getLoggers(String applicationId) {
 		if (!this.logs.containsKey(applicationId)) {
 			synchronized (this.logs) {
 				if (!this.logs.containsKey(applicationId)) {
-					this.logs.put(applicationId, new ArrayList<LogProcessorWrapper>());
+					this.logs.put(applicationId, new ArrayList<LogInterceptor>());
 				}
 			}
 		}
@@ -310,9 +335,9 @@ public class ActionsServer {
 	}
 
 	public LogInfo getLogInfo(String applicationId) {
-		List<LogProcessorWrapper> logs = this.getLoggers(applicationId);
+		List<LogInterceptor> logs = this.getLoggers(applicationId);
 		LogInfo info = new LogInfo();
-		for (LogProcessorWrapper log : logs) {
+		for (LogInterceptor log : logs) {
 			List<String> lines = log.lines();
 			info.addLogLines(this.wrapperToObjectIdMapping.get(log), lines);
 		}
@@ -320,7 +345,7 @@ public class ActionsServer {
 	}
 
 	public List<String> getLogLines(String applicationId, String objectId) {
-		LogProcessorWrapper wrapper = this.objectIdLogs.get(objectId);
+		LogInterceptor wrapper = this.objectIdLogs.get(objectId);
 		if (wrapper == null) {
 			return new ArrayList<String>();
 		}
@@ -367,5 +392,12 @@ public class ActionsServer {
 		}
 		
 		return stats;
+	}
+	
+	public Collection<String> getApplicationIds() {
+		Set<String> applicationIds = new HashSet<String>();
+		applicationIds.addAll(this.profilers.keySet());
+		applicationIds.addAll(this.logs.keySet());
+		return applicationIds;
 	}
 }

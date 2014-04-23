@@ -11,6 +11,7 @@
 	var editor;
 	var currentFilename = null;
 	var newFile = false;
+	var resType = "public";
 	
 	//File tree vars
 	var fileTreeView;
@@ -27,7 +28,7 @@
 		filename = node.getPath();
         e.preventDefault(); 
   		$.ajax({
-  			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files" + filename,
+  			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
   			type: "GET",
   			success: function(response) {
             	editor.setFile(filename, response);
@@ -55,7 +56,7 @@
     	if(filename[0] != "/")
     		filename = "/"+filename;
 	    $.ajax({
-	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files" + filename,
+	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
 	    	type: "PUT",
 	    	data: content,
 	    	success: function(response) {
@@ -63,17 +64,13 @@
 	     	}
 	    });
     }	
-
     
-    $(document).ready(function() {
-    	
-    	//Initialize the file tree.
+    function fillTree(){
+    	$("#fileTree").empty();
     	fileTreeView = new FolderView($("#fileTree"));
     	fileTreeView.fileSelectedHook = selectFile;
-    	
-    	//Fill the file tree
     	$.ajax({
-   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/" + $(self).text(),
+   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType +"/" + $(self).text(),
    			type: "GET",
    			dataType: 'json',
    			success: function(response) {
@@ -82,9 +79,27 @@
            		});
        		}
 		});
+    }
+
+    
+    $(document).ready(function() {
+    	
+    	//Initialize the file tree
+    	fillTree();
+    	
     	
         editor = new FileEditor($("#editor"), 700, 500,$("#toolbar"));
         editor.setSaveFileHook(saveFile)
+        
+        $("#publicResBtn").click(function(e){
+        	resType="public";
+        	fillTree();
+        });
+        
+        $("#privateResBtn").click(function(e){
+        	resType="private";
+        	fillTree();
+        });
         
         //File tree toolbar
         $("#uploadZip").click(function(e) {
@@ -116,7 +131,7 @@
         		var filename = $(this).parent().attr("path");
         		var self = this;
         		$.ajax({
-           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files" + filename,
+           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
            			type: "DELETE",
            			dataType: 'html',
            			success: function() {
@@ -133,17 +148,27 @@
 		</script>
 
   <div class="container">
+
     <div id="alerts"></div>
     <div class="row" id='toolbar'>
-      <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-        <form id="zipUploadForm" action="upload" method="POST" enctype="multipart/form-data">
-          <input id="zipFile" type="file" name="file" style="display: none" />
-          <button id="uploadZip" class="btn" title="Uppload zip file"><span class="glyphicon glyphicon-upload"></span></button>
-          <button id="newFile" class="btn" title="New file"><span class="glyphicon glyphicon-file"></span></button>
-          <button id="deleteFile" class="btn" title="Delete file"><span class="glyphicon glyphicon-remove"></span></button>
-        </form>
-      </div>
+      <label>Resource Type:</label>
+	  <div class="btn-group" data-toggle="buttons">
+		  <button class="btn active" id="publicResBtn">
+		    <input type="radio" name="resType" id="resPublic"> Public
+		  </button>
+		  <button class="btn" id="privateResBtn">
+		    <input type="radio" name="resType" id="resPrivate"> Private
+		  </button>
+	  </div>
+      <form id="zipUploadForm" action="upload" method="POST" enctype="multipart/form-data">
+        <input id="zipFile" type="file" name="file" style="display: none" />
+        <button id="uploadZip" class="btn" title="Uppload zip file"><span class="glyphicon glyphicon-upload"></span></button>
+        <button id="newFile" class="btn" title="New file"><span class="glyphicon glyphicon-file"></span></button>
+        <button id="deleteFile" class="btn" title="Delete file"><span class="glyphicon glyphicon-remove"></span></button>
+      </form>
+
     </div>
+
     <div class="row" id="editor-container">
       <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" id="tree-container">
         <div class="tree-folder" id="fileTree">

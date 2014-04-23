@@ -3,6 +3,8 @@ package com.abstractions.service.core;
 import java.io.InputStream;
 import java.util.List;
 
+import com.abstractions.model.Resource;
+
 public interface ResourceService {
 
 	public abstract void storeResource(long applicationId, String path, InputStream stream);
@@ -18,5 +20,7 @@ public interface ResourceService {
 	public abstract boolean resourceExists(long applicationId, String path);
 	
 	public abstract long getResourceLastModifiedDate(long applicationId, String path);
+	
+	public abstract Resource getResource(long applicationId, String path);
 
 }
