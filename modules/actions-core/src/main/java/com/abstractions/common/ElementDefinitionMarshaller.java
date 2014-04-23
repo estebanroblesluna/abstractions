@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -14,7 +15,13 @@ import org.codehaus.jackson.map.jsontype.NamedType;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.abstractions.meta.*;
+import com.abstractions.meta.AbstractionDefinition;
+import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ElementDefinition;
+import com.abstractions.meta.MessageSourceDefinition;
+import com.abstractions.meta.ProcessorDefinition;
+import com.abstractions.meta.RouterDefinition;
 
 /**
 *
@@ -52,6 +59,11 @@ public class ElementDefinitionMarshaller {
 	public static List<ElementDefinition> unmarshall(String definitionsAsJSON) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper(); 
 		mapper.getDeserializationConfig().addMixInAnnotations(ElementDefinition.class, ElementDefinitionMixIn.class);
+		mapper.setVisibilityChecker(mapper.getSerializationConfig().getDefaultVisibilityChecker()
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 		mapper.registerSubtypes(
 	            new NamedType(AbstractionDefinition.class, "AbstractionDefinition"),
 	            new NamedType(ApplicationDefinition.class, "ApplicationDefinition"),
