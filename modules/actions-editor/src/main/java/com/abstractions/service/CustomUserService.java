@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.web.CustomUser;
 import com.abstractions.web.EmailExistsException;
@@ -20,6 +21,7 @@ import com.abstractions.web.EmailService;
 import com.abstractions.web.UsernameExistsException;
 
 @Service
+@Transactional
 public class CustomUserService {
 	
 	private static Log log = LogFactory.getLog(CustomUserService.class);
