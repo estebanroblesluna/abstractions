@@ -89,9 +89,13 @@ public abstract class ElementDefinition {
 		this.isScript = false;
 	}
 	
-	public void setScript(String aScript) {
+	public void setScript(boolean isScript) {
+		this.isScript = isScript;
+	}
+	
+	public void setScriptText(String aScript) {
 		this.implementation = aScript;
-		this.isScript = true;
+		this.isScript = StringUtils.isNotEmpty(aScript);
 	}
 
 	public String getImplementation() {

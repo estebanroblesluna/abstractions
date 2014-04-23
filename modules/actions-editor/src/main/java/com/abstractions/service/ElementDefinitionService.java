@@ -9,7 +9,6 @@ import org.jsoup.helper.Validate;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- *
  * @author Guido J. Celada (celadaguido@gmail.com)
  */
 public class ElementDefinitionService {

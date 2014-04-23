@@ -67,7 +67,7 @@
         <name>Spring Maven Snapshot Repository</name>
         <url>http://maven.springframework.org/snapshot</url>
     </repository>
-		
+
     <!-- javax.mail -->
     <repository>
       <id>Java.Net</id>

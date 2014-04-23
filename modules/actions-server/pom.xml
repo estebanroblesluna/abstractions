@@ -23,6 +23,8 @@
       <artifactId>actions-core</artifactId>
       <version>${version}</version>
     </dependency>
+    
+    <!-- MODULES -->
     <dependency>
       <groupId>com.actions</groupId>
       <artifactId>actions-modules-http</artifactId>
@@ -48,11 +50,8 @@
       <artifactId>actions-modules-cache</artifactId>
       <version>${version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.actions</groupId>
-      <artifactId>actions-common-service</artifactId>
-      <version>${version}</version>
-    </dependency>
+
+    <!-- UTILS -->
     <dependency>
       <groupId>com.actions</groupId>
       <artifactId>actions-utils</artifactId>
@@ -63,6 +62,7 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+    
     <!-- Spring 3 dependencies -->
     <dependency>
       <groupId>org.springframework</groupId>
