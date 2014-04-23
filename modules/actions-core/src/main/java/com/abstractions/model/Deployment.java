@@ -70,4 +70,8 @@ public class Deployment {
 		}
 		return null;
 	}
+
+	public List<DeploymentToServer> getToServers() {
+		return toServers;
+	}
 }

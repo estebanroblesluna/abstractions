@@ -36,19 +36,21 @@ public class ContextRESTService {
 	private String serverId;
 	private DeploymentService deploymentService;
 	private LibraryService libraryService;
-        private IconService iconService;
+    private IconService iconService;
 	
 	public ContextRESTService(
 			DevelopmentContextHolder holder, 
 			NamesMapping mapping, 
 			String serverId, 
 			DeploymentService deploymentService,
-			LibraryService libraryService) {
+			LibraryService libraryService,
+			IconService iconService) {
 		this.holder = holder;
 		this.mapping = mapping;
 		this.serverId = serverId;
 		this.deploymentService = deploymentService;
 		this.libraryService = libraryService;
+		this.iconService = iconService;
 	}
 	
 	@POST

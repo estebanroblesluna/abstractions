@@ -9,7 +9,7 @@ import org.springframework.util.MultiValueMap;
 
 /**
  *
- * @author Guido J. Celada
+ * @author Guido J. Celada (celadaguido@gmail.com)
  */
 public class UserConnectionSignUp implements ConnectionSignUp {
 

@@ -1935,8 +1935,8 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithPoints:"), func
     self._lineWidth = aLineWidth;
 }
 ,["void",null])]);
-}p;18;PropertiesFigure.jt;6530;@STATIC;1.0;t;6511;{var the_class = objj_allocateClassPair(Figure, "PropertiesFigure"),
-meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_drawing"), new objj_ivar("_selectedFigure"), new objj_ivar("_nameColumn"), new objj_ivar("_valueColumn"), new objj_ivar("_tableView")]);objj_registerClassPair(the_class);
+}p;18;PropertiesFigure.jt;11119;@STATIC;1.0;t;11099;{var the_class = objj_allocateClassPair(Figure, "PropertiesFigure"),
+meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_drawing"), new objj_ivar("_selectedFigure"), new objj_ivar("_nameColumn"), new objj_ivar("_valueColumn"), new objj_ivar("_tableView"), new objj_ivar("_currentTextFieldEdition"), new objj_ivar("_currentRowIndex"), new objj_ivar("_checkboxMapping")]);objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:drawing:"), function $PropertiesFigure__initWithFrame_drawing_(self, _cmd, aFrame, aDrawing)
 {
     self = objj_msgSendSuper({ receiver:self, super_class:objj_getClass("PropertiesFigure").super_class }, "initWithFrame:", aFrame);
@@ -1944,6 +1944,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:drawing:"
     {
         self._drawing = aDrawing;
         self._selectedFigure = nil;
+        self._checkboxMapping = objj_msgSend(CPDictionary, "dictionary");
         objj_msgSend(objj_msgSend(CPNotificationCenter, "defaultCenter"), "addObserver:selector:name:object:", self, sel_getUid("selectionChanged"), DrawingSelectionChangedNotification, self._drawing);
         var scrollFrame = CGRectMake(5, 0, 695, 100);
         var scrollView = objj_msgSend(objj_msgSend(CPScrollView, "alloc"), "initWithFrame:", scrollFrame);
@@ -1974,11 +1975,41 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:drawing:"
 }
 ,["id","CGRect","Drawing"]), new objj_method(sel_getUid("doubleClick:"), function $PropertiesFigure__doubleClick_(self, _cmd, anObject)
 {
-    var column = 1;
-    var row = objj_msgSend(self._tableView, "selectedRow");
-    objj_msgSend(self._tableView, "editColumn:row:withEvent:select:", column, row, nil, YES);
+    objj_msgSend(self, "cleanUpCurrentTextFieldEdition");
+    var columnIndex = 1;
+    var rowIndex = objj_msgSend(self._tableView, "selectedRow");
+    var identifier = objj_msgSend(self._valueColumn, "UID"),
+        textField = self._tableView._dataViewsForTableColumns[identifier][rowIndex];
+    objj_msgSend(textField, "setEditable:", YES);
+    objj_msgSend(objj_msgSend(self, "window"), "makeFirstResponder:", textField);
+    objj_msgSend(objj_msgSend(CPNotificationCenter, "defaultCenter"), "addObserver:selector:name:object:", self, sel_getUid("controlTextDidBlur:"), CPTextFieldDidBlurNotification, textField);
+    objj_msgSend(objj_msgSend(CPNotificationCenter, "defaultCenter"), "addObserver:selector:name:object:", self, sel_getUid("controlTextDidEndEditing:"), CPControlTextDidEndEditingNotification, textField);
+    self._currentTextFieldEdition = textField;
+    self._currentRowIndex = rowIndex;
 }
-,["void","id"]), new objj_method(sel_getUid("numberOfRowsInTableView:"), function $PropertiesFigure__numberOfRowsInTableView_(self, _cmd, aTableView)
+,["void","id"]), new objj_method(sel_getUid("controlTextDidEndEditing:"), function $PropertiesFigure__controlTextDidEndEditing_(self, _cmd, notification)
+{
+    var value = objj_msgSend(self._currentTextFieldEdition, "objectValue");
+    var model = objj_msgSend(self._selectedFigure, "model");
+    objj_msgSend(model, "propertyValueAt:be:", self._currentRowIndex, value);
+    objj_msgSend(self, "cleanUpCurrentTextFieldEdition");
+    objj_msgSend(objj_msgSend(self, "window"), "makeFirstResponder:", objj_msgSend(self, "drawing"));
+}
+,["void","CPNotification"]), new objj_method(sel_getUid("controlTextDidBlur:"), function $PropertiesFigure__controlTextDidBlur_(self, _cmd, notification)
+{
+    objj_msgSend(self, "controlTextDidEndEditing:", notification);
+}
+,["void","CPNotification"]), new objj_method(sel_getUid("cleanUpCurrentTextFieldEdition"), function $PropertiesFigure__cleanUpCurrentTextFieldEdition(self, _cmd)
+{
+    if (self._currentTextFieldEdition != nil)
+    {
+        objj_msgSend(objj_msgSend(CPNotificationCenter, "defaultCenter"), "removeObserver:name:object:", self, CPControlTextDidEndEditingNotification, self._currentTextFieldEdition);
+        objj_msgSend(objj_msgSend(CPNotificationCenter, "defaultCenter"), "removeObserver:name:object:", self, CPTextFieldDidBlurNotification, self._currentTextFieldEdition);
+        objj_msgSend(self._currentTextFieldEdition, "setSelectable:", NO);
+        objj_msgSend(self._currentTextFieldEdition, "setEditable:", NO);
+    }
+}
+,["void"]), new objj_method(sel_getUid("numberOfRowsInTableView:"), function $PropertiesFigure__numberOfRowsInTableView_(self, _cmd, aTableView)
 {
     if (self._selectedFigure == nil)
     {
@@ -1998,19 +2029,7 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:drawing:"
         }
     }
 }
-,["int","CPTableView"]), new objj_method(sel_getUid("tableView:objectValueForTableColumn:row:"), function $PropertiesFigure__tableView_objectValueForTableColumn_row_(self, _cmd, aTableView, aTableColumn, rowIndex)
-{
-    var model = objj_msgSend(self._selectedFigure, "model");
-    if (self._nameColumn == aTableColumn)
-    {
-        return objj_msgSend(model, "propertyDisplayNameAt:", rowIndex);
-    }
-    else
-    {
-        return objj_msgSend(model, "propertyValueAt:", rowIndex);
-    }
-}
-,["id","CPTableView","CPTableColumn","int"]), new objj_method(sel_getUid("tableView:setObjectValue:forTableColumn:row:"), function $PropertiesFigure__tableView_setObjectValue_forTableColumn_row_(self, _cmd, aTableView, aValue, aTableColumn, rowIndex)
+,["int","CPTableView"]), new objj_method(sel_getUid("tableView:setObjectValue:forTableColumn:row:"), function $PropertiesFigure__tableView_setObjectValue_forTableColumn_row_(self, _cmd, aTableView, aValue, aTableColumn, rowIndex)
 {
     var model = objj_msgSend(self._selectedFigure, "model");
     if (aTableColumn == self._valueColumn)
@@ -2018,7 +2037,66 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initWithFrame:drawing:"
         return objj_msgSend(model, "propertyValueAt:be:", rowIndex, aValue);
     }
 }
-,["void","CPTableView","id","CPTableColumn","int"]), new objj_method(sel_getUid("selectionChanged"), function $PropertiesFigure__selectionChanged(self, _cmd)
+,["void","CPTableView","id","CPTableColumn","int"]), new objj_method(sel_getUid("tableView:dataViewForTableColumn:row:"), function $PropertiesFigure__tableView_dataViewForTableColumn_row_(self, _cmd, aTableView, aTableColumn, aRowIndex)
+{
+    var _model = objj_msgSend(self._selectedFigure, "model");
+    var tableColumnId = objj_msgSend(aTableColumn, "identifier");
+    var propertyName = objj_msgSend(_model, "propertyDisplayNameAt:", aRowIndex);
+    var viewKind = "view_kind_" + _model + "_" + propertyName + "_" + tableColumnId;
+    var view = objj_msgSend(aTableView, "makeViewWithIdentifier:owner:", viewKind, self);
+    if (view == null)
+    {
+        if (aRowIndex < 0 || _model == nil)
+        {
+            view = objj_msgSend(objj_msgSend(CPTableCellView, "alloc"), "initWithFrame:", CGRectMakeZero());
+        }
+        else
+        {
+            if (aTableColumn == self._valueColumn)
+            {
+                var propertyType = objj_msgSend(_model, "propertyTypeAt:", aRowIndex);
+                if (objj_msgSend(propertyType, "isEqual:", PropertyTypeBoolean))
+                {
+                    var editableView = objj_msgSend(CPCheckBox, "checkBoxWithTitle:", "");
+                    objj_msgSend(editableView, "sizeToFit");
+                    objj_msgSend(editableView, "setTarget:", self);
+                    objj_msgSend(editableView, "setSendsActionOnEndEditing:", YES);
+                    objj_msgSend(editableView, "setAction:", sel_getUid("toggleCheckbox:"));
+                    objj_msgSend(self._checkboxMapping, "setObject:forKey:", aRowIndex, editableView);
+                    view = editableView;
+                }
+                else
+                {
+                    view = objj_msgSend(aTableColumn, "_newDataView");
+                }
+            }
+            else
+            {
+                view = objj_msgSend(aTableColumn, "_newDataView");
+            }
+        }
+        objj_msgSend(view, "setIdentifier:", viewKind);
+    }
+    var value = "Undefined";
+    if (aTableColumn == self._valueColumn)
+    {
+        value = objj_msgSend(_model, "propertyValueAt:", aRowIndex);
+    }
+    else
+    {
+        value = objj_msgSend(_model, "propertyDisplayNameAt:", aRowIndex);
+    }
+    objj_msgSend(view, "setObjectValue:", value);
+    return view;
+}
+,["id","CPTableView","CPTableColumn","CPInteger"]), new objj_method(sel_getUid("toggleCheckbox:"), function $PropertiesFigure__toggleCheckbox_(self, _cmd, aSender)
+{
+    var rowIndex = objj_msgSend(self._checkboxMapping, "objectForKey:", aSender);
+    var model = objj_msgSend(self._selectedFigure, "model");
+    var value = objj_msgSend(aSender, "objectValue");
+    objj_msgSend(model, "propertyValueAt:be:", rowIndex, value);
+}
+,["void","id"]), new objj_method(sel_getUid("selectionChanged"), function $PropertiesFigure__selectionChanged(self, _cmd)
 {
     if (self._selectedFigure != nil)
     {
@@ -2099,7 +2177,7 @@ class_addMethods(meta_class, [new objj_method(sel_getUid("newAt:"), function $Re
     return widget;
 }
 ,["RectangleFigure","id"])]);
-}p;15;ToolboxFigure.jt;5209;@STATIC;1.0;t;5190;{var the_class = objj_allocateClassPair(Figure, "ToolboxFigure"),
+}p;15;ToolboxFigure.jt;5150;@STATIC;1.0;t;5131;{var the_class = objj_allocateClassPair(Figure, "ToolboxFigure"),
 meta_class = the_class.isa;class_addIvars(the_class, [new objj_ivar("_drawing"), new objj_ivar("_buttonsMapping"), new objj_ivar("_currentColumn"), new objj_ivar("_maxColumn"), new objj_ivar("_currentY")]);objj_registerClassPair(the_class);
 class_addMethods(the_class, [new objj_method(sel_getUid("initializeWith:at:"), function $ToolboxFigure__initializeWith_at_(self, _cmd, aDrawing, aPoint)
 {
@@ -2158,7 +2236,6 @@ class_addMethods(the_class, [new objj_method(sel_getUid("initializeWith:at:"), f
     objj_msgSend(button, "setFrameOrigin:", origin);
     var icon = objj_msgSend(objj_msgSend(CPImage, "alloc"), "initWithContentsOfFile:", url);
     objj_msgSend(button, "setImage:", icon);
-    objj_msgSend(button, "setButtonType:", CPOnOffButton);
     objj_msgSend(button, "setBordered:", YES);
     objj_msgSend(button, "setBezelStyle:", CPRegularSquareBezelStyle);
     objj_msgSend(button, "setFrameSize:", CGSizeMake(buttonWidth, buttonHeight));

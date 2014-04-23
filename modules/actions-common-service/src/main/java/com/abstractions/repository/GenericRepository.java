@@ -84,6 +84,15 @@ public class GenericRepository {
 			.add(Restrictions.eq(property, value))
 			.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T findByAnd(Class<T> theClass, String property, Object value, String property2, Object value2) {
+		return (T) this.sessionFactory.getCurrentSession()
+			.createCriteria(theClass)
+			.add(Restrictions.eq(property, value))
+			.add(Restrictions.eq(property2, value2))
+			.uniqueResult();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public <T> T findBy(Class<T> theClass, Map<String,Object> restrictions){
@@ -108,6 +117,29 @@ public class GenericRepository {
     public void update(Object o) {
         this.sessionFactory.getCurrentSession().update(o);
     }
-    
-   
+
+	public List getCommands(long serverId, Object state) {
+		return this.sessionFactory.getCurrentSession()
+				.createQuery("SELECT sc FROM ServerCommand sc INNER JOIN sc.deploymentToServer as toServer INNER JOIN toServer.server as server WHERE sc.state = :state AND server.id = :serverId")
+				.setString("state", state.toString())
+				.setLong("serverId", serverId)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getLastProfilingOf(String applicationId) {
+		return this.sessionFactory.getCurrentSession()
+				.createSQLQuery("SELECT * FROM (SELECT element_id, average, date FROM actions.profiling_info INNER JOIN profiling_info_averages ON profiling_info_averages.profiling_info_id = profiling_info.profiling_info_id WHERE average > 0 AND application_id = ? ORDER BY date DESC) AS averages GROUP BY averages.element_id")
+				.setString(0, applicationId)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<String> getLastLoggingInfoOf(String applicationId, String elementId) {
+		return this.sessionFactory.getCurrentSession()
+				.createSQLQuery("SELECT logging_info_logs.log FROM logging_info_logs INNER JOIN logging_info ON logging_info_logs.logging_info_id = logging_info.logging_info_id WHERE logging_info.application_id = ? AND logging_info_logs.element_id = ? ORDER BY logging_info.date")
+				.setString(0, applicationId)
+				.setString(1, elementId)
+				.list();
+	}
 }
