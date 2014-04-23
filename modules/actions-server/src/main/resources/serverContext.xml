@@ -14,22 +14,7 @@
           "
 >
 
-  <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
   <context:property-placeholder location="classpath:server.properties" ignore-unresolvable="true" />
-  
-  <import resource="classpath:common.xml" />
-  <import resource="classpath:datasource.xml" />
-  <import resource="classpath:hibernate.xml" />
-  <import resource="classpath:applicationContext.xml" />
-
-  <bean id="libraryService" class="com.abstractions.service.core.LibraryService">
-    <constructor-arg index="0" ref="repository" />
-  </bean>
-  
-  <bean class="com.abstractions.service.core.MappingInitializer" init-method="initializeMapping">
-    <property name="mapping" ref="namesMapping" />
-    <property name="libraryService" ref="libraryService" />
-  </bean>
   
   <bean id="httpStrategy" class="com.abstractions.http.HttpStrategy" />
 
@@ -43,10 +28,11 @@
   
   <bean id="actionsServer" class="com.abstractions.server.core.ActionsServer">
     <constructor-arg value="${server.apps.directory}" />
-    <constructor-arg ref="namesMapping" />
     <constructor-arg>
 	  	<bean class="com.abstractions.service.core.DatabaseResourceService">
-	    	<constructor-arg index="0" ref="repository" />
+	    	<constructor-arg index="0"> <!-- TODO adjust this -->
+              <null/>
+            </constructor-arg>
 	    	<constructor-arg index="1" value="public" />
 	  	</bean>
     </constructor-arg>

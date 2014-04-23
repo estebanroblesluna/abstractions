@@ -14,11 +14,15 @@ public class ApplicationDefinition extends CompositeDefinition {
 	private static final Log log = LogFactory.getLog(ApplicationDefinition.class);
 
 	private volatile InterpreterDelegate interpreterDelegate;
+	private final NamesMapping mapping;
 	
-	protected ApplicationDefinition() { }
+	protected ApplicationDefinition() {
+		this.mapping = new NamesMapping();
+	}
 
 	public ApplicationDefinition(String name) {
 		super(name);
+		this.mapping = new NamesMapping();
 	}
 
 	/**
@@ -54,5 +58,9 @@ public class ApplicationDefinition extends CompositeDefinition {
 	@Override
 	protected CompositeTemplate basicCreateTemplate(String id, CompositeDefinition compositeDefinition, NamesMapping mapping) {
 		return new ApplicationTemplate(id, this, mapping);
+	}
+
+	public NamesMapping getMapping() {
+		return mapping;
 	}
 }
