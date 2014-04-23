@@ -14,9 +14,9 @@
             width: 80px;
         }
         html, body {
-        background-color: #FFF;
-        line-height: 0px;
-        font-size: 13px;
+          line-height: 0px;
+          font-size: 13px;
+            background: url(static/img/background.jpg) repeat 0 0;
         }
         .text-center{
             text-align: center;
@@ -42,11 +42,8 @@
         }
         #well{
             margin: 0;
-            background-color: #FFF;
             border: 0;
-            padding: 200px;
-            background-image: url('/static/img/background.jpg');
-
+            padding-top: 100px;
         }
         .col-sm-offset-4{
             margin-left: 25%;
@@ -80,7 +77,7 @@
             margin-left: 0;
             margin-right: -50px;
         }
-        .btn{
+        .btn {
             border-width: 0 1px 4px 1px;
             font-size: 12px;
             font-weight: bold;
@@ -112,18 +109,13 @@
             $("#loading").show();
             return true;
         }
-        $( document ).ready(function() {
-            if ($("#alert").length == 0){
-                     $("#pan").height("430px");
-            }
-        });
     </script>
-    <div class="text-center">
+    <div class="text-center" id="mainContent" class="container">
 
-        <div class="well" id="well">
+        <div id="well">
             
 
-            <div class="panel panel-default" id= "pan" style="width: 270px; margin-left: auto; margin-right: auto; height: 480px;" >
+            <div class="panel panel-default" id= "pan" style="width: 270px; margin-left: auto; margin-right: auto;" >
                 
                 <div class="panel-body" id='panel-body'>
                     <img src='static/img/loading.gif' alt='Loading...' id='loading' style='display:none;'/>
@@ -208,9 +200,6 @@
                         
 
                 </div>
-                <div class="form-group">
-                        <hr>    
-                </div>
                 <div class="panel-body" id='panel-body'>
                     
                 
@@ -218,7 +207,7 @@
                 
 
                 <div class="col-sm-offset-2 col-sm-12" style="
-    margin-top: 40px;" >
+    margin-top: 20px;" >
                                     <button class="btn btn-danger btn-block" name="submit" id="register" type="submit"  onclick="loadLoadingImage();">
                                         <span>Sing UP</span>
                                         
