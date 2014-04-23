@@ -21,24 +21,28 @@ public class EmailService {
 	private static Log log = LogFactory.getLog(EmailService.class);
 	
 	@Value("${register.confirmationEmail.username}")
-	String username;
+	private String username;
 	
 	@Value("${register.confirmationEmail.password}")
-	String password;
+	private String password;
 	
 	@Value("${register.confirmationEmail.host}")
-	String emailHost;
+	private String emailHost;
 	
 	@Value("${register.confirmationEmail.port}")
-	int emailPort;
+	private int emailPort;
 	
 	@Value("${register.confirmationEmail.usesTSL}")
-	boolean usesTSL;
+	private boolean usesTSL;
 	
 	@Value("${register.webhost}")
-	String host;
+	private String host;
+	
+	private Properties props;
 	
 	private ThreadPoolTaskExecutor taskExecutor;
+	
+	private Session session;
 	
     public EmailService() {
         this.taskExecutor = new ThreadPoolTaskExecutor();
@@ -48,24 +52,22 @@ public class EmailService {
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         taskExecutor.afterPropertiesSet();
     }
-			 
-	public void sendRegistrationMail(CustomUser user) throws AddressException, MessagingException {
-		 
-        
-        
-        Properties props = new Properties();
+    
+    public void init() {
+        props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", usesTSL);
         props.put("mail.smtp.host", emailHost);
         props.put("mail.smtp.port", emailPort);
-		
-        Session session = Session.getInstance(props,
+        session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
             		protected PasswordAuthentication getPasswordAuthentication() {
             			return new PasswordAuthentication(username, password);
             		}
         		});
- 
+    }
+			 
+	public void sendRegistrationMail(CustomUser user) throws AddressException, MessagingException {	
         final Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(username));
         message.setRecipients(Message.RecipientType.TO,
@@ -80,6 +82,31 @@ public class EmailService {
                 "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + CustomJdbcUserDetailsManager.generateConfirmationToken(user) +
                 "'><b>Activate Account</b></a>"+
                 "<br/>*************************************** ", "text/html" );
+        
+        Runnable r = new Runnable() {
+            public void run() {
+            	try {
+					Transport.send(message);
+				} catch (MessagingException e) {
+					log.error(e.getMessage());
+				}
+            }
+        };
+        taskExecutor.execute(r);
+    }
+	
+	public void sendUserEnabledMail(CustomUser user) throws AddressException, MessagingException {	
+        final Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(username));
+        message.setRecipients(Message.RecipientType.TO,
+                InternetAddress.parse(user.getEmail()));
+        message.setSubject( user.getFullName() + " your account is enabled");
+        message.setContent("Dear "+ user.getFullName() + ", your account is enabled, <br>"+
+                "Now you can use LiquidML at full power:"+
+                "<br/>Username : <b>" + user.getUsername() +"</b>"+
+                "<br/>Use it now : <br>" +
+                "<a href='" + host + "'><b>LiquidML</b></a>"
+                , "text/html" );
         
         Runnable r = new Runnable() {
             public void run() {
