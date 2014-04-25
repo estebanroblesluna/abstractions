@@ -146,10 +146,11 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 		return this.object;
 	}
 
-	public void perform(String actionName, String[] arguments) throws ServiceException {
+	public Object perform(String actionName, String[] arguments) throws ServiceException {
 		if (this.object != null) {
 			try {
-				MethodUtils.invokeMethod(this.object, actionName, arguments);
+				Object result = MethodUtils.invokeMethod(this.object, actionName, arguments);
+				return result;
 			} catch (NoSuchMethodException e) {
 				throw new ServiceException("Error invoking the method");
 			} catch (IllegalAccessException e) {
@@ -158,6 +159,8 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 				throw new ServiceException("Error invoking the method");
 			}
 		}
+		
+		return null;
 	}
 
 	public boolean hasBreakpoint() {
