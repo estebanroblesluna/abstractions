@@ -128,7 +128,7 @@
         $("#deleteFile").click(function(e){
         	e.preventDefault();
         	$(".selectedFile").each(function(){
-        		var filename = $(this).parent().attr("path");
+        		var filename = $(this).attr("path");
         		var self = this;
         		$.ajax({
            			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,

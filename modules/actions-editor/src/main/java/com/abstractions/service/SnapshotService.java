@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.model.Environment;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
 import com.abstractions.model.Resource;
@@ -100,13 +101,14 @@ public class SnapshotService {
 	}
 	
 	@Transactional
-	public void generateSnapshot(long applicationId) {
+	public void generateSnapshot(long applicationId, Environment env) {
 		Application application = this.applicationService.getApplication(applicationId);
 		
 		ApplicationSnapshot snapshot = new ApplicationSnapshot(application);
+		snapshot.setEnvironment(env);
 		
 		//clone all properties
-		for (Property property : application.getProperties()) {
+		for (Property property : application.getProperties(env)) {
 			try {
 				Property clonedProperty = property.clone();
 				this.repository.save(clonedProperty);
@@ -176,6 +178,7 @@ public class SnapshotService {
 					continue;
 				}
 			}
+			
 			for (String filename : this.resourceService.listResources(application.getId())) {
 				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
 				zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
