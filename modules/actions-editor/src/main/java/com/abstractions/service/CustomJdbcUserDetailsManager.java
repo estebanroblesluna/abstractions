@@ -148,7 +148,7 @@ public class CustomJdbcUserDetailsManager extends JdbcUserDetailsManager {
 		getJdbcTemplate().update(enableSql, username);		
 	}
 	
-    private CustomUser loadUserByUsernameWithoutAuths(String username) {
+    public CustomUser loadUserByUsernameWithoutAuths(String username) {
         List<CustomUser> users = getJdbcTemplate().query(usersByUsernameQuery, new String[] {username}, new RowMapper<CustomUser>() {
             public CustomUser mapRow(ResultSet rs, int rowNum) throws SQLException {
                 String username = rs.getString(1);

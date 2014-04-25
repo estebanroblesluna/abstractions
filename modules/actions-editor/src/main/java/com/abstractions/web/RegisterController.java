@@ -1,17 +1,12 @@
 package com.abstractions.web;
 
-import java.util.ArrayList;
-import java.util.Date;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.validation.Valid;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.service.CustomJdbcUserDetailsManager;
+import com.abstractions.service.CustomUserService;
 
 /**
  * Controller for Register user
@@ -30,12 +25,9 @@ import com.abstractions.service.CustomJdbcUserDetailsManager;
 public class RegisterController {
 	
 	private static Log log = LogFactory.getLog(RegisterController.class);
-	
+
 	@Autowired
-	CustomJdbcUserDetailsManager userManager; 
-	
-	@Autowired
-	EmailService confirmationEmail;
+	CustomUserService service;
 	
 	@RequestMapping(value="/register", method = RequestMethod.GET)
 	public ModelAndView register() {
@@ -48,29 +40,15 @@ public class RegisterController {
 		
 		if(result.hasErrors())
 			return mv;
-            
-		boolean enabled = false;
-		boolean confirmed = false;
-		String sha1password = DigestUtils.shaHex(form.getPassword());
-		ArrayList<GrantedAuthorityImpl> auths = new ArrayList<GrantedAuthorityImpl>();
-		auths.add(new GrantedAuthorityImpl("ROLE_USER"));
-        
-		CustomUser newUser = new CustomUser(form.getUsername(), sha1password, form.getEmail(), form.getFullName(), new Date(), enabled, confirmed, auths);
-		
+
 		try {
-			userManager.createUser(newUser);
+			service.registerUser(form.getUsername(), form.getPassword(), form.getEmail(), form.getFullName());
 		} catch (UsernameExistsException e) {
 			mv.addObject("usernameExistsError","Username already exists");
 			return mv;
 		} catch (EmailExistsException e) {
 			mv.addObject("emailExistsError", "Email already exists");
 			return mv;
-		}
-		
-		try {
-			confirmationEmail.sendRegistrationMail(newUser);
-		} catch (AddressException e) {
-			log.error(e.getMessage());
 		} catch (MessagingException e) {
 			log.error(e.getMessage());
 		}
@@ -80,11 +58,7 @@ public class RegisterController {
 	
 	@RequestMapping(value="/register/confirm")
 	public String confirm(@RequestParam("username") String username, @RequestParam("token") String token) {
-		try {
-			userManager.confirmUser(username, token);
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
+		service.confirmUser(username, token);
 		return "redirect:/login/";
 	}
 
