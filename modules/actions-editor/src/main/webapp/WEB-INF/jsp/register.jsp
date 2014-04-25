@@ -15,7 +15,6 @@
         .col-sm-offset-1{
             margin-left: 0%;
         }
-        
         .whiteBackground {
           background-color: #FFF;
         }
@@ -49,37 +48,37 @@
                     <div id="panel-form-body">
                         <form:form class="form-horizontal" role="form" name='form' action="register" method="POST" modelAttribute="registerForm"  >
                             <div class="form-group">
-                                <label for="inputUsername" class="col-sm-2 control-label" style="font-size: smaller">Username</label>
+                                <label for="inputUsername" class="col-sm-2 control-label">Username</label>
                                 <div class="col-sm-10">
                                 	<form:errors path="username" cssClass="alert-danger" element="div"></form:errors>
                                     <form:input path="username" type="text" class="form-control" id="inputUsername"  name='username' />
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="inputPassword3" class="col-sm-2 control-label"style="font-size: smaller">Password</label>
+                                <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
                                 <div class="col-sm-10">
                                 	<form:errors path="password"  cssClass="alert-danger" element="div"></form:errors>
                                     <form:input path="password" type="password" class="form-control" id="inputPassword3"  name='password' />
                                 </div>
                             </div>
                             <div class="form-group">
-                            	<label for="inputEmail" class="col-sm-2 control-label" style="font-size: smaller">Email</label>
+                            	<label for="inputEmail" class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-10">
                                 	<form:errors path="email"  cssClass="alert-danger" element="div"></form:errors>
                                     <form:input path="email" type="text" class="form-control" id="inputEmail"  name='email' />
                                 </div>
                             </div>
                             <div class="form-group">
-                            	<label for="inputName" class="col-sm-2 control-label"style="font-size: smaller">Full Name</label style="font-size: small">
-                                <div class="col-sm-10">
-                                	<form:errors path="fullName"  cssClass="alert-danger" element="div"></form:errors>
-                                    <form:input path="fullName" type="text" class="form-control" id="inputName"  name='fullName' />
+                            	<label for="inputName" class="col-sm-2 control-label">Full Name</label class="initialism">
+                                    <div class="col-sm-10">
+                                        <form:errors path="fullName"  cssClass="alert-danger" element="div"></form:errors>
+                                        <form:input path="fullName" type="text" class="form-control" id="inputName"  name='fullName' />
+                                    </div>
                                 </div>
-                            </div>
                             <hr>
                             <div class="form-group">
                                 <div class="col-sm-offset-1 col-sm-12">
-                                    <button class="btn btn-success btn-block" name="submit" type="submit" onclick="alto()">
+                                    <button class="btn btn-success btn-block" name="submit" type="submit">
                                         <span>Submit</span>
                                         <span class="glyphicon glyphicon-ok-sign"></span>
                                         
