@@ -20,7 +20,7 @@ public class HttpReceiver extends HttpServlet {
 	public static final String HTTP_EXCEPTION        = "_HTTP_EXCEPTION";
 
 	private final HttpReceiverAsyncListener listener;
-	private volatile HttpMessageSource messageSource;
+	private volatile AbstractHttpMessageSource messageSource;
 
 	public HttpReceiver() {
 		this.listener = new HttpReceiverAsyncListener();
@@ -51,7 +51,11 @@ public class HttpReceiver extends HttpServlet {
 		});
 	}
 
-	public void setMessageSource(HttpMessageSource messageSource) {
+	public void setMessageSource(AbstractHttpMessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+
+	public AbstractHttpMessageSource getMessageSource() {
+		return messageSource;
 	}
 }

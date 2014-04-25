@@ -26,6 +26,10 @@
   <import resource="rest.xml" />
   <import resource="dust.xml" />
   
+  <!-- MODULES -->
+  <import resource="classpath:http-module.xml" />
+  
+  
   <mvc:annotation-driven />
   
   <context:component-scan base-package="com.abstractions.service.rest" />
