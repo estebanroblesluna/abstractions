@@ -70,6 +70,15 @@ public class Application {
 		return Collections.unmodifiableList(properties);
 	}
 	
+	public List<Property> getProperties(Environment env) {
+		List<Property> ret = new ArrayList<Property>();
+		for(Property p : this.properties ){
+			if(p.getEnvironment() == env)
+				ret.add(p);
+		}
+		return Collections.unmodifiableList(ret);
+	}
+	
 	public List<Flow> getFlows() {
 		return Collections.unmodifiableList(flows);
 	}
@@ -90,8 +99,8 @@ public class Application {
 		return team;
 	}
 	
-	public String getProperty(String propertyName){
-		for(Property property : this.getProperties()){
+	public String getProperty(String propertyName, Environment env){
+		for(Property property : this.getProperties(env)){
 			if(property.getName().equals(propertyName))
 				return property.getValue();
 		}

@@ -35,5 +35,6 @@ mysql -u root < $BASEDIR/migration/0.1/extend-resource-blob-type.sql
 mysql -u root < $BASEDIR/migration/0.1/initial-resources.sql
 mysql -u root < $BASEDIR/migration/0.1/update-resources-table.sql
 mysql -u root < $BASEDIR/migration/0.1/add-logging-info.sql
+mysql -u root < $BASEDIR/migration/0.1/update-snapshot-table.sql
 
 echo -e "${green}Done!${reset}";

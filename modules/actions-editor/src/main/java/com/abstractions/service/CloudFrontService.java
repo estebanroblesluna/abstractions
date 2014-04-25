@@ -91,8 +91,8 @@ public class CloudFrontService {
 	public void distributeResources(long snapshotId){
 		
 		ApplicationSnapshot snapshot = snapshotService.getSnapshot(snapshotId);
-		String accessKey = snapshot.getApplication().getProperty(awsAccessKeyProperty);
-		String secretKey = snapshot.getApplication().getProperty(awsSecretKeyProperty);
+		String accessKey = snapshot.getProperty(awsAccessKeyProperty);
+		String secretKey = snapshot.getProperty(awsSecretKeyProperty);
 		if((secretKey==null || accessKey==null))
 			return;
 		

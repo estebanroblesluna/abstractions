@@ -16,6 +16,7 @@ public class ApplicationSnapshot {
 	private List<Property> properties;
 	private Application application;
 	private List<Resource> resources;
+	private Environment environment;
 
 	public ApplicationSnapshot(){
 		
@@ -27,6 +28,7 @@ public class ApplicationSnapshot {
 		this.properties = new ArrayList<Property>();
 		this.application = application;
 		this.resources = new ArrayList<Resource>();
+		this.setEnvironment(null);
 	}
 
 	public void addProperty(Property property) {
@@ -67,5 +69,27 @@ public class ApplicationSnapshot {
 
 	public Application getApplication() {
 		return application;
+	}
+
+	/**
+	 * @return the environment
+	 */
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	/**
+	 * @param environment the environment to set
+	 */
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
+	
+	public String getProperty(String propertyName){
+		for (Property property : this.properties ){
+			if(property.getName().equals(propertyName))
+				return property.getValue();
+		}
+		return null;
 	}
 }
