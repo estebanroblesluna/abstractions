@@ -100,9 +100,9 @@
                 <div class="row" style="margin-top:30px">
                   <p>Don't have an account?</p>
                   <div class="col-md-12 col-sm-12">
-                    <button class="btn btn-danger btn-block" name="submit" id="register" type="submit" onclick="loadLoadingImage();">
+                    <a class="btn btn-danger btn-block" name="submit" id="register" type="submit" href="register">
                       <span>Sign up</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
             </div>
