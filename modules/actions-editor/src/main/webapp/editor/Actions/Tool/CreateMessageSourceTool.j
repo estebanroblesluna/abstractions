@@ -66,6 +66,15 @@
 		[newFigure switchToEditMode];
 	}
 	
+	var elementName = [newModel elementName];
+    if (elementName == "HTTP_MESSAGE_SOURCE") {
+	    var openTestUrlMenu = [[CPMenuItem alloc] initWithTitle:@"Open test url" action: @selector(openTestUrl:) keyEquivalent:@""];
+	    [openTestUrlMenu setTarget: newFigure];
+	    [openTestUrlMenu setEnabled: YES];
+	    var contextMenu = [newFigure menu];
+	    [contextMenu addItem: openTestUrlMenu];
+    }
+    
 	[[Actions mode] createMessageSourceStateFigure: newFigure drawing: aDrawing point: aPoint];
 
 	return newFigure;

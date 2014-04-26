@@ -35,7 +35,7 @@
     	arguments: nil];
     	
     [[self model] messageSourceState: "START"];
-} 
+}
 
 - (void) stop: (id) sender 
 { 
@@ -45,6 +45,23 @@
     	
     [[self model] messageSourceState: "STOP"];
 } 
+
+- (void) openTestUrl: (id) sender 
+{
+	var w = window.open('', '_blank');
+	
+	var callback = (function(theWindow) {
+		return function(result) {
+			theWindow.location = result;
+		};
+	})(w);
+	
+	[[[self model] api]
+		perform: @"getTestUrl"
+		arguments: nil
+		onResponse: callback]
+}
+
 
 - (id) acceptsNewEndingChain
 {

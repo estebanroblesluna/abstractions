@@ -303,12 +303,20 @@
 
 - (id) perform: (id) actionName arguments: (id) anArrayOfArguments
 {
+	return [self perform: actionName arguments: anArrayOfArguments onResponse: nil];
+}
+
+- (id) perform: (id) actionName arguments: (id) anArrayOfArguments onResponse: (id) aCallback
+{
 	CPLog.debug("Performing action of " + _elementId + " action " + actionName + " arguments " + anArrayOfArguments);
 	$.ajax({
 		type: "POST",
 		url: "../service/element/" + _contextId + "/" + _elementId + "/action/" + actionName
 	}).done(function( result ) {
 		CPLog.debug("Action performed of " + _elementId + " action " + actionName + " arguments " + anArrayOfArguments);
+		if (aCallback != nil) {
+			aCallback.call(aCallback, result.result);
+		}
 	});
 
 	return self;
