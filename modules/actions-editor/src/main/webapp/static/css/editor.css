@@ -55,3 +55,7 @@ html, body, .container, #editor-container, #tree-container {
 #zipUploadForm {
 	display: inline-block;
 }
+
+.light{
+	color: #D0D0D0;
+}

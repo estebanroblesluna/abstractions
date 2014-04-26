@@ -45,6 +45,7 @@
             <tr>
               <th>#</th>
               <th>Snapshot date</th>
+              <th>Environment</th>
               <th></th>
             </tr>
           </thead>
@@ -53,6 +54,7 @@
             <tr>
               <td>${snapshot.id}</td>
               <td>${snapshot.date}</td>
+              <td>${snapshot.environment}</td>
               <td><a href="/teams/${teamId}/applications/${applicationId}/snapshots/${snapshot.id}/deployments/">Deployments</a>
             </tr>
           </c:forEach>

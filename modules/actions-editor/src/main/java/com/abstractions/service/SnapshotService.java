@@ -194,6 +194,11 @@ public class SnapshotService {
 				zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
 				IOUtils.write(flow.getJson(), zipOutputStream);
 			}
+			//Properties
+			zipOutputStream.putNextEntry(new ZipEntry("properties"));
+			for(Property property : snapshot.getProperties()){
+			  IOUtils.write(property.getName() + " = " + property.getValue()+"\n", zipOutputStream);
+			}
 			zipOutputStream.close();
 		} catch (IOException e) {
 			log.warn("Error persisting snapshot", e);

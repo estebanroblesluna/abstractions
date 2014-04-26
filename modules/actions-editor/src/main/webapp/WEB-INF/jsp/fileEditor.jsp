@@ -151,12 +151,12 @@
 
     <div id="alerts"></div>
     <div class="row" id='toolbar'>
-      <label>Resource Type:</label>
+      <label class="light">Resource Type:</label>
 	  <div class="btn-group" data-toggle="buttons">
-		  <button class="btn active" id="publicResBtn">
+		  <button class="btn btn-primary active" id="publicResBtn">
 		    <input type="radio" name="resType" id="resPublic"> Public
 		  </button>
-		  <button class="btn" id="privateResBtn">
+		  <button class="btn btn-primary" id="privateResBtn">
 		    <input type="radio" name="resType" id="resPrivate"> Private
 		  </button>
 	  </div>
