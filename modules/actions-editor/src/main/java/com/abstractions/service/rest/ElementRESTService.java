@@ -261,8 +261,11 @@ public class ElementRESTService {
 			arguments = argumentsAsString.split(",");
 		}
 		try {
-			definition.perform(actionName, arguments);
-			return ResponseUtils.ok();
+			Object result = definition.perform(actionName, arguments);
+			String resultAsString = result == null 
+					? "null"
+					: result.toString();
+			return ResponseUtils.ok(new Attribute("result", resultAsString));
 		} catch (ServiceException e) {
 			return ResponseUtils.fail("Error performing operation");
 		}

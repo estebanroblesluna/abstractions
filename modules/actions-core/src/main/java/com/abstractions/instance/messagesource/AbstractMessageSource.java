@@ -30,7 +30,7 @@ public class AbstractMessageSource implements MessageSource, IdentificableMutabl
 		this.listeners.remove(listener);
 	}
 
-	protected Message newMessage(Message message) {
+	public Message newMessage(Message message) {
 		Message response = message;
 		
 		if (this.mainListener != null) {

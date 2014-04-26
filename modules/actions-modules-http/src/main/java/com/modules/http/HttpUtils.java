@@ -20,6 +20,8 @@ public class HttpUtils
 {
   private static Log log = LogFactory.getLog(HttpUtils.class);
 
+  public static final String DEV_HTTP_PARAM = "liquidML_key";
+  
   public static Message readFrom(HttpResponse response, boolean streaming)
   {
     Message message = new Message();

@@ -26,6 +26,10 @@
   <import resource="rest.xml" />
   <import resource="dust.xml" />
   
+  <!-- MODULES -->
+  <import resource="classpath:http-module.xml" />
+  
+  
   <mvc:annotation-driven />
   
   <context:component-scan base-package="com.abstractions.service.rest" />
@@ -173,8 +177,9 @@
             factory-method="noOpText" />
  
   
-  <bean id="signInAdapter"  
-  class="com.abstractions.web.SignInAdapterImpl" /> 
+  <bean id="signInAdapter" class="com.abstractions.web.SignInAdapterImpl">
+    <property name="enabled" value="${social.login.enabled}" />
+  </bean> 
   
   <bean class="org.springframework.social.connect.web.ProviderSignInController"> 
     <!-- relies on by-type autowiring for the constructor-args -->    
