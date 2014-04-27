@@ -68,6 +68,10 @@
 
   <bean class="com.abstractions.utils.ApplicationContextHolder">
   </bean>
+  
+  <bean id="dustCompilerSnapshotProcessor" class="com.abstractions.service.DustCompilerSnapshotProcessor">
+  	<constructor-arg index="0" ref="resourceBasedDustTemplateCompiler" />
+  </bean>
 
   <bean id="snapshotService" class="com.abstractions.service.SnapshotService">
     <constructor-arg index="0" ref="repository" />
@@ -81,7 +85,12 @@
     		</bean>
     	</list>
     </constructor-arg>
-    <constructor-arg index="5" value="./files" />
+    <constructor-arg index="5">
+    	<list>
+    		<ref bean="dustCompilerSnapshotProcessor" />
+    	</list>
+    </constructor-arg>
+    <constructor-arg index="6" value="./files" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">
