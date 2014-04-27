@@ -49,8 +49,12 @@
                     </div>
                   </c:if>
                   
-                  <h3 class="registerTitle">Register</h3>
                   <form:form class="form-horizontal" role="form" name='form' action="register" method="POST" modelAttribute="registerForm">
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12">
+                          <img src="static/img/logo.png" />
+                        </div>
+                    </div>
                     <div class="form-group">
                       <label for="inputUsername" class="col-sm-3 control-label">Username</label>
                       <div class="col-sm-9 controls">
