@@ -47,6 +47,11 @@
                         <form class="form-horizontal" role="form" name='f' action="<c:url value='j_spring_security_check'/>" method="POST" >
                             <div class="form-group">
                                 <div class="col-md-12 col-sm-12">
+                                  <img src="static/img/logo.png" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12 col-sm-12">
                                     <input type="text" class="form-control" id="inputEmail3" placeholder="Username" name='j_username'>
                                 </div>
                             </div>
