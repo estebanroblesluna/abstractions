@@ -30,8 +30,13 @@
         }
     </style>
         <div class="container">
+          
           <div class="row" style="margin-top: 50px">
-            <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-4 col-xs-offset-4 whiteBackground well" id="pan">
+            <div class="alert alert-info" id="info" style="text-align: center">
+                <span class="glyphicon glyphicon-info-sign"></span>
+                Please remember that your account will be <strong>enabled</strong> after our admins check your information 
+            </div>
+            <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-4 col-xs-offset-4 whiteBackground well" id="pan" style="min-width: 324px;">
               <div class="container text-center">
                 <div class="row">
                   <c:set var="usernameExistsError" value="${usernameExistsError}"/>

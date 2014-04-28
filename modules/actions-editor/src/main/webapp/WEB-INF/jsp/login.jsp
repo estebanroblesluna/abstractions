@@ -37,7 +37,17 @@
     
     <div class="text-center" class="container">
         <div class="row" style="margin-top: 50px">
-            <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-4 col-xs-offset-4 whiteBackground well" id="pan">
+			<c:if test='${not empty param.confirmed}'>
+				<div class="alert alert-success" id="info" style="min-width:620px; max-width: 1170px; margin-right: auto; margin-left: auto">
+					<span class="glyphicon glyphicon-ok"></span>
+					Your e-mail has been confirmed
+				</div>
+				<div class="alert alert-info" id="info" style="min-width:620px; max-width: 1170px; margin-right: auto; margin-left: auto">
+					<span class="glyphicon glyphicon-info-sign" ></span>
+					Please remember that your account will be <strong>enabled</strong> after our admins check your information
+				</div>
+			</c:if>
+			<div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-4 col-xs-offset-4 whiteBackground well" id="pan" style="min-width: 340px;">
               <div class="container">
                 <div class="row">
                   <div class="col-sm-12 col-md-12">
@@ -75,7 +85,7 @@
                                     <strong>Error: </strong>
                                     ${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
                                 </div>
-                            </c:if> 
+                            </c:if>
                         </form>
                     </div>
                   </div>
