@@ -59,7 +59,7 @@ public class RegisterController {
 	@RequestMapping(value="/register/confirm")
 	public String confirm(@RequestParam("username") String username, @RequestParam("token") String token) {
 		service.confirmUser(username, token);
-		return "redirect:/login/";
+		return "redirect:/login?confirmed=true/";
 	}
 
 }
