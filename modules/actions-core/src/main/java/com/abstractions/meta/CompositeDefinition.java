@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.abstractions.api.ApplicationAware;
 import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
 import com.abstractions.api.IdentificableMutable;
@@ -66,6 +67,9 @@ public abstract class CompositeDefinition extends ElementDefinition {
 						if (element instanceof IdentificableMutable) {
 							((IdentificableMutable) element).setId(elementTemplate.getId());
 						}
+						if (element instanceof ApplicationAware) {
+							((ApplicationAware) element).setApplicationId(this.getApplicationId());
+						}
 						compositeTemplate.afterInstantiation(element, elementTemplate);
 						compositeElement.addObject(elementTemplate.getId(), element);
 					}
@@ -79,6 +83,11 @@ public abstract class CompositeDefinition extends ElementDefinition {
 		return compositeElement;
 	}
 	
+	protected String getApplicationId() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
 	protected CompositeElementImpl basicCreateInstance(CompositeTemplate compositeTemplate) {
 		return new CompositeElementImpl(compositeTemplate);
 	}

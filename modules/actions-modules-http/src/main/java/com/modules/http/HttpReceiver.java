@@ -36,6 +36,8 @@ public class HttpReceiver extends HttpServlet {
 		final Message message = HttpUtils.readFrom(request, false);
 
 		this.messageSource = (AbstractHttpMessageSource) request.getServletContext().getAttribute(MESSAGE_SOURCE);
+
+		message.putProperty("actions.applicationId", this.messageSource.getApplicationId());
 		
 		Long timeout = ExpressionUtils.evaluateNoFail(this.messageSource.getTimeoutExpression(), message, -1l);
 		context.setTimeout(timeout);
