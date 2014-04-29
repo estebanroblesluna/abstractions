@@ -1,10 +1,15 @@
 package com.modules.http;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.abstractions.api.Message;
 import com.abstractions.api.Startable;
 import com.abstractions.api.Terminable;
 
 public class HttpMessageSource extends AbstractHttpMessageSource implements Terminable, Startable {
+
+	private static Log log = LogFactory.getLog(HttpMessageSource.class);
 
 	private volatile int port;
 
@@ -15,8 +20,17 @@ public class HttpMessageSource extends AbstractHttpMessageSource implements Term
 	public synchronized void start() {
 		this.stopCurrentServer();
 
-		HttpServerHolder.getInstance().start(this.port);
-		HttpServerHolder.getInstance().register(this, this.port);
+		try {
+			HttpServerHolder.getInstance().start(this.port);
+		} catch (Exception e) {
+			log.warn("Error starting server", e);
+		}
+		
+		try {
+			HttpServerHolder.getInstance().register(this, this.port);
+		} catch (Exception e) {
+			log.warn("Error registering server", e);
+		}
 	}
 
 	public synchronized void stop() {
