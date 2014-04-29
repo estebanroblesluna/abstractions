@@ -55,7 +55,7 @@ INSERT INTO `router_definition` (`element_definition_id`, `router_evaluator_impl
 INSERT INTO `router_definition` (`element_definition_id`, `router_evaluator_implementation`, `is_router_evaluator_script`) VALUES (7,'com.core.interpreter.WireTapRouterEvaluator',0);
 
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (1,1,'name','Name','STRING','New script');
-INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (2,1,'script','Script','STRING','');
+INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (2,1,'script','Script','SCRIPT','');
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (3,2,'name','Name','STRING','New next in chain connection');
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (4,3,'name','Name','STRING','New choice router');
 INSERT INTO `element_property_definition` (`property_definition_id`, `element_definition_id`, `name`, `display_name`, `property_type`, `default_value`) VALUES (5,4,'name','Name','STRING','New choice connection');
