@@ -68,3 +68,8 @@ mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-resource
 echo -e "${yellow}Executing add-logging-info.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/add-logging-info.sql
 
+
+
+
+echo -e "${yellow}Executing hello-world-sample${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sample.sql
