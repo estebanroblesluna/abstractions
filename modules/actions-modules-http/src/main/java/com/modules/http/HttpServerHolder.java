@@ -38,11 +38,9 @@ public class HttpServerHolder {
 	}
 	
 	private final Map<Integer, JettyHttpServer> servers;
-	private final Map<Integer, HttpReceiver> receivers;
 	
 	private HttpServerHolder() {
 		this.servers = new ConcurrentHashMap<Integer, JettyHttpServer>();
-		this.receivers = new ConcurrentHashMap<Integer, HttpReceiver>();
 	}
 	
 	public void start(Integer port) {
@@ -54,18 +52,19 @@ public class HttpServerHolder {
 	}
 	
 	public void register(HttpMessageSource messageSource, Integer port) {
-		this.getServer(port); //make sure the receiver is created
-		HttpReceiver receiver = this.receivers.get(port);
+		JettyHttpServer server = this.getServer(port); //make sure the receiver is created
 		
 		if (this.isDev()) {
-			if (receiver.getMessageSource() == null) {
-				receiver.setMessageSource(new DevHttpMessageSource());
+			AbstractHttpMessageSource ms = (AbstractHttpMessageSource) server.getHandler().getAttribute(HttpReceiver.MESSAGE_SOURCE);
+			if (ms == null) {
+				ms = new DevHttpMessageSource();
+				server.getHandler().setAttribute(HttpReceiver.MESSAGE_SOURCE, ms);
 			}
 			
-			DevHttpMessageSource devMessageSource = (DevHttpMessageSource) receiver.getMessageSource();
+			DevHttpMessageSource devMessageSource = (DevHttpMessageSource) ms;
 			devMessageSource.addSource(messageSource);
 		} else {
-			receiver.setMessageSource(messageSource);
+			server.getHandler().setAttribute(HttpReceiver.MESSAGE_SOURCE, messageSource);
 		}
 	}
 
@@ -89,7 +88,6 @@ public class HttpServerHolder {
 						if (!port.equals(DEV_PORT)) {
 							JettyHttpServer server = this.getServer(DEV_PORT);
 							this.servers.put(port, server);
-							this.receivers.put(port, this.receivers.get(DEV_PORT));
 						} else {
 							return this.buildServerAndReceiver(port); //DEV PORT case
 						}
@@ -106,17 +104,13 @@ public class HttpServerHolder {
 	private JettyHttpServer buildServerAndReceiver(Integer port) {
 		JettyHttpServer server = new JettyHttpServer(port);
 		ServletHolder holder = server.addServlet(HttpReceiver.class, "/");
-		HttpReceiver receiver = null;
-		
 		try {
 			holder.start();
-			receiver = (HttpReceiver) holder.getServlet();
 		} catch (Exception e) {
 			throw new RuntimeException("Can't start servlet", e);
 		}
 		
 		this.servers.put(port, server);
-		this.receivers.put(port, receiver);
 		
 		return server;
 	}
