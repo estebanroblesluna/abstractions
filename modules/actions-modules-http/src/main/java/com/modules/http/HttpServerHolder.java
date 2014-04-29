@@ -70,7 +70,9 @@ public class HttpServerHolder {
 
 	public void stop(Integer port) {
 		try {
-			this.getServer(port).stop();
+			if (!this.isDev()) {
+				this.getServer(port).stop();
+			}
 		} catch (Exception e) {
 			log.warn("Error stopping http server on port " + port, e);
 		}
