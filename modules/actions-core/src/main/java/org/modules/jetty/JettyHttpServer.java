@@ -7,8 +7,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class JettyHttpServer {
-	private Server server;
-	private ServletContextHandler handler;
+	private final Server server;
+	private final ServletContextHandler handler;
 
 	public JettyHttpServer(int port) {
 		this.server = new Server(port);
@@ -31,5 +31,9 @@ public class JettyHttpServer {
 
 	public boolean isRunning() {
 		return this.server.isRunning();
+	}
+
+	public ServletContextHandler getHandler() {
+		return handler;
 	}
 }
