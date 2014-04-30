@@ -1,5 +1,7 @@
 package com.abstractions.utils;
 
+import java.util.Properties;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -27,6 +29,14 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 	
 	public Object getBean(String beanName) {
 		return this.applicationContext.getBean(beanName);
+	}
+	
+	public String getProperty(String propertyName) {
+	  try {
+      return ((Properties)this.applicationContext.getBean("applicationProperties")).getProperty(propertyName);
+    } catch (Exception e) {
+      return null;
+    }
 	}
 
 }

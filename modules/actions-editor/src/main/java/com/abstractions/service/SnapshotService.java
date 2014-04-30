@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.model.Environment;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
 import com.abstractions.model.Resource;
@@ -100,13 +101,14 @@ public class SnapshotService {
 	}
 	
 	@Transactional
-	public void generateSnapshot(long applicationId) {
+	public void generateSnapshot(long applicationId, Environment env) {
 		Application application = this.applicationService.getApplication(applicationId);
 		
 		ApplicationSnapshot snapshot = new ApplicationSnapshot(application);
+		snapshot.setEnvironment(env);
 		
 		//clone all properties
-		for (Property property : application.getProperties()) {
+		for (Property property : application.getProperties(env)) {
 			try {
 				Property clonedProperty = property.clone();
 				this.repository.save(clonedProperty);
@@ -167,6 +169,7 @@ public class SnapshotService {
 	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) throws Exception {
 		try {
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(application.getId(),snapshot.getId()));
+
 			for (ResourceAppender resourceAppender : this.resourceAppenders) {
 				for (Resource resource : resourceAppender.getResources()) {
 					zipOutputStream.putNextEntry(new ZipEntry("files/" + resource.getPath()));
@@ -176,6 +179,11 @@ public class SnapshotService {
 			for (Flow flow : application.getFlows()) {
 				zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
 				IOUtils.write(flow.getJson(), zipOutputStream);
+			}
+			//Properties
+			zipOutputStream.putNextEntry(new ZipEntry("properties"));
+			for(Property property : snapshot.getProperties()){
+			  IOUtils.write(property.getName() + " = " + property.getValue()+"\n", zipOutputStream);
 			}
 			zipOutputStream.close();
 		} catch (IOException e) {

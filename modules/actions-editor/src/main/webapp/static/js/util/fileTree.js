@@ -201,7 +201,7 @@ function FolderView(domRoot, model){
 		res.append(bullet);
 		var link = $("<a>"+model.name+"</a>")
 		res.append(link);
-		link.click(partial(parentView.fileSelectedHook,model));
+		res.click(partial(parentView.fileSelectedHook,model));
 		res.attr("path",model.getPath());
 		domNode.append(res);
 	}

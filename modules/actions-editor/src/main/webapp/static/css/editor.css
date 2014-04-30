@@ -46,9 +46,16 @@ html, body, .container, #editor-container, #tree-container {
 }
 
 .selectedFile {
-	background-color: red;
+	background-color: #3276b1;
 }
 
+.selectedFile a{
+	color: white;
+}
 #zipUploadForm {
 	display: inline-block;
+}
+
+.light{
+	color: #D0D0D0;
 }
