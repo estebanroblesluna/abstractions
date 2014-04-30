@@ -51,9 +51,7 @@ public class SnapshotService {
 	private ResourceService privateResourceService;
 	private ApplicationService applicationService;
 	private List<ResourceAppender> resourceAppenders;
-	
-	@Autowired
-	private NamesMapping namesMapping;
+	private List<SnapshotProcessor> snapshotProcessors;
 
 	
 	private void initializeDirectory() {
@@ -83,12 +81,13 @@ public class SnapshotService {
 	
 	protected SnapshotService() { }
 	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService publicResourceService, ResourceService privateResourceService, List<ResourceAppender> resourceAppenders, String rootPath) {
+	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService publicResourceService, ResourceService privateResourceService, List<ResourceAppender> resourceAppenders, List<SnapshotProcessor> snapshotProcessors, String rootPath) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
 		Validate.notNull(publicResourceService);
 		Validate.notNull(privateResourceService);
 		Validate.notNull(resourceAppenders);
+		Validate.notNull(snapshotProcessors);
 		Validate.notNull(rootPath);
 		
 		this.repository = repository;
@@ -96,7 +95,8 @@ public class SnapshotService {
 		this.applicationService = applicationService;
 		this.publicResourceService = publicResourceService;
 		this.privateResourceService = privateResourceService;
-		this.setRootPath(rootPath);
+		this.snapshotProcessors = snapshotProcessors;
+		this.rootPath = rootPath;
 		this.initializeDirectory();
 	}
 	
@@ -128,7 +128,13 @@ public class SnapshotService {
 				log.warn("Error clonning flow", e);
 			}
 		}
-		
+
+		try {
+			this.processSnapshot(application, snapshot);
+		} catch (Exception e) {
+			log.error("Error when processing snapshot", e);
+		}
+
 		//clone all resources
 		Resource cloned;
 		Resource original;
@@ -152,38 +158,18 @@ public class SnapshotService {
 		
 		try {
 			this.persistSnapshot(application, snapshot);
-		} catch (MarshallingException e) {
-			log.error("Error when marshalling application snapshot", e);
+		} catch (Exception e) {
+			log.error("Error when persisting application snapshot", e);
 		}
 		CloudFrontService cf = new CloudFrontService(this);
 		cf.distributeResources(snapshot.getId());
 
 	}
 
-	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) throws MarshallingException {
+	private void persistSnapshot(Application application, ApplicationSnapshot snapshot) throws Exception {
 		try {
-			this.processResources(application, snapshot);
 			ZipOutputStream zipOutputStream = new ZipOutputStream(this.getSnapshotOutputStream(application.getId(),snapshot.getId()));
-			/*for(Resource resource : snapshot.getResources()){
-				InputStream inputStream = resource.getInputStream();
-				List<ResourceChange> changes = this.resourceProcessor.process(resource.getPath(), inputStream);
-				for (ResourceChange change : changes) {
-					if (change.getAction().equals(ResourceAction.CREATE_OR_UPDATE)) {
-						zipOutputStream.putNextEntry(new ZipEntry("files/"+ resource.getType()+"/"+ resource.getPath()));
-						IOUtils.copy(change.getInputStream(), zipOutputStream);
-						change.getInputStream().close();
-					}
-				}
-				if (inputStream == null) {
-					continue;
-				}
-			}
-			
-			for (String filename : this.resourceService.listResources(application.getId())) {
-				InputStream inputStream = this.resourceService.getContentsOfResource(application.getId(), filename);
-				zipOutputStream.putNextEntry(new ZipEntry("files/" + filename));
-				IOUtils.copy(inputStream, zipOutputStream);
-			}*/
+
 			for (ResourceAppender resourceAppender : this.resourceAppenders) {
 				for (Resource resource : resourceAppender.getResources()) {
 					zipOutputStream.putNextEntry(new ZipEntry("files/" + resource.getPath()));
@@ -205,25 +191,9 @@ public class SnapshotService {
 		}
 	}
 	
-	private void processResources(Application application, ApplicationSnapshot snapshot) throws MarshallingException, IOException {
-		for (Flow flow : snapshot.getFlows()) {
-			ApplicationDefinition applicationDefinition = new ApplicationDefinition(application.getName());
-			CompositeTemplate template = new CompositeTemplateMarshaller(this.namesMapping).unmarshall(applicationDefinition, flow.getJson());
-			Iterator<ElementTemplate> elementIterator = template.getDefinitions().values().iterator();
-			while (elementIterator.hasNext()) {
-				ElementTemplate element = elementIterator.next();
-				if (element.getMeta().getName().equals("RESOURCE_DUST_RENDERER")) {
-					/*
-					this.dustCompiler.mergeAndCompile(
-						application.getId(),
-						"http://localhost:8080/service/fileStore/2/files/",
-						element.getProperties().get("name"),
-						element.getProperty("bodyTemplatePath"),
-						element.getProperty("resourcesList"),
-						element.getProperty("templateRenderingList"));
-					*/
-				}
-			}				
+	private void processSnapshot(Application application, ApplicationSnapshot snapshot) throws Exception {
+		for (SnapshotProcessor snapshotProcessor : this.snapshotProcessors) {
+			snapshotProcessor.process(application, snapshot);
 		}
 	}
 

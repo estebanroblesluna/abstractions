@@ -15,6 +15,7 @@ import com.abstractions.utils.ExpressionUtils;
 @WebServlet(asyncSupported = true)
 public class HttpReceiver extends HttpServlet {
 	
+	public static final String MESSAGE_SOURCE = "MESSAGE_SOURCE";
 	private static final long serialVersionUID = 1L;
 	public static final String HTTP_RESPONSE_MESSAGE = "_HTTP_RESPONSE_MESSAGE";
 	public static final String HTTP_EXCEPTION        = "_HTTP_EXCEPTION";
@@ -34,7 +35,11 @@ public class HttpReceiver extends HttpServlet {
 		final AsyncContext context = request.startAsync(request, response);
 		final Message message = HttpUtils.readFrom(request, false);
 
-		Long timeout = ExpressionUtils.evaluateNoFail(this.messageSource.getTimeoutExpression(), message, 0l);
+		this.messageSource = (AbstractHttpMessageSource) request.getServletContext().getAttribute(MESSAGE_SOURCE);
+
+		message.putProperty("actions.applicationId", this.messageSource.getApplicationId());
+		
+		Long timeout = ExpressionUtils.evaluateNoFail(this.messageSource.getTimeoutExpression(), message, -1l);
 		context.setTimeout(timeout);
 		context.addListener(this.listener);
 
@@ -49,13 +54,5 @@ public class HttpReceiver extends HttpServlet {
 				context.complete();
 			}
 		});
-	}
-
-	public void setMessageSource(AbstractHttpMessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
-	public AbstractHttpMessageSource getMessageSource() {
-		return messageSource;
 	}
 }
