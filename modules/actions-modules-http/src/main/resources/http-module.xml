@@ -20,7 +20,8 @@
 
 
   <bean class="com.modules.http.HttpServerHolder" factory-method="initialize">
-    <constructor-arg value="${http.initization.dev.port}" />
-    <constructor-arg value="${http.initization.environment}" />
+    <constructor-arg value="${http.initialization.dev.port}" />
+    <constructor-arg value="${http.initialization.environment}" />
+    <constructor-arg value="${http.initialization.ec2dns}" />
   </bean>
 </beans>

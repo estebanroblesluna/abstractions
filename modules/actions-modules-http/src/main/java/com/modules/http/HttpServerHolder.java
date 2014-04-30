@@ -1,27 +1,38 @@
 package com.modules.http;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.modules.jetty.JettyHttpServer;
 
+import com.abstractions.http.HttpStrategy;
 import com.abstractions.model.Environment;
 
 public class HttpServerHolder {
 
 	private static Integer DEV_PORT = 9090;
 	private static Environment ENVIRONMENT = Environment.DEV;
+	private static String DNS_RESOLVER = "";
 	
 	private static Log log = LogFactory.getLog(HttpServerHolder.class);
 	private static HttpServerHolder INSTANCE;
 	
-	public static Boolean initialize(Integer devPort, Environment env) {
+	
+	public static Boolean initialize(Integer devPort, Environment env, String dnsResolver) {
 		DEV_PORT = devPort;
 		ENVIRONMENT = env;
+		DNS_RESOLVER = dnsResolver;
 		return true;
 	}
 	
@@ -38,9 +49,12 @@ public class HttpServerHolder {
 	}
 	
 	private final Map<Integer, JettyHttpServer> servers;
+	private final HttpStrategy strategy;
+	private String dns;
 	
 	private HttpServerHolder() {
 		this.servers = new ConcurrentHashMap<Integer, JettyHttpServer>();
+		this.strategy = new HttpStrategy();
 	}
 	
 	public void start(Integer port) {
@@ -119,7 +133,7 @@ public class HttpServerHolder {
 	
 	public String getTestUrl(HttpMessageSource httpMessageSource) {
 		try {
-			String serverName = java.net.InetAddress.getLocalHost().getHostName();
+			String serverName = this.getServerName();
 			Integer port = this.isDev() ? DEV_PORT : httpMessageSource.getPort();
 			String extraParam = this.isDev() ? "/?" + HttpUtils.DEV_HTTP_PARAM + "=" + httpMessageSource.getId() : "";
 			
@@ -129,6 +143,33 @@ public class HttpServerHolder {
 		}
 	}
 	
+	private String getServerName() throws UnknownHostException {
+		if (StringUtils.isNotBlank(this.dns)) {
+			return this.dns;
+		}
+		
+		HttpResponse response = null;
+		try {
+			response = this.strategy
+				.get(DNS_RESOLVER)
+				.execute();
+			
+			this.dns = IOUtils.toString(response.getEntity().getContent());
+		} catch (ClientProtocolException e) {
+			log.warn("Error resolving DNS ", e);
+		} catch (IOException e) {
+			log.warn("Error resolving DNS ", e);
+		} finally {
+			this.strategy.close(response);
+		}
+		
+		if (this.dns == null) {
+			this.dns = java.net.InetAddress.getLocalHost().getHostName();
+		}
+		
+		return this.dns;
+	}
+
 	private boolean isDev() {
 		return Environment.DEV.equals(ENVIRONMENT);
 	}

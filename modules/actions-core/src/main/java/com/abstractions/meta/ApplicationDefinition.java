@@ -63,4 +63,8 @@ public class ApplicationDefinition extends CompositeDefinition {
 	public NamesMapping getMapping() {
 		return mapping;
 	}
+	
+	protected String getApplicationId() {
+		return Long.valueOf(this.getId()).toString();
+	}
 }
