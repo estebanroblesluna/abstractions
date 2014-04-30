@@ -40,6 +40,7 @@ public class ServerController {
 	
 	private String defaultServerAppDirectory;
 	private String defaultEditorUrl;
+	private String defaultServerWar;
 
 	@RequestMapping(value = "/teams/{teamId}/serverGroups/{serverGroupId}/servers/", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("serverGroupId") long serverGroupId) {
@@ -64,6 +65,8 @@ public class ServerController {
 			serverScript = serverScript.replaceAll("\\$\\$\\$server.editor.url\\$\\$\\$", this.defaultEditorUrl);
 			serverScript = serverScript.replaceAll("\\$\\$\\$server.id\\$\\$\\$", server.getExternalId());
 			serverScript = serverScript.replaceAll("\\$\\$\\$server.key\\$\\$\\$", server.getKey());
+			serverScript = serverScript.replaceAll("\\$\\$\\$server.war.url\\$\\$\\$", this.defaultServerWar);
+			
 
 			server.setAmiScript(serverScript);
 		}
@@ -113,5 +116,14 @@ public class ServerController {
 	@Value("${server.default.editor.url}") 
 	public void setDefaultEditorUrl(String defaultEditorUrl) {
 		this.defaultEditorUrl = defaultEditorUrl;
+	}
+
+	public String getDefaultServerWar() {
+		return defaultServerWar;
+	}
+
+	@Value("${server.default.server.war.url}") 
+	public void setDefaultServerWar(String defaultServerWar) {
+		this.defaultServerWar = defaultServerWar;
 	}
 }
