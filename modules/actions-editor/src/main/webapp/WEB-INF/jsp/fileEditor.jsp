@@ -128,7 +128,7 @@
         $("#deleteFile").click(function(e){
         	e.preventDefault();
         	$(".selectedFile").each(function(){
-        		var filename = $(this).parent().attr("path");
+        		var filename = $(this).attr("path");
         		var self = this;
         		$.ajax({
            			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
@@ -151,12 +151,12 @@
 
     <div id="alerts"></div>
     <div class="row" id='toolbar'>
-      <label>Resource Type:</label>
+      <label class="light">Resource Type:</label>
 	  <div class="btn-group" data-toggle="buttons">
-		  <button class="btn active" id="publicResBtn">
+		  <button class="btn btn-primary active" id="publicResBtn">
 		    <input type="radio" name="resType" id="resPublic"> Public
 		  </button>
-		  <button class="btn" id="privateResBtn">
+		  <button class="btn btn-primary" id="privateResBtn">
 		    <input type="radio" name="resType" id="resPrivate"> Private
 		  </button>
 	  </div>

@@ -10,7 +10,7 @@ BASEDIR=$(dirname $0);
 echo -e "${yellow}Running mvn clean install -DskipTests --quiet\n${reset}";
 mvn clean install -DskipTests --quiet;
 echo -e "${yellow}Running mvn eclipse:eclipse --quiet\n${reset}";
-mvn eclipse:eclipse --quiet;
+mvn eclipse:eclipse -Dwtpversion=2.0 --quiet;
 cd config/schema;
 echo -e "${yellow}Updating database (config/recreateSchema.sh)\n${reset}";
 ./recreateSchema.sh;

@@ -1,5 +1,8 @@
 package com.abstractions.generalization;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.abstractions.api.Element;
 import com.abstractions.api.Message;
 import com.abstractions.instance.messagesource.MessageSource;
@@ -10,6 +13,8 @@ import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
+import com.abstractions.utils.ApplicationContextHolder;
+import com.abstractions.utils.LiquidMlApplicationContext;
 import com.abstractions.utils.MessageUtils;
 
 public class ApplicationTemplate extends CompositeTemplate implements MessageSourceListener {
@@ -43,11 +48,23 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 		if (appDefinition.getInterpreterDelegate() != null) {
 			interpreter.setDelegate(appDefinition.getInterpreterDelegate());
 		}
-
-		// TODO replace by real app id
-		message.putProperty(MessageUtils.APPLICATION_ID_PROPERTY, 2);
-		// TODO set all application properties here
-		message.putProperty(MessageUtils.APPLICATION_CDN_PROPERTY, "http://localhost:8123/service/fileStore/2/publicFiles/");
+		
+    // TODO replace by real app id
+		long applicationId = 2;
+		
+		message.putProperty(MessageUtils.APPLICATION_ID_PROPERTY, applicationId);
+		try {
+		  // TODO define actions.http.requestURL as a constant 
+      URL requestUrl = new URL((String) message.getProperty("actions.http.requestURL"));
+      String cdnUrl = 
+              requestUrl.getProtocol() + "://" + 
+              requestUrl.getHost() + ":" + 
+              LiquidMlApplicationContext.getInstance().getLocalCdnPort() + 
+              LiquidMlApplicationContext.getInstance().getLocalCdnBaseUrlFor(applicationId);
+      message.putProperty(MessageUtils.APPLICATION_CDN_PROPERTY, cdnUrl);
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
 		
 		Thread root = interpreter.run(message);
 		return root.getCurrentMessage();

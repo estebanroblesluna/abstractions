@@ -67,9 +67,13 @@ echo -e "${yellow}Executing update-resources-table.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-resources-table.sql
 echo -e "${yellow}Executing add-logging-info.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/add-logging-info.sql
-
-
-
-
-echo -e "${yellow}Executing hello-world-sample${reset}";
+echo -e "${yellow}Executing update-snapshot-table.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-snapshot-table.sql
+echo -e "${yellow}Executing hello-world-sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sample.sql
+echo -e "${yellow}Executing update-dust-renderer-example-flow.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-renderer-example-flow.sql
+echo -e "${green}Done!${reset}";
+
+
+
