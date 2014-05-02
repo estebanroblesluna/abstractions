@@ -73,6 +73,9 @@ echo -e "${yellow}Executing hello-world-sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sample.sql
 echo -e "${yellow}Executing update-dust-renderer-example-flow.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-renderer-example-flow.sql
+
+#v0.2
+
 echo -e "${green}Done!${reset}";
 
 
