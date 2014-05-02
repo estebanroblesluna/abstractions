@@ -4,7 +4,7 @@ then
 	echo "Server found, no need to download"
 else
 	echo "Downloading server..."
-	cd /usr/local/jetty-9.1.3/webapps/
+	cd /usr/local/jetty/current/webapps/
 	wget $$$server.war.url$$$
 	unzip server.war -d server/
 	rm server.war
@@ -21,7 +21,7 @@ else
 	echo "LiquidML app directory created"
 fi
 
-sed -i "s|server.apps.directory=[^ ]*|server.apps.directory=$$$server.apps.directory$$$|g" /usr/local/jetty-9.1.3/webapps/server/WEB-INF/classes/server.properties
-sed -i "s|server.editor.url=[^ ]*|server.editor.url=$$$server.editor.url$$$|g" /usr/local/jetty-9.1.3/webapps/server/WEB-INF/classes/server.properties
-sed -i "s|server.id=[^ ]*|server.id=$$$server.id$$$|g" /usr/local/jetty-9.1.3/webapps/server/WEB-INF/classes/server.properties
-sed -i "s|server.key=[^ ]*|server.key=$$$server.key$$$|g" /usr/local/jetty-9.1.3/webapps/server/WEB-INF/classes/server.properties
+sed -i "s|server.apps.directory=[^ ]*|server.apps.directory=$$$server.apps.directory$$$|g" /usr/local/jetty/current/webapps/server/WEB-INF/classes/server.properties
+sed -i "s|server.editor.url=[^ ]*|server.editor.url=$$$server.editor.url$$$|g" /usr/local/jetty/current/webapps/server/WEB-INF/classes/server.properties
+sed -i "s|server.id=[^ ]*|server.id=$$$server.id$$$|g" /usr/local/jetty/current/webapps/server/WEB-INF/classes/server.properties
+sed -i "s|server.key=[^ ]*|server.key=$$$server.key$$$|g" /usr/local/jetty/current/webapps/server/WEB-INF/classes/server.properties

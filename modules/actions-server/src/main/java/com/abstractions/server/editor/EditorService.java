@@ -118,6 +118,8 @@ public class EditorService {
 			log.warn("Error pinging server " + this.editorUrl);
 		} catch (JSONException e) {
 			log.warn("Error pinging server " + this.editorUrl);
+		} catch (Exception e) {
+			log.warn("Error pinging server " + this.editorUrl);
 		} finally {
 			this.strategy.close(response);
 		}
@@ -336,7 +338,7 @@ public class EditorService {
 	
 	public void processPendingDeployments(JSONObject object) throws JSONException {
 		String key = "deployments";
-		
+		log.info("[START] Processing pending deployments");
 		if (object.has(key)) {
 			JSONArray array = object.getJSONArray(key);
 			for (int i = 0; i < array.length(); i++) {
@@ -345,7 +347,10 @@ public class EditorService {
 				long applicationId = deployment.getLong("applicationId");
 				this.startDeployment(deploymentId, applicationId);
 			}
+		} else {
+			log.info("NO DEPLOYMENTS FOUND");
 		}
+		log.info("[END] Processing pending deployments");
 	}
 	
 	
@@ -355,6 +360,7 @@ public class EditorService {
 	 * @param applicationId 
 	 */
 	private void startDeployment(Long deploymentId, Long applicationId) {
+		log.info("[START] Deploying " + StringUtils.defaultString(deploymentId.toString()));
 		HttpResponse response = null;
 		try {
 			response = this.strategy
@@ -376,6 +382,7 @@ public class EditorService {
 		} finally {
 			this.strategy.close(response);
 		}
+		log.info("[END] Deploying " + StringUtils.defaultString(deploymentId.toString()));
 	}
 
 	private void notifyFailure(Long deploymentId) {
