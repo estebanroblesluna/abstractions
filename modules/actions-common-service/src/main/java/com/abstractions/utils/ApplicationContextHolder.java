@@ -3,6 +3,7 @@ package com.abstractions.utils;
 import java.util.Properties;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -28,7 +29,11 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 	}
 	
 	public Object getBean(String beanName) {
+	  try {
 		return this.applicationContext.getBean(beanName);
+	  } catch (NoSuchBeanDefinitionException e) {
+	    return null;
+	  }
 	}
 	
 	public String getProperty(String propertyName) {

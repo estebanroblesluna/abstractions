@@ -19,6 +19,9 @@
 
   <context:property-placeholder location="classpath:server.properties" ignore-unresolvable="true" />
   
+  <bean class="com.abstractions.utils.ApplicationContextHolder">
+  </bean>
+  
   <bean id="httpStrategy" class="com.abstractions.http.HttpStrategy" />
 
   <bean id="editorService" class="com.abstractions.server.editor.EditorService">
