@@ -19,6 +19,36 @@
 
   <context:property-placeholder location="classpath:server.properties" ignore-unresolvable="true" />
   
+  <context:component-scan  base-package="com.abstractions.server.service.rest" />
+  
+  <bean class="com.abstractions.utils.ApplicationContextHolder">
+  </bean>
+  
+  <bean id="privateResourceService" class="com.abstractions.service.core.FilesystemResourceService">
+    <constructor-arg index="0" value="${server.apps.directory}" />
+    <constructor-arg index="1" value="/resources/private" />
+  </bean>
+  
+  <bean id="publicResourceService" class="com.abstractions.service.core.FilesystemResourceService">
+    <constructor-arg index="0" value="${server.apps.directory}" />
+    <constructor-arg index="1" value="/resources/public" />
+  </bean>
+  
+  <bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+	<property name="properties">
+      <props>
+        <prop key="localCdnBaseUrl">${localCdnBaseUrl}</prop>
+        <prop key="localCdnPort">${localCdnPort}</prop>
+      </props>
+    </property>
+  </bean>
+  
+  <bean id="resourceBasedDustTemplateCompiler" class="com.modules.dust.ResourceBasedDustTemplateCompiler">
+  	<constructor-arg index="0" ref="publicResourceService" />
+  	<constructor-arg index="1" ref="privateResourceService" />
+  	<constructor-arg index="2"><bean class="com.modules.dust.DustConnector" /></constructor-arg>
+  </bean>
+  
   <bean id="httpStrategy" class="com.abstractions.http.HttpStrategy" />
 
   <bean id="editorService" class="com.abstractions.server.editor.EditorService">
