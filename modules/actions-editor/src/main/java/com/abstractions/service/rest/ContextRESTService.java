@@ -36,7 +36,7 @@ public class ContextRESTService {
 	private String serverId;
 	private DeploymentService deploymentService;
 	private LibraryService libraryService;
-    private IconService iconService;
+  private IconService iconService;
 	
 	public ContextRESTService(
 			DevelopmentContextHolder holder, 

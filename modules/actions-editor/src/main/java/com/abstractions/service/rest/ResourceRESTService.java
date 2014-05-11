@@ -1,5 +1,6 @@
 package com.abstractions.service.rest;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import javax.ws.rs.DELETE;
@@ -95,7 +96,7 @@ public class ResourceRESTService {
 	@GET
 	@Path("{applicationId}/snapshots/{snapshotId}")
 	public Response getSnapshot(@PathParam("applicationId") long applicationId, @PathParam("snapshotId") long snapshotId) {
-		InputStream result = this.snapshotService.getContentsOfSnapshot(applicationId, snapshotId);
+		InputStream result = new ByteArrayInputStream(this.snapshotService.getSnapshot(snapshotId).getZip());
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
