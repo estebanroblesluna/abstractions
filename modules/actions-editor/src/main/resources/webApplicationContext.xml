@@ -98,7 +98,7 @@
     		<ref bean="dustCompilerSnapshotProcessor" />
     	</list>
     </constructor-arg>
-    <constructor-arg index="6" value="./files" />
+    <constructor-arg index="6" value="${snapshot.files.location}" />
   </bean>
 
   <bean id="teamService" class="com.abstractions.service.TeamService">

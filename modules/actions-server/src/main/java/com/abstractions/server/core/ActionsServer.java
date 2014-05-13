@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
@@ -120,17 +121,22 @@ public class ActionsServer {
 	}
 
 	public void start(String applicationId, InputStream applicationZip) {
+		log.info("[START] Application id " + StringUtils.defaultString(applicationId));
 		ZipInputStream zipInputStream = new ZipInputStream(applicationZip);
 		
 		this.cleanUpApplication(applicationId);
 		
 		try {
 			ZipEntry zipEntry = zipInputStream.getNextEntry();
+			log.info("[START] Saving files " + StringUtils.defaultString(applicationId));
+
 			while (zipEntry != null) {
 				this.saveFile(applicationId, zipEntry, zipInputStream);
 				zipInputStream.closeEntry();
 				zipEntry = zipInputStream.getNextEntry();
 			}
+
+			log.info("[END] Saving files " + StringUtils.defaultString(applicationId));
 			zipInputStream.close();
 			this.startApplicationFromFiles(applicationId);
 		} catch (Exception e) {
@@ -148,6 +154,7 @@ public class ActionsServer {
 	}
 
 	private void startApplicationFromFiles(String applicationId) throws InstantiationException, IllegalAccessException, ServiceException {
+		log.info("[START] Application from files " + StringUtils.defaultString(applicationId));
 		ApplicationDefinition appDefinition = new ApplicationDefinition(applicationId);
 		File applicationDirectory = new File(this.applicationDirectory + "/" + applicationId);
 
@@ -170,7 +177,10 @@ public class ActionsServer {
 			this.statistics.put(applicationId, statistics);
 			this.definitions.put(applicationId, composite);
 			this.appDefinitions.put(applicationId, appDefinition);
+		} else {
+			log.warn("NOT FOUND Application from files " + StringUtils.defaultString(applicationId));
 		}
+		log.info("[END] Application from files " + StringUtils.defaultString(applicationId));
 	}
 
 	private void loadMapping(NamesMapping mapping, File applicationDirectory) {

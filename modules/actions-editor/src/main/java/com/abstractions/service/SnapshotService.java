@@ -169,6 +169,14 @@ public class SnapshotService {
 				zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
 				IOUtils.write(flow.getJson(), zipOutputStream);
 			}
+			for (String resourceName : this.privateResourceService.listResources(application.getId())) {
+			  zipOutputStream.putNextEntry(new ZipEntry("resources/private/" + resourceName));
+        IOUtils.write(this.privateResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
+			}
+			for (String resourceName : this.publicResourceService.listResources(application.getId())) {
+        zipOutputStream.putNextEntry(new ZipEntry("resources/public/" + resourceName));
+        IOUtils.write(this.publicResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
+      }
 			//Properties
 			zipOutputStream.putNextEntry(new ZipEntry("properties"));
 			for(Property property : snapshot.getProperties()){
