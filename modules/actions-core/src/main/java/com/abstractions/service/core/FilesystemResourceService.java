@@ -24,15 +24,15 @@ public class FilesystemResourceService implements ResourceService {
 
 	private static Log log = LogFactory.getLog(FilesystemResourceService.class);
 	
-	private static final String ENCODED_PATH_SEPARATOR = "___";
-	private static final String FILES_DIRECTORY = "files";
+	private String resourcesDirectory;
 	private String rootPath;
 	private File rootDir;
 
-	public FilesystemResourceService(String rootPath) {
+	public FilesystemResourceService(String rootPath, String resourcesDirectory) {
 		Validate.notNull(rootPath);
 
 		this.setRootPath(rootPath);
+		this.setResourcesDirectory(resourcesDirectory);
 		this.initializeDirectory();
 	}
 
@@ -61,11 +61,13 @@ public class FilesystemResourceService implements ResourceService {
 	}
 
 	private String encodePath(String path) {
-		return path.replaceAll(File.separator, ENCODED_PATH_SEPARATOR);
+	  return path;
+		//return path.replaceAll(File.separator, ENCODED_PATH_SEPARATOR);
 	}
 
 	private String decodePath(String path) {
-		return path.replaceAll(ENCODED_PATH_SEPARATOR, File.separator);
+	  return path;
+		//return path.replaceAll(ENCODED_PATH_SEPARATOR, File.separator);
 	}
 
 	/* (non-Javadoc)
@@ -94,7 +96,7 @@ public class FilesystemResourceService implements ResourceService {
 		for (Object file : FileUtils.listFiles(directory, FileFilterUtils.fileFileFilter(), FileFilterUtils.trueFileFilter())) {
 			String absolutePath = ((File) file).getAbsolutePath();
 			String currentPath = this.getRootDir().getAbsolutePath().substring(0, this.getRootDir().getAbsolutePath().indexOf(this.getRootPath()));
-			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length() + 1 + FILES_DIRECTORY.length() + 1 + new Long(applicationId).toString().length() + 1));
+			String filename = this.decodePath(absolutePath.substring(currentPath.length() + this.getRootPath().length() + 1 + this.getResourcesDirectory().length() + 1 + new Long(applicationId).toString().length() + 1));
 			files.add(filename.replace("." + File.separator, File.separator));
 		}
 		return files;
@@ -134,7 +136,7 @@ public class FilesystemResourceService implements ResourceService {
 	}
 	
 	private String buildFilesPath(long applicationId, String path) {
-		return this.getRootPath() + File.separator + applicationId + File.separator + FILES_DIRECTORY + File.separator + this.encodePath(path);
+		return this.getRootPath() + File.separator + applicationId + this.getResourcesDirectory() + File.separator + this.encodePath(path);
 	}
 
 	/* (non-Javadoc)
@@ -170,4 +172,12 @@ public class FilesystemResourceService implements ResourceService {
 	public Resource getResource(long applicationId, String path) {
 		throw new NotImplementedException();
 	}
+
+  private String getResourcesDirectory() {
+    return resourcesDirectory;
+  }
+
+  private void setResourcesDirectory(String resourcesDirectory) {
+    this.resourcesDirectory = resourcesDirectory;
+  }
 }	

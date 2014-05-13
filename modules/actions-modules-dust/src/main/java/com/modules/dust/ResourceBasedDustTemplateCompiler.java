@@ -91,7 +91,7 @@ public class ResourceBasedDustTemplateCompiler {
 		String template = this.buildMasterTemplate(compilationSpec);
 		this.dustConnector.putTemplate(compilationSpec.getTemplateName(), template);
 		compiledMasterTemplate = this.dustConnector.getCompiledTemplate(compilationSpec.getTemplateName());
-		this.publicResourceService.storeResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
+		this.privateResourceService.storeResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec), new ByteArrayInputStream(compiledMasterTemplate.getBytes()));
 		return compiledMasterTemplate;
 	}
 	
@@ -141,7 +141,7 @@ public class ResourceBasedDustTemplateCompiler {
 	@Transactional
 	public String getCompiledMasterTemplate(TemplateCompilationSpec compilationSpec) throws IOException {
 		InputStream contents = null;
-		contents = this.publicResourceService.getContentsOfResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec));
+		contents = this.privateResourceService.getContentsOfResource(compilationSpec.getApplicationId(), this.getMasterTemplateName(compilationSpec));
 		if (contents != null) {
 			return IOUtils.toString(contents);
 		}
