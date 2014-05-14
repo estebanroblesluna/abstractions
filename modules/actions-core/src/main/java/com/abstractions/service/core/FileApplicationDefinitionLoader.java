@@ -35,12 +35,8 @@ public class FileApplicationDefinitionLoader implements ApplicationDefinitionLoa
 	
 	@Override
 	public ApplicationDefinition load(long applicationId, NamesMapping mapping) {
-<<<<<<< HEAD
 		ApplicationDefinition appDefinition = new ApplicationDefinition("App " + applicationId);
 		appDefinition.setId(applicationId);
-=======
-		ApplicationDefinition appDefinition = new ApplicationDefinition(Long.valueOf(applicationId).toString());
->>>>>>> bfcfd1d3090c2fdd3b455b79665bcf7cb9442cf3
 		
 		File applicationDirectory = new File(this.baseDirectory + "/" + applicationId);
 
