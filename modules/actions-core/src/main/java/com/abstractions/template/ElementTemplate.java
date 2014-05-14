@@ -18,8 +18,8 @@ import com.abstractions.api.Element;
 import com.abstractions.api.Identificable;
 import com.abstractions.api.Startable;
 import com.abstractions.api.Terminable;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.common.ElementInterceptor;
-import com.abstractions.instance.common.PerformanceInterceptor;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
@@ -83,19 +83,9 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 		}
 	}
 	
-	public synchronized Element sync(CompositeElement container, NamesMapping mapping) throws ServiceException {
-		if (this.object == null) {
-			this.instantiate(container, mapping);
-		}
-		
-		this.initialize(container, mapping);
-		
-		return this.object;
-	}
-	
-	public synchronized Element instantiate(CompositeElement context, NamesMapping mapping) throws ServiceException {
+	public synchronized Element instantiate(CompositeElement context, NamesMapping mapping, ApplicationTemplate appTemplate) throws ServiceException {
 		try {
-			this.object = this.metaElementDefinition.instantiate(context, mapping, this);
+			this.object = this.metaElementDefinition.instantiate(context, mapping, this, appTemplate);
 			return this.object;
 		} catch (InstantiationException e) {
 			throw new ServiceException("Error creating object");
@@ -104,11 +94,11 @@ public class ElementTemplate implements Identificable, Startable, Terminable {
 		}
 	}
 	
-	public void initialize(CompositeElement container, NamesMapping mapping) throws ServiceException {
+	public void initialize(CompositeElement container, NamesMapping mapping, ApplicationTemplate appTemplate) throws ServiceException {
 		if (this.object == null) {
-			this.instantiate(container, mapping);
+			this.instantiate(container, mapping, appTemplate);
 		}
-		this.metaElementDefinition.initialize(this, this.properties, container, mapping);
+		this.metaElementDefinition.initialize(this, this.properties, container, mapping, appTemplate);
 	}
 	
 	public String getId() {

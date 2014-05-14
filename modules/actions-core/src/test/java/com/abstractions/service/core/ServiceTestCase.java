@@ -27,7 +27,7 @@ public class ServiceTestCase extends TestCase {
 	}
 
 	public void testDefinitions() throws ServiceException {
-		CompositeTemplate application = new ApplicationTemplate(new ApplicationDefinition("myApp"), this.mapping);
+	  ApplicationTemplate application = new ApplicationTemplate(new ApplicationDefinition("myApp"), this.mapping);
 		ElementTemplate addPropertyDefinition = new ElementTemplate(this.common.getDefinition("ADD_PROPERTY"));
 		ElementTemplate toStringDefinition = new ElementTemplate(this.common.getDefinition("TO_STRING"));
 		
@@ -37,7 +37,7 @@ public class ServiceTestCase extends TestCase {
 		addPropertyDefinition.setProperty("key", "http.a");
 		addPropertyDefinition.setProperty("processor", "urn:" + toStringDefinition.getId());
 		
-		application.sync(null, this.mapping);
+		application.sync();
 		CompositeElement composite = (CompositeElement) application.getInstance();
 		
 		

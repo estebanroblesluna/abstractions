@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.CompositeDefinition;
 import com.abstractions.service.core.ApplicationTransformation;
@@ -55,11 +56,11 @@ public class LazyAutorefreshableCacheTransformation implements ApplicationTransf
 	}
 	
 	@Override
-	public void transform(CompositeTemplate application) {
+	public void transform(CompositeTemplate context, ApplicationTemplate appTemplate) {
 		List<ElementTemplate> cacheAccess = new ArrayList<ElementTemplate>();
 		
 		//OBTAIN THE CONNECTION DEFINITION
-		ElementTemplate connectionDefinition = application.getDefinition(objectId);
+		ElementTemplate connectionDefinition = context.getDefinition(objectId);
 		
 		//SAVE THE PREVIOUS TARGET ID
 		String previousTargetId = connectionDefinition.getProperty("target");
@@ -70,10 +71,10 @@ public class LazyAutorefreshableCacheTransformation implements ApplicationTransf
 		ElementTemplate choiceDefinition = new ElementTemplate(this.mapping.getDefinition("CHOICE"));
 		ElementTemplate chainDefinition = new ElementTemplate(this.mapping.getDefinition("CHAIN"));
 		ElementTemplate wireTapDefinition = new ElementTemplate(this.mapping.getDefinition("WIRE_TAP"));
-		application.addDefinition(getCacheDefinition);
-		application.addDefinition(choiceDefinition);
-		application.addDefinition(chainDefinition);
-		application.addDefinition(wireTapDefinition);
+		context.addDefinition(getCacheDefinition);
+		context.addDefinition(choiceDefinition);
+		context.addDefinition(chainDefinition);
+		context.addDefinition(wireTapDefinition);
 		
 		//SET THE EXPRESSION TO GET FROM MEMCACHED
 		String adaptedKeyExpression = "'__CACHED_" + getCacheDefinition.getId() + "_' + " + keyExpression;
@@ -81,21 +82,21 @@ public class LazyAutorefreshableCacheTransformation implements ApplicationTransf
 		getCacheDefinition.setProperty("expression", adaptedKeyExpression);
 		
 		//CACHE -> CHOICE
-		application.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		context.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 
 		//CHOICE -> CHAIN
-		String choiceConnectionId = application.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
+		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		//IF CACHE IS NULL
-		ElementTemplate choiceConnectionDefinition = application.getDefinition(choiceConnectionId);
+		ElementTemplate choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
 		choiceConnectionDefinition.setProperty("expression", "message.payload == null");
 
 		//CHOICE -> WIRE_TAP
-		String choiceWireTapConnectionId = application.addConnection(choiceDefinition.getId(), wireTapDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
-		ElementTemplate choiceWireTapConnectionDefinition = application.getDefinition(choiceWireTapConnectionId);
+		String choiceWireTapConnectionId = context.addConnection(choiceDefinition.getId(), wireTapDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
+		ElementTemplate choiceWireTapConnectionDefinition = context.getDefinition(choiceWireTapConnectionId);
 		choiceWireTapConnectionDefinition.setProperty("expression", "message.payload != null");
 
 		//POINT TO THE PREVIOUS COMPUTATION
-		application.addConnection(chainDefinition.getId(), previousTargetId.substring(4), ConnectionType.CHAIN_CONNECTION);
+		context.addConnection(chainDefinition.getId(), previousTargetId.substring(4), ConnectionType.CHAIN_CONNECTION);
 		
 		//ADD PUT OPERATION
 		String[] putExpressions = StringUtils.split(cacheExpressions, ';');
@@ -113,33 +114,33 @@ public class LazyAutorefreshableCacheTransformation implements ApplicationTransf
 			cacheAccess.add(putCacheDefinition);
 			cacheAccess.add(putCacheTimeDefinition);
 
-			application.addDefinition(nullProcessorDefinition);
-			application.addDefinition(putCacheDefinition);
-			application.addDefinition(putCacheTimeDefinition);
+			context.addDefinition(nullProcessorDefinition);
+			context.addDefinition(putCacheDefinition);
+			context.addDefinition(putCacheTimeDefinition);
 			
-			application.addConnection(chainDefinition.getId(), nullProcessorDefinition.getId(), ConnectionType.CHAIN_CONNECTION);
-			application.addConnection(nullProcessorDefinition.getId(), putCacheDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
-			application.addConnection(putCacheDefinition.getId(), putCacheTimeDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+			context.addConnection(chainDefinition.getId(), nullProcessorDefinition.getId(), ConnectionType.CHAIN_CONNECTION);
+			context.addConnection(nullProcessorDefinition.getId(), putCacheDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+			context.addConnection(putCacheDefinition.getId(), putCacheTimeDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		}
 		
 		//ADD WIRE TAP PART
 		ElementTemplate getTimeFromCacheDefinition = new ElementTemplate(this.mapping.getDefinition("GET_MEMCACHED"));
 		ElementTemplate timeChoiceDefinition = new ElementTemplate(this.mapping.getDefinition("CHOICE"));
-		application.addDefinition(getTimeFromCacheDefinition);
-		application.addDefinition(timeChoiceDefinition);
+		context.addDefinition(getTimeFromCacheDefinition);
+		context.addDefinition(timeChoiceDefinition);
 		getTimeFromCacheDefinition.setProperty("expression", adaptedTimeKeyExpression);
 
 		cacheAccess.add(getTimeFromCacheDefinition);
 
 		//WIRE_TAP -> CACHE
-		application.addConnection(wireTapDefinition.getId(), getTimeFromCacheDefinition.getId(), ConnectionType.WIRE_TAP_CONNECTION);
+		context.addConnection(wireTapDefinition.getId(), getTimeFromCacheDefinition.getId(), ConnectionType.WIRE_TAP_CONNECTION);
 		//CACHE -> CHOICE
-		application.addConnection(getTimeFromCacheDefinition.getId(), timeChoiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		context.addConnection(getTimeFromCacheDefinition.getId(), timeChoiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		//CHOICE -> CHAIN
-		String timeChoiceId = application.addConnection(timeChoiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
+		String timeChoiceId = context.addConnection(timeChoiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		
 		//TIME CHOICE CONDITION
-		ElementTemplate timeChoiceConnectionDefinition = application.getDefinition(timeChoiceId);
+		ElementTemplate timeChoiceConnectionDefinition = context.getDefinition(timeChoiceId);
 		timeChoiceConnectionDefinition.setProperty("expression", "(message.payload != null) && ((new java.util.Date().getTime() - message.payload) > " + this.oldCacheEntryInMills + ")");
 	
 		
@@ -152,8 +153,8 @@ public class LazyAutorefreshableCacheTransformation implements ApplicationTransf
 		cache.setTtl(this.ttl);
 		
 		//INITIALIZE ALL OBJECTS THAT HAS ACCESS TO THE CACHE
-		CompositeDefinition appDefinition = ((CompositeDefinition) application.getMeta());
-		appDefinition.initializeTemplates(application, null, this.mapping, cacheAccess);
+		CompositeDefinition appDefinition = ((CompositeDefinition) context.getMeta());
+		appDefinition.initializeTemplates(context, null, this.mapping, cacheAccess, appTemplate);
 		
 		for (ElementTemplate template : cacheAccess) {
 			try {
@@ -166,7 +167,7 @@ public class LazyAutorefreshableCacheTransformation implements ApplicationTransf
 		}
 		
 		try {
-			application.sync(null, this.mapping);
+		  appTemplate.sync();
 		} catch (ServiceException e) {
 			log.warn("Error syncing context", e);
 		}

@@ -11,6 +11,7 @@ import org.jsoup.helper.Validate;
 
 import com.abstractions.api.Identificable;
 import com.abstractions.api.Message;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
@@ -25,9 +26,10 @@ public class Interpreter implements Identificable, ThreadObserver {
 	private final AtomicLong threadCount;
 	private final Map<Long, Thread> threads;
 	private final ElementTemplate source;
+	private final ApplicationTemplate appTemplate;
 	private volatile InterpreterDelegate delegate;
 
-	public Interpreter(CompositeTemplate context, ElementTemplate source) {
+	public Interpreter(CompositeTemplate context, ElementTemplate source, ApplicationTemplate appTemplate) {
 		Validate.notNull(context);
 		Validate.notNull(source);
 		
@@ -37,6 +39,7 @@ public class Interpreter implements Identificable, ThreadObserver {
 		this.threads = new ConcurrentHashMap<Long, Thread>();
 		this.source = source;
 		this.delegate = new NullInterpreterDelegate();
+		this.appTemplate = appTemplate;
 	}
 	
 	public Thread run(Message message) {
@@ -100,6 +103,6 @@ public class Interpreter implements Identificable, ThreadObserver {
 	}
 
 	public void sync() throws ServiceException {
-		this.context.sync();
+		this.appTemplate.sync();
 	}
 }
