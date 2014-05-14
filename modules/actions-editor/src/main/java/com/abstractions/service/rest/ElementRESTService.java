@@ -19,8 +19,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.service.DeploymentService;
+import com.abstractions.service.UserService;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
@@ -36,18 +38,24 @@ public class ElementRESTService {
 	private DevelopmentContextHolder holder;
 	private NamesMapping mapping;
 	private DeploymentService deploymentService;
+  private UserService userService;
 	
-	public ElementRESTService(DevelopmentContextHolder holder, NamesMapping mapping, DeploymentService deploymentService) {
+	public ElementRESTService(DevelopmentContextHolder holder, NamesMapping mapping, DeploymentService deploymentService, UserService userService) {
 		this.holder = holder;
 		this.mapping = mapping;
 		this.deploymentService = deploymentService;
+		this.userService = userService;
 	}
 	
 	@POST
-	@Path("/{contextId}/{element}")
-	public Response addElement(@PathParam("contextId") String contextId, @PathParam("element") String elementName)
-	{
-		CompositeTemplate context = this.holder.get(contextId);
+	@Path("/{applicationId}/{contextId}/{element}")
+	public Response addElement(
+          @PathParam("applicationId") String applicationId, 
+	        @PathParam("contextId") String contextId, 
+	        @PathParam("element") String elementName) {
+
+	  ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		
 		ElementTemplate definition = new ElementTemplate(this.mapping.getDefinition(elementName));
 		context.addDefinition(definition);
@@ -56,10 +64,14 @@ public class ElementRESTService {
 	}
 	
 	@DELETE
-	@Path("/{contextId}/{elementId}")
-	public Response deleteElement(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId)
-	{
-		CompositeTemplate context = this.holder.get(contextId);
+	@Path("/{applicationId}/{contextId}/{elementId}")
+	public Response deleteElement(
+          @PathParam("applicationId") String applicationId, 
+	        @PathParam("contextId") String contextId, 
+	        @PathParam("elementId") String elementId) {
+	  
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		List<String> ids = context.deleteDefinition(elementId);
 		JSONObject deleted = new JSONObject();
 		JSONArray array = new JSONArray();
@@ -180,14 +192,16 @@ public class ElementRESTService {
 	}
 	
 	@POST
-	@Path("/{contextId}/{elementId}/{nextInChainId}/connection/{connectionType}")
+	@Path("/{applicationId}/{contextId}/{elementId}/{nextInChainId}/connection/{connectionType}")
 	public Response addConnection(
+	    @PathParam("applicationId") String applicationId, 
 			@PathParam("contextId") String contextId, 
 			@PathParam("elementId") String sourceId, 
 			@PathParam("nextInChainId") String targetId,
 			@PathParam("connectionType") String connectionType)
 	{
-		CompositeTemplate context = this.holder.get(contextId);
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
@@ -204,13 +218,15 @@ public class ElementRESTService {
 	}
 	
 	@PUT
-	@Path("/{contextId}/{elementId}/breakpoint/{breakpoint}")
+	@Path("/{applicationId}/{contextId}/{elementId}/breakpoint/{breakpoint}")
 	public Response setBreakpoint(
+      @PathParam("applicationId") String applicationId, 
 			@PathParam("contextId") String contextId, 
 			@PathParam("elementId") String elementId, 
 			@PathParam("breakpoint") String breakpoint)
 	{
-		CompositeTemplate context = this.holder.get(contextId);
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
@@ -233,28 +249,32 @@ public class ElementRESTService {
 	}
 	
 	@POST
-	@Path("/{contextId}/{elementId}/property/{propertyName}")
+	@Path("/{applicationId}/{contextId}/{elementId}/property/{propertyName}")
 	public Response setProperty(
+	    @PathParam("applicationId") String applicationId, 
 			@PathParam("contextId") String contextId, 
 			@PathParam("elementId") String elementId, 
 			@PathParam("propertyName") String propertyName, 
 			@FormParam("propertyValue") String propertyValue)
 	{
-		CompositeTemplate context = this.holder.get(contextId);
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		ElementTemplate definition = context.getDefinition(elementId);
 		definition.setProperty(propertyName, propertyValue);
 		return ResponseUtils.ok();
 	}
 	
 	@POST
-	@Path("/{contextId}/{elementId}/action/{actionName}")
+	@Path("/{applicationId}/{contextId}/{elementId}/action/{actionName}")
 	public Response performAction(
+      @PathParam("applicationId") String applicationId, 
 			@PathParam("contextId") String contextId, 
 			@PathParam("elementId") String elementId, 
 			@PathParam("actionName") String actionName, 
 			@FormParam("arguments") String argumentsAsString)
 	{
-		CompositeTemplate context = this.holder.get(contextId);
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		ElementTemplate definition = context.getDefinition(elementId);
 		String[] arguments = null;
 		if (!StringUtils.isBlank(argumentsAsString)) {
@@ -272,9 +292,13 @@ public class ElementRESTService {
 	}
 	
 	@POST
-	@Path("/{contextId}/{elementId}/sync")
-	public Response sync(@PathParam("contextId") String contextId, @PathParam("elementId") String elementId) {
-		CompositeTemplate context = this.holder.get(contextId);
+	@Path("/{applicationId}/{contextId}/{elementId}/sync")
+	public Response sync(
+	        @PathParam("applicationId") String applicationId, 
+	        @PathParam("contextId") String contextId, 
+	        @PathParam("elementId") String elementId) {
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
@@ -288,13 +312,13 @@ public class ElementRESTService {
 
 		if (context.getCompositeElement() == null) {
 			try {
-				context.sync();
+			  appTemplate.sync();
 			} catch (ServiceException e) {
 				return ResponseUtils.fail("Error syncing context");
 			}
 		} else {
 			try {
-				objectDefinition.initialize(context.getCompositeElement(), this.mapping);
+				objectDefinition.initialize(context.getCompositeElement(), this.mapping, appTemplate);
 			} catch (ServiceException e) {
 				return ResponseUtils.fail("Error initializing object");
 			}

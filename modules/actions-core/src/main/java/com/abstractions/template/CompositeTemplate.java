@@ -18,11 +18,12 @@ import org.apache.commons.logging.LogFactory;
 import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
 import com.abstractions.api.Processor;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.core.ConnectionType;
+import com.abstractions.instance.messagesource.MessageSource;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.service.core.NamesMapping;
-import com.abstractions.service.core.ServiceException;
 
 public class CompositeTemplate extends ElementTemplate {
 
@@ -34,7 +35,7 @@ public class CompositeTemplate extends ElementTemplate {
 	private volatile transient Map<ElementTemplate, ExecutorService> executorServices;
 	private final transient NamesMapping mapping;
 
-	protected CompositeTemplate(ElementDefinition metaElementDefinition, NamesMapping mapping) {
+	public CompositeTemplate(ElementDefinition metaElementDefinition, NamesMapping mapping) {
 		super(metaElementDefinition);
 		
 		Validate.notNull(mapping);
@@ -52,14 +53,16 @@ public class CompositeTemplate extends ElementTemplate {
 		this.mapping = mapping;
 	}
 
-	public synchronized Element sync() throws ServiceException {
-		return this.sync(null, this.mapping);
-	}
-	
-	public void afterScan(Element object, ElementTemplate definition) {
+	public void afterScan(Element object, ElementTemplate definition, ApplicationTemplate appTemplate) {
+    if (object instanceof MessageSource) {
+      ((MessageSource) object).setMainListener(appTemplate);
+    }
 	}
 
-	public void afterInstantiation(Element object, ElementTemplate definition) {
+	public void afterInstantiation(Element object, ElementTemplate definition, ApplicationTemplate appTemplate) {
+    if (object instanceof MessageSource) {
+      ((MessageSource) object).setMainListener(appTemplate);
+    }
 	}
 
 	public void addDefinition(ElementTemplate definition) {
@@ -91,7 +94,19 @@ public class CompositeTemplate extends ElementTemplate {
 
 	public ElementTemplate getDefinition(String elementId) {
 		synchronized (this.definitions) {
-			return this.definitions.get(elementId);
+		  ElementTemplate template = this.definitions.get(elementId);
+		  
+		  if (template == null) {
+		    for (ElementTemplate eleTemplate : this.definitions.values()) {
+		      if (eleTemplate instanceof CompositeTemplate) {
+		        return ((CompositeTemplate) eleTemplate).getDefinition(elementId);
+		      }
+		    }
+		    
+		    return null;
+		  } else {
+		    return template;
+		  }
 		}
 	}
 

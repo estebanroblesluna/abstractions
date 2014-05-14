@@ -15,14 +15,16 @@ import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
 import com.abstractions.generalization.Abstracter;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.generalization.MultipleEntryPointsException;
 import com.abstractions.generalization.UnconnectedDefinitionsException;
 import com.abstractions.meta.AbstractionDefinition;
-import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.model.User;
 import com.abstractions.service.DeploymentService;
 import com.abstractions.service.IconService;
-import com.abstractions.service.core.LibraryService;
+import com.abstractions.service.UserService;
 import com.abstractions.service.core.DevelopmentContextHolder;
+import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
@@ -31,12 +33,13 @@ import com.abstractions.web.FlowController;
 @Path("/context")
 public class ContextRESTService {
 
-	private DevelopmentContextHolder holder;
-	private NamesMapping mapping;
-	private String serverId;
-	private DeploymentService deploymentService;
-	private LibraryService libraryService;
-    private IconService iconService;
+  private DevelopmentContextHolder holder;
+  private NamesMapping mapping;
+  private String serverId;
+  private DeploymentService deploymentService;
+  private LibraryService libraryService;
+  private IconService iconService;
+  private UserService userService;
 	
 	public ContextRESTService(
 			DevelopmentContextHolder holder, 
@@ -44,23 +47,25 @@ public class ContextRESTService {
 			String serverId, 
 			DeploymentService deploymentService,
 			LibraryService libraryService,
-			IconService iconService) {
+			IconService iconService,
+			UserService userService) {
 		this.holder = holder;
 		this.mapping = mapping;
 		this.serverId = serverId;
 		this.deploymentService = deploymentService;
 		this.libraryService = libraryService;
 		this.iconService = iconService;
+		this.userService = userService;
 	}
 	
 	@POST
-	@Path("/")
-	public Response createContext() {
-		ApplicationDefinition appDefinition = new ApplicationDefinition("myApp");
-		CompositeTemplate definition = appDefinition.createTemplate(this.mapping);
-		
-		this.holder.put(definition);
-		String contextId = definition.getId();
+	@Path("/{applicationId}")
+	public Response createContext(@PathParam("applicationId") String applicationId) {
+    User user = this.userService.getCurrentUser();
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(user, applicationId);
+
+    CompositeTemplate compositeTemplate = appTemplate.createFlow();
+		String contextId = compositeTemplate.getId();
 		
 		return ResponseUtils.ok(
 				new Attribute("id", contextId), 
@@ -68,20 +73,20 @@ public class ContextRESTService {
 	}
 	
 	@POST
-	@Path("/{id}/sync")
-	public Response sync(@PathParam("id") String contextId) {
-		CompositeTemplate context = this.holder.get(contextId);
+	@Path("/{applicationId}/sync")
+	public Response sync(@PathParam("applicationId") String applicationId) {
+	  User user = this.userService.getCurrentUser();
+		ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(user, applicationId);
 		
-		if (context == null)
-		{
-			return ResponseUtils.fail("Context not found");
+		if (appTemplate == null) {
+			return ResponseUtils.fail("Application not found");
 		}
 		
 		try {
-			context.sync(null, this.mapping);
+		  appTemplate.sync(this.mapping);
 			return ResponseUtils.ok();
 		} catch (ServiceException e) {
-			return ResponseUtils.fail("Error syncing context");
+			return ResponseUtils.fail("Error syncing application");
 		}
 	}
 	
@@ -93,15 +98,17 @@ public class ContextRESTService {
 	}
 	
 	@POST
-	@Path("/{id}/abstract")
+	@Path("/{applicationId}/{id}/abstract")
 	public Response abstractAbstraction(
+	    @PathParam("applicationId") String applicationId,
 			@PathParam("id") String contextId,
 			@FormParam("name") String name,
 			@FormParam("displayName") String displayName,
 			@FormParam("elementUrns") String elementUrnsAsString) {
 		
 		List<String> elementUrns = Arrays.asList(elementUrnsAsString.split(","));
-		CompositeTemplate application = this.holder.get(contextId);
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate application = appTemplate.getFlow(contextId);
 		
 		Abstracter abstracter = new Abstracter();
 		
@@ -120,6 +127,5 @@ public class ContextRESTService {
  		} catch (JSONException e) {
 			return ResponseUtils.fail("Error converting abstraction to JSON! Please refresh");
 		}
-		
 	}
 }

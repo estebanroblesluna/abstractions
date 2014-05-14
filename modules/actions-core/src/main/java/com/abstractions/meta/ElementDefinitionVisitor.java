@@ -13,4 +13,6 @@ public interface ElementDefinitionVisitor {
 	Object visitAbstractionDefinition(AbstractionDefinition abstractionDefinition);
 
 	Object visitApplicationDefinition(ApplicationDefinition applicationDefinition);
+
+  Object visitFlowDefinition(FlowDefinition flowDefinition);
 }

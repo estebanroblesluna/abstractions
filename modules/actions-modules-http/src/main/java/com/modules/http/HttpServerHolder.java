@@ -133,7 +133,7 @@ public class HttpServerHolder {
 	
 	public String getTestUrl(HttpMessageSource httpMessageSource) {
 		try {
-			String serverName = this.getServerName();
+			String serverName = this.isDev() ? "localhost" : this.getServerName();
 			Integer port = this.isDev() ? DEV_PORT : httpMessageSource.getPort();
 			String extraParam = this.isDev() ? "/?" + HttpUtils.DEV_HTTP_PARAM + "=" + httpMessageSource.getId() : "";
 			

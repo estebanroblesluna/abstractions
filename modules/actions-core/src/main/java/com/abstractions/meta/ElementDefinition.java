@@ -13,6 +13,7 @@ import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
 import com.abstractions.common.Icon;
 import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.common.ScriptingProcessor;
 import com.abstractions.model.PropertyDefinition;
 import com.abstractions.runtime.interpreter.Thread;
@@ -106,7 +107,7 @@ public abstract class ElementDefinition {
 		return isScript;
 	}
 
-	public Element instantiate(CompositeElement context, NamesMapping mapping, ElementTemplate template) throws InstantiationException, IllegalAccessException {
+	public Element instantiate(CompositeElement context, NamesMapping mapping, ElementTemplate template, ApplicationTemplate appTemplate) throws InstantiationException, IllegalAccessException {
 		Element object;
 		
 		if (this.isScript()) {
@@ -139,7 +140,7 @@ public abstract class ElementDefinition {
 		return false;
 	}
 
-	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping) {
+	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping, ApplicationTemplate appTemplate) {
 		Map<String, String> instanceProperties = template.getProperties();
 
 		Map<String, String> initialProperties = mapping.getElementInitialProperties(this.name);
@@ -154,5 +155,9 @@ public abstract class ElementDefinition {
 
 	public long getId() {
 		return this.id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 }

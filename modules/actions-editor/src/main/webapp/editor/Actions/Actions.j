@@ -137,6 +137,14 @@ var _controller;
 	return contextId;
 }
 
++ (id) applicationId
+{
+	var sharedApplication = [CPApplication sharedApplication];
+    var namedArguments = [sharedApplication namedArguments];
+	var contextId = [namedArguments objectForKey: "applicationId"];
+	return contextId;
+}
+
 + (id) modeParam
 {
 	var sharedApplication = [CPApplication sharedApplication];
