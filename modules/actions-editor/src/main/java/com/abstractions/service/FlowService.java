@@ -8,9 +8,11 @@ import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.Flow;
+import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.NamesMapping;
@@ -42,8 +44,6 @@ public class FlowService {
 		this.marshaller = new CompositeTemplateMarshaller(mapping);
 		this.holder = holder;
 		this.mapping = mapping;
-		
-		this.holder.setKeyProvider(new WebUserKeyProvider());
 	}
 	
 	@Transactional
@@ -96,26 +96,15 @@ public class FlowService {
 	}
 
 	@Transactional
-	public Flow loadFlow(long teamId, long applicationId, long flowId) {
+	public Flow loadFlow(User user, long teamId, long applicationId, long flowId) {
 		Flow flow = this.getFlow(teamId, applicationId, flowId);
-		CompositeTemplate context;
 		
-		try 
-		{
-			ApplicationDefinition appDefinition = new ApplicationDefinition("myApp");
-			CompositeTemplate flowTemplate = this.marshaller.unmarshall(appDefinition, flow.getJson());
-			appDefinition.addDefinitions(flowTemplate.getDefinitions().values());
-			context = appDefinition.createTemplate(flowTemplate.getId(), this.mapping);
-			context.sync();
-		} 
-		catch (MarshallingException e) 
-		{
-			throw new IllegalArgumentException("Marshalling exception", e);
+		try {
+	    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(user, applicationId);
+	    appTemplate.sync();
 		} catch (ServiceException e) {
 			throw new IllegalArgumentException("Error instantiating context", e);
 		} 
-		
-		this.holder.put(context);
 		
 		return flow;
 	}

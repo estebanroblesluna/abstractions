@@ -19,7 +19,7 @@ import com.abstractions.template.ElementTemplate;
 
 public class InterpreterTestCase extends TestCase {
 
-	private CompositeTemplate application;
+	private ApplicationTemplate application;
 	private Library common;
 	private NamesMapping mapping;
 
@@ -49,9 +49,9 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addDefinition(target);
 		this.application.addConnection(source.getId(), target.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, source);
+		Interpreter interpreter = new Interpreter(this.application, source, this.application);
 
 		Message message = new Message();
 		message.setPayload(0l);
@@ -82,9 +82,9 @@ public class InterpreterTestCase extends TestCase {
 		ElementTemplate inc3Connection = this.application.getDefinition(inc3ConnectionId);
 		inc3Connection.setProperty("expression", "message.properties['val'] == 'bbb'");
 		
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, source);
+		Interpreter interpreter = new Interpreter(this.application, source, this.application);
 
 		//case inc2 router
 		Message message = new Message();
@@ -134,9 +134,9 @@ public class InterpreterTestCase extends TestCase {
 		ElementTemplate inc3Connection = this.application.getDefinition(inc3ConnectionId);
 		inc3Connection.setProperty("targetExpression", "message.properties['inc3'] = result.payload");
 		
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, source);
+		Interpreter interpreter = new Interpreter(this.application, source, this.application);
 
 		Message message = new Message();
 		message.setPayload(0l);
@@ -162,9 +162,9 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addConnection(router.getId(), inc2.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		this.application.addConnection(router.getId(), listener.getId(), ConnectionType.WIRE_TAP_CONNECTION);
 
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, source);
+		Interpreter interpreter = new Interpreter(this.application, source, this.application);
 
 		Message message = new Message();
 		message.setPayload(0l);
@@ -196,9 +196,9 @@ public class InterpreterTestCase extends TestCase {
 		ElementTemplate inc2 = new ElementTemplate(incBy2);
 		this.application.addDefinition(inc2);
 		
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, inc2);
+		Interpreter interpreter = new Interpreter(this.application, inc2, this.application);
 
 		Message message = new Message();
 		message.setPayload(0l);
@@ -227,9 +227,9 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addDefinition(inc2_2);
 		this.application.addDefinition(inc2_1_2);
 		
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, inc2_1);
+		Interpreter interpreter = new Interpreter(this.application, inc2_1, this.application);
 
 		Message message = new Message();
 		message.setPayload(0l);
@@ -279,9 +279,9 @@ public class InterpreterTestCase extends TestCase {
 		this.application.addConnection(add6.getId(), inc3.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		this.application.addConnection(inc3.getId(), add62.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		
-		Interpreter interpreter = new Interpreter(this.application, add6);
+		Interpreter interpreter = new Interpreter(this.application, add6, this.application);
 
 		Message message = new Message();
 		message.setPayload(0l);

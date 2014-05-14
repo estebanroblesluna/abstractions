@@ -15,7 +15,7 @@ import com.abstractions.template.ElementTemplate;
 
 public class ContextPerfTest extends TestCase {
 
-	private CompositeTemplate application;
+	private ApplicationTemplate application;
 	private String startId;
 	private NamesMapping mapping;
 	private Library common;
@@ -42,7 +42,7 @@ public class ContextPerfTest extends TestCase {
 		this.buildChain(count, "B");
 		String startIdB = this.startId;
 
-		this.application.sync(null, this.mapping);
+		this.application.sync(this.mapping);
 		long end = System.currentTimeMillis();
 
 		System.out.println("Took " + (end - start) + "ms to build chain A and B");
@@ -52,7 +52,7 @@ public class ContextPerfTest extends TestCase {
 		message.setPayload(0l);
 		
 		ElementTemplate source = application.getDefinition(startIdA);
-		Interpreter interpreter = new Interpreter(application, source);
+		Interpreter interpreter = new Interpreter(application, source, application);
 		com.abstractions.runtime.interpreter.Thread thread = interpreter.createThread(source, message);
 		
 		start = System.currentTimeMillis();
@@ -69,7 +69,7 @@ public class ContextPerfTest extends TestCase {
 		message.setPayload(0l);
 		
 		source = application.getDefinition(startIdB);
-		interpreter = new Interpreter(application, source);
+		interpreter = new Interpreter(application, source, application);
 		thread = interpreter.createThread(source, message);
 		
 		start = System.currentTimeMillis();

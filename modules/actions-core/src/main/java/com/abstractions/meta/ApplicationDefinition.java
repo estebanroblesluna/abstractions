@@ -1,17 +1,11 @@
 package com.abstractions.meta;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.runtime.interpreter.InterpreterDelegate;
 import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
-import com.abstractions.template.CompositeTemplate;
 
 public class ApplicationDefinition extends CompositeDefinition {
-
-	private static final Log log = LogFactory.getLog(ApplicationDefinition.class);
 
 	private volatile InterpreterDelegate interpreterDelegate;
 	private final NamesMapping mapping;
@@ -24,6 +18,12 @@ public class ApplicationDefinition extends CompositeDefinition {
 		super(name);
 		this.mapping = new NamesMapping();
 	}
+
+  // ONLY for DEV environment we may need to use a mapping
+  public ApplicationDefinition(String name, NamesMapping mapping) {
+    super(name);
+    this.mapping = mapping;
+  }
 
 	/**
 	 * {@inheritDoc}
@@ -56,15 +56,15 @@ public class ApplicationDefinition extends CompositeDefinition {
 	}
 
 	@Override
-	protected CompositeTemplate basicCreateTemplate(String id, CompositeDefinition compositeDefinition, NamesMapping mapping) {
+	protected ApplicationTemplate basicCreateTemplate(String id, CompositeDefinition compositeDefinition, NamesMapping mapping) {
 		return new ApplicationTemplate(id, this, mapping);
 	}
 
-	public NamesMapping getMapping() {
-		return mapping;
+	public ApplicationTemplate createTemplate(NamesMapping mapping) {
+		return (ApplicationTemplate) super.createTemplate(mapping);
 	}
 	
-	protected String getApplicationId() {
-		return Long.valueOf(this.getId()).toString();
+	public NamesMapping getMapping() {
+		return mapping;
 	}
 }

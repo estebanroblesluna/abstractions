@@ -10,10 +10,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.abstractions.api.ApplicationAware;
 import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
 import com.abstractions.api.IdentificableMutable;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.composition.CompositeElementImpl;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
@@ -48,7 +48,7 @@ public abstract class CompositeDefinition extends ElementDefinition {
 	}
 
 	@Override
-	public Element instantiate(CompositeElement container, NamesMapping mapping, ElementTemplate template) throws InstantiationException, IllegalAccessException {
+	public Element instantiate(CompositeElement container, NamesMapping mapping, ElementTemplate template, ApplicationTemplate appTemplate) throws InstantiationException, IllegalAccessException {
 		CompositeTemplate compositeTemplate = (CompositeTemplate) template;
 		
 		CompositeElementImpl compositeElement = null;
@@ -63,17 +63,14 @@ public abstract class CompositeDefinition extends ElementDefinition {
 			for (ElementTemplate elementTemplate : compositeTemplate.getDefinitions().values()) {
 				try {
 					if (!elementTemplate.isInstantiated()) {
-						Element element = elementTemplate.instantiate(compositeElement, mapping);
+						Element element = elementTemplate.instantiate(compositeElement, mapping, appTemplate);
 						if (element instanceof IdentificableMutable) {
 							((IdentificableMutable) element).setId(elementTemplate.getId());
 						}
-						if (element instanceof ApplicationAware) {
-							((ApplicationAware) element).setApplicationId(this.getApplicationId());
-						}
-						compositeTemplate.afterInstantiation(element, elementTemplate);
+						compositeTemplate.afterInstantiation(element, elementTemplate, appTemplate);
 						compositeElement.addObject(elementTemplate.getId(), element);
 					}
-					compositeTemplate.afterScan(elementTemplate.getInstance(), elementTemplate);
+					compositeTemplate.afterScan(elementTemplate.getInstance(), elementTemplate, appTemplate);
 				} catch (ServiceException e) {
 					log.warn("Error instantiating object", e);
 				}
@@ -83,24 +80,19 @@ public abstract class CompositeDefinition extends ElementDefinition {
 		return compositeElement;
 	}
 	
-	protected String getApplicationId() {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
 	protected CompositeElementImpl basicCreateInstance(CompositeTemplate compositeTemplate) {
 		return new CompositeElementImpl(compositeTemplate);
 	}
 
-	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping) {
-		super.initialize(template, properties, container, mapping);
+	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping, ApplicationTemplate appTemplate) {
+		super.initialize(template, properties, container, mapping, appTemplate);
 		
 		CompositeTemplate composite = (CompositeTemplate) template;
 		CompositeElement compositeElement = composite.getCompositeElement();
 		
 		synchronized (composite.getDefinitions()) {
 			//wire them all together
-			this.initializeTemplates(composite, compositeElement, mapping, composite.getDefinitions().values());		
+			this.initializeTemplates(composite, compositeElement, mapping, composite.getDefinitions().values(), appTemplate);		
 		}
 	}
 
@@ -108,21 +100,21 @@ public abstract class CompositeDefinition extends ElementDefinition {
 			CompositeTemplate templatesContainer, 
 			CompositeElement parent, 
 			NamesMapping mapping, 
-			Collection<ElementTemplate> templates) {
+			Collection<ElementTemplate> templates, 
+			ApplicationTemplate appTemplate) {
 		
-		for (ElementTemplate definition : templates)
-		{
+		for (ElementTemplate definition : templates) {
 			try {
 				if (!definition.isInstantiated()) {
-					Element element = definition.instantiate(parent, mapping);
+					Element element = definition.instantiate(parent, mapping, appTemplate);
 					if (element instanceof IdentificableMutable) {
 						((IdentificableMutable) element).setId(definition.getId());
 					}
-					templatesContainer.afterInstantiation(element, definition);
+					templatesContainer.afterInstantiation(element, definition, appTemplate);
 				}
-				definition.initialize(parent, mapping);
+				definition.initialize(parent, mapping, appTemplate);
 
-				templatesContainer.afterScan(definition.getInstance(), definition);
+				templatesContainer.afterScan(definition.getInstance(), definition, appTemplate);
 			} catch (ServiceException e) {
 				log.warn("Error initializing object", e);
 			}
