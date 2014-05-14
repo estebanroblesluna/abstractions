@@ -24,9 +24,11 @@ import org.codehaus.jettison.json.JSONObject;
 import org.jsoup.nodes.Attribute;
 
 import com.abstractions.api.Message;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.runtime.interpreter.DebuggableThread;
 import com.abstractions.runtime.interpreter.Interpreter;
 import com.abstractions.runtime.interpreter.InterpreterDelegate;
+import com.abstractions.service.UserService;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.InterpreterHolder;
 import com.abstractions.service.core.ServiceException;
@@ -41,20 +43,27 @@ public class InterpreterRESTService implements InterpreterDelegate {
 
 	private DevelopmentContextHolder contextHolder;
 	private InterpreterHolder interpreterHolder;
+	private UserService userService;
 	
 	private ExecutorService executor;
 	
-	public InterpreterRESTService(DevelopmentContextHolder contextHolder, InterpreterHolder interpreterHolder) {
+	public InterpreterRESTService(DevelopmentContextHolder contextHolder, InterpreterHolder interpreterHolder, UserService userService) {
 		this.executor = Executors.newFixedThreadPool(10);
 		
 		this.contextHolder = contextHolder;
 		this.interpreterHolder = interpreterHolder;
+		this.userService = userService;
 	}
 	
 	@POST
-	@Path("/{contextId}/create")
-	public Response createInterpreter(@PathParam("contextId") String contextId, @FormParam("initialProcessorId") String initialProcessorId) {
-		CompositeTemplate context = this.contextHolder.get(contextId);
+	@Path("/{applicationId}/{contextId}/create")
+	public Response createInterpreter(
+          @PathParam("applicationId") String applicationId, 
+	        @PathParam("contextId") String contextId, 
+	        @FormParam("initialProcessorId") String initialProcessorId) {
+	  
+    ApplicationTemplate appTemplate = this.contextHolder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(contextId);
 		
 		if (context == null) {
 			return ResponseUtils.fail("Context not found");
@@ -66,7 +75,7 @@ public class InterpreterRESTService implements InterpreterDelegate {
 			return ResponseUtils.fail("Start processor not found");
 		}
 
-		Interpreter interpreter = new Interpreter(context, startProcessor);
+		Interpreter interpreter = new Interpreter(context, startProcessor, appTemplate);
 		this.interpreterHolder.put(interpreter);
 		
 		interpreter.setDelegate(this);

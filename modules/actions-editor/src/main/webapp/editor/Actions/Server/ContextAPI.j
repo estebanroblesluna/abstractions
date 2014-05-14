@@ -63,7 +63,7 @@
 	CPLog.debug("Creating context");
 	$.ajax({
 		type: "POST",
-		url: "../service/context/"
+		url: "../service/context/" + [Actions applicationId]
 	}).done(function( result ) {
 		_contextId = result.id;
 		[_delegate contextCreated: _contextId];
@@ -78,7 +78,7 @@
 	CPLog.debug("Syncing context " + _contextId);
 	$.ajax({
 		type: "POST",
-		url: "../service/context/" + _contextId + "/sync"
+		url: "../service/context/" + [Actions applicationId] + "/sync"
 	}).done(function( result ) {
 		CPLog.debug("Context synced " + _contextId);
 	});

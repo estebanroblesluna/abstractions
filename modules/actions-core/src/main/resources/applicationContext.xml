@@ -19,8 +19,10 @@
   <context:property-placeholder location="classpath:application.properties" ignore-unresolvable="true" />
 
   <bean id="contextHolder" class="com.abstractions.service.core.DevelopmentContextHolder">
-    <constructor-arg index="0" value="10" />
-    <constructor-arg index="1" value="MINUTES" />
+    <constructor-arg value="10" />
+    <constructor-arg value="MINUTES" />
+    <constructor-arg ref="applicationLoader" />
+    <constructor-arg ref="namesMapping" />
   </bean>
   
   <bean id="interpreterHolder" class="com.abstractions.service.core.InterpreterHolder" />

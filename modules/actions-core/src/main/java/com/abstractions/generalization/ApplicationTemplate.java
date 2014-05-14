@@ -8,12 +8,14 @@ import com.abstractions.api.Message;
 import com.abstractions.instance.messagesource.MessageSource;
 import com.abstractions.instance.messagesource.MessageSourceListener;
 import com.abstractions.meta.ApplicationDefinition;
+import com.abstractions.meta.ElementDefinition;
+import com.abstractions.meta.FlowDefinition;
 import com.abstractions.runtime.interpreter.Interpreter;
 import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
-import com.abstractions.utils.ApplicationContextHolder;
 import com.abstractions.utils.LiquidMlApplicationContext;
 import com.abstractions.utils.MessageUtils;
 
@@ -26,33 +28,38 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 	public ApplicationTemplate(String id, ApplicationDefinition metaElementDefinition, NamesMapping mapping) {
 		super(id, metaElementDefinition, mapping);
 	}
-	
-	public void afterInstantiation(Element object, ElementTemplate definition) {
-		if (object instanceof MessageSource) {
-			((MessageSource) object).setMainListener(this);
-		}
-	}
-	
-	public void afterScan(Element object, ElementTemplate definition) {
-		if (object instanceof MessageSource) {
-			((MessageSource) object).setMainListener(this);
-		}
-	}
-	
+
+  public synchronized Element sync() throws ServiceException {
+    return this.sync(this.getMapping());
+  }
+
+  public synchronized Element sync(NamesMapping mapping) throws ServiceException {
+    if (mapping == null) {
+      mapping = this.getMapping();
+    }
+    
+    if (this.object == null) {
+      this.instantiate(null, mapping, this);
+    }
+
+    this.initialize(null, mapping, this);
+
+    return this.object;
+  }
+	 
 	@Override
 	public Message onMessageReceived(MessageSource messageSource, Message message) {
+		long applicationId = this.getMeta().getId();
+		message.putProperty(MessageUtils.APPLICATION_ID_PROPERTY, applicationId);
+		
 		ElementTemplate nextInChain = this.getNextInChainFor(messageSource.getId());
-		Interpreter interpreter = new Interpreter(this, nextInChain);
+		Interpreter interpreter = new Interpreter(this, nextInChain, this);
 		
 		ApplicationDefinition appDefinition = (ApplicationDefinition) this.getMeta();
 		if (appDefinition.getInterpreterDelegate() != null) {
 			interpreter.setDelegate(appDefinition.getInterpreterDelegate());
 		}
 		
-    // TODO replace by real app id
-		long applicationId = 2;
-		
-		message.putProperty(MessageUtils.APPLICATION_ID_PROPERTY, applicationId);
 		try {
 		  // TODO define actions.http.requestURL as a constant 
       URL requestUrl = new URL((String) message.getProperty("actions.http.requestURL"));
@@ -69,4 +76,26 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 		Thread root = interpreter.run(message);
 		return root.getCurrentMessage();
 	}
+
+  public CompositeTemplate createFlow() {
+    NamesMapping mapping = ((ApplicationDefinition)this.getMeta()).getMapping();
+    ElementDefinition definition = new FlowDefinition();
+    CompositeTemplate newFlow = new CompositeTemplate(definition, mapping);
+    this.addDefinition(newFlow);
+    return newFlow;
+  }
+  
+  public CompositeTemplate getFlow(String flowId) {
+    ElementTemplate element = this.getDefinition(flowId);
+    if (element == null) {
+      return null;
+    } else {
+      if (element instanceof CompositeTemplate) {
+        return (CompositeTemplate) element;
+      } else {
+        throw new RuntimeException(flowId + " is not a flow");
+      }
+    }
+  }
+
 }

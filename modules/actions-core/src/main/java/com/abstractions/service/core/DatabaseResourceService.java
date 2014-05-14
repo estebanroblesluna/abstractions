@@ -13,7 +13,6 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsoup.helper.Validate;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Resource;
