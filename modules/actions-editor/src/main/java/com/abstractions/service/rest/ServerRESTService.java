@@ -1,6 +1,7 @@
 package com.abstractions.service.rest;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
 import java.util.HashMap;
@@ -191,9 +192,8 @@ public class ServerRESTService {
 	@POST
 	@Path("/deployment/{deploymentId}/start")
 	public Response startDeployment(@PathParam("deploymentId") long deploymentId, @FormParam("server-id") String serverId, @FormParam("server-key") String serverKey) {
-		String filename = this.deploymentService.startDeployment(deploymentId, serverId, serverKey);
-		if (filename != null) {
-			File fileToSend = new File(filename);
+		InputStream fileToSend = this.deploymentService.startDeployment(deploymentId, serverId, serverKey);
+		if (fileToSend != null) {
 			return Response
 					.ok(fileToSend, "application/zip")
 					.build();

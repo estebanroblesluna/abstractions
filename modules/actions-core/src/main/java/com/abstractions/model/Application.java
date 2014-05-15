@@ -73,7 +73,7 @@ public class Application {
 	public List<Property> getProperties(Environment env) {
 		List<Property> ret = new ArrayList<Property>();
 		for(Property p : this.properties ){
-			if(p.getEnvironment() == env)
+			if(p.getEnvironment().equals(env))
 				ret.add(p);
 		}
 		return Collections.unmodifiableList(ret);

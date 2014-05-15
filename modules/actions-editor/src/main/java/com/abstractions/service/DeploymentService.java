@@ -1,5 +1,6 @@
 package com.abstractions.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import com.abstractions.model.Server;
 import com.abstractions.model.ServerCommand;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
+
 
 @Service
 public class DeploymentService {
@@ -302,7 +304,7 @@ public class DeploymentService {
 	}
 
 	@Transactional
-	public String startDeployment(long deploymentId, String serverId, String serverKey) {
+	public InputStream startDeployment(long deploymentId, String serverId, String serverKey) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
 		Server server = this.serverService.getServer(serverId, serverKey);
 		
@@ -310,11 +312,7 @@ public class DeploymentService {
 			DeploymentToServer toServer = deployment.getToServer(server.getId());
 			toServer.setState(DeploymentState.STARTED);
 			this.repository.save(toServer);
-			
-			String filename = this.snapshotService.buildSnapshotPath(
-					deployment.getSnapshot().getApplication().getId(), 
-					deployment.getSnapshot().getId());
-			return filename;
+			return new ByteArrayInputStream(deployment.getSnapshot().getZip());
 		} else {
 			return null;
 		}
