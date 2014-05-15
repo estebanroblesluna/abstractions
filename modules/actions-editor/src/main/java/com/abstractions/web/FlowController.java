@@ -251,13 +251,13 @@ public class FlowController {
 	public ModelAndView edit(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId) {
 		ModelAndView mv = new ModelAndView("editFlow");
 		
-		Flow flow = this.service.loadFlow(this.userService.getCurrentUser(), teamId, applicationId, flowId);
-                String applicationName = this.applicationService.getApplication(applicationId).getName();
-                String teamName = this.teamService.getTeam(teamId).getName();
-                mv.addObject("applicationName", applicationName);
-                mv.addObject("teamName", teamName);
-		mv.addObject("flow", flow);
-		mv.addObject("libraries", getLibraries(libraryService));
+    Flow flow = this.service.loadFlow(this.userService.getCurrentUser(), teamId, applicationId, flowId);
+    String applicationName = this.applicationService.getApplication(applicationId).getName();
+    String teamName = this.teamService.getTeam(teamId).getName();
+    mv.addObject("applicationName", applicationName);
+    mv.addObject("teamName", teamName);
+    mv.addObject("flow", flow);
+    mv.addObject("libraries", getLibraries(libraryService));
 		
 		return mv;
 	}

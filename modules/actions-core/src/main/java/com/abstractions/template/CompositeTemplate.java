@@ -99,7 +99,10 @@ public class CompositeTemplate extends ElementTemplate {
 		  if (template == null) {
 		    for (ElementTemplate eleTemplate : this.definitions.values()) {
 		      if (eleTemplate instanceof CompositeTemplate) {
-		        return ((CompositeTemplate) eleTemplate).getDefinition(elementId);
+		        template = ((CompositeTemplate) eleTemplate).getDefinition(elementId);
+		        if (template != null) {
+		          return template;
+		        }
 		      }
 		    }
 		    
