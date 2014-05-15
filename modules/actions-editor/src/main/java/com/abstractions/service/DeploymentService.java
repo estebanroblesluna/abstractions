@@ -94,7 +94,7 @@ public class DeploymentService {
 	@Transactional
 	public void addDeployment(long snapshotId, long userId, Collection<Long> servers) {
 		ApplicationSnapshot applicationSnapshot = this.snapshotService.getSnapshot(snapshotId);
-		User user = this.userService.getUser(userId);
+		User user = this.userService.getCurrentUser();
 		final Deployment deployment = new Deployment(applicationSnapshot, user);
 
 		for (long serverId : servers) {

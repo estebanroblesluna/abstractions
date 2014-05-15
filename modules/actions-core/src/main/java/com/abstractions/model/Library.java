@@ -14,6 +14,7 @@ import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ElementDefinitionVisitor;
+import com.abstractions.meta.FlowDefinition;
 import com.abstractions.meta.MessageSourceDefinition;
 import com.abstractions.meta.ProcessorDefinition;
 import com.abstractions.meta.RouterDefinition;
@@ -107,6 +108,11 @@ public class Library {
 				public Object visitApplicationDefinition(ApplicationDefinition applicationDefinition) {
 					return null;
 				}
+
+        @Override
+        public Object visitFlowDefinition(FlowDefinition flowDefinition) {
+          return null;
+        }
 			});
 			
 			mapping.addMapping(element.getName(), element);

@@ -88,7 +88,7 @@
 	_state = @"NOT_IN_SYNC";
 	$.ajax({
 		type: "POST",
-		url: "../service/element/" + _contextId + "/" + elementName
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + elementName
 	}).done(function( result ) {
 		_elementId = result.id;
 		_state = @"SYNCED";
@@ -231,7 +231,7 @@
 	_state = @"NOT_IN_SYNC";
 	$.ajax({
 		type: "DELETE",
-		url: "../service/element/" + _contextId + "/" + _elementId
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + _elementId
 	}).done(function( result ) {
 		_state = @"DELETED";
 		[self changed];
@@ -250,7 +250,7 @@
 	
 	$.ajax({
 		type: "POST",
-		url: "../service/element/" + _contextId + "/" + _elementId + "/property/" + propertyName,
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + _elementId + "/property/" + propertyName,
 		data: {"propertyValue" : propertyValue }
 	}).done(function( result ) {
 		_state = @"NOT_IN_SYNC";
@@ -269,7 +269,7 @@
 	
 	$.ajax({
 		type: "POST",
-		url: "../service/element/" + _contextId + "/" + _elementId + "/" + anElementId + "/connection/" + aConnectionType
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + _elementId + "/" + anElementId + "/connection/" + aConnectionType
 	}).done(function( result ) {
 		_state = @"SYNCED";
 		var id = result.id;
@@ -289,7 +289,7 @@
 	
 	$.ajax({
 		type: "PUT",
-		url: "../service/element/" + _contextId + "/" + _elementId + "/breakpoint/" + aBreakpoint
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + _elementId + "/breakpoint/" + aBreakpoint
 	}).done(function( result ) {
 		_state = @"SYNCED";
 		_hasBreakpoint = aBreakpoint;
@@ -311,7 +311,7 @@
 	CPLog.debug("Performing action of " + _elementId + " action " + actionName + " arguments " + anArrayOfArguments);
 	$.ajax({
 		type: "POST",
-		url: "../service/element/" + _contextId + "/" + _elementId + "/action/" + actionName
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + _elementId + "/action/" + actionName
 	}).done(function( result ) {
 		CPLog.debug("Action performed of " + _elementId + " action " + actionName + " arguments " + anArrayOfArguments);
 		if (aCallback != nil) {
@@ -330,7 +330,7 @@
 
 	$.ajax({
 		type: "POST",
-		url: "../service/element/" + _contextId + "/" + _elementId + "/sync"
+		url: "../service/element/" + [Actions applicationId] + "/" + _contextId + "/" + _elementId + "/sync"
 	}).done(function( result ) {
 		_state = @"SYNCED";
 		[self changed];

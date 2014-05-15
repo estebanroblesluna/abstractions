@@ -41,7 +41,7 @@
 
 	$.ajax({
 		type: "POST",
-		url: "../service/context/" + contextId + "/abstract",
+		url: "../service/context/" + [Actions applicationId] + "/" + contextId + "/abstract",
 		data: {"name" : name, "displayName" : name, "elementUrns": urns}
 	}).done(function( result ) {
 		[self processResult: result.definition selectedUrns: selectedUrns];
