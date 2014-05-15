@@ -17,6 +17,7 @@ public class ApplicationSnapshot {
 	private Application application;
 	private List<Resource> resources;
 	private Environment environment;
+	private byte[] zip;
 
 	public ApplicationSnapshot(){
 		
@@ -92,4 +93,12 @@ public class ApplicationSnapshot {
 		}
 		return null;
 	}
+
+  public byte[] getZip() {
+    return zip;
+  }
+
+  public void setZip(byte[] zip) {
+    this.zip = zip;
+  }
 }
