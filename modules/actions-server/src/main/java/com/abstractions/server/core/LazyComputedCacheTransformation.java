@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.meta.CompositeDefinition;
 import com.abstractions.service.core.ApplicationTransformation;
@@ -53,11 +54,11 @@ public class LazyComputedCacheTransformation implements ApplicationTransformatio
 	}
 	
 	@Override
-	public void transform(CompositeTemplate application) {
+	public void transform(CompositeTemplate context, ApplicationTemplate appTemplate) {
 		List<ElementTemplate> cacheAccess = new ArrayList<ElementTemplate>();
 
 		//OBTAIN THE CONNECTION DEFINITION
-		ElementTemplate connectionDefinition = application.getDefinition(objectId);
+		ElementTemplate connectionDefinition = context.getDefinition(objectId);
 		
 		//SAVE THE PREVIOUS TARGET ID
 		String previousTargetId = connectionDefinition.getProperty("target");
@@ -67,25 +68,25 @@ public class LazyComputedCacheTransformation implements ApplicationTransformatio
 		cacheAccess.add(getCacheDefinition);
 		ElementTemplate choiceDefinition = new ElementTemplate(this.mapping.getDefinition("CHOICE"));
 		ElementTemplate chainDefinition = new ElementTemplate(this.mapping.getDefinition("CHAIN"));
-		application.addDefinition(getCacheDefinition);
-		application.addDefinition(choiceDefinition);
-		application.addDefinition(chainDefinition);
+		context.addDefinition(getCacheDefinition);
+		context.addDefinition(choiceDefinition);
+		context.addDefinition(chainDefinition);
 		
 		//SET THE EXPRESSION TO GET FROM MEMCACHED
 		String adaptedKeyExpression = "'__CACHED_" + getCacheDefinition.getId() + "_' + " + keyExpression;
 		getCacheDefinition.setProperty("expression", adaptedKeyExpression);
 		
 		//CACHE -> CHOICE
-		application.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+		context.addConnection(getCacheDefinition.getId(), choiceDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 
 		//CHOICE -> CHAIN
-		String choiceConnectionId = application.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
+		String choiceConnectionId = context.addConnection(choiceDefinition.getId(), chainDefinition.getId(), ConnectionType.CHOICE_CONNECTION).getId();
 		//IF CACHE IS NULL
-		ElementTemplate choiceConnectionDefinition = application.getDefinition(choiceConnectionId);
+		ElementTemplate choiceConnectionDefinition = context.getDefinition(choiceConnectionId);
 		choiceConnectionDefinition.setProperty("expression", "message.payload == null");
 
 		//POINT TO THE PREVIOUS COMPUTATION
-		application.addConnection(chainDefinition.getId(), previousTargetId.substring(4), ConnectionType.CHAIN_CONNECTION);
+		context.addConnection(chainDefinition.getId(), previousTargetId.substring(4), ConnectionType.CHAIN_CONNECTION);
 		
 		//ADD PUT OPERATION
 		String[] putExpressions = StringUtils.split(cacheExpressions, ';');
@@ -98,10 +99,10 @@ public class LazyComputedCacheTransformation implements ApplicationTransformatio
 
 			cacheAccess.add(putCacheDefinition);
 			
-			application.addDefinition(nullProcessorDefinition);
-			application.addDefinition(putCacheDefinition);
-			application.addConnection(chainDefinition.getId(), nullProcessorDefinition.getId(), ConnectionType.CHAIN_CONNECTION);
-			application.addConnection(nullProcessorDefinition.getId(), putCacheDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+			context.addDefinition(nullProcessorDefinition);
+			context.addDefinition(putCacheDefinition);
+			context.addConnection(chainDefinition.getId(), nullProcessorDefinition.getId(), ConnectionType.CHAIN_CONNECTION);
+			context.addConnection(nullProcessorDefinition.getId(), putCacheDefinition.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
 		}
 		
 		//FINALLY CHANGE THE CONNECTION TO POINT TO THE GET FROM CACHE
@@ -113,8 +114,8 @@ public class LazyComputedCacheTransformation implements ApplicationTransformatio
 		cache.setTtl(this.ttl);
 		
 		//INITIALIZE ALL OBJECTS THAT HAS ACCESS TO THE CACHE
-		CompositeDefinition appDefinition = ((CompositeDefinition) application.getMeta());
-		appDefinition.initializeTemplates(application, null, this.mapping, cacheAccess);
+		CompositeDefinition appDefinition = ((CompositeDefinition) context.getMeta());
+		appDefinition.initializeTemplates(context, null, this.mapping, cacheAccess, appTemplate);
 		
 		for (ElementTemplate template : cacheAccess) {
 			try {
@@ -127,7 +128,7 @@ public class LazyComputedCacheTransformation implements ApplicationTransformatio
 		}
 				
 		try {
-			application.sync(null, this.mapping);
+		  appTemplate.sync();
 		} catch (ServiceException e) {
 			log.warn("Error syncing context", e);
 		}

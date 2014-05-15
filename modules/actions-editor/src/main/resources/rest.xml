@@ -5,8 +5,9 @@
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
   <bean id="interpreterRest" class="com.abstractions.service.rest.InterpreterRESTService">
-    <constructor-arg index="0" ref="contextHolder" />
-    <constructor-arg index="1" ref="interpreterHolder" />
+    <constructor-arg ref="contextHolder" />
+    <constructor-arg ref="interpreterHolder" />
+    <constructor-arg ref="userService" />
   </bean>
   
   <bean id="contextRest" class="com.abstractions.service.rest.ContextRESTService">
@@ -16,12 +17,14 @@
     <constructor-arg ref="deploymentService" />
     <constructor-arg ref="libraryService" />
     <constructor-arg ref="iconService" />
+    <constructor-arg ref="userService" />
   </bean>
 
   <bean id="elementRest" class="com.abstractions.service.rest.ElementRESTService">
-    <constructor-arg index="0" ref="contextHolder" />
-    <constructor-arg index="1" ref="namesMapping" />
-    <constructor-arg index="2" ref="deploymentService" />
+    <constructor-arg ref="contextHolder" />
+    <constructor-arg ref="namesMapping" />
+    <constructor-arg ref="deploymentService" />
+    <constructor-arg ref="userService" />
   </bean>
   
   <bean id="serverRest" class="com.abstractions.service.rest.ServerRESTService">

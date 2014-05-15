@@ -23,7 +23,7 @@
       <script type="text/javascript">
         var libraries = ${libraries};
       </script>
-      <iframe src="/editor/index-debug.html?saveUrl=/teams/${teamId}/applications/${applicationId}/flows/save" style="width:100%; height: 550px" frameBorder="0"></iframe>
+      <iframe src="/editor/index-debug.html?applicationId=${applicationId}&saveUrl=/teams/${teamId}/applications/${applicationId}/flows/save" style="width:100%; height: 550px" frameBorder="0"></iframe>
       </div>
     </div>
   </div>

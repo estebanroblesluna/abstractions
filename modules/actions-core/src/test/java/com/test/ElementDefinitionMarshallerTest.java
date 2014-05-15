@@ -3,6 +3,8 @@ package com.test;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -12,8 +14,6 @@ import org.junit.Test;
 import com.abstractions.common.ElementDefinitionMarshaller;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ProcessorDefinition;
-
-import junit.framework.TestCase;
 
 /**
 *

@@ -22,8 +22,13 @@ public class UserService {
 	}
 
 	@Transactional
-	public User getUser(long userId) {
-		return this.genericRepository.get(User.class, userId);
+	private User getUser(long userId) {
+		User user = this.genericRepository.get(User.class, userId);
+		return user;
 	}
-
+	
+  @Transactional
+	public User getCurrentUser(){
+	  return this.getUser(1);
+	}
 }

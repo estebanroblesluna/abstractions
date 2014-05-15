@@ -57,7 +57,7 @@
 	
 	$.ajax({
 		type: "POST",
-		url: "../service/interpreter/" + _contextId + "/create",
+		url: "../service/interpreter/" + [Actions applicationId] + "/" + _contextId + "/create",
 		data: {"initialProcessorId": _elementId }
 	}).done(function( result ) {
 		_interpreterId = result.id;
