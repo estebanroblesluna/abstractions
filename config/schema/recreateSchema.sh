@@ -76,6 +76,11 @@ mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-ren
 
 #v0.2
 
+#v0.3
+
+echo -e "${yellow}Executing refactor-environment.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/refactor-environment.sql
+
 echo -e "${green}Done!${reset}";
 
 

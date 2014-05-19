@@ -25,17 +25,18 @@ public class FileApplicationDefinitionLoader implements ApplicationDefinitionLoa
 	private static final Log log = LogFactory.getLog(FileApplicationDefinitionLoader.class);
 
 	private final String baseDirectory;
+  private final PropertiesLoader propertiesLoader;
 
-	
-	public FileApplicationDefinitionLoader(String baseDirectory) {
+	public FileApplicationDefinitionLoader(String baseDirectory, PropertiesLoader propertiesLoader) {
 		Validate.notNull(baseDirectory);
 		
 		this.baseDirectory = baseDirectory;
+    this.propertiesLoader = propertiesLoader;
 	}
 	
 	@Override
 	public ApplicationDefinition load(long applicationId, NamesMapping mapping) {
-		ApplicationDefinition appDefinition = new ApplicationDefinition("App " + applicationId);
+		ApplicationDefinition appDefinition = new ApplicationDefinition("App " + applicationId, this.propertiesLoader);
 		appDefinition.setId(applicationId);
 		
 		File applicationDirectory = new File(this.baseDirectory + "/" + applicationId);

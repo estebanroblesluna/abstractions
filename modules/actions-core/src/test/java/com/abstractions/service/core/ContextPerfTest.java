@@ -32,7 +32,7 @@ public class ContextPerfTest extends TestCase {
 		
 		long count = 10000;
 
-		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp"), this.mapping);
+		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp", null), this.mapping, null);
 		
 		long start = System.currentTimeMillis();
 		

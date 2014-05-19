@@ -36,8 +36,11 @@
     </id>
 
     <property name="date" type="java.util.Date" />
-    <property name="environment" type="com.abstractions.model.Environment" />
-    <property name="zip" type="binary" column="zip" />
+    <property name="environment" column="environment">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.Environment</param>
+       </type>
+    </property>    <property name="zip" type="binary" column="zip" />
     <many-to-one name="application" column="application_id" />
     
     <bag name="properties" lazy="false" cascade="all">
@@ -97,7 +100,11 @@
     </id>
     <property name="name" type="string" />
     <property name="value" type="string" />
-    <property name="environment" />
+    <property name="environment" column="environment">
+       <type name="com.abstractions.repository.GenericEnumUserType">
+        <param name="enumClass">com.abstractions.model.Environment</param>
+       </type>
+    </property>
   </class>
 
 

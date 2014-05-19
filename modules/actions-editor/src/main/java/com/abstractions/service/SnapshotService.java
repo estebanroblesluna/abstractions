@@ -180,7 +180,7 @@ public class SnapshotService {
 			//Properties
 			zipOutputStream.putNextEntry(new ZipEntry("properties"));
 			for(Property property : snapshot.getProperties()){
-			  IOUtils.write(property.getName() + " = " + property.getValue()+"\n", zipOutputStream);
+			  IOUtils.write(property.getName() + "=" + property.getValue()+"\n", zipOutputStream);
 			}
 	    zipOutputStream.closeEntry();
 			zipOutputStream.close();

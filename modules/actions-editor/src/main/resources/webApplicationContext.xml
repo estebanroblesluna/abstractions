@@ -212,5 +212,10 @@
 
    <bean id="applicationLoader" class="com.abstractions.service.core.DatabaseApplicationDefinitionLoader">
     <constructor-arg ref="repository" />
-   </bean>   
+    <constructor-arg ref="propertiesLoader" />
+   </bean>
+   
+   <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
+    <constructor-arg ref="repository" />
+   </bean>
 </beans>

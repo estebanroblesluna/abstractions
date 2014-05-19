@@ -17,18 +17,20 @@ public class DatabaseApplicationDefinitionLoader implements ApplicationDefinitio
 	private static final Log log = LogFactory.getLog(DatabaseApplicationDefinitionLoader.class);
 	
 	private final GenericRepository repository;
+	private final PropertiesLoader propertiesLoader;
 	
-	public DatabaseApplicationDefinitionLoader(GenericRepository repository) {
+	public DatabaseApplicationDefinitionLoader(GenericRepository repository, PropertiesLoader propertiesLoader) {
 		Validate.notNull(repository);
 		
 		this.repository = repository;
+    this.propertiesLoader = propertiesLoader;
 	}
 	
 	@Override
 	public ApplicationDefinition load(long applicationId, NamesMapping mapping) {
 		Application application = this.repository.get(Application.class, applicationId);
 
-		ApplicationDefinition appDefinition = new ApplicationDefinition(application.getName(), mapping);
+		ApplicationDefinition appDefinition = new ApplicationDefinition(application.getName(), mapping, this.propertiesLoader);
 		appDefinition.setId(applicationId);
 
 		CompositeTemplateMarshaller marshaller = new CompositeTemplateMarshaller(appDefinition.getMapping());

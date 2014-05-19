@@ -69,6 +69,11 @@
 	    	<constructor-arg index="1" value="public" />
 	  	</bean>
     </constructor-arg>
+    <constructor-arg ref="propertiesLoader" />
+  </bean>
+
+  <bean id="propertiesLoader" class="com.abstractions.service.core.FilePropertiesLoader">
+    <constructor-arg value="${server.apps.directory}" />
   </bean>
 
   <task:scheduled-tasks scheduler="myScheduler">

@@ -37,7 +37,7 @@ public class InterpreterTestCase extends TestCase {
 		
 		mapping.addEvaluator("FLOW", new AbstractionEvaluator());
 		
-		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp"), mapping);
+		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp", null), mapping, null);
 	}
 	
 	

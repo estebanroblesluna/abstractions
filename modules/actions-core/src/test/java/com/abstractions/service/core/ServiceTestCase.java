@@ -27,7 +27,7 @@ public class ServiceTestCase extends TestCase {
 	}
 
 	public void testDefinitions() throws ServiceException {
-	  ApplicationTemplate application = new ApplicationTemplate(new ApplicationDefinition("myApp"), this.mapping);
+	  ApplicationTemplate application = new ApplicationTemplate(new ApplicationDefinition("myApp", null), this.mapping, null);
 		ElementTemplate addPropertyDefinition = new ElementTemplate(this.common.getDefinition("ADD_PROPERTY"));
 		ElementTemplate toStringDefinition = new ElementTemplate(this.common.getDefinition("TO_STRING"));
 		

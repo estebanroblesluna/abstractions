@@ -28,11 +28,9 @@ import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.LoggingInfo;
 import com.abstractions.model.ProfilingInfo;
 import com.abstractions.service.core.FileApplicationDefinitionLoader;
-import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.PropertiesLoader;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.service.core.ServiceException;
-import com.abstractions.service.repository.CompositeTemplateMarshaller;
-import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
@@ -52,9 +50,9 @@ public class ActionsServer {
 
 	private ResourceService resourceService;
 	private final ApplicationMappingInitializer applicationMappingInitializer;
-
+	private final PropertiesLoader propertiesLoader;
 	
-	public ActionsServer(String applicationDirectory, ResourceService resourceService) {
+	public ActionsServer(String applicationDirectory, ResourceService resourceService, PropertiesLoader propertiesLoader) {
 		Validate.notNull(applicationDirectory);
 		Validate.notNull(resourceService);
 
@@ -66,6 +64,7 @@ public class ActionsServer {
 		}
 
 		this.resourceService = resourceService;
+		this.propertiesLoader = propertiesLoader;
 		
 		this.definitions = new ConcurrentHashMap<String, CompositeTemplate>();
 		this.profilers = new ConcurrentHashMap<String, List<PerformanceInterceptor>>();
@@ -132,7 +131,7 @@ public class ActionsServer {
 	private void startApplicationFromFiles(String applicationId) throws InstantiationException, IllegalAccessException, ServiceException {
 		log.info("[START] Application from files " + StringUtils.defaultString(applicationId));
 		
-		FileApplicationDefinitionLoader loader = new FileApplicationDefinitionLoader(this.applicationDirectory);
+		FileApplicationDefinitionLoader loader = new FileApplicationDefinitionLoader(this.applicationDirectory, this.propertiesLoader);
 		ApplicationDefinition appDefinition = loader.load(Long.valueOf(applicationId), null);
 		        
 		ApplicationTemplate composite = appDefinition.createTemplate(appDefinition.getMapping());
