@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.service.CustomUserService;
+import com.abstractions.service.UserServiceIface;
 
 /**
  * Controller for Register user
@@ -27,7 +27,7 @@ public class RegisterController {
 	private static Log log = LogFactory.getLog(RegisterController.class);
 
 	@Autowired
-	CustomUserService service;
+	UserServiceIface service;
 	
 	@RequestMapping(value="/register", method = RequestMethod.GET)
 	public ModelAndView register() {
@@ -42,7 +42,7 @@ public class RegisterController {
 			return mv;
 
 		try {
-			service.registerUser(form.getUsername(), form.getPassword(), form.getEmail(), form.getFullName());
+			service.registerUser(form.getUsername(), form.getPassword(), form.getEmail(), form.getFirstName(), form.getLastName());
 		} catch (UsernameExistsException e) {
 			mv.addObject("usernameExistsError","Username already exists");
 			return mv;
@@ -58,7 +58,11 @@ public class RegisterController {
 	
 	@RequestMapping(value="/register/confirm")
 	public String confirm(@RequestParam("username") String username, @RequestParam("token") String token) {
-		service.confirmUser(username, token);
+		try {
+      service.confirmUser(username, token);
+    } catch (Exception e) {
+      log.error(e.getMessage());
+    }
 		return "redirect:/login?confirmed=true/";
 	}
 

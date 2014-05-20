@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.service.CustomUserService;
+import com.abstractions.service.UserServiceIface;
 
 /**
  * @author Guido J. Celada (celadaguido@gmail.com)
@@ -15,13 +15,13 @@ import com.abstractions.service.CustomUserService;
 @Controller
 public class AdminPanelController {
 	
-	@Autowired
-	CustomUserService service;
+  @Autowired
+  UserServiceIface service;
 	
 	@RequestMapping(value="/admin/enable-users", method = RequestMethod.GET)
 	public ModelAndView enableUsers() {
 		ModelAndView mv = new ModelAndView("admin-enable-users", "EnableUserForm", new EnableUserForm());
-		mv.addObject("my_conf_users", service.getConfirmedUsers());
+		mv.addObject("my_conf_users", service.getConfirmedDisabledUsers());
 		return mv;
 	}
 	

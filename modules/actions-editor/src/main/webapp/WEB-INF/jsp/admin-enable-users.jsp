@@ -25,7 +25,7 @@
 			<div class="col-lg-12">
 				<ol class="breadcrumb">
 					<li>Admin</li>
-					<li class="active">Confirm users</li>
+					<li class="active">Enable confirmed users</li>
 				</ol>
 			</div>
 		</div>
@@ -35,11 +35,13 @@
 
 				<table class="table table-striped">
 					<thead>
+					<b>Disabled users with confirmed email:</b>
 						<tr>
 							<th>Username</th>
-							<th>Full name</th>
+							<th>First Name</th>
+							<th>Last Name</th>
 							<th>Email</th>
-							<th>Confirm?</th>
+							<th>Enable?</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -48,7 +50,8 @@
 						<c:forEach var="u" items='${my_conf_users}' varStatus="lp">
 							<tr>
 								<td>${u.username}</td>
-								<td>${u.fullName}</td>
+								<td>${u.firstName}</td>
+								<td>${u.lastName}</td>
 								<td>${u.email}</td>
 								<td><input type="checkbox" class="selectedObjects"
 									name="usersToEnable" value="${u.username}" /></td>

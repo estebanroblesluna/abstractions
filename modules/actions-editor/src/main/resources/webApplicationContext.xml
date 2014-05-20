@@ -110,15 +110,20 @@
     <constructor-arg index="1" ref="teamService" />
   </bean>
 
+  <bean id="emailService" class="com.abstractions.web.EmailService" init-method="init"/> 
+
+  <bean id="userRepository" class="com.abstractions.repository.UserRepository" parent="repository" />
+
   <bean id="userService" class="com.abstractions.service.UserService">
-    <constructor-arg index="0" ref="repository" />
+    <constructor-arg ref="userRepository" />
+    <constructor-arg ref="emailService" />
   </bean>
 
   <bean id="deploymentService" class="com.abstractions.service.DeploymentService">
-    <constructor-arg index="0" ref="repository" />
-    <constructor-arg index="1" ref="snapshotService" />
-    <constructor-arg index="2" ref="userService" />
-    <constructor-arg index="3" ref="serverService" />
+    <constructor-arg ref="repository" />
+    <constructor-arg ref="snapshotService" />
+    <constructor-arg ref="userService" />
+    <constructor-arg ref="serverService" />
   </bean>
 
   <bean id="publicResourceService" class="com.abstractions.service.core.DatabaseResourceService">
@@ -201,12 +206,5 @@
   <bean class="org.springframework.social.connect.web.ProviderSignInController"> 
     <!-- relies on by-type autowiring for the constructor-args -->    
   </bean>
-  
-   <bean id="authProvider" class="com.abstractions.service.CustomJdbcUserDetailsManager">
-        <property name="dataSource" ref="dataSource"/>
-   </bean>
    
-   <bean id="registerConfirmationEmail" class="com.abstractions.web.EmailService"  init-method="init"/> 
-   
-   <bean id="customUserService" class="com.abstractions.service.CustomUserService" />
 </beans>

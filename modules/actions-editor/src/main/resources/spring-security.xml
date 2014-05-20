@@ -25,7 +25,7 @@
 	</http>
  
 	<authentication-manager>
-	  <authentication-provider user-service-ref="authProvider">
+	  <authentication-provider user-service-ref="userService">
 	  	<password-encoder hash="sha">
 	  	</password-encoder>
 	  </authentication-provider>

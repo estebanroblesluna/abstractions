@@ -1,18 +1,15 @@
 package com.abstractions.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -48,7 +45,7 @@ public class DeploymentService {
 
 	private GenericRepository repository;
 	private SnapshotService snapshotService;
-	private UserService userService;
+	private UserServiceIface userService;
 	private ServerService serverService;
 	
 	public DeploymentService() {
@@ -68,7 +65,7 @@ public class DeploymentService {
 	public DeploymentService(
 			GenericRepository repository, 
 			SnapshotService snapshotService, 
-			UserService userService, 
+			UserServiceIface userService,
 			ServerService serverService) {
 		this();
 		Validate.notNull(repository);

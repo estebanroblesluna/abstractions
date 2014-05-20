@@ -18,7 +18,6 @@ echo -e "${yellow}Executing actionsSchema.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/actionsSchema.sql
 echo -e "${yellow}Executing sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/sample.sql
-
 echo -e "${yellow}Executing update-icons.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-icons.sql
 echo -e "${yellow}Executing module-sql.sql${reset}";
@@ -73,10 +72,12 @@ echo -e "${yellow}Executing hello-world-sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sample.sql
 echo -e "${yellow}Executing update-dust-renderer-example-flow.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-renderer-example-flow.sql
+echo -e "${yellow}Executing add-auth-tables2.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.2/add-auth-tables2.sql
 
 #v0.2
 
-echo -e "${green}Done!${reset}";
+echo -e "${green}Done recreating schema!${reset}";
 
 
 
