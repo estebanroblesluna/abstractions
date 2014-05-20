@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.generalization.ApplicationTemplate;
-import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.Flow;
 import com.abstractions.model.User;
@@ -20,7 +19,6 @@ import com.abstractions.service.core.ServiceException;
 import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
-import com.abstractions.web.WebUserKeyProvider;
 
 @Service
 public class FlowService {
@@ -29,7 +27,6 @@ public class FlowService {
 	private ApplicationService applicationService;
 	private CompositeTemplateMarshaller marshaller;
 	private DevelopmentContextHolder holder;
-	private NamesMapping mapping;
 	
 	protected FlowService() { }
 	
@@ -43,7 +40,6 @@ public class FlowService {
 		this.applicationService = applicationService;
 		this.marshaller = new CompositeTemplateMarshaller(mapping);
 		this.holder = holder;
-		this.mapping = mapping;
 	}
 	
 	@Transactional

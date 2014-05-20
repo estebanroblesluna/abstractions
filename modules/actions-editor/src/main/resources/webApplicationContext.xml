@@ -111,14 +111,20 @@
   </bean>
 
   <bean id="userService" class="com.abstractions.service.UserService">
-    <constructor-arg index="0" ref="repository" />
+    <constructor-arg ref="repository" />
   </bean>
 
   <bean id="deploymentService" class="com.abstractions.service.DeploymentService">
-    <constructor-arg index="0" ref="repository" />
-    <constructor-arg index="1" ref="snapshotService" />
-    <constructor-arg index="2" ref="userService" />
-    <constructor-arg index="3" ref="serverService" />
+    <constructor-arg ref="repository" />
+    <constructor-arg ref="snapshotService" />
+    <constructor-arg ref="userService" />
+    <constructor-arg ref="serverService" />
+    <constructor-arg ref="cloudFrontService" />
+  </bean>
+  
+  <bean id="cloudFrontService" class="com.abstractions.service.CloudFrontService">
+    <constructor-arg ref="snapshotService" />
+    <constructor-arg ref="repository" />
   </bean>
 
   <bean id="publicResourceService" class="com.abstractions.service.core.DatabaseResourceService">

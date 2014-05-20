@@ -1,30 +1,19 @@
 package com.abstractions.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Environment;
@@ -32,43 +21,19 @@ import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
 import com.abstractions.model.Resource;
 import com.abstractions.repository.GenericRepository;
-import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ResourceService;
-import com.abstractions.service.ApplicationService;
-import com.abstractions.service.repository.CompositeTemplateMarshaller;
-import com.abstractions.service.repository.MarshallingException;
-import com.abstractions.template.CompositeTemplate;
-import com.abstractions.template.ElementTemplate;
 
 @Service
 public class SnapshotService {
 
 	private static final Log log = LogFactory.getLog(SnapshotService.class);
 	
-	private String rootPath;
-	private File rootDir;
 	private GenericRepository repository;
 	private ResourceService publicResourceService;
 	private ResourceService privateResourceService;
 	private ApplicationService applicationService;
 	private List<ResourceAppender> resourceAppenders;
 	private List<SnapshotProcessor> snapshotProcessors;
-	
-	public String getRootPath() {
-		return rootPath;
-	}
-
-	public void setRootPath(String rootPath) {
-		this.rootPath = rootPath;
-	}
-
-	private File getRootDir() {
-		return rootDir;
-	}
-
-	private void setRootDir(File rootDir) {
-		this.rootDir = rootDir;
-	}
 	
 	protected SnapshotService() { }
 	
@@ -150,9 +115,6 @@ public class SnapshotService {
 		}
     this.repository.save(application);
     this.repository.save(snapshot);
-		CloudFrontService cf = new CloudFrontService(this);
-		cf.distributeResources(snapshot.getId());
-
 	}
 
 	private void generateSnapshotZip(Application application, ApplicationSnapshot snapshot) throws Exception {

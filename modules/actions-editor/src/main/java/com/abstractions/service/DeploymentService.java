@@ -1,26 +1,13 @@
 package com.abstractions.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -40,48 +27,37 @@ import com.abstractions.model.ServerCommand;
 import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
 
-
 @Service
 public class DeploymentService {
 
 	private static final Log log = LogFactory.getLog(DeploymentService.class);
 	
-	private HttpClient client;
-
 	private GenericRepository repository;
 	private SnapshotService snapshotService;
 	private UserService userService;
 	private ServerService serverService;
+	private CloudFrontService cfService;
 	
-	public DeploymentService() {
-		ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager();
-		HttpParams params = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(params, 3000);
-		HttpConnectionParams.setSoTimeout(params, 3000);
-
-		connManager.setMaxTotal(100);
-		connManager.setDefaultMaxPerRoute(10);
-
-		this.client = new DefaultHttpClient(connManager, params);
-		this.client.getParams().setParameter(
-				ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
-	}
+	public DeploymentService() { }
 
 	public DeploymentService(
 			GenericRepository repository, 
 			SnapshotService snapshotService, 
 			UserService userService, 
-			ServerService serverService) {
-		this();
-		Validate.notNull(repository);
+			ServerService serverService,
+			CloudFrontService cfService) {
+
+	  Validate.notNull(repository);
 		Validate.notNull(snapshotService);
 		Validate.notNull(userService);
 		Validate.notNull(serverService);
+    Validate.notNull(cfService);
 
 		this.repository = repository;
 		this.snapshotService = snapshotService;
 		this.userService = userService;
 		this.serverService = serverService;
+    this.cfService = cfService;
 	}
 
 	@Transactional
@@ -93,7 +69,12 @@ public class DeploymentService {
 	
 	@Transactional
 	public void addDeployment(long snapshotId, long userId, Collection<Long> servers) {
-		ApplicationSnapshot applicationSnapshot = this.snapshotService.getSnapshot(snapshotId);
+    ApplicationSnapshot applicationSnapshot = this.snapshotService.getSnapshot(snapshotId);
+
+    if (this.isCDNAware(applicationSnapshot)) {
+      this.cfService.distributeResources(applicationSnapshot);
+    }
+	  
 		User user = this.userService.getCurrentUser();
 		final Deployment deployment = new Deployment(applicationSnapshot, user);
 
@@ -104,7 +85,12 @@ public class DeploymentService {
 		this.repository.save(deployment);
 	}
 
-	@Transactional
+	private boolean isCDNAware(ApplicationSnapshot applicationSnapshot) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Transactional
 	public List<Deployment> getDeployments(long applicationSnapshotId) {
 		List<Deployment> deployments = this.repository.get(Deployment.class, "snapshot", applicationSnapshotId);
 		for (Deployment deployment : deployments) {
@@ -299,10 +285,6 @@ public class DeploymentService {
 		return result;
 	}
 	
-	private HttpResponse execute(HttpUriRequest method) throws ClientProtocolException, IOException {
-		return this.client.execute(method);
-	}
-
 	@Transactional
 	public InputStream startDeployment(long deploymentId, String serverId, String serverKey) {
 		Deployment deployment = this.repository.get(Deployment.class, deploymentId);
