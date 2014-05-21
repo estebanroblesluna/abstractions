@@ -24,6 +24,7 @@ CREATE TABLE `users` (
   `email` VARCHAR(100) NOT NULL UNIQUE,
   `first_name` VARCHAR(200),
   `last_name` VARCHAR(200),
+  `type` VARCHAR(200),
   `creationDate` TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

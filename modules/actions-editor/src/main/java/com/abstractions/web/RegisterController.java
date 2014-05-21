@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.service.UserServiceIface;
+import com.abstractions.service.UserService;
 
 /**
  * Controller for Register user
@@ -27,7 +27,7 @@ public class RegisterController {
 	private static Log log = LogFactory.getLog(RegisterController.class);
 
 	@Autowired
-	UserServiceIface service;
+	UserService service;
 	
 	@RequestMapping(value="/register", method = RequestMethod.GET)
 	public ModelAndView register() {

@@ -222,7 +222,7 @@
     </bag>
     <bag name="users" table="user_team" inverse="false" lazy="true" fetch="select" cascade="all" access="field">
       <key column="team_id" />
-      <many-to-many class="com.abstractions.model.User" column="user_id" />
+      <many-to-many class="com.abstractions.model.UserImpl" column="user_id" />
     </bag>
   </class>
 
@@ -233,7 +233,7 @@
     <property name="authority" column="authority" type="string" />    
   </class>	
 	
-  <class name="com.abstractions.model.User" table="users">
+  <class name="com.abstractions.model.UserImpl" table="users">
     <id name="id" type="long" column="user_id" access="field">
       <generator class="native" />
     </id>
@@ -244,7 +244,7 @@
     <property name="creationDate" column="creationDate" type="date" />
     <property name="confirmed" column="confirmed"/>
     <property name="enabled" column="enabled"/>
-	  <property name="password" column="password" type="string" />
+	<property name="password" column="password" type="string" />
 	
     <bag name="authorities" table="authorities" inverse="true" lazy="false">
       <key column="auth_id" not-null="true"/>

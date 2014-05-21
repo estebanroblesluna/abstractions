@@ -18,6 +18,7 @@
     <spring-social-twitter.version>1.0.5.RELEASE</spring-social-twitter.version>
     <spring-social-facebook.version>1.0.0.RELEASE</spring-social-facebook.version>
     <spring.security.crypto.version>3.1.0.RC3</spring.security.crypto.version>
+    <atmosphere.version>1.0.13</atmosphere.version>
   </properties>
 
   <repositories>

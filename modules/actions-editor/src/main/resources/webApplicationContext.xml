@@ -114,7 +114,7 @@
 
   <bean id="userRepository" class="com.abstractions.repository.UserRepository" parent="repository" />
 
-  <bean id="userService" class="com.abstractions.service.UserService">
+  <bean id="userService" class="com.abstractions.service.UserServiceImpl">
     <constructor-arg ref="userRepository" />
     <constructor-arg ref="emailService" />
   </bean>

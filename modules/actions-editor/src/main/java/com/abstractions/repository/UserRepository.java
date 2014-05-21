@@ -22,7 +22,7 @@ public class UserRepository extends GenericRepository {
   }
 
   public User getUserByUsernameWithAuthorities(String username) {
-    String query = "from com.abstractions.model.User as user " + 
+    String query = "from UserImpl as user " + 
                    "inner join fetch user.authorities as auth " + 
                    "where username = :username";
     Query q = this.getSessionFactory().getCurrentSession().createQuery(query);
@@ -32,7 +32,7 @@ public class UserRepository extends GenericRepository {
   
   @SuppressWarnings("unchecked")
   public List<User> getConfirmedDisabledUsers() {
-    String query = "from com.abstractions.model.User as user " + 
+    String query = "from UserImpl as user " + 
                    "where confirmed = true "+
                    "and enabled = false";
     Query q = this.getSessionFactory().getCurrentSession().createQuery(query);

@@ -11,19 +11,19 @@ public class Team {
 	long id;
 
 	private String name;
-	private User owner;
+	private UserImpl owner;
 	private List<ServerGroup> serverGroups;
 	private List<Application> applications;
-	private List<User> users;
+	private List<UserImpl> users;
 	
 	protected Team() {}
 	
-	public Team(String name, User owner) {
+	public Team(String name, UserImpl owner) {
 		Validate.notNull(owner);
 		this.name = name;
 		this.serverGroups = new ArrayList<ServerGroup>();
 		this.applications = new ArrayList<Application>();
-		this.users = new ArrayList<User>();
+		this.users = new ArrayList<UserImpl>();
 		this.owner = owner;
 		this.addUser(owner);
 	}
@@ -44,7 +44,7 @@ public class Team {
 		this.applications.add(application);
 	}
 	
-	public void addUser(User user) {
+	public void addUser(UserImpl user) {
 		Validate.notNull(user);
 		
 		this.users.add(user);
@@ -59,7 +59,7 @@ public class Team {
 		return Collections.unmodifiableList(applications);
 	}
 	
-	public List<User> getUsers() {
+	public List<UserImpl> getUsers() {
 		return Collections.unmodifiableList(users);
 	}
 
@@ -67,7 +67,7 @@ public class Team {
 		return id;
 	}
 
-	public User getOwner() {
+	public UserImpl getOwner() {
 		return owner;
 	}
 }

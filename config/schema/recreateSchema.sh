@@ -73,7 +73,7 @@ mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sam
 echo -e "${yellow}Executing update-dust-renderer-example-flow.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-renderer-example-flow.sql
 echo -e "${yellow}Executing add-auth-tables2.sql${reset}";
-mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.2/add-auth-tables2.sql
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-auth-tables2.sql
 
 #v0.2
 

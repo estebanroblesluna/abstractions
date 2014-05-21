@@ -9,13 +9,13 @@ public class Deployment {
 
 	long id;
 
-	private User triggerBy;
+	private UserImpl triggerBy;
 	private ApplicationSnapshot snapshot;
 	private List<DeploymentToServer> toServers;
 	
 	public Deployment() { }
 
-	public Deployment(ApplicationSnapshot snapshot, User user) {
+	public Deployment(ApplicationSnapshot snapshot, UserImpl user) {
 		Validate.notNull(snapshot);
 		Validate.notNull(user);
 		
@@ -43,7 +43,7 @@ public class Deployment {
 		return servers;
 	}
 
-	public User getTriggerBy() {
+	public UserImpl getTriggerBy() {
 		return triggerBy;
 	}
 	

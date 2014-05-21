@@ -25,6 +25,7 @@ import com.abstractions.model.ProfilingInfoJSONMarshaller;
 import com.abstractions.model.Server;
 import com.abstractions.model.ServerCommand;
 import com.abstractions.model.User;
+import com.abstractions.model.UserImpl;
 import com.abstractions.repository.GenericRepository;
 
 @Service
@@ -75,7 +76,7 @@ public class DeploymentService {
       this.cfService.distributeResources(applicationSnapshot);
     }
 	  
-		User user = this.userService.getCurrentUser();
+		UserImpl user = (UserImpl) this.userService.getCurrentUser();
 		final Deployment deployment = new Deployment(applicationSnapshot, user);
 
 		for (long serverId : servers) {

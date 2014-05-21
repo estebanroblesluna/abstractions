@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.abstractions.service.UserServiceIface;
+import com.abstractions.service.UserService;
 
 /**
  * @author Guido J. Celada (celadaguido@gmail.com)
@@ -16,7 +16,7 @@ import com.abstractions.service.UserServiceIface;
 public class AdminPanelController {
 	
   @Autowired
-  UserServiceIface service;
+  UserService service;
 	
 	@RequestMapping(value="/admin/enable-users", method = RequestMethod.GET)
 	public ModelAndView enableUsers() {

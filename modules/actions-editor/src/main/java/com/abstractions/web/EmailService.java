@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.abstractions.model.User;
-import com.abstractions.service.UserService;
+import com.abstractions.model.UserImpl;
+import com.abstractions.service.UserServiceImpl;
 
 /**
  * 
@@ -80,7 +81,7 @@ public class EmailService {
                 +"<br/>Username : <b>" + user.getUsername() +"</b>"+
                 "<br/>Full Name : <b>" + user.getFirstName() +" "+ user.getLastName() + "</b>"+
                 "<br/>Click the link to activate your account : <br>" +
-                "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + UserService.generateConfirmationToken(user) +
+                "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + UserServiceImpl.generateConfirmationToken(user) +
                 "'><b>Activate Account</b></a>"+
                 "<br/>*************************************** ", "text/html" );
         
