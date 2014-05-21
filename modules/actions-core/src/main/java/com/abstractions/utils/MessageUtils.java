@@ -8,6 +8,7 @@ public class MessageUtils {
 	public static final String FILE_BASE_PROPERTY = BASE_PROPERTY + ".file";
 
 	public static final String APPLICATION_BASE_PROPERTY = BASE_PROPERTY + ".application";
+  public static final String PROPERTY_BASE = APPLICATION_BASE_PROPERTY + ".properties.";
 
 	public static final String APPLICATION_ID_PROPERTY = APPLICATION_BASE_PROPERTY + ".id";
 	public static final String APPLICATION_CDN_PROPERTY = APPLICATION_BASE_PROPERTY + ".cdn";

@@ -1,7 +1,6 @@
 package com.abstractions.server.core;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,18 +21,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
-import com.abstractions.common.ElementDefinitionMarshaller;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.instance.common.LogInterceptor;
 import com.abstractions.instance.common.PerformanceInterceptor;
 import com.abstractions.meta.ApplicationDefinition;
-import com.abstractions.meta.ElementDefinition;
 import com.abstractions.model.LoggingInfo;
 import com.abstractions.model.ProfilingInfo;
-import com.abstractions.service.core.NamesMapping;
+import com.abstractions.service.core.FileApplicationDefinitionLoader;
+import com.abstractions.service.core.PropertiesLoader;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.service.core.ServiceException;
-import com.abstractions.service.repository.CompositeTemplateMarshaller;
-import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
@@ -53,9 +50,9 @@ public class ActionsServer {
 
 	private ResourceService resourceService;
 	private final ApplicationMappingInitializer applicationMappingInitializer;
-
+	private final PropertiesLoader propertiesLoader;
 	
-	public ActionsServer(String applicationDirectory, ResourceService resourceService) {
+	public ActionsServer(String applicationDirectory, ResourceService resourceService, PropertiesLoader propertiesLoader) {
 		Validate.notNull(applicationDirectory);
 		Validate.notNull(resourceService);
 
@@ -67,6 +64,7 @@ public class ActionsServer {
 		}
 
 		this.resourceService = resourceService;
+		this.propertiesLoader = propertiesLoader;
 		
 		this.definitions = new ConcurrentHashMap<String, CompositeTemplate>();
 		this.profilers = new ConcurrentHashMap<String, List<PerformanceInterceptor>>();
@@ -94,29 +92,6 @@ public class ActionsServer {
 					}
 				}
 			}
-		}
-	}
-
-	/**
-	 * Starts the context definition in CompositeTemplate assuming that it 
-	 * has been stored as a json object.
-	 * The it tries to sync and start the definition.
-	 * 
-	 * If the definition has been started you can stop it at any time by calling the stop method
-	 * 
-	 * @param appDefinition
-	 * @param flowDefinition 
-	 */
-	private void start(ApplicationDefinition appDefinition, String flowDefinition) {
-		try {
-			CompositeTemplateMarshaller marshaller = new CompositeTemplateMarshaller(appDefinition.getMapping());
-			CompositeTemplate composite = marshaller.unmarshall(appDefinition, flowDefinition);
-			
-			for (ElementTemplate template : composite.getDefinitions().values()) {
-				appDefinition.addDefinition(template);
-			}
-		} catch (MarshallingException e) {
-			log.error("Error reading definition", e);
 		}
 	}
 
@@ -155,60 +130,22 @@ public class ActionsServer {
 
 	private void startApplicationFromFiles(String applicationId) throws InstantiationException, IllegalAccessException, ServiceException {
 		log.info("[START] Application from files " + StringUtils.defaultString(applicationId));
-		ApplicationDefinition appDefinition = new ApplicationDefinition(applicationId);
-		File applicationDirectory = new File(this.applicationDirectory + "/" + applicationId);
+		
+		FileApplicationDefinitionLoader loader = new FileApplicationDefinitionLoader(this.applicationDirectory, this.propertiesLoader);
+		ApplicationDefinition appDefinition = loader.load(Long.valueOf(applicationId), null);
+		        
+		ApplicationTemplate composite = appDefinition.createTemplate(appDefinition.getMapping());
+		composite.sync();
+		composite.start();
+			
+		StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();
+		appDefinition.setDefaultInterpreterDelegate(statistics);
+		
+		this.statistics.put(applicationId, statistics);
+		this.definitions.put(applicationId, composite);
+		this.appDefinitions.put(applicationId, appDefinition);
 
-		if (applicationDirectory.exists()) {
-			NamesMapping mapping = appDefinition.getMapping();
-			this.loadMapping(mapping, applicationDirectory);
-			
-			File flowDirectory = new File(applicationDirectory, "flows");
-			for (File flowFile : flowDirectory.listFiles()) {
-				this.startFlow(appDefinition, flowFile);
-			}
-			
-			CompositeTemplate composite = appDefinition.createTemplate(mapping);
-			composite.sync(null, mapping);
-			composite.start();
-			
-			StatisticsInterpreterDelegate statistics = new StatisticsInterpreterDelegate();
-			appDefinition.setDefaultInterpreterDelegate(statistics);
-			
-			this.statistics.put(applicationId, statistics);
-			this.definitions.put(applicationId, composite);
-			this.appDefinitions.put(applicationId, appDefinition);
-		} else {
-			log.warn("NOT FOUND Application from files " + StringUtils.defaultString(applicationId));
-		}
 		log.info("[END] Application from files " + StringUtils.defaultString(applicationId));
-	}
-
-	private void loadMapping(NamesMapping mapping, File applicationDirectory) {
-		File mappingFile = new File(applicationDirectory, "files/_definitions/commons.json");
-
-		if (mappingFile.exists()) {
-			InputStream io = null;
-			
-			try {
-				io = new FileInputStream(mappingFile);
-				String definitionsAsJSON = IOUtils.toString(io);
-				List<ElementDefinition> elements = ElementDefinitionMarshaller.unmarshall(definitionsAsJSON);
-				this.applicationMappingInitializer.buildFromInto(elements, mapping);
-			} catch (IOException e) {
-				log.warn("Error parsing mapping", e);
-			} finally {
-				IOUtils.closeQuietly(io);
-			}
-		}
-	}
-
-	private void startFlow(ApplicationDefinition appDefinition, File flowFile) {
-		try {
-			String flowDefinition = FileUtils.readFileToString(flowFile);
-			this.start(appDefinition, flowDefinition);
-		} catch (IOException e) {
-			log.warn("Error reading flow (ignoring for now) " + flowFile.getAbsolutePath(), e);
-		}
 	}
 
 	private void cleanUpApplication(String applicationId) {
@@ -400,7 +337,8 @@ public class ActionsServer {
 		LazyComputedCacheTransformation transformation = new LazyComputedCacheTransformation(
 				objectId, memcachedURL, keyExpression, cacheExpressions, ttl, appDefinition.getMapping());
 		
-		transformation.transform(context);
+		ApplicationTemplate appTemplate = (ApplicationTemplate) this.definitions.get(applicationId);
+		transformation.transform(context, appTemplate);
 	}
 	
 	public void addLazyAutorefreshableCache(
@@ -417,8 +355,8 @@ public class ActionsServer {
 		LazyAutorefreshableCacheTransformation transformation = new LazyAutorefreshableCacheTransformation(
 				objectId, memcachedURL, keyExpression, cacheExpressions, oldCacheEntryInMills, appDefinition.getMapping());
 		
-		transformation.transform(context);
-
+    ApplicationTemplate appTemplate = (ApplicationTemplate) this.definitions.get(applicationId);
+		transformation.transform(context, appTemplate);
 	}
 
 	public Map<String, StatisticsInfo> getStatistics() {

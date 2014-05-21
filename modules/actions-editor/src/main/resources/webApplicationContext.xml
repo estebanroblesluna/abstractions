@@ -124,6 +124,12 @@
     <constructor-arg ref="snapshotService" />
     <constructor-arg ref="userService" />
     <constructor-arg ref="serverService" />
+    <constructor-arg ref="cloudFrontService" />
+  </bean>
+  
+  <bean id="cloudFrontService" class="com.abstractions.service.CloudFrontService">
+    <constructor-arg ref="snapshotService" />
+    <constructor-arg ref="repository" />
   </bean>
 
   <bean id="publicResourceService" class="com.abstractions.service.core.DatabaseResourceService">
@@ -207,4 +213,12 @@
     <!-- relies on by-type autowiring for the constructor-args -->    
   </bean>
    
+   <bean id="applicationLoader" class="com.abstractions.service.core.DatabaseApplicationDefinitionLoader">
+    <constructor-arg ref="repository" />
+    <constructor-arg ref="propertiesLoader" />
+   </bean>
+   
+   <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
+    <constructor-arg ref="repository" />
+   </bean>
 </beans>

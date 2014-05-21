@@ -13,7 +13,6 @@
     <hibernate.version>4.2.5.Final</hibernate.version>
     <jersey.version>1.12</jersey.version>
     <jetty.version>8.1.9.v20130131</jetty.version>
-    <atmosphere.version>1.0.13</atmosphere.version>
     <spring.security.version>3.0.5.RELEASE</spring.security.version>
     <spring-social.version>1.0.0.RELEASE</spring-social.version>
     <spring-social-twitter.version>1.0.5.RELEASE</spring-social-twitter.version>

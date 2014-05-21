@@ -12,6 +12,7 @@ import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
 import com.abstractions.generalization.AbstractionEvaluator;
 import com.abstractions.generalization.AbstractionTemplate;
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.template.CompositeTemplate;
@@ -51,18 +52,18 @@ public class AbstractionDefinition extends CompositeDefinition {
 	}
 	
 	@Override
-	public Element instantiate(CompositeElement container, NamesMapping mapping, ElementTemplate template) throws InstantiationException, IllegalAccessException {
+	public Element instantiate(CompositeElement container, NamesMapping mapping, ElementTemplate template, ApplicationTemplate appTemplate) throws InstantiationException, IllegalAccessException {
 		AbstractionTemplate abstraction = (AbstractionTemplate) this.createTemplate(mapping);
 		abstraction.setStartingElement(this.startingDefinition);
 		
 		this.elementToAbstractionMapping.put(template, abstraction);
 		
-		return super.instantiate(container, mapping, abstraction);
+		return super.instantiate(container, mapping, abstraction, appTemplate);
 	}
 	
-	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping) {
+	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping, ApplicationTemplate appTemplate) {
 		AbstractionTemplate abstraction = this.elementToAbstractionMapping.get(template);
-		super.initialize(abstraction, properties, container, mapping);
+		super.initialize(abstraction, properties, container, mapping, appTemplate);
 	}
 	
 	/**

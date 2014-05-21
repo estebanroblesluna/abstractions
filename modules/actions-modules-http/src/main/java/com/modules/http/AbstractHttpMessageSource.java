@@ -1,10 +1,9 @@
 package com.modules.http;
 
-import com.abstractions.api.ApplicationAware;
 import com.abstractions.api.Expression;
 import com.abstractions.instance.messagesource.AbstractMessageSource;
 
-public abstract class AbstractHttpMessageSource extends AbstractMessageSource implements ApplicationAware {
+public abstract class AbstractHttpMessageSource extends AbstractMessageSource {
 
 	private volatile Expression timeoutExpression;
 	private volatile String applicationId;

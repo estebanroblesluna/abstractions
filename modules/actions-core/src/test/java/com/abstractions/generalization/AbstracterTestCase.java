@@ -28,7 +28,7 @@ public class AbstracterTestCase extends TestCase {
 		
 		this.common = Meta.getCommonLibrary();
 		this.common.createMappings(mapping);
-		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp"), mapping);
+		this.application = new ApplicationTemplate(new ApplicationDefinition("myApp", null), mapping, null);
 		this.abstracter = new Abstracter();
 	}
 

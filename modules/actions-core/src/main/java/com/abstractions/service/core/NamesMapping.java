@@ -1,9 +1,11 @@
 package com.abstractions.service.core;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -93,6 +95,9 @@ public class NamesMapping {
 	}
 
 	public Map<String, String> getElementInitialProperties(String elementName) {
+	  if (StringUtils.isBlank(elementName)) {
+	    return new HashMap<String, String>();
+	  }
 		return this.elementInitialProperties.get(elementName);
 	}
 

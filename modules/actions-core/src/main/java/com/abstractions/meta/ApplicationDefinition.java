@@ -1,29 +1,33 @@
 package com.abstractions.meta;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.runtime.interpreter.InterpreterDelegate;
 import com.abstractions.runtime.interpreter.Thread;
 import com.abstractions.service.core.NamesMapping;
-import com.abstractions.template.CompositeTemplate;
+import com.abstractions.service.core.PropertiesLoader;
 
 public class ApplicationDefinition extends CompositeDefinition {
 
-	private static final Log log = LogFactory.getLog(ApplicationDefinition.class);
-
 	private volatile InterpreterDelegate interpreterDelegate;
 	private final NamesMapping mapping;
+	private PropertiesLoader propertiesLoader;
 	
 	protected ApplicationDefinition() {
 		this.mapping = new NamesMapping();
 	}
 
-	public ApplicationDefinition(String name) {
+	public ApplicationDefinition(String name, PropertiesLoader propertiesLoader) {
 		super(name);
 		this.mapping = new NamesMapping();
+		this.propertiesLoader = propertiesLoader;
 	}
+
+  // ONLY for DEV environment we may need to use a mapping
+  public ApplicationDefinition(String name, NamesMapping mapping, PropertiesLoader propertiesLoader) {
+    super(name);
+    this.mapping = mapping;
+    this.propertiesLoader = propertiesLoader;
+  }
 
 	/**
 	 * {@inheritDoc}
@@ -56,15 +60,15 @@ public class ApplicationDefinition extends CompositeDefinition {
 	}
 
 	@Override
-	protected CompositeTemplate basicCreateTemplate(String id, CompositeDefinition compositeDefinition, NamesMapping mapping) {
-		return new ApplicationTemplate(id, this, mapping);
+	protected ApplicationTemplate basicCreateTemplate(String id, CompositeDefinition compositeDefinition, NamesMapping mapping) {
+		return new ApplicationTemplate(id, this, mapping, this.propertiesLoader);
 	}
 
-	public NamesMapping getMapping() {
-		return mapping;
+	public ApplicationTemplate createTemplate(NamesMapping mapping) {
+		return (ApplicationTemplate) super.createTemplate(mapping);
 	}
 	
-	protected String getApplicationId() {
-		return Long.valueOf(this.getId()).toString();
+	public NamesMapping getMapping() {
+		return mapping;
 	}
 }

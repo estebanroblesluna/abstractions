@@ -110,8 +110,10 @@ public class EditorService {
 			
 			String json = IOUtils.toString(response.getEntity().getContent());
 			JSONObject object = new JSONObject(json);
+			
 			this.processPendingDeployments(object);
 			this.processPendingCommands(object);
+			
 		} catch (ClientProtocolException e) {
 			log.warn("Error pinging server " + this.editorUrl);
 		} catch (IOException e) {

@@ -1,12 +1,16 @@
 package com.abstractions.service;
 
-import org.apache.commons.io.input.CloseShieldInputStream;
+import java.io.ByteArrayInputStream;
+
 import org.apache.commons.lang.Validate;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.model.Property;
 import com.abstractions.model.Resource;
+import com.abstractions.repository.GenericRepository;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudfront.AmazonCloudFrontClient;
@@ -14,6 +18,7 @@ import com.amazonaws.services.cloudfront.model.Aliases;
 import com.amazonaws.services.cloudfront.model.CacheBehaviors;
 import com.amazonaws.services.cloudfront.model.CookiePreference;
 import com.amazonaws.services.cloudfront.model.CreateDistributionRequest;
+import com.amazonaws.services.cloudfront.model.CreateDistributionResult;
 import com.amazonaws.services.cloudfront.model.DefaultCacheBehavior;
 import com.amazonaws.services.cloudfront.model.DistributionConfig;
 import com.amazonaws.services.cloudfront.model.ForwardedValues;
@@ -28,22 +33,22 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
-import java.io.ByteArrayInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 public class CloudFrontService {
 	
 	private static String awsAccessKeyProperty = "awsAccessKey";
 	private static String awsSecretKeyProperty = "awsSecretKey";
 	
 	private SnapshotService snapshotService;
+	private GenericRepository repository;
 	
 	public CloudFrontService(){}
 	
-	public CloudFrontService(SnapshotService snapshotService){
+	public CloudFrontService(SnapshotService snapshotService, GenericRepository repository){
 		Validate.notNull(snapshotService);
+    Validate.notNull(repository);
+		
 		this.snapshotService = snapshotService;
+    this.repository = repository;
 	}
 	
 	private void uploadResources(ApplicationSnapshot snapshot, AWSCredentials credentials){
@@ -87,14 +92,20 @@ public class CloudFrontService {
 	private String buildSnapshotBucketName(ApplicationSnapshot snapshot){
 		return ("app-"+snapshot.getApplication().getName()+"-snp-"+snapshot.getId()).toLowerCase();
 	}
-	
-	public void distributeResources(long snapshotId){
-		
-		ApplicationSnapshot snapshot = snapshotService.getSnapshot(snapshotId);
+
+  @Transactional
+  public String distributeResources(long snapshotId) {
+    ApplicationSnapshot snapshot = this.snapshotService.getSnapshot(snapshotId);
+    return this.distributeResources(snapshot);
+  }
+
+	@Transactional
+	public String distributeResources(ApplicationSnapshot snapshot){
 		String accessKey = snapshot.getProperty(awsAccessKeyProperty);
 		String secretKey = snapshot.getProperty(awsSecretKeyProperty);
+		
 		if((secretKey==null || accessKey==null))
-			return;
+			return null;
 		
 		AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 		uploadResources(snapshot, credentials);
@@ -147,6 +158,15 @@ public class CloudFrontService {
 														
 		
 		CreateDistributionRequest createDistributionRequest = new CreateDistributionRequest().withDistributionConfig(distributionConfig);
-		client.createDistribution(createDistributionRequest);
+		CreateDistributionResult result = client.createDistribution(createDistributionRequest);
+		String location = result.getLocation();
+		
+		//TODO change this line
+		Property property = new Property("cdnUrl", location, snapshot.getEnvironment());
+		snapshot.addProperty(property);
+		
+		this.repository.save(snapshot);
+		
+		return location;
 	}
 }

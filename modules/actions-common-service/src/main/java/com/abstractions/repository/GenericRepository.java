@@ -150,4 +150,12 @@ public class GenericRepository {
   protected void setSessionFactory(SessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
   }
+
+  public List getProperties(long applicationId, Object environment) {
+    return this.getSessionFactory().getCurrentSession()
+            .createQuery("SELECT p FROM Application app INNER JOIN app.properties as p WHERE app.id = :applicationId AND p.environment = :environment")
+            .setString("environment", environment.toString())
+            .setLong("applicationId", applicationId)
+            .list();
+  }
 }

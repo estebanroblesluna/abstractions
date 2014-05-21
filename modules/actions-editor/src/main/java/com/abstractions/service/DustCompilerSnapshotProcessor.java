@@ -29,7 +29,7 @@ public class DustCompilerSnapshotProcessor implements SnapshotProcessor {
 	@Override
 	public void process(Application application, ApplicationSnapshot snapshot) throws Exception {
 		for (Flow flow : snapshot.getFlows()) {
-			ApplicationDefinition applicationDefinition = new ApplicationDefinition(application.getName());
+			ApplicationDefinition applicationDefinition = new ApplicationDefinition(application.getName(), null);
 			CompositeTemplate template = new CompositeTemplateMarshaller(this.namesMapping).unmarshall(applicationDefinition, flow.getJson());
 			Iterator<ElementTemplate> elementIterator = template.getDefinitions().values().iterator();
 			while (elementIterator.hasNext()) {

@@ -45,10 +45,6 @@
 			<artifactId>atmosphere-jersey</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.atmosphere</groupId>
-			<artifactId>atmosphere-compat-tomcat7</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
 		</dependency>

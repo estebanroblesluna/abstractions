@@ -15,7 +15,6 @@ import com.abstractions.model.Deployment;
 import com.abstractions.model.Flow;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.DeploymentService;
-import com.abstractions.service.UserServiceIface;
 import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.ServerService;
 import com.abstractions.service.TeamService;
@@ -32,14 +31,11 @@ public class DeploymentController {
 	@Autowired
 	LibraryService libraryService;
         
-  @Autowired
-  ApplicationService applicationService;
-
-  @Autowired
-  TeamService teamService;
-
-  @Autowired
-  UserServiceIface userService;
+        @Autowired
+	ApplicationService applicationService;
+        
+        @Autowired
+	TeamService teamService;
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("snapshotId") long snapshotId, @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {

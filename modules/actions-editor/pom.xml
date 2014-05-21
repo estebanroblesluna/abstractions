@@ -101,10 +101,6 @@
       <groupId>org.atmosphere</groupId>
       <artifactId>atmosphere-jersey</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.atmosphere</groupId>
-      <artifactId>atmosphere-compat-tomcat7</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>cglib</groupId>
@@ -132,7 +128,6 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpmime</artifactId>
     </dependency>
-  
 
     <dependency>
       <groupId>org.springframework.social</groupId>

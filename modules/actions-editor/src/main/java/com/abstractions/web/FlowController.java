@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.abstractions.generalization.ApplicationTemplate;
 import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ConnectionDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ElementDefinitionVisitor;
+import com.abstractions.meta.FlowDefinition;
 import com.abstractions.meta.MessageSourceDefinition;
 import com.abstractions.meta.ProcessorDefinition;
 import com.abstractions.meta.RouterDefinition;
@@ -27,9 +29,10 @@ import com.abstractions.model.Library;
 import com.abstractions.model.PropertyDefinition;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.FlowService;
-import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.TeamService;
+import com.abstractions.service.UserService;
 import com.abstractions.service.core.DevelopmentContextHolder;
+import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
@@ -37,50 +40,59 @@ import com.abstractions.template.ElementTemplate;
 @Controller
 public class FlowController {
 
-	@Autowired
-	FlowService service;
-	
-	@Autowired
-	DevelopmentContextHolder holder;
-	
-	@Autowired
-	LibraryService libraryService;
+  @Autowired
+  FlowService service;
 
-        @Autowired
-	ApplicationService applicationService;
-        
-        @Autowired
-	TeamService teamService;
-	
-	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows", method = RequestMethod.GET)
-	public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
-		ModelAndView mv = new ModelAndView("flows");
-		String applicationName = this.applicationService.getApplication(applicationId).getName();
-		List<Flow> flows = this.service.getFlows(teamId, applicationId);
-        String teamName = this.teamService.getTeam(teamId).getName();
-		mv.addObject("teamName", teamName);
-		mv.addObject("flows", flows);
-        mv.addObject("applicationName", applicationName);
+  @Autowired
+  DevelopmentContextHolder holder;
 
-		return mv;
-	}
+  @Autowired
+  LibraryService libraryService;
+
+  @Autowired
+  ApplicationService applicationService;
+
+  @Autowired
+  TeamService teamService;
+  
+  @Autowired
+  UserService userService;
 	
-	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/add", method = RequestMethod.GET)
-	public ModelAndView add(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
-		ModelAndView mv = new ModelAndView("addFlow");
-                String applicationName = this.applicationService.getApplication(applicationId).getName();
-                String teamName = this.teamService.getTeam(teamId).getName();
-                mv.addObject("applicationName", applicationName);
-                mv.addObject("teamName", teamName);
-		mv.addObject("teamId", teamId);
-		mv.addObject("applicationId", applicationId);
-		mv.addObject("libraries", getLibraries(libraryService));
-		return mv;
-	}
+  @RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows", method = RequestMethod.GET)
+  public ModelAndView home(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
+    ModelAndView mv = new ModelAndView("flows");
+    String applicationName = this.applicationService.getApplication(applicationId).getName();
+    List<Flow> flows = this.service.getFlows(teamId, applicationId);
+    String teamName = this.teamService.getTeam(teamId).getName();
+    mv.addObject("teamName", teamName);
+    mv.addObject("flows", flows);
+    mv.addObject("applicationName", applicationName);
+
+    return mv;
+  }
+	
+  @RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/add", method = RequestMethod.GET)
+  public ModelAndView add(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
+    ModelAndView mv = new ModelAndView("addFlow");
+    String applicationName = this.applicationService.getApplication(applicationId).getName();
+    String teamName = this.teamService.getTeam(teamId).getName();
+    mv.addObject("applicationName", applicationName);
+    mv.addObject("teamName", teamName);
+    mv.addObject("teamId", teamId);
+    mv.addObject("applicationId", applicationId);
+    mv.addObject("libraries", getLibraries(libraryService));
+    return mv;
+  }
 
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/save/{flowId}", method = RequestMethod.POST, produces = { "application/json" })
-	public @ResponseBody String editFlowOnSave(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
-		CompositeTemplate context = this.holder.get(form.getName());
+	public @ResponseBody String editFlowOnSave(
+	        @PathVariable("teamId") long teamId, 
+	        @PathVariable("applicationId") long applicationId, 
+	        @PathVariable("flowId") long flowId, 
+	        @ModelAttribute("form") AddFlowForm form) throws JSONException {
+	  
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+		CompositeTemplate context = appTemplate.getFlow(form.getName());
 		
 		JSONObject result = new JSONObject();
 		
@@ -155,8 +167,13 @@ public class FlowController {
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/flows/save", method = RequestMethod.POST, produces = { "application/json" })
-	public @ResponseBody String addFlow(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @ModelAttribute("form") AddFlowForm form) throws JSONException {
-		CompositeTemplate context = this.holder.get(form.getName());
+	public @ResponseBody String addFlow(
+	        @PathVariable("teamId") long teamId, 
+	        @PathVariable("applicationId") long applicationId, 
+	        @ModelAttribute("form") AddFlowForm form) throws JSONException {
+
+    ApplicationTemplate appTemplate = this.holder.getApplicationTemplate(this.userService.getCurrentUser(), applicationId);
+    CompositeTemplate context = appTemplate.getFlow(form.getName());
 		
 		JSONObject result = new JSONObject();
 		
@@ -234,13 +251,13 @@ public class FlowController {
 	public ModelAndView edit(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("flowId") long flowId) {
 		ModelAndView mv = new ModelAndView("editFlow");
 		
-		Flow flow = this.service.loadFlow(teamId, applicationId, flowId);
-                String applicationName = this.applicationService.getApplication(applicationId).getName();
-                String teamName = this.teamService.getTeam(teamId).getName();
-                mv.addObject("applicationName", applicationName);
-                mv.addObject("teamName", teamName);
-		mv.addObject("flow", flow);
-		mv.addObject("libraries", getLibraries(libraryService));
+    Flow flow = this.service.loadFlow(this.userService.getCurrentUser(), teamId, applicationId, flowId);
+    String applicationName = this.applicationService.getApplication(applicationId).getName();
+    String teamName = this.teamService.getTeam(teamId).getName();
+    mv.addObject("applicationName", applicationName);
+    mv.addObject("teamName", teamName);
+    mv.addObject("flow", flow);
+    mv.addObject("libraries", getLibraries(libraryService));
 		
 		return mv;
 	}
@@ -338,6 +355,11 @@ public class FlowController {
 				}
 				return null;
 			}
+
+      @Override
+      public Object visitFlowDefinition(FlowDefinition flowDefinition) {
+        return null;
+      }
 		});
 		
 		JSONArray propertyDefinitions = new JSONArray();
