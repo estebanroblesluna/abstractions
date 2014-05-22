@@ -128,7 +128,7 @@ public class EditorService {
 	}
 	
 	public void sendProfiling() {
-		Collection<String> applicationIds = this.actionsServer.getApplicationIds();
+		Collection<String> applicationIds = this.actionsServer.getApplicationIdsForLoggingAndProfiling();
 
 		JSONObject profilingInfo = new JSONObject();
 		JSONArray infos = new JSONArray();
@@ -170,7 +170,7 @@ public class EditorService {
 	}
 
 	public void sendLogging() {
-		Collection<String> applicationIds = this.actionsServer.getApplicationIds();
+		Collection<String> applicationIds = this.actionsServer.getApplicationIdsForLoggingAndProfiling();
 
 		JSONObject loggingInfo = new JSONObject();
 		JSONArray infos = new JSONArray();

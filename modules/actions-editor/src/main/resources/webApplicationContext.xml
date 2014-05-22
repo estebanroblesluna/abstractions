@@ -91,6 +91,13 @@
     		<bean class="com.abstractions.service.DefinitionsResourceAppender">
     			<constructor-arg ref="elementDefinitionService" />
     		</bean>
+    		<bean class="com.abstractions.service.StringMapResourceAppender">
+    			<constructor-arg>
+    				<map>
+    					<entry key="__ok" value=""></entry>
+    				</map>
+    			</constructor-arg>
+    		</bean>
     	</list>
     </constructor-arg>
     <constructor-arg index="5">
@@ -223,5 +230,8 @@
    
    <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
     <constructor-arg ref="repository" />
+   </bean>
+   
+   <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager">
    </bean>
 </beans>

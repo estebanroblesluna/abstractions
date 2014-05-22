@@ -369,10 +369,18 @@ public class ActionsServer {
 		return stats;
 	}
 	
-	public Collection<String> getApplicationIds() {
+	public Collection<String> getApplicationIdsForLoggingAndProfiling() {
 		Set<String> applicationIds = new HashSet<String>();
 		applicationIds.addAll(this.profilers.keySet());
 		applicationIds.addAll(this.logs.keySet());
 		return applicationIds;
 	}
+	
+	public Collection<Long> getApplicationIds() {
+    Set<Long> applicationIds = new HashSet<Long>();
+    for (ApplicationDefinition appDefinition : this.appDefinitions.values()) {
+      applicationIds.add(appDefinition.getId());
+    }
+    return applicationIds;
+  }
 }

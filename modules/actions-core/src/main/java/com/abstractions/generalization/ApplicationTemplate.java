@@ -18,6 +18,7 @@ import com.abstractions.service.core.PropertiesLoader;
 import com.abstractions.service.core.ServiceException;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
+import com.abstractions.utils.LiquidMLWebApplicationContext;
 import com.abstractions.utils.LiquidMlApplicationContext;
 import com.abstractions.utils.MessageUtils;
 
@@ -76,18 +77,21 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 			interpreter.setDelegate(appDefinition.getInterpreterDelegate());
 		}
 		
-		try {
-		  // TODO define actions.http.requestURL as a constant 
-      URL requestUrl = new URL((String) message.getProperty("actions.http.requestURL"));
-      String cdnUrl = 
-              requestUrl.getProtocol() + "://" + 
-              requestUrl.getHost() + ":" + 
-              LiquidMlApplicationContext.getInstance().getLocalCdnPort() + 
-              LiquidMlApplicationContext.getInstance().getLocalCdnBaseUrlFor(applicationId);
-      message.putProperty(MessageUtils.APPLICATION_CDN_PROPERTY, cdnUrl);
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-    }
+		String cdnUrl = LiquidMLWebApplicationContext.getInstance().getCdnUrl(applicationId);
+		if (cdnUrl != null) {
+		  cdnUrl = cdnUrl + "/";
+		} else {
+  		try {
+        URL requestUrl = new URL((String) message.getProperty(MessageUtils.HTTP_REQUEST_URL));
+        cdnUrl = 
+                requestUrl.getProtocol() + "://" + 
+                requestUrl.getHost() + ":" + 
+                LiquidMlApplicationContext.getInstance().getLocalCdnPort() + 
+                LiquidMlApplicationContext.getInstance().getLocalCdnBaseUrlFor(applicationId);
+      } catch (MalformedURLException e) { }
+		}
+		
+		message.putProperty(MessageUtils.APPLICATION_CDN_PROPERTY, cdnUrl);
 		
 		Thread root = interpreter.run(message);
 		return root.getCurrentMessage();
