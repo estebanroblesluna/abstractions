@@ -19,11 +19,6 @@
     <webappName>editor</webappName>
     <jetty.port>9091</jetty.port>
     <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
-    <spring.security.version>3.0.5.RELEASE</spring.security.version>
-    <spring-social.version>1.0.0.RELEASE</spring-social.version>
-    <spring-social-twitter.version>1.0.5.RELEASE</spring-social-twitter.version>
-    <spring-social-facebook.version>1.0.0.RELEASE</spring-social-facebook.version>
-    <spring.security.crypto.version>3.1.0.RC3</spring.security.crypto.version>
     <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
   </properties>
 
@@ -133,68 +128,35 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpmime</artifactId>
     </dependency>
-    
-    <!-- Spring Security -->
-    <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
-    </dependency>
-    
-    <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${spring.security.version}</version>
-            <type>jar</type>
-    </dependency>
-
-    <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>${spring.security.version}</version>
-            <type>jar</type>
-    </dependency>
-    
-    <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-taglibs</artifactId>
-        <version>${spring.security.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework.social</groupId>
       <artifactId>spring-social-core</artifactId>
-      <version>${spring-social.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework.social</groupId>
       <artifactId>spring-social-web</artifactId>
-      <version>${spring-social.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework.social</groupId>
       <artifactId>spring-social-twitter</artifactId>
-      <version>${spring-social-twitter.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework.social</groupId>
       <artifactId>spring-social-facebook</artifactId>
-      <version>${spring-social-facebook.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-crypto</artifactId>
-      <version>${spring.security.crypto.version}</version>
     </dependency>
     
     <dependency>
       <groupId>org.springframework.social</groupId>
       <artifactId>spring-social-security</artifactId>
-      <version>1.1.0.BUILD-SNAPSHOT</version>
     </dependency>
     
      <!-- Java Mail API -->
@@ -214,6 +176,27 @@
 	  <groupId>org.hibernate</groupId>
 	  <artifactId>hibernate-validator</artifactId>
 	  <version>5.1.0.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <type>jar</type>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
     </dependency>
   </dependencies>
 

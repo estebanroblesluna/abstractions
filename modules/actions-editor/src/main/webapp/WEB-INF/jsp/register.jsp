@@ -82,10 +82,17 @@
                       </div>
                     </div>
                     <div class="form-group">
-                      <label for="inputName" class="col-sm-3 control-label">Full Name</label>
+                      <label for="inputName" class="col-sm-3 control-label">First Name</label>
                       <div class="col-sm-9">
-                        <form:input path="fullName" type="text" class="form-control" id="inputName" name='fullName' />
-                        <form:errors path="fullName" cssClass="alert-danger" element="div"></form:errors>
+                        <form:input path="firstName" type="text" class="form-control" id="inputName" name='firstName' />
+                        <form:errors path="firstName" cssClass="alert-danger" element="div"></form:errors>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="inputName" class="col-sm-3 control-label">Last Name</label>
+                      <div class="col-sm-9">
+                        <form:input path="lastName" type="text" class="form-control" id="inputName" name='lastName' />
+                        <form:errors path="lastName" cssClass="alert-danger" element="div"></form:errors>
                       </div>
                     </div>
                     <div class="form-group">
