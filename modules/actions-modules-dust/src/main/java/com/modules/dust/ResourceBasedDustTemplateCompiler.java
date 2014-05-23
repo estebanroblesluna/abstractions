@@ -62,7 +62,8 @@ public class ResourceBasedDustTemplateCompiler {
 			StringBuilder compiledContent = new StringBuilder();
 			for (String path : paths) {
 				if (path.endsWith(".css")) {
-					compiledContent.append(this.privateResourceService.getContentsOfResource(applicationId, path));
+					compiledContent.append(IOUtils.toString(this.privateResourceService.getContentsOfResource(applicationId, path)));
+					compiledContent.append("\n");
 				}
 			}
 			this.publicResourceService.storeResource(applicationId, destPath, new ByteArrayInputStream(compiledContent.toString().getBytes()));
