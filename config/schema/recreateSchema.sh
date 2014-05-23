@@ -81,6 +81,8 @@ mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-auth-tables
 
 echo -e "${yellow}Executing refactor-environment.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/refactor-environment.sql
+echo -e "${yellow}Executing add-connectors-table.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connectors-table.sql
 
 echo -e "${green}Done recreating schema!${reset}";
 

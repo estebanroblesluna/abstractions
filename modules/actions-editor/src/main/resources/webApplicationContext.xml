@@ -228,7 +228,10 @@
    <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
     <constructor-arg ref="repository" />
    </bean>
-   
    <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager">
    </bean>
+   <bean id="connectorService" class="com.abstractions.service.ConnectorService">
+    <constructor-arg ref="repository" />
+    <constructor-arg ref="teamService" />
+  </bean>
 </beans>
