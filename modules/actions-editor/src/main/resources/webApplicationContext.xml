@@ -94,7 +94,7 @@
     		<bean class="com.abstractions.service.StringMapResourceAppender">
     			<constructor-arg>
     				<map>
-    					<entry key="__ok" value=""></entry>
+    					<entry key="resources/__ok" value=""></entry>
     				</map>
     			</constructor-arg>
     		</bean>
