@@ -229,6 +229,13 @@
     <constructor-arg ref="repository" />
    </bean>
    
+<<<<<<< HEAD
    <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager">
    </bean>
+=======
+   <bean id="connectorService" class="com.abstractions.service.ConnectorService">
+    <constructor-arg ref="repository" />
+    <constructor-arg ref="teamService" />
+  </bean>
+>>>>>>> CRUD for connectors
 </beans>
