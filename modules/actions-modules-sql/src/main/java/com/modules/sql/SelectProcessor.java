@@ -44,10 +44,12 @@ public class SelectProcessor implements Processor {
 		int size = this.parameterExpressions == null ? 0 : this.parameterExpressions.size();
 		Object[] params = new Object[size];
 		int i = 0;
-		for (Expression expression : this.parameterExpressions) {
-			Object param = expression.evaluate(message);
-			params[i] = param;
-			i++;
+		if (size != 0) {
+	    for (Expression expression : this.parameterExpressions) {
+	      Object param = expression.evaluate(message);
+	      params[i] = param;
+	      i++;
+	    }
 		}
 		return params;
 	}
