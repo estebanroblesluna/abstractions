@@ -14,4 +14,11 @@ public class MessageUtils {
 	public static final String APPLICATION_CDN_PROPERTY = APPLICATION_BASE_PROPERTY + ".cdn";
 	
 	public static final String APPLICATION_PROPERTY_BASE_PROPERTY = APPLICATION_BASE_PROPERTY + ".property";
+
+  public static final String CDN_DUMMY_RESOURCE_NAME = "_ok";
+
+  public static final String HTTP_REQUEST_URL = HTTP_BASE_PROPERTY + ".requestURL";
+
+  public static final String HTTP_REQUEST_PROPERTY = HTTP_BASE_PROPERTY + "._request";
+  public static final String HTTP_RESPONSE_PROPERTY = HTTP_BASE_PROPERTY + "._response";
 }

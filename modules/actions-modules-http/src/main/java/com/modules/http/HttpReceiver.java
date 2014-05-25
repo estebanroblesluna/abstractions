@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.abstractions.api.Message;
 import com.abstractions.utils.ExpressionUtils;
+import com.abstractions.utils.MessageUtils;
 
 @WebServlet(asyncSupported = true)
 public class HttpReceiver extends HttpServlet {
@@ -35,10 +36,11 @@ public class HttpReceiver extends HttpServlet {
 		final AsyncContext context = request.startAsync(request, response);
 		final Message message = HttpUtils.readFrom(request, false);
 
+		message.putProperty(MessageUtils.HTTP_REQUEST_PROPERTY, request);
+    message.putProperty(MessageUtils.HTTP_RESPONSE_PROPERTY, response);
+		
 		this.messageSource = (AbstractHttpMessageSource) request.getServletContext().getAttribute(MESSAGE_SOURCE);
 
-		message.putProperty("actions.applicationId", this.messageSource.getApplicationId());
-		
 		Long timeout = ExpressionUtils.evaluateNoFail(this.messageSource.getTimeoutExpression(), message, -1l);
 		context.setTimeout(timeout);
 		context.addListener(this.listener);
