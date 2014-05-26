@@ -8,9 +8,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +65,21 @@ public class ResourceRESTService {
 		InputStream result = resourceService.getContentsOfResource(applicationId, path);
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
+		} 
+		
+		ResponseBuilder builder = Response.ok(result);
+		if (path.endsWith(".css")) {
+		  builder.type(MediaType.valueOf("text/css"));
+		} else if (path.endsWith(".js")) {
+      builder.type(MediaType.valueOf("application/javascript"));
+    } else if (path.endsWith(".gif")) {
+      builder.type(MediaType.valueOf("image/gif"));
+    } else if (path.endsWith(".jpg") || path.endsWith(".jpeg")) {
+      builder.type(MediaType.valueOf("image/jpeg"));
+    } else if (path.endsWith(".png")) {
+      builder.type(MediaType.valueOf("image/png"));
 		}
-		return Response.ok(result).build();
+		return builder.build();
 	}
 	
 	

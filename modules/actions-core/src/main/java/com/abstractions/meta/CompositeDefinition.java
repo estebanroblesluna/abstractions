@@ -53,7 +53,7 @@ public abstract class CompositeDefinition extends ElementDefinition {
 		
 		CompositeElementImpl compositeElement = null;
 		if (!compositeTemplate.isInstantiated()) {
-			compositeElement = this.basicCreateInstance(compositeTemplate);
+			compositeElement = this.basicCreateInstance(compositeTemplate, container);
 			compositeTemplate.overrideObject(compositeElement);
 		} else {
 			compositeElement = (CompositeElementImpl) compositeTemplate.getInstance();
@@ -80,8 +80,8 @@ public abstract class CompositeDefinition extends ElementDefinition {
 		return compositeElement;
 	}
 	
-	protected CompositeElementImpl basicCreateInstance(CompositeTemplate compositeTemplate) {
-		return new CompositeElementImpl(compositeTemplate);
+	protected CompositeElementImpl basicCreateInstance(CompositeTemplate compositeTemplate, CompositeElement container) {
+		return new CompositeElementImpl(compositeTemplate, container);
 	}
 
 	public void initialize(ElementTemplate template, Map<String, String> properties, CompositeElement container, NamesMapping mapping, ApplicationTemplate appTemplate) {

@@ -120,7 +120,7 @@ public abstract class ElementDefinition {
 		return object;
 	}
 
-	public void basicSetProperties(Object object, Map<String, String> properties, CompositeElement context, NamesMapping mapping) {
+	public void basicSetProperties(Object object, Map<String, String> properties, CompositeElement context, NamesMapping mapping, ApplicationTemplate appTemplate) {
 		if (properties == null || properties.isEmpty()) {
 			return;
 		}
@@ -129,7 +129,7 @@ public abstract class ElementDefinition {
 			String propertyName = entry.getKey();
 			String propertyValue = entry.getValue();
 			try {
-				BeanUtils.setProperty(object, propertyName, propertyValue, context, mapping);
+				BeanUtils.setProperty(object, propertyName, propertyValue, context, mapping, appTemplate);
 			} catch (ServiceException e) {
 				log.warn("Error setting property " + StringUtils.defaultString(propertyName) + " with value " + StringUtils.defaultString(propertyValue));
 			}
@@ -144,8 +144,8 @@ public abstract class ElementDefinition {
 		Map<String, String> instanceProperties = template.getProperties();
 
 		Map<String, String> initialProperties = mapping.getElementInitialProperties(this.name);
-		this.basicSetProperties(template.getInstance(), initialProperties, container, mapping);
-		this.basicSetProperties(template.getInstance(), instanceProperties, container, mapping);
+		this.basicSetProperties(template.getInstance(), initialProperties, container, mapping, appTemplate);
+		this.basicSetProperties(template.getInstance(), instanceProperties, container, mapping, appTemplate);
 	}
 
 	@SuppressWarnings("unchecked")

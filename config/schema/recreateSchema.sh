@@ -87,6 +87,8 @@ echo -e "${yellow}Executing add-connectors-table.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connectors-table.sql
 echo -e "${yellow}Executing for-each-router.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/for-each-router.sql
+echo -e "${yellow}Executing add-connector-definition.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connector-definition.sql
 
 echo -e "${green}Done recreating schema!${reset}";
 
@@ -94,5 +96,9 @@ echo -e "${green}Adding some data${reset}";
 
 echo -e "${yellow}Executing lifia-new-site.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/lifia-new-site.sql
+echo -e "${yellow}Executing lifia-resources.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/lifia-resources.sql
+echo -e "${yellow}Executing delete-extra-flow-in-lifia-site.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/delete-extra-flow-in-lifia-site.sql
 
 echo -e "${green}DONE Adding some data${reset}";

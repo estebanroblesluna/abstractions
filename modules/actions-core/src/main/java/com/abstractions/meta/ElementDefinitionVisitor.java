@@ -15,4 +15,6 @@ public interface ElementDefinitionVisitor {
 	Object visitApplicationDefinition(ApplicationDefinition applicationDefinition);
 
   Object visitFlowDefinition(FlowDefinition flowDefinition);
+
+  Object visitConnectorDefinition(ConnectorDefinition connectorDefinition);
 }
