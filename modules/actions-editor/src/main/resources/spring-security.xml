@@ -11,7 +11,8 @@
                 <intercept-url pattern="/static/**" filters="none" />
                 <intercept-url pattern="/static/img/**" filters="none" />
                 <intercept-url pattern="/signin/**" filters="none" />
-                <intercept-url pattern="/service/**" filters="none" />
+                <intercept-url pattern="/service/fileStore/**" filters="none" />
+                <intercept-url pattern="/service/**" access="ROLE_USER" />
                 <intercept-url pattern="/login" filters="none" />
                 <intercept-url pattern="/register" filters="none" />
                 <intercept-url pattern="/register/confirm" filters="none" />

@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.abstractions.api.Element;
+import com.abstractions.api.Expression;
 import com.abstractions.api.Message;
-import com.abstractions.instance.core.AllConnection;
 import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
@@ -193,16 +193,17 @@ public class Thread {
 		return this.id;
 	}
 
-	void startSubthread(ExecutorService service, final Message newMessage, final Message storeResultMessage, 
-			final ElementTemplate allConnectionDefinition, final CountDownLatch latch) {
+	void startSubthread(
+	        ExecutorService service, 
+	        final Message newMessage, 
+	        final Message storeResultMessage, 
+	        final ElementTemplate targetDefinition,
+	        final Expression targetExpression,
+	        final CountDownLatch latch) {
 		
 		service.execute(new Runnable() {
 			@Override
 			public void run() {
-				//get the target object definition
-				String urnTarget = allConnectionDefinition.getProperty("target");
-				ElementTemplate targetDefinition = getComposite().resolve(urnTarget);
-				
 				//create the subthread starting from the target and with the copy of the message
 				final Thread subthread = createSubthread(targetDefinition, newMessage);
 				
@@ -210,9 +211,8 @@ public class Thread {
 				subthread.addObserver(new ThreadObserver() {
 					@Override
 					public void terminated(Thread thread) {
-						AllConnection allConnection = (AllConnection) allConnectionDefinition.getInstance();
-						if (allConnection.getTargetExpression() != null) {
-							allConnection.getTargetExpression().evaluate(storeResultMessage, new String[] {"result"}, thread.getCurrentMessage());
+						if (targetExpression != null) {
+						  targetExpression.evaluate(storeResultMessage, new String[] {"result"}, thread.getCurrentMessage());
 						}
 						latch.countDown();
 					}

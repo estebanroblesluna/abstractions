@@ -1,5 +1,7 @@
 package com.abstractions.runtime.interpreter;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import com.abstractions.api.Message;
@@ -14,7 +16,6 @@ import com.abstractions.meta.example.Meta;
 import com.abstractions.model.Library;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.ServiceException;
-import com.abstractions.template.CompositeTemplate;
 import com.abstractions.template.ElementTemplate;
 
 public class InterpreterTestCase extends TestCase {
@@ -32,6 +33,7 @@ public class InterpreterTestCase extends TestCase {
 		this.common.addBasicDefinitionForClass("INC2", "message.payload = message.payload + 2");
 		this.common.addBasicDefinitionForClass("INC3", "message.payload = message.payload + 3");
 		this.common.addBasicDefinitionForClass("LISTENER", ListenerProcessor.class);
+    this.common.addBasicDefinitionForClass("MERGE",  "message.payload = message.payload.inject(0, { sum, value -> sum + value })");
 
 		this.common.createMappings(mapping);
 		
@@ -180,6 +182,30 @@ public class InterpreterTestCase extends TestCase {
 
 		assertEquals(1l, ((ListenerProcessor) listener.getInstance()).getLastMessage().getPayload());
 	}
+	
+	 public void testForEachRouter() throws ServiceException {
+	    ElementTemplate target = new ElementTemplate(this.common.getDefinition("INC"));
+	    ElementTemplate router = new ElementTemplate(this.common.getDefinition("FOR_EACH"));
+      ElementTemplate next = new ElementTemplate(this.common.getDefinition("MERGE"));
+
+	    this.application.addDefinition(router);
+      this.application.addDefinition(target);
+      this.application.addDefinition(next);
+
+	    this.application.addConnection(router.getId(), target.getId(), ConnectionType.FOR_EACH_CONNECTION);
+	    this.application.addConnection(router.getId(), next.getId(), ConnectionType.NEXT_IN_CHAIN_CONNECTION);
+	    
+	    this.application.sync(this.mapping);
+	    
+	    Interpreter interpreter = new Interpreter(this.application, router, this.application);
+
+	    Object payload = Arrays.asList(1,2,3,4,5,6);
+	    Message message = new Message();
+	    message.setPayload(payload);
+	    
+	    Thread thread = interpreter.run(message);
+	    assertEquals(27, thread.getCurrentMessage().getPayload());
+	  }
 	
 	public void testSimpleAbstraction() throws ServiceException {
 		AbstractionDefinition incBy2 = new AbstractionDefinition("INC_BY_2");

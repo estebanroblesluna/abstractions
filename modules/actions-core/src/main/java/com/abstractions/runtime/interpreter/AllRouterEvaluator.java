@@ -41,12 +41,16 @@ public class AllRouterEvaluator implements Evaluator {
 			if (connectionDefinition != null) {
 				Object connection = connectionDefinition.getInstance();
 				if (connection instanceof AllConnection) {
-					thread.startSubthread(service, currentMessage.clone(), currentMessage, connectionDefinition, latch);
+	        String urnTarget = connectionDefinition.getProperty("target");
+	        ElementTemplate targetDefinition = thread.getComposite().resolve(urnTarget);
+	        AllConnection allConnection = (AllConnection) connectionDefinition.getInstance();
+
+					thread.startSubthread(service, currentMessage.clone(), currentMessage, targetDefinition, allConnection.getTargetExpression(), latch);
 				}
 			}
 		}
 		
-	    try {
+	  try {
 			latch.await();
 			thread.computeNextInChainProcessorAndSet();
 		} catch (InterruptedException e) {

@@ -6,7 +6,8 @@ public enum ConnectionType {
 	ALL_CONNECTION, 
 	CHOICE_CONNECTION,
 	WIRE_TAP_CONNECTION,
-	CHAIN_CONNECTION;
+	CHAIN_CONNECTION,
+	FOR_EACH_CONNECTION;
 
 	public String getElementName() {
 		return this.toString();
