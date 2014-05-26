@@ -4,18 +4,22 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import com.abstractions.api.Message;
 import com.abstractions.api.Processor;
-import com.abstractions.service.core.FilesystemResourceService;
 import com.abstractions.service.core.ResourceService;
 import com.abstractions.utils.ExpressionUtils;
 import com.abstractions.utils.IdGenerator;
+import com.abstractions.utils.JsonBuilder;
 import com.abstractions.utils.MessageUtils;
 import com.modules.dust.util.DustApplicationContext;
 
 public class ResourceBasedDustRendererProcessor implements Processor {
 
+  
+  
 	/**
 	 * Path to get the template
 	 */
@@ -77,14 +81,23 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 
 
 	private String setContentToRender(Message message, TemplateCompilationSpec templateCompilationSpec) {
-		StringBuilder content = new StringBuilder("{");
-		content.append("\"cdn\":\"" + this.getCDNPath(message) + "\"");
-		for (RenderingSpec spec : templateCompilationSpec.getRenderingList()) {
-			String json = ExpressionUtils.evaluateNoFail(spec.getDataExpression(), message, "{}");
-			content.append(",\"" + this.templateCompiler.getJsonPlaceholderForRenderingSpec(spec) + "\":\"" + json.replace("\"", "\\\"") + "\"");
-		}
-		content.append("}");
-		return content.toString();
+	  try {
+      String cdnPath = this.getCDNPath(message);
+      JsonBuilder jsonBuilder = JsonBuilder.newWithObject()
+        .field("cdn", cdnPath);
+      for (RenderingSpec spec : templateCompilationSpec.getRenderingList()) {
+      	String json = ExpressionUtils.evaluateNoFail(spec.getDataExpression(), message, "{}");
+      	JSONObject jsonObject = new JSONObject(json);
+      	jsonObject.put("cdn", cdnPath);
+      	jsonBuilder.jsonField(this.templateCompiler.getJsonPlaceholderForRenderingSpec(spec), "\"" + jsonObject.toString().replace("\"", "\\\"") + "\"");
+      }
+      return jsonBuilder.getContent();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+	  return "";
 	}
 	
 	private String evaluate(String name, String compiledTemplate, String json) {

@@ -20,9 +20,14 @@ public class JsonBuilder {
     this.objectNesting = 0;
   }
   
+  public static JsonBuilder newWithObject() throws IOException {
+    JsonBuilder jsonBuilder = new JsonBuilder();
+    jsonBuilder.startObject();
+    return jsonBuilder;
+  }
+  
   public static JsonBuilder newWithObject(String fieldName) throws IOException {
-	  JsonBuilder jsonBuilder = new JsonBuilder();
-	  jsonBuilder.startObject();
+	  JsonBuilder jsonBuilder = newWithObject();
 	  jsonBuilder.objectField(fieldName);
 	  return jsonBuilder;
   }
@@ -101,4 +106,12 @@ public class JsonBuilder {
     this.objectNesting++;
     return this;
   }
+
+  public JsonBuilder jsonField(String fieldName, String jsonContent) throws JsonGenerationException, IOException {
+    this.generator.writeFieldName(fieldName);
+    this.generator.writeRaw(":" + jsonContent);
+    return this;
+  }
+  
+  
 }
