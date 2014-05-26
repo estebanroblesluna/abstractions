@@ -6,6 +6,7 @@ public enum ElementDefinitionType {
 	PROCESSOR,
 	ROUTER,
 
+	CONNECTOR,
 	CONNECTION,
 	
 	//composite definitions

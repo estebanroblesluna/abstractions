@@ -18,7 +18,7 @@ public class SelectProcessor implements Processor {
 
 	private static Log log = LogFactory.getLog(SelectProcessor.class);
 	
-	private SQLConnector connector;
+	private volatile SQLConnector connector;
 	private Expression selectExpression;
 	private List<Expression> parameterExpressions;
 

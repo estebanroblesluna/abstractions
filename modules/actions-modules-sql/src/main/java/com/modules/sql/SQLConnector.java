@@ -10,10 +10,18 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.service.spi.Stoppable;
+
+import com.abstractions.api.Connector;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.DataSources;
 
-public class SQLConnector {
+public class SQLConnector implements Connector, Stoppable {
 
+  private static final Log log = LogFactory.getLog(SQLConnector.class);
+  
 	private volatile DataSource dataSource;
 	
 	private String driver = "com.mysql.jdbc.Driver";
@@ -119,4 +127,15 @@ public class SQLConnector {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+  @Override
+  public void stop() {
+    if (this.dataSource != null) {
+      try {
+        DataSources.destroy(this.dataSource);
+      } catch (SQLException e) {
+        log.error("Error closing datasource", e);
+      }
+    }
+  }
 }

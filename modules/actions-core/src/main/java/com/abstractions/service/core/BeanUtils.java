@@ -10,13 +10,15 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.lang.StringUtils;
 
 import com.abstractions.api.CompositeElement;
+import com.abstractions.api.Connector;
 import com.abstractions.api.Expression;
 import com.abstractions.expression.ScriptingExpression;
 import com.abstractions.expression.ScriptingLanguage;
+import com.abstractions.generalization.ApplicationTemplate;
 
 public class BeanUtils {
 
-	public static void setProperty(Object object, String propertyName, String propertyValue, CompositeElement context, NamesMapping mapping) throws ServiceException {
+	public static void setProperty(Object object, String propertyName, String propertyValue, CompositeElement context, NamesMapping mapping, ApplicationTemplate appTemplate) throws ServiceException {
 		try {
 			org.apache.commons.beanutils.BeanUtils.setProperty(object, propertyName, propertyValue);
 		} catch (IllegalArgumentException e) {
@@ -35,6 +37,11 @@ public class BeanUtils {
 						} else if (Expression.class.isAssignableFrom(descriptor.getPropertyType())) {
 							String newValue = "expression:groovy:" + StringUtils.defaultString(propertyValue);
 							setExpression(object, propertyName, newValue, mapping);
+            } else if (Connector.class.isAssignableFrom(descriptor.getPropertyType())) {
+              if (!propertyValue.startsWith("urn:")) {
+                propertyValue = "urn:" + propertyValue;
+              }
+              setReference(object, propertyName, propertyValue, context);
 						}
 					} catch (IllegalAccessException e1) {
 						throw new ServiceException("Error setting the property");

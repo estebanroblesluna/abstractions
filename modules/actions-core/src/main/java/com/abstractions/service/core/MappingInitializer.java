@@ -11,7 +11,7 @@ public class MappingInitializer {
 	private LibraryService libraryService;
 
 	public void initializeMapping() {
-		List<Library> libraries = this.libraryService.getCommonLibraries();
+		List<Library> libraries = this.libraryService.getAllLibraries();
 		
 		for (Library library : libraries) {
 			library.createMappings(mapping);
