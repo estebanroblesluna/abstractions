@@ -14,12 +14,14 @@ import com.abstractions.utils.IdGenerator;
 public class CompositeElementImpl implements CompositeElement, Identificable {
 
 	private final String id;
+	private final CompositeElement parentComposite;
 	private final Map<String, Element> objects;
 	private final CompositeTemplate template;
 	
-	public CompositeElementImpl(CompositeTemplate template)
+	public CompositeElementImpl(CompositeTemplate template, CompositeElement parentComposite)
 	{
 		this.template = template;
+		this.parentComposite = parentComposite;
 		this.id = IdGenerator.getNewId();
 		this.objects = new ConcurrentHashMap<String, Element>();
 	}
@@ -46,7 +48,17 @@ public class CompositeElementImpl implements CompositeElement, Identificable {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getObjectWithId(String id) {
-		return (T) this.objects.get(id);
+		Element element = this.objects.get(id);
+		
+		if (element != null) {
+		  return (T) element;
+		} else {
+		  if (this.parentComposite != null) {
+		    return this.parentComposite.getObjectWithId(id);
+		  } else {
+		    return null;
+		  }
+		}
 	}
 	
 	/**

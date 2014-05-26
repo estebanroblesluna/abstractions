@@ -14,10 +14,10 @@
         });
 </script>
 
-<nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation">
+<nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation" style="height:50px;">
     <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <a class="navbar-brand" href="/teams/" style="padding-top:10px;"><img src="/static/img/logo_mini.png"></a>
         <ul class="nav navbar-nav">
-            <li id ="teams"><a href="/teams/">Home</a></li>
             <li id="libraries"><a href="/libraries/">Libraries</a></li> 
             <sec:authorize access="hasRole('ROLE_ADMIN')">
 		        <li class="dropdown" >

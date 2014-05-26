@@ -66,8 +66,7 @@ echo -e "${yellow}Executing update-resources-table.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-resources-table.sql
 echo -e "${yellow}Executing add-logging-info.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/add-logging-info.sql
-echo -e "${yellow}Executing update-snapshot-table.sql${reset}";
-mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-snapshot-table.sql
+
 echo -e "${yellow}Executing hello-world-sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sample.sql
 echo -e "${yellow}Executing update-dust-renderer-example-flow.sql${reset}";
@@ -77,6 +76,9 @@ mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-auth-tables
 
 #v0.2
 
+echo -e "${yellow}Executing update-snapshot-table.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.2/update-snapshot-table.sql
+
 #v0.3
 
 echo -e "${yellow}Executing refactor-environment.sql${reset}";
@@ -85,6 +87,8 @@ echo -e "${yellow}Executing add-connectors-table.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connectors-table.sql
 echo -e "${yellow}Executing for-each-router.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/for-each-router.sql
+echo -e "${yellow}Executing add-connector-definition.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connector-definition.sql
 
 echo -e "${green}Done recreating schema!${reset}";
 

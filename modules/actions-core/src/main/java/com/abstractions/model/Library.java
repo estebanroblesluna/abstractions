@@ -12,6 +12,7 @@ import com.abstractions.generalization.AbstractionEvaluator;
 import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ConnectorDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.ElementDefinitionVisitor;
 import com.abstractions.meta.FlowDefinition;
@@ -111,6 +112,11 @@ public class Library {
 
         @Override
         public Object visitFlowDefinition(FlowDefinition flowDefinition) {
+          return null;
+        }
+
+        @Override
+        public Object visitConnectorDefinition(ConnectorDefinition connectorDefinition) {
           return null;
         }
 			});

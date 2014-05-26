@@ -322,6 +322,10 @@
       <key column="element_definition_id"/>
     </joined-subclass>
 
+    <joined-subclass name="com.abstractions.meta.ConnectorDefinition" table="connector_definition">
+      <key column="element_definition_id"/>
+    </joined-subclass>
+
     <joined-subclass name="com.abstractions.meta.RouterDefinition" table="router_definition">
       <key column="element_definition_id"/>
       <property name="routerEvaluatorImplementation" column="router_evaluator_implementation"/>

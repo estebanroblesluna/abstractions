@@ -1,5 +1,6 @@
 package com.abstractions.service.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jsoup.helper.Validate;
@@ -24,8 +25,22 @@ public class LibraryService {
 
 	@Transactional
 	public List<Library> getCommonLibraries() {
-		return this.repository.get(Library.class, "displayName");
+		List<Library> libraries = new ArrayList<Library>();
+		libraries.add((Library) this.repository.get(Library.class, 1l));
+    libraries.add((Library) this.repository.get(Library.class, 2l));
+    libraries.add((Library) this.repository.get(Library.class, 3l));
+    return libraries;
 	}
+	
+	 @Transactional
+	  public List<Library> getAllLibraries() {
+	    List<Library> libraries = new ArrayList<Library>();
+	    libraries.add((Library) this.repository.get(Library.class, 1l));
+	    libraries.add((Library) this.repository.get(Library.class, 2l));
+	    libraries.add((Library) this.repository.get(Library.class, 3l));
+      libraries.add((Library) this.repository.get(Library.class, 4l));
+	    return libraries;
+	  }
 
 	@Transactional
 	public void add(Library library) {
