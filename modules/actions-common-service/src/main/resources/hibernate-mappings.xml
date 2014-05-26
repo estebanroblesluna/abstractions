@@ -40,7 +40,8 @@
        <type name="com.abstractions.repository.GenericEnumUserType">
         <param name="enumClass">com.abstractions.model.Environment</param>
        </type>
-    </property>    <property name="zip" type="binary" column="zip" />
+    </property>    
+    <property name="zip" type="binary" column="zip" />
     <many-to-one name="application" column="application_id" />
     
     <bag name="properties" lazy="false" cascade="all">
@@ -105,6 +106,19 @@
         <param name="enumClass">com.abstractions.model.Environment</param>
        </type>
     </property>
+  </class>
+
+  <class name="com.abstractions.model.Connector" table="connector">
+    <id name="id" type="long" column="connector_id" access="field">
+      <generator class="native" />
+    </id>
+    <property name="name" column="name" />
+    <property name="type" column="type" />
+    <map name="configurations" table="connector_configurations" lazy="false" cascade="all">
+      <key column="connector_id"/>
+      <map-key column="name" type="string" />
+      <element column="value" type="string" />
+    </map>
   </class>
 
 
@@ -215,31 +229,50 @@
       <key column="team_id" />
       <one-to-many class="com.abstractions.model.Application" />
     </bag>
+    <bag name="connectors" lazy="false" access="field">
+      <key column="team_id" />
+      <one-to-many class="com.abstractions.model.Connector" />
+    </bag>  
     <bag name="serverGroups" lazy="true" access="field">
       <key column="team_id" />
       <one-to-many class="com.abstractions.model.ServerGroup" />
     </bag>
     <bag name="users" table="user_team" inverse="false" lazy="true" fetch="select" cascade="all" access="field">
       <key column="team_id" />
-      <many-to-many class="com.abstractions.model.User" column="user_id" />
+      <many-to-many class="com.abstractions.model.UserImpl" column="user_id" />
     </bag>
   </class>
 
-
-  <class name="com.abstractions.model.User" table="user">
+  <class name="com.abstractions.model.Authority" table="authorities">
+    <id name="id" type="long" column="auth_id" access="field">
+      <generator class="native" />
+    </id>
+    <property name="authority" column="authority" type="string" />    
+  </class>	
+	
+  <class name="com.abstractions.model.UserImpl" table="users">
     <id name="id" type="long" column="user_id" access="field">
       <generator class="native" />
     </id>
     <property name="firstName" column="first_name" type="string" />
     <property name="lastName" column="last_name" type="string" />
-
-    <bag name="teams" table="user_team" inverse="true" lazy="false" fetch="select" cascade="all" access="field">
+    <property name="username" column="username" type="string" unique="true" />
+    <property name="email" column="email" type="string" unique="true"/>
+    <property name="creationDate" column="creationDate" type="date" />
+    <property name="confirmed" column="confirmed"/>
+    <property name="enabled" column="enabled"/>
+	<property name="password" column="password" type="string" />
+	
+    <bag name="authorities" table="authorities" inverse="true" lazy="false">
+      <key column="auth_id" not-null="true"/>
+      <one-to-many class="com.abstractions.model.Authority"/>
+    </bag>   
+    
+    <bag name="teams" table="user_team" lazy="false">
       <key column="user_id" />
       <many-to-many class="com.abstractions.model.Team" column="team_id" />
     </bag>
-  </class>
-  
-  
+  </class>  
   
   <class name="com.abstractions.model.Library" table="library">
     <id name="id" type="long" column="library_id" access="field">

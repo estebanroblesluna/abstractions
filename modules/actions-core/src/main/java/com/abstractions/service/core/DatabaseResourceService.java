@@ -86,14 +86,9 @@ public class DatabaseResourceService implements ResourceService {
 	@Transactional
 	public void uncompressContent(long applicationId, InputStream stream) {
 		try {
-			ZipInputStream zipInputStream = new ZipInputStream(stream);
+		  ZipInputStream zipInputStream = new ZipInputStream(stream);
 			ZipEntry zipEntry = zipInputStream.getNextEntry();
 			while (zipEntry != null) {
-				if (zipEntry.getSize() == -1) {
-					zipInputStream.closeEntry();
-					zipEntry = zipInputStream.getNextEntry();
-					continue;
-				}
 				this.storeResource(applicationId, zipEntry.getName().replace("." + File.separator, File.separator), zipInputStream);
 				zipInputStream.closeEntry();
 				zipEntry = zipInputStream.getNextEntry();

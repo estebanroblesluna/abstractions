@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Team;
 import com.abstractions.model.User;
+import com.abstractions.model.UserImpl;
 import com.abstractions.repository.GenericRepository;
 
 @Service
@@ -26,7 +27,7 @@ public class TeamService {
 	
 	@Transactional
 	public void addTeam(String name, long ownerID) {
-		User user = this.repository.get(User.class, ownerID);
+	  UserImpl user = this.repository.get(UserImpl.class, ownerID);
 		if (user != null) {
 			new Team(name, user);
 			this.repository.save(user);
@@ -35,7 +36,7 @@ public class TeamService {
 	
 	@Transactional
 	public List<Team> getTeamsOf(long currentUserId) {
-		User user = this.repository.get(User.class, currentUserId);
+	  UserImpl user = this.repository.get(UserImpl.class, currentUserId);
 		if (user != null) {
 			return user.getTeams();
 		} else {

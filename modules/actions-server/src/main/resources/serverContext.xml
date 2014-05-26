@@ -59,6 +59,13 @@
     <constructor-arg ref="actionsServer" />
   </bean>
   
+  <bean id="cdnService" class="com.abstractions.server.cdn.CdnService">
+    <constructor-arg ref="httpStrategy" />
+    <constructor-arg ref="propertiesLoader" />
+    <constructor-arg ref="actionsServer" />
+    <constructor-arg ref="cdnStatusManager" />
+  </bean>
+  
   <bean id="actionsServer" class="com.abstractions.server.core.ActionsServer">
     <constructor-arg value="${server.apps.directory}" />
     <constructor-arg>
@@ -81,7 +88,11 @@
       <task:scheduled ref="editorService" method="sendStatistics" fixed-delay="60000"/>
       <task:scheduled ref="editorService" method="sendProfiling" fixed-delay="3000"/>
       <task:scheduled ref="editorService" method="sendLogging" fixed-delay="5000"/>
+      <task:scheduled ref="cdnService" method="update" fixed-delay="15000"/>
   </task:scheduled-tasks>
   
   <task:scheduler id="myScheduler" pool-size="10"/>
+  
+  <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager">
+  </bean>
 </beans>

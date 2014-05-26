@@ -18,7 +18,6 @@ echo -e "${yellow}Executing actionsSchema.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/actionsSchema.sql
 echo -e "${yellow}Executing sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/sample.sql
-
 echo -e "${yellow}Executing update-icons.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-icons.sql
 echo -e "${yellow}Executing module-sql.sql${reset}";
@@ -73,6 +72,8 @@ echo -e "${yellow}Executing hello-world-sample.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/hello-world-sample.sql
 echo -e "${yellow}Executing update-dust-renderer-example-flow.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-renderer-example-flow.sql
+echo -e "${yellow}Executing add-auth-tables2.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-auth-tables2.sql
 
 #v0.2
 
@@ -80,8 +81,16 @@ mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.1/update-dust-ren
 
 echo -e "${yellow}Executing refactor-environment.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/refactor-environment.sql
+echo -e "${yellow}Executing add-connectors-table.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connectors-table.sql
+echo -e "${yellow}Executing for-each-router.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/for-each-router.sql
 
-echo -e "${green}Done!${reset}";
+echo -e "${green}Done recreating schema!${reset}";
 
+echo -e "${green}Adding some data${reset}";
 
+echo -e "${yellow}Executing lifia-new-site.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/lifia-new-site.sql
 
+echo -e "${green}DONE Adding some data${reset}";

@@ -91,6 +91,13 @@
     		<bean class="com.abstractions.service.DefinitionsResourceAppender">
     			<constructor-arg ref="elementDefinitionService" />
     		</bean>
+    		<bean class="com.abstractions.service.StringMapResourceAppender">
+    			<constructor-arg>
+    				<map>
+    					<entry key="resources/__ok" value=""></entry>
+    				</map>
+    			</constructor-arg>
+    		</bean>
     	</list>
     </constructor-arg>
     <constructor-arg index="5">
@@ -110,8 +117,13 @@
     <constructor-arg index="1" ref="teamService" />
   </bean>
 
-  <bean id="userService" class="com.abstractions.service.UserService">
-    <constructor-arg ref="repository" />
+  <bean id="emailService" class="com.abstractions.web.EmailService" init-method="init"/> 
+
+  <bean id="userRepository" class="com.abstractions.repository.UserRepository" parent="repository" />
+
+  <bean id="userService" class="com.abstractions.service.UserServiceImpl">
+    <constructor-arg ref="userRepository" />
+    <constructor-arg ref="emailService" />
   </bean>
 
   <bean id="deploymentService" class="com.abstractions.service.DeploymentService">
@@ -207,15 +219,7 @@
   <bean class="org.springframework.social.connect.web.ProviderSignInController"> 
     <!-- relies on by-type autowiring for the constructor-args -->    
   </bean>
-  
-   <bean id="authProvider" class="com.abstractions.service.CustomJdbcUserDetailsManager">
-        <property name="dataSource" ref="dataSource"/>
-   </bean>
    
-   <bean id="registerConfirmationEmail" class="com.abstractions.web.EmailService"  init-method="init"/> 
-   
-   <bean id="customUserService" class="com.abstractions.service.CustomUserService" />
-
    <bean id="applicationLoader" class="com.abstractions.service.core.DatabaseApplicationDefinitionLoader">
     <constructor-arg ref="repository" />
     <constructor-arg ref="propertiesLoader" />
@@ -224,4 +228,10 @@
    <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
     <constructor-arg ref="repository" />
    </bean>
+   <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager">
+   </bean>
+   <bean id="connectorService" class="com.abstractions.service.ConnectorService">
+    <constructor-arg ref="repository" />
+    <constructor-arg ref="teamService" />
+  </bean>
 </beans>

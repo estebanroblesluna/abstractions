@@ -9,6 +9,7 @@ import com.abstractions.model.ApplicationSnapshot;
 import com.abstractions.model.Property;
 import com.abstractions.model.Resource;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.utils.MessageUtils;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
@@ -162,7 +163,7 @@ public class CloudFrontService {
 		String location = result.getLocation();
 		
 		//TODO change this line
-		Property property = new Property("cdnUrl", location, snapshot.getEnvironment());
+		Property property = new Property(MessageUtils.APPLICATION_CDN_PROPERTY, location, snapshot.getEnvironment());
 		snapshot.addProperty(property);
 		
 		this.repository.save(snapshot);

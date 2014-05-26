@@ -10,7 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.abstractions.service.CustomJdbcUserDetailsManager;
+import com.abstractions.model.User;
+import com.abstractions.model.UserImpl;
+import com.abstractions.service.UserServiceImpl;
 
 /**
  * 
@@ -67,19 +69,19 @@ public class EmailService {
         		});
     }
 			 
-	public void sendRegistrationMail(CustomUser user) throws AddressException, MessagingException {	
+	public void sendRegistrationMail(User user) throws AddressException, MessagingException {	
         final Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(username));
         message.setRecipients(Message.RecipientType.TO,
                 InternetAddress.parse(user.getEmail()));
-        message.setSubject( user.getFullName() + " thank you for your registration");
-        message.setContent("Thank you "+ user.getFullName() + " for your registration, <br>"+
+        message.setSubject( user.getFirstName() +" "+ user.getLastName() + " thank you for your registration");
+        message.setContent("Thank you "+ user.getFirstName() +" "+ user.getLastName() + " for your registration, <br>"+
                 "Following are the details of your account,"+
                 "<br/>*************************************** "
                 +"<br/>Username : <b>" + user.getUsername() +"</b>"+
-                "<br/>Full Name : <b>" + user.getFullName() + "</b>"+
+                "<br/>Full Name : <b>" + user.getFirstName() +" "+ user.getLastName() + "</b>"+
                 "<br/>Click the link to activate your account : <br>" +
-                "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + CustomJdbcUserDetailsManager.generateConfirmationToken(user) +
+                "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + UserServiceImpl.generateConfirmationToken(user) +
                 "'><b>Activate Account</b></a>"+
                 "<br/>*************************************** ", "text/html" );
         
@@ -95,13 +97,13 @@ public class EmailService {
         taskExecutor.execute(r);
     }
 	
-	public void sendUserEnabledMail(CustomUser user) throws AddressException, MessagingException {	
+	public void sendUserEnabledMail(User user) throws AddressException, MessagingException {	
         final Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(username));
         message.setRecipients(Message.RecipientType.TO,
                 InternetAddress.parse(user.getEmail()));
-        message.setSubject( user.getFullName() + " your account is enabled");
-        message.setContent("Dear "+ user.getFullName() + ", your account is enabled, <br>"+
+        message.setSubject( user.getFirstName() +" "+ user.getLastName() + " your account is enabled");
+        message.setContent("Dear "+ user.getFirstName() +" "+ user.getLastName() + ", your account is enabled, <br>"+
                 "Now you can use LiquidML at full power:"+
                 "<br/>Username : <b>" + user.getUsername() +"</b>"+
                 "<br/>Use it now : <br>" +

@@ -1,34 +1,30 @@
 package com.abstractions.service;
 
-import org.jsoup.helper.Validate;
+import java.util.List;
+
+import javax.mail.MessagingException;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.User;
-import com.abstractions.repository.GenericRepository;
+import com.abstractions.web.EmailExistsException;
+import com.abstractions.web.UsernameExistsException;
 
+/**
+*
+* @author Guido J. Celada (celadaguido@gmail.com)
+*/
 @Service
-public class UserService {
+public interface UserService extends UserDetailsService {
 
-	private GenericRepository genericRepository;
-
-	public UserService() {
-	}
-
-	public UserService(GenericRepository genericRepository) {
-		Validate.notNull(genericRepository);
-
-		this.genericRepository = genericRepository;
-	}
-
-	@Transactional
-	private User getUser(long userId) {
-		User user = this.genericRepository.get(User.class, userId);
-		return user;
-	}
-	
-  @Transactional
-	public User getCurrentUser(){
-	  return this.getUser(1);
-	}
+  public User getUser(long userId);
+  public User getUserByUsername(String username) throws UsernameNotFoundException, DataAccessException;
+  public User getCurrentUser();
+  public void registerUser(String username, String password, String email, String firstName, String lastName) throws UsernameExistsException, EmailExistsException, MessagingException;
+  public void confirmUser(String username, String token) throws Exception;
+  public List<User> getConfirmedDisabledUsers();
+  public void enableUser(String username);
 }

@@ -17,10 +17,19 @@ public class RegisterForm {
 	private String password;
 	@Email(message="Not a real email") @NotEmpty(message="May not be empty")
 	private String email;
-	@NotEmpty(message="May not be empty") @Size(min=5, max=100, message="Too short name") 
-	private String fullName;
+	@NotEmpty(message="May not be empty") @Size(min=5, max=100, message="Too short") 
+	private String firstName; 
+  @NotEmpty(message="May not be empty") @Size(min=5, max=100, message="Too short") 
+  private String lastName;
 	
-	public String getUsername() {
+	
+  public String getLastName() {
+    return lastName;
+  }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+  public String getUsername() {
 		return username;
 	}
 	public void setUsername(String username) {
@@ -38,11 +47,11 @@ public class RegisterForm {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getFullName() {
-		return fullName;
-	}
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
+	public String getFirstName() {
+    return firstName;
+  }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 	
 }
