@@ -102,6 +102,7 @@ public class ResourceBasedDustTemplateCompiler {
 		head = this.addStylesheets(compilationSpec, head, compilationSpec.getStylesheetsPaths());
 		head = this.addJsAndTemplatesFiles(compilationSpec, head, compilationSpec.getJsAndTemplatesPaths());
 		head = this.addRenderingScripts(compilationSpec, head);
+    head = "<title>Lifia</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">" + head; //TODO FIX THIS
 		return "<html><head>" + head + "</head><body>" + body + "</body></html>";
 	}
 	
@@ -122,7 +123,7 @@ public class ResourceBasedDustTemplateCompiler {
 			return head;
 		}
 		this.mergeAndCompileStylesheets(compilationSpec.getApplicationId(), compilationSpec.getStylesheetsPaths(), this.getCompiledStylesheetsPath(compilationSpec));
-		head += "<link rel=\"stylesheet\" src=\"{cdn}" + this.getCompiledStylesheetsPath(compilationSpec) + "\" />";
+		head += "<link rel=\"stylesheet\" type=\"text/css\" href=\"{cdn}" + this.getCompiledStylesheetsPath(compilationSpec) + "\" />";
 		return head;
 	}
 

@@ -96,7 +96,8 @@ echo -e "${green}Adding some data${reset}";
 
 echo -e "${yellow}Executing lifia-new-site.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/lifia-new-site.sql
-
+echo -e "${yellow}Executing lifia-resources.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/lifia-resources.sql
 echo -e "${yellow}Executing delete-extra-flow-in-lifia-site.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/delete-extra-flow-in-lifia-site.sql
 

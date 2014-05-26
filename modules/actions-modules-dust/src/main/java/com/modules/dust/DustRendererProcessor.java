@@ -10,6 +10,7 @@ import com.abstractions.api.Message;
 import com.abstractions.api.Processor;
 import com.abstractions.utils.ExpressionUtils;
 import com.abstractions.utils.IdGenerator;
+import com.abstractions.utils.MessageUtils;
 
 public class DustRendererProcessor implements Processor {
 
@@ -65,6 +66,7 @@ public class DustRendererProcessor implements Processor {
 			
 			String result = this.evaluate(this.name, compiledTemplate, json);
 			message.setPayload(result);
+			message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".contentType", "text/html");
 		}
 		
 		return message;
