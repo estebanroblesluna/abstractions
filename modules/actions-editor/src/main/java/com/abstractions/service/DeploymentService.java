@@ -27,6 +27,7 @@ import com.abstractions.model.ServerCommand;
 import com.abstractions.model.User;
 import com.abstractions.model.UserImpl;
 import com.abstractions.repository.GenericRepository;
+import com.abstractions.utils.MessageUtils;
 
 @Service
 public class DeploymentService {
@@ -87,9 +88,9 @@ public class DeploymentService {
 	}
 
 	private boolean isCDNAware(ApplicationSnapshot applicationSnapshot) {
-    // TODO Auto-generated method stub
-    return false;
-  }
+			return applicationSnapshot.getProperty(MessageUtils.APPLICATION_CDN_PROPERTY) != null &&
+					!applicationSnapshot.getResources().isEmpty();
+	}
 
   @Transactional
 	public List<Deployment> getDeployments(long applicationSnapshotId) {
