@@ -89,6 +89,8 @@ echo -e "${yellow}Executing for-each-router.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/for-each-router.sql
 echo -e "${yellow}Executing add-connector-definition.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-connector-definition.sql
+echo -e "${yellow}Executing drop-zip-column.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/drop-zip-column.sql
 
 echo -e "${green}Done recreating schema!${reset}";
 

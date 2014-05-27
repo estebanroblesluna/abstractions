@@ -1,6 +1,6 @@
 package com.abstractions.service;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,6 @@ import com.abstractions.model.ProfilingInfo;
 import com.abstractions.model.ProfilingInfoJSONMarshaller;
 import com.abstractions.model.Server;
 import com.abstractions.model.ServerCommand;
-import com.abstractions.model.User;
 import com.abstractions.model.UserImpl;
 import com.abstractions.repository.GenericRepository;
 import com.abstractions.utils.MessageUtils;
@@ -88,7 +87,9 @@ public class DeploymentService {
 	}
 
 	private boolean isCDNAware(ApplicationSnapshot applicationSnapshot) {
-			return applicationSnapshot.getProperty(MessageUtils.APPLICATION_CDN_PROPERTY) != null &&
+			return 
+			    applicationSnapshot.getProperty(MessageUtils.APPLICATION_CLOUDFRONT_ACCESS) != null &&
+			    applicationSnapshot.getProperty(MessageUtils.APPLICATION_CLOUDFRONT_SECRET) != null &&
 					!applicationSnapshot.getResources().isEmpty();
 	}
 
@@ -296,7 +297,12 @@ public class DeploymentService {
 			DeploymentToServer toServer = deployment.getToServer(server.getId());
 			toServer.setState(DeploymentState.STARTED);
 			this.repository.save(toServer);
-			InputStream io = this.snapshotService.getZipFor(deployment.getSnapshot());
+			InputStream io = null;
+      try {
+        io = this.snapshotService.getZipFor(deployment.getSnapshot().getId());
+      } catch (IOException e) {
+        log.error("Error when obtaining snapshot");
+      }
 			return io;
 		} else {
 			return null;
