@@ -12,7 +12,8 @@ public class MessageUtils {
 
 	public static final String APPLICATION_ID_PROPERTY = APPLICATION_BASE_PROPERTY + ".id";
 	public static final String APPLICATION_CDN_PROPERTY = APPLICATION_BASE_PROPERTY + ".cdn";
-	
+	public static final String APPLICATION_CLOUDFRONT_SECRET = APPLICATION_CDN_PROPERTY + ".aws_secret";
+	public static final String APPLICATION_CLOUDFRONT_ACCESS = APPLICATION_CDN_PROPERTY + ".aws_access";
 	public static final String APPLICATION_PROPERTY_BASE_PROPERTY = APPLICATION_BASE_PROPERTY + ".property";
 
   public static final String CDN_DUMMY_RESOURCE_NAME = "_ok";

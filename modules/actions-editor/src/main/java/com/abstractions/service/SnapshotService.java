@@ -124,7 +124,7 @@ public class SnapshotService {
 	  ZipOutputStream zipOutputStream = new ZipOutputStream(bytes);
 			for (ResourceAppender resourceAppender : this.resourceAppenders) {
 				for (Resource resource : resourceAppender.getResources()) {
-					zipOutputStream.putNextEntry(new ZipEntry("files/" + resource.getPath()));
+					zipOutputStream.putNextEntry(new ZipEntry(resource.getPath()));
 					IOUtils.copy(new ByteArrayInputStream(resource.getData()), zipOutputStream);
 				}
 			}
@@ -155,25 +155,6 @@ public class SnapshotService {
 			snapshotProcessor.process(application, snapshot);
 		}
 	}
-
-	/*
-	private void processResources(Application application, ApplicationSnapshot snapshot) throws MarshallingException {
-		for (Flow flow : snapshot.getFlows()) {
-			ApplicationDefinition applicationDefinition = new ApplicationDefinition(application.getName());
-			new CompositeTemplateMarshaller(this.namesMapping).unmarshall(applicationDefinition, flow.getJson());
-			Iterator<ElementTemplate> elementIterator = applicationDefinition.getDefinitions().values().iterator();
-			while (elementIterator.hasNext()) {
-				ElementTemplate element = elementIterator.next();
-				if (element.getMeta().getImplementation().equals("RESOURCE_DUST_RENDERER")) {
-					this.dustCompiler.mergeAndCompile(
-						element.getProperty("bodyTemplatePath"),
-						element.getProperty("resourcesList"),
-						element.getProperty("templateRenderingList"));
-				}
-			}				
-		}
-	}
-	*/
 	
 	@Transactional
 	public List<ApplicationSnapshot> getSnapshots(long applicationId) {

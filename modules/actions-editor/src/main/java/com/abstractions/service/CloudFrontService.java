@@ -91,8 +91,8 @@ public class CloudFrontService {
 
 	@Transactional
 	public String distributeResources(ApplicationSnapshot snapshot){
-		String accessKey = snapshot.getProperty(awsAccessKeyProperty);
-		String secretKey = snapshot.getProperty(awsSecretKeyProperty);
+		String accessKey = snapshot.getProperty(MessageUtils.APPLICATION_CLOUDFRONT_ACCESS);
+		String secretKey = snapshot.getProperty(MessageUtils.APPLICATION_CLOUDFRONT_SECRET);
 		
 		if((secretKey==null || accessKey==null))
 			return null;
