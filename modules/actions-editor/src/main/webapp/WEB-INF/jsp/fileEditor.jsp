@@ -45,7 +45,6 @@
     
     function fileSaved(filename, content) {
     	showMessage("File saved");
-    	debugger;
     	if (newFile) {
     		addFileToTree(filename);
     		newFile = false;
@@ -136,7 +135,7 @@
            			dataType: 'html',
            			success: function() {
            				fileTreeView.model.deleteFile(filename);
-           				$(self).parent().remove();
+           				$(self).remove();
                		}
         		});
         		fileTreeView.model.deleteFile(filename);
