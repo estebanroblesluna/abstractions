@@ -1,0 +1,7 @@
+[ {
+  "@type" : "Connector",
+  "id" : 0,
+  "name" : "testing",
+  "type" : "none",
+  "configurations" : [ ]
+} ]
