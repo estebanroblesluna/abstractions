@@ -88,7 +88,7 @@ public class DeploymentService {
 
 	private boolean isCDNAware(ApplicationSnapshot applicationSnapshot) {
     // TODO Auto-generated method stub
-    return false;
+    return true;
   }
 
   @Transactional
@@ -295,7 +295,8 @@ public class DeploymentService {
 			DeploymentToServer toServer = deployment.getToServer(server.getId());
 			toServer.setState(DeploymentState.STARTED);
 			this.repository.save(toServer);
-			return new ByteArrayInputStream(deployment.getSnapshot().getZip());
+			InputStream io = this.snapshotService.getZipFor(deployment.getSnapshot());
+			return io;
 		} else {
 			return null;
 		}

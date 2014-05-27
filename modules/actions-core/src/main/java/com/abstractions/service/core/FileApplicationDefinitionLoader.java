@@ -55,7 +55,7 @@ public class FileApplicationDefinitionLoader implements ApplicationDefinitionLoa
 	}
 
 	private void loadMapping(NamesMapping mapping, File applicationDirectory) {
-		File mappingFile = new File(applicationDirectory, "files/_definitions/commons.json");
+		File mappingFile = new File(applicationDirectory, "_definitions/commons.json");
 
 		if (mappingFile.exists()) {
 			InputStream io = null;

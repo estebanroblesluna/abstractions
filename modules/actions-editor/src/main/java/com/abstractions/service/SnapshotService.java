@@ -1,6 +1,7 @@
 package com.abstractions.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -187,4 +188,8 @@ public class SnapshotService {
 		return this.repository.get(ApplicationSnapshot.class, snapshotId);
 	}
 
+  public InputStream getZipFor(ApplicationSnapshot snapshot) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

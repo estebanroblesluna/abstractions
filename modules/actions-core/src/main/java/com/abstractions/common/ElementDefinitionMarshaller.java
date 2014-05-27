@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.abstractions.meta.AbstractionDefinition;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ConnectionDefinition;
+import com.abstractions.meta.ConnectorDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.MessageSourceDefinition;
 import com.abstractions.meta.ProcessorDefinition;
@@ -70,6 +71,7 @@ public class ElementDefinitionMarshaller {
 	            new NamedType(ConnectionDefinition.class, "ConnectionDefinition"),
 	            new NamedType(ProcessorDefinition.class, "ProcessorDefinition"),
 	            new NamedType(MessageSourceDefinition.class, "MessageSourceDefinition"),
+              new NamedType(ConnectorDefinition.class, "ConnectorDefinition"),
 	            new NamedType(RouterDefinition.class, "RouterDefinition")
 				);
 		mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
