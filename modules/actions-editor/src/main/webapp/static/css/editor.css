@@ -20,12 +20,14 @@
 	cursor: pointer;
 }
 
-html, body, .container, #editor-container, #tree-container {
+html, body, .container, #editor-container {
 	height: 100%;
 }
 
 #tree-container{
+	height: 500px;
 	background-color: rgb(241, 241, 241);
+	overflow-y: scroll
 }
 
 #fileTree {
