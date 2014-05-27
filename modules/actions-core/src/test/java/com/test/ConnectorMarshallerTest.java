@@ -33,10 +33,10 @@ public class ConnectorMarshallerTest extends TestCase {
     configurations.put("configDos", "0002");
     connectors.add(new Connector("testing", "none", configurations));
 
-    // setup simpleJSON
+    // setup testJSON
     String JSONstring = null;
     try {
-      JSONstring = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("ConnectorJSONtesting.json")).replace("\n", "");
+      JSONstring = IOUtils.toString(this.getClass().getResourceAsStream("ConnectorJSONtesting.json")).replace("\n", "");
     } catch (IOException e1) {
       fail("JSONException when opening resource file ConnectorJSONtesting");
     }
@@ -82,7 +82,6 @@ public class ConnectorMarshallerTest extends TestCase {
     }
 
     assertEquals(connectors, connectorsResult);
-    assertEquals(connectors.size(), connectorsResult.size());
   }
 
   @Test

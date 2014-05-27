@@ -3,5 +3,5 @@
   "id" : 0,
   "name" : "testing",
   "type" : "none",
-  "configurations" : [ ]
-} ]
+  "configurations" : { "configUno" : "0001","configDos" : "0002"}
+} ] 
