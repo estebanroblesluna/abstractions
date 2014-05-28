@@ -91,13 +91,6 @@
     		<bean class="com.abstractions.service.DefinitionsResourceAppender">
     			<constructor-arg ref="elementDefinitionService" />
     		</bean>
-    		<bean class="com.abstractions.service.StringMapResourceAppender">
-    			<constructor-arg>
-    				<map>
-    					<entry key="resources/public/_ok" value=""></entry>
-    				</map>
-    			</constructor-arg>
-    		</bean>
     	</list>
     </constructor-arg>
     <constructor-arg index="5">

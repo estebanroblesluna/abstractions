@@ -33,7 +33,9 @@ public class CdnStatusManager {
   }
 
   public void addCdnStatus(CdnStatus cdnStatus) {
-    this.cdnUpForApplication.put(cdnStatus.getApplicationId(), cdnStatus);
+    if (!this.cdnUpForApplication.containsKey(cdnStatus.getApplicationId())) {
+      this.cdnUpForApplication.put(cdnStatus.getApplicationId(), cdnStatus);
+    }
   }  
   
 }

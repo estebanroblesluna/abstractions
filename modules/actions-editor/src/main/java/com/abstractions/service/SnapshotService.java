@@ -107,6 +107,11 @@ public class SnapshotService {
 			 snapshot.addResource(cloned);
 		}
 		
+		Resource okResource = new Resource(applicationId, "_ok", "OK".getBytes(), "P");
+		okResource.setSnapshot(true);
+		
+    snapshot.addResource(okResource);
+		
 		application.addSnapshot(snapshot);
 
     this.repository.save(application);
