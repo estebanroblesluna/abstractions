@@ -1,13 +1,13 @@
 package com.abstractions.model;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
  * @author Martin Aparicio Pons (martin.aparicio.pons@gmail.com)
  */
-public class Connector {
+public class Connector implements Cloneable {
 
   private long id;
   private String name;
@@ -20,7 +20,7 @@ public class Connector {
   public Connector(String name, String type, Map<String, String> configurations) {
     this.name = name;
     this.type = type;
-    this.configurations = configurations;
+    this.configurations = new HashMap<String, String>(configurations);
   }
 
   public String getName() {
@@ -49,5 +49,11 @@ public class Connector {
 
   public void setType(String type) {
     this.type = type;
+  }
+  
+  @Override
+  public Connector clone() throws CloneNotSupportedException {
+    Connector connector = new Connector(this.name, this.type, this.configurations);
+    return connector;
   }
 }

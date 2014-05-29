@@ -16,8 +16,10 @@ import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.abstractions.common.ConnectorMarshaller;
 import com.abstractions.model.Application;
 import com.abstractions.model.ApplicationSnapshot;
+import com.abstractions.model.Connector;
 import com.abstractions.model.Environment;
 import com.abstractions.model.Flow;
 import com.abstractions.model.Property;
@@ -72,7 +74,18 @@ public class SnapshotService {
 				log.warn("Error clonning property", e);
 			}
 		}
-		
+
+    //clone all connectors
+    for (Connector connector : application.getTeam().getConnectors()) {
+      try {
+        Connector clonedConnector = connector.clone();
+        this.repository.save(clonedConnector);
+        snapshot.addConnector(clonedConnector);
+      } catch (CloneNotSupportedException e) {
+        log.warn("Error clonning connector", e);
+      }
+    }
+
 		//clone all flows
 		for (Flow flow : application.getFlows()) {
 			try {
@@ -138,37 +151,46 @@ public class SnapshotService {
 		return this.repository.get(ApplicationSnapshot.class, snapshotId);
 	}
 
-	@Transactional
+  @Transactional
   public InputStream getZipFor(long snapshotId) throws IOException {
-	  ApplicationSnapshot snapshot = this.getSnapshot(snapshotId);
+    ApplicationSnapshot snapshot = this.getSnapshot(snapshotId);
     Application application = snapshot.getApplication();
     ByteArrayOutputStream bytes = new ByteArrayOutputStream(4096);
     ZipOutputStream zipOutputStream = new ZipOutputStream(bytes);
-      for (ResourceAppender resourceAppender : this.resourceAppenders) {
-        for (Resource resource : resourceAppender.getResources()) {
-          zipOutputStream.putNextEntry(new ZipEntry(resource.getPath()));
-          IOUtils.copy(new ByteArrayInputStream(resource.getData()), zipOutputStream);
-        }
+    
+    for (ResourceAppender resourceAppender : this.resourceAppenders) {
+      for (Resource resource : resourceAppender.getResources()) {
+        zipOutputStream.putNextEntry(new ZipEntry(resource.getPath()));
+        IOUtils.copy(new ByteArrayInputStream(resource.getData()), zipOutputStream);
       }
-      for (Flow flow : application.getFlows()) {
-        zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
-        IOUtils.write(flow.getJson(), zipOutputStream);
-      }
-      for (String resourceName : this.privateResourceService.listResources(application.getId())) {
-        zipOutputStream.putNextEntry(new ZipEntry("resources/private/" + resourceName));
-        IOUtils.write(this.privateResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
-      }
-      for (String resourceName : this.publicResourceService.listResources(application.getId())) {
-        zipOutputStream.putNextEntry(new ZipEntry("resources/public/" + resourceName));
-        IOUtils.write(this.publicResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
-      }
-      //Properties
-      zipOutputStream.putNextEntry(new ZipEntry("properties"));
-      for(Property property : snapshot.getProperties()){
-        IOUtils.write(property.getName() + "=" + property.getValue()+"\n", zipOutputStream);
-      }
-      zipOutputStream.closeEntry();
-      zipOutputStream.close();
-      return new ByteArrayInputStream(bytes.toByteArray());
+    }
+    
+    for (Flow flow : snapshot.getFlows()) {
+      zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
+      IOUtils.write(flow.getJson(), zipOutputStream);
+    }
+    
+    String connectorMarshalled = ConnectorMarshaller.marshall(snapshot.getConnectors());
+    zipOutputStream.putNextEntry(new ZipEntry("connectors.json"));
+    IOUtils.write(connectorMarshalled, zipOutputStream);
+    
+    for (String resourceName : this.privateResourceService.listResources(application.getId())) {
+      zipOutputStream.putNextEntry(new ZipEntry("resources/private/" + resourceName));
+      IOUtils.write(this.privateResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
+    }
+    for (String resourceName : this.publicResourceService.listResources(application.getId())) {
+      zipOutputStream.putNextEntry(new ZipEntry("resources/public/" + resourceName));
+      IOUtils.write(this.publicResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
+    }
+    
+    // Properties
+    zipOutputStream.putNextEntry(new ZipEntry("properties"));
+    for (Property property : snapshot.getProperties()) {
+      IOUtils.write(property.getName() + "=" + property.getValue() + "\n", zipOutputStream);
+    }
+    
+    zipOutputStream.closeEntry();
+    zipOutputStream.close();
+    return new ByteArrayInputStream(bytes.toByteArray());
   }
 }

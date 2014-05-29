@@ -9,88 +9,98 @@ import org.jsoup.helper.Validate;
 
 public class ApplicationSnapshot {
 
-	long id;
-	
-	private Date date;
-	private List<Flow> flows;
-	private List<Property> properties;
-	private Application application;
-	private List<Resource> resources;
-	private Environment environment;
+  long id;
 
-	public ApplicationSnapshot(){
-		
-	}
-	
-	public ApplicationSnapshot(Application application) {
-		this.date = new Date();
-		this.flows = new ArrayList<Flow>();
-		this.properties = new ArrayList<Property>();
-		this.application = application;
-		this.resources = new ArrayList<Resource>();
-		this.setEnvironment(null);
-	}
+  private Date date;
+  private List<Flow> flows;
+  private List<Property> properties;
+  private Application application;
+  private List<Resource> resources;
+  private List<Connector> connectors;
+  private Environment environment;
 
-	public void addProperty(Property property) {
-		Validate.notNull(property);
+  protected ApplicationSnapshot() { }
 
-		this.properties.add(property);
-	}
+  public ApplicationSnapshot(Application application) {
+    this.date = new Date();
+    this.flows = new ArrayList<Flow>();
+    this.properties = new ArrayList<Property>();
+    this.application = application;
+    this.resources = new ArrayList<Resource>();
+    this.connectors = new ArrayList<Connector>();
+    this.setEnvironment(null);
+  }
 
-	public List<Property> getProperties() {
-		return Collections.unmodifiableList(this.properties);
-	}
-	
-	public void addFlow(Flow flow) {
-		Validate.notNull(flow);
+  public void addProperty(Property property) {
+    Validate.notNull(property);
 
-		this.flows.add(flow);
-	}
-	
-	public List<Flow> getFlows() {
-		return Collections.unmodifiableList(this.flows);
-	}
+    this.properties.add(property);
+  }
 
-	public Date getDate() {
-		return date;
-	}
+  public void addConnector(Connector connector) {
+    Validate.notNull(connector);
 
-	public long getId() {
-		return id;
-	}
-	
-	public List<Resource> getResources(){
-		return Collections.unmodifiableList(this.resources);
-	}
-	
-	public void addResource(Resource resource){
-		this.resources.add(resource);
-	}
+    this.connectors.add(connector);
+  }
 
-	public Application getApplication() {
-		return application;
-	}
+  public List<Property> getProperties() {
+    return Collections.unmodifiableList(this.properties);
+  }
 
-	/**
-	 * @return the environment
-	 */
-	public Environment getEnvironment() {
-		return environment;
-	}
+  public void addFlow(Flow flow) {
+    Validate.notNull(flow);
 
-	/**
-	 * @param environment the environment to set
-	 */
-	public void setEnvironment(Environment environment) {
-		this.environment = environment;
-	}
-	
-	public String getProperty(String propertyName){
-		for (Property property : this.properties ){
-			if(property.getName().equals(propertyName))
-				return property.getValue();
-		}
-		return null;
-	}
-	
+    this.flows.add(flow);
+  }
+
+  public List<Flow> getFlows() {
+    return Collections.unmodifiableList(this.flows);
+  }
+
+  public Date getDate() {
+    return date;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public List<Resource> getResources() {
+    return Collections.unmodifiableList(this.resources);
+  }
+  
+  public List<Connector> getConnectors() {
+    return Collections.unmodifiableList(this.connectors);
+  }
+
+  public void addResource(Resource resource) {
+    this.resources.add(resource);
+  }
+
+  public Application getApplication() {
+    return application;
+  }
+
+  /**
+   * @return the environment
+   */
+  public Environment getEnvironment() {
+    return environment;
+  }
+
+  /**
+   * @param environment
+   *          the environment to set
+   */
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
+  }
+
+  public String getProperty(String propertyName) {
+    for (Property property : this.properties) {
+      if (property.getName().equals(propertyName))
+        return property.getValue();
+    }
+    return null;
+  }
 }

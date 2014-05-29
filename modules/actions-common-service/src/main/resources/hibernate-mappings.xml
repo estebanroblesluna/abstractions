@@ -55,7 +55,10 @@
       <key column="application_snapshot_id" />
       <one-to-many class="com.abstractions.model.Resource" />
     </bag>
-    
+    <bag name="connectors" lazy="false" cascade="all">
+      <key column="application_snapshot_id" />
+      <one-to-many class="com.abstractions.model.Connector" />
+    </bag>    
   </class>
 
   <class name="com.abstractions.model.Flow" table="flows">
