@@ -23,8 +23,18 @@
 			$(".selectedFile").attr("class","file");
 			node.cleanTreeSelection();
 		}
-		node.selected = true;
-		$(this).attr("class","file selectedFile");
+		node.selected = !node.selected;
+		if(node.selected)
+			$(this).attr("class","file selectedFile");
+		else
+			$(this).attr("class","file");
+		if($(".selectedFile").size())
+			$("#deleteFile").prop("disabled",false);
+		else
+			$("#deleteFile").prop("disabled",true);
+  	}
+	
+	function openFile(node, e){
 		filename = node.getPath();
         e.preventDefault(); 
   		$.ajax({
@@ -34,7 +44,8 @@
             	editor.setFile(filename, response);
         	}
   		});
-  	}
+  		$("#saveButton").prop("disabled",false);
+	}
 	
     function addFileToTree(filename) {
     	filename = filename[0] == '/' ? filename.substring(1) : filename;
@@ -68,6 +79,7 @@
     	$("#fileTree").empty();
     	fileTreeView = new FolderView($("#fileTree"));
     	fileTreeView.fileSelectedHook = selectFile;
+    	fileTreeView.fileOpenHook = openFile;
     	$.ajax({
    			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType +"/" + $(self).text(),
    			type: "GET",
@@ -80,8 +92,31 @@
 		});
     }
 
+	function deleteFiles(){
+    	$(".selectedFile").each(function(){
+    		var filename = $(this).attr("path");
+    		var self = this;
+    		$.ajax({
+       			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
+       			type: "DELETE",
+       			dataType: 'html',
+       			success: function() {
+       				fileTreeView.model.deleteFile(filename);
+       				$(self).remove();
+           		}
+    		});
+    		fileTreeView.model.deleteFile(filename);
+    	})
+    }
     
     $(document).ready(function() {
+    	
+
+    	$("#deleteFile").prop("disabled",true);
+    	$("#deleteFile").confirmation({
+    		onConfirm: deleteFiles,
+    		placement: 'bottom'
+    	});
     	
     	//Initialize the file tree
     	fillTree();
@@ -124,24 +159,6 @@
             newFile = true;
          });
         
-        $("#deleteFile").click(function(e){
-        	e.preventDefault();
-        	$(".selectedFile").each(function(){
-        		var filename = $(this).attr("path");
-        		var self = this;
-        		$.ajax({
-           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
-           			type: "DELETE",
-           			dataType: 'html',
-           			success: function() {
-           				fileTreeView.model.deleteFile(filename);
-           				$(self).remove();
-               		}
-        		});
-        		fileTreeView.model.deleteFile(filename);
-        	})
-        });
-        
     });
     
 		</script>
@@ -163,7 +180,7 @@
         <input id="zipFile" type="file" name="file" style="display: none" />
         <button id="uploadZip" class="btn" title="Uppload zip file"><span class="glyphicon glyphicon-upload"></span></button>
         <button id="newFile" class="btn" title="New file"><span class="glyphicon glyphicon-file"></span></button>
-        <button id="deleteFile" class="btn" title="Delete file"><span class="glyphicon glyphicon-remove"></span></button>
+        <button id="deleteFile" data-toggle="confirmation" enabled="false" class="btn" title="Delete selected files?"><span class="glyphicon glyphicon-remove"></span></button>
       </form>
 
     </div>

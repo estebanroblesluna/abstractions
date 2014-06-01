@@ -11,6 +11,7 @@
 <script src="${staticResourcesUrl}js/codemirror/modes/htmlmixed.js"></script>
 <script src="${staticResourcesUrl}js/jquery.min.js"></script>
 <script src="${staticResourcesUrl}js/bootstrap.min.js"></script>
+<script src="${staticResourcesUrl}js/bootstrap-confirmation.js"></script>
 <script src="${staticResourcesUrl}js/alert.js"></script>
 <script src="${staticResourcesUrl}js/util/functionalTools.js"></script>
 <script src="${staticResourcesUrl}js/util/tree.js"></script>

@@ -43,7 +43,7 @@ function FileEditor(container, width, height, toolbar){
 	//Toolbar buttons
 	var saveButton = $('<button class="btn" id="saveButton" title="Save file"><span class="glyphicon glyphicon-floppy-disk"></span> </button>');
     toolbarSection.append(saveButton);
-    
+    saveButton.prop("disabled",true);
     $(saveButton).click(function(ev){
     	ev.preventDefault();
     	saveFileHook(editingFile,editor.getValue())

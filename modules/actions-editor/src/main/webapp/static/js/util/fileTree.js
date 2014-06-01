@@ -1,4 +1,4 @@
-var Folder = function(name,clickOnFile,clickOnFolder){
+var Folder = function(name){
 	
 	this.__proto__= new Tree()
 	this.name = name || "";
@@ -78,7 +78,7 @@ var Folder = function(name,clickOnFile,clickOnFolder){
 			var file = path[0];
 			var fileNode = this.getFile(file);
 			if(!fileNode){
-				fileNode = new File(file,this.clickOnFile,this.deleteFileHook);
+				fileNode = new File(file,this.clickOnFile,this.deleteFileHook,this.dblClickFileHook);
 				this.addLeaf(fileNode);
 				this.newFileHook(fileNode);
 			}
@@ -138,11 +138,12 @@ var Folder = function(name,clickOnFile,clickOnFolder){
 }
 
 
-var File = function(name,clickOnFile,deleteFileHook){
+var File = function(name,clickOnFile,deleteFileHook,dblClickOnFile){
 	
 	this.__proto__ = new Leaf();
 	this.name = name || "";
 	this.clickOnFile = clickOnFile || nop;
+	this.dblClickOnFile = dblClickOnFile || nop;
 	this.deleteFileHook = deleteFileHook || nop;
 	this.selected = false;
 	
@@ -181,8 +182,8 @@ function FolderView(domRoot, model){
 	
 	//Event handlers
 	function folderAdded(domNode,parentView,model){
-		var res = $("<li class='tree-folder open-folder'>")
-		var bullet = $("<span class='glyphicon glyphicon-folder-open'></span>");
+		var res = $("<li class='tree-folder closed-folder'>")
+		var bullet = $("<span class='glyphicon glyphicon-folder-close'></span>");
 		res.append(bullet);
 		bullet.click(swapCollapseStatus)
 		res.append("<span>"+model.name+"<span/>")
@@ -190,6 +191,7 @@ function FolderView(domRoot, model){
 		domNode.append(res);
 		newView = new FolderView(res,model);
 		newView.fileSelectedHook = parentView.fileSelectedHook;
+		newView.fileOpenHook = parentView.fileOpenHook;
 		parentView.subViews.push(newView);
 	}
 	
@@ -202,6 +204,7 @@ function FolderView(domRoot, model){
 		var link = $("<a>"+model.name+"</a>")
 		res.append(link);
 		res.click(partial(parentView.fileSelectedHook,model));
+		res.dblclick(partial(parentView.fileOpenHook,model));
 		res.attr("path",model.getPath());
 		domNode.append(res);
 	}
@@ -216,6 +219,7 @@ function FolderView(domRoot, model){
 	this.subViews = [];
 	this.model = model || new Folder();
 	this.fileSelectedHook = nop;
+	this.fileOpenHook = nop;
 	
 	var folderList = $("<ul class='folder-list'></ul>");
 	var fileList = $("<ul class='file-list'></ul>");
