@@ -1,0 +1,28 @@
+[ {
+  "@type" : "Connector",
+  "id" : 0,
+  "name" : "Cache",
+  "type" : "connection to cache",
+  "configurations" : { "time" : "1002","isTrue" : "True"}},
+  {
+  "@type" : "Connector",
+  "id" : 0,
+  "name" : "anotherOne",
+  "type" : "connection to DB",
+  "configurations" : { "ttl" : "100"}},
+  {
+  "@type" : "Connector",
+  "id" : 0,
+  "name" : "yes",
+  "type" : "",
+  "configurations" : {}},
+  {
+  "@type" : "Connector",
+  "id" : 0,
+  "name" : "1",
+  "type" : "1",
+  "configurations" : { "1" : "1"}},
+ ] 
+
+
+

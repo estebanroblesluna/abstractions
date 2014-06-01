@@ -1,6 +1,6 @@
 package com.abstractions.service.rest;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.ws.rs.DELETE;
@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -109,11 +110,19 @@ public class ResourceRESTService {
 	
 	@GET
 	@Path("{applicationId}/snapshots/{snapshotId}")
+	@Produces("application/zip")
 	public Response getSnapshot(@PathParam("applicationId") long applicationId, @PathParam("snapshotId") long snapshotId) {
-		InputStream result = new ByteArrayInputStream(this.snapshotService.getSnapshot(snapshotId).getZip());
+		InputStream result = null;
+    try {
+      result = this.snapshotService.getZipFor(snapshotId);
+    } catch (IOException e) {
+      log.error("Error when generating zip for snapshot");
+    }
 		if (result == null) {
 			return Response.status(404).entity("File not found").build();
 		}
-		return Response.ok(result).build();
+		return Response.ok(result)
+		        .header("Content-Disposition", "attachment; filename=Snaphost.zip")
+		        .build();
 	}
 }

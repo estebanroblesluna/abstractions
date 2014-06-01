@@ -12,13 +12,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.helper.Validate;
 
+import com.abstractions.common.ConnectorMarshaller;
 import com.abstractions.common.ElementDefinitionMarshaller;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ElementDefinition;
+import com.abstractions.model.Connector;
 import com.abstractions.model.Library;
 import com.abstractions.service.repository.CompositeTemplateMarshaller;
 import com.abstractions.service.repository.MarshallingException;
 import com.abstractions.template.CompositeTemplate;
+import com.abstractions.template.ElementTemplate;
 
 public class FileApplicationDefinitionLoader implements ApplicationDefinitionLoader {
 
@@ -44,6 +47,7 @@ public class FileApplicationDefinitionLoader implements ApplicationDefinitionLoa
 		if (applicationDirectory.exists()) {
 			NamesMapping appMapping = appDefinition.getMapping(); 
 			this.loadMapping(appMapping, applicationDirectory);
+			this.loadConnectors(appDefinition, applicationDirectory, appMapping);
 			
 			File flowDirectory = new File(applicationDirectory, "flows");
 			for (File flowFile : flowDirectory.listFiles()) {
@@ -54,8 +58,35 @@ public class FileApplicationDefinitionLoader implements ApplicationDefinitionLoa
 		return appDefinition;
 	}
 
-	private void loadMapping(NamesMapping mapping, File applicationDirectory) {
-		File mappingFile = new File(applicationDirectory, "files/_definitions/commons.json");
+	private void loadConnectors(ApplicationDefinition appDefinition, File applicationDirectory, NamesMapping mapping) {
+    File connectorsFile = new File(applicationDirectory, "connectors.json");
+
+    if (connectorsFile.exists()) {
+      InputStream io = null;
+      
+      try {
+        io = new FileInputStream(connectorsFile);
+        String connectorsAsJSON = IOUtils.toString(io);
+        List<Connector> connectors = ConnectorMarshaller.unmarshall(connectorsAsJSON);
+        
+        for (Connector connector : connectors) {
+          String id = connector.getName();
+          ElementDefinition metaElementDefinition = mapping.getDefinition(connector.getType());
+          ElementTemplate connectorTemplate = new ElementTemplate(id, metaElementDefinition);
+          connectorTemplate.setProperties(connector.getConfigurations());
+          
+          appDefinition.addDefinition(connectorTemplate);
+        }
+      } catch (IOException e) {
+        log.warn("Error parsing mapping", e);
+      } finally {
+        IOUtils.closeQuietly(io);
+      }
+    }
+  }
+
+  private void loadMapping(NamesMapping mapping, File applicationDirectory) {
+		File mappingFile = new File(applicationDirectory, "_definitions/commons.json");
 
 		if (mappingFile.exists()) {
 			InputStream io = null;

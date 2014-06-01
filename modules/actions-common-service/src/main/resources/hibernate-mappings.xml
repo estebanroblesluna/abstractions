@@ -41,7 +41,6 @@
         <param name="enumClass">com.abstractions.model.Environment</param>
        </type>
     </property>    
-    <property name="zip" type="binary" column="zip" />
     <many-to-one name="application" column="application_id" />
     
     <bag name="properties" lazy="false" cascade="all">
@@ -56,7 +55,10 @@
       <key column="application_snapshot_id" />
       <one-to-many class="com.abstractions.model.Resource" />
     </bag>
-    
+    <bag name="connectors" lazy="false" cascade="all">
+      <key column="application_snapshot_id" />
+      <one-to-many class="com.abstractions.model.Connector" />
+    </bag>    
   </class>
 
   <class name="com.abstractions.model.Flow" table="flows">
