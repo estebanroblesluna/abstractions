@@ -46,6 +46,14 @@ public abstract class CompositeDefinition extends ElementDefinition {
 	public Map<String, ElementTemplate> getDefinitions() {
 		return Collections.unmodifiableMap(this.definitions);
 	}
+	
+  public ElementTemplate getDefinition(String id) {
+    return this.definitions.get(id);
+  }
+
+  public void removeDefinition(String id) {
+    this.definitions.remove(id);
+  }
 
 	@Override
 	public Element instantiate(CompositeElement container, NamesMapping mapping, ElementTemplate template, ApplicationTemplate appTemplate) throws InstantiationException, IllegalAccessException {
@@ -111,6 +119,7 @@ public abstract class CompositeDefinition extends ElementDefinition {
 						((IdentificableMutable) element).setId(definition.getId());
 					}
 					templatesContainer.afterInstantiation(element, definition, appTemplate);
+					parent.addObject(definition.getId(), element);
 				}
 				definition.initialize(parent, mapping, appTemplate);
 

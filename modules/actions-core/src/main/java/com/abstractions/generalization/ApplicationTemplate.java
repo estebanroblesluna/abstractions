@@ -117,5 +117,4 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
       }
     }
   }
-
 }
