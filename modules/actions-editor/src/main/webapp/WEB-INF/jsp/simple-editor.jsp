@@ -6,7 +6,6 @@
 	<style type="text/css">
 		body {
 			margin: 0;
-			height: 93.7%;
 		}
 		.CodeMirror {
 			height: 100%;
