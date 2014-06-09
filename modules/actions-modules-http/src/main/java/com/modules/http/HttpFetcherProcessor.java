@@ -90,8 +90,10 @@ public class HttpFetcherProcessor implements Processor {
 
 			return message;
 		} catch (ClientProtocolException e) {
+		  message.setException(e);
 			throw new ProcessingException(e);
 		} catch (IOException e) {
+      message.setException(e);
 			throw new ProcessingException(e);
 		}
 	}
@@ -111,8 +113,10 @@ public class HttpFetcherProcessor implements Processor {
 
 			url = uri.toString();
 		} catch (URISyntaxException e) {
+      message.setException(e);
 			throw new ProcessingException(e);
 		} catch (MalformedURLException e) {
+      message.setException(e);
 			throw new ProcessingException(e);
 		}
 
@@ -133,7 +137,7 @@ public class HttpFetcherProcessor implements Processor {
 			try {
 				post.setEntity(new UrlEncodedFormEntity(data, HTTP.UTF_8));
 			} catch (UnsupportedEncodingException e) {
-				// log
+	      message.setException(e);
 			}
 
 			request = post;

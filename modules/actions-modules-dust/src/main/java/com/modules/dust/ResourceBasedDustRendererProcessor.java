@@ -66,6 +66,7 @@ public class ResourceBasedDustRendererProcessor implements Processor {
 			}
 			message.setPayload(this.evaluate(this.getName(), compiledMasterTemplate, this.setContentToRender(message, templateCompilationSpec)));
 		} catch (IOException e) {
+		  message.setException(e);
 			log.error("Error compiling master template", e);
 		}
     message.putProperty(MessageUtils.HTTP_BASE_PROPERTY + ".contentType", "text/html");
