@@ -11,8 +11,10 @@ import com.abstractions.instance.messagesource.MessageSourceListener;
 import com.abstractions.meta.ApplicationDefinition;
 import com.abstractions.meta.ElementDefinition;
 import com.abstractions.meta.FlowDefinition;
+import com.abstractions.runtime.interpreter.DevInterpreterDelegate;
 import com.abstractions.runtime.interpreter.Interpreter;
 import com.abstractions.runtime.interpreter.Thread;
+import com.abstractions.service.core.EnvironmentHolder;
 import com.abstractions.service.core.NamesMapping;
 import com.abstractions.service.core.PropertiesLoader;
 import com.abstractions.service.core.ServiceException;
@@ -72,6 +74,10 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
 		ElementTemplate nextInChain = this.getNextInChainFor(messageSource.getId());
 		Interpreter interpreter = new Interpreter(this, nextInChain, this);
 		
+		if (EnvironmentHolder.isDev()) {
+		  interpreter.setDelegate(DevInterpreterDelegate.getInstance());
+		}
+		
 		ApplicationDefinition appDefinition = (ApplicationDefinition) this.getMeta();
 		if (appDefinition.getInterpreterDelegate() != null) {
 			interpreter.setDelegate(appDefinition.getInterpreterDelegate());
@@ -117,5 +123,4 @@ public class ApplicationTemplate extends CompositeTemplate implements MessageSou
       }
     }
   }
-
 }

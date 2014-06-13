@@ -217,14 +217,23 @@
     <constructor-arg ref="repository" />
     <constructor-arg ref="propertiesLoader" />
    </bean>
-   
-   <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
+
+  <bean id="propertiesLoader" class="com.abstractions.service.core.DatabasePropertiesLoader">
     <constructor-arg ref="repository" />
-   </bean>
-   <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager">
-   </bean>
-   <bean id="connectorService" class="com.abstractions.service.ConnectorService">
+  </bean>
+
+  <bean id="cdnStatusManager" class="com.abstractions.cdn.CdnStatusManager" />
+
+  <bean id="connectorService" class="com.abstractions.service.ConnectorService">
     <constructor-arg ref="repository" />
     <constructor-arg ref="teamService" />
+    <constructor-arg ref="developmentEnvironmentService" />
   </bean>
+
+   <bean id="developmentEnvironmentService" class="com.abstractions.service.DevelopmentEnvironmentService">
+    <constructor-arg ref="contextHolder" />
+    <constructor-arg ref="repository" />
+  </bean>
+  
+  
 </beans>

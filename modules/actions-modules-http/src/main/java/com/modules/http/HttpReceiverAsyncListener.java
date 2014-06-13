@@ -18,7 +18,12 @@ public class HttpReceiverAsyncListener implements AsyncListener {
 	@Override
 	public void onComplete(AsyncEvent event) throws IOException {
 		Exception e = (Exception) event.getAsyncContext().getRequest().getAttribute(HttpReceiver.HTTP_EXCEPTION);
+    Message message = (Message) event.getAsyncContext().getRequest().getAttribute(HttpReceiver.HTTP_RESPONSE_MESSAGE);
+
 		ServletResponse response = event.getAsyncContext().getResponse();
+		if (e == null) {
+		  e = message.getException();
+		}
 
 		if (e != null) {
 			if (response instanceof HttpServletResponse) {
@@ -26,8 +31,6 @@ public class HttpReceiverAsyncListener implements AsyncListener {
 				IOUtils.write(ExceptionUtils.getFullStackTrace(e), response.getWriter());
 			}
 		} else {
-
-			Message message = (Message) event.getAsyncContext().getRequest().getAttribute(HttpReceiver.HTTP_RESPONSE_MESSAGE);
 			if (message != null) {
 				Object contentType = message.getProperty(MessageUtils.HTTP_BASE_PROPERTY + ".contentType");
 				if (contentType != null) {

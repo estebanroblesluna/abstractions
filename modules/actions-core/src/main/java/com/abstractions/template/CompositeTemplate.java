@@ -19,6 +19,7 @@ import com.abstractions.api.CompositeElement;
 import com.abstractions.api.Element;
 import com.abstractions.api.Processor;
 import com.abstractions.generalization.ApplicationTemplate;
+import com.abstractions.instance.composition.CompositeElementImpl;
 import com.abstractions.instance.core.ConnectionType;
 import com.abstractions.instance.messagesource.MessageSource;
 import com.abstractions.meta.ConnectionDefinition;
@@ -201,6 +202,11 @@ public class CompositeTemplate extends ElementTemplate {
 			}
 		}
 		
+		if (this.isInstantiated()) {
+		  for (String id : deletedEntities) {
+		    ((CompositeElement) this.object).deleteObjectWithId(id);
+		  }
+		}
 		return deletedEntities;
 	}
 	

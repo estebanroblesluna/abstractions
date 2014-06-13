@@ -78,7 +78,7 @@ public class Thread {
 					this.getId().toString(), 
 					this.getComposite().getId(), 
 					this.currentElement, 
-					this.currentMessage.clone(),
+					this.currentMessage,
 					e);
 			this.hasNextProcessor.set(false);
 			this.hasException.set(true);

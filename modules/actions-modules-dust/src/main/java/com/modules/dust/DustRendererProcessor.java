@@ -45,7 +45,7 @@ public class DustRendererProcessor implements Processor {
 		String compiledTemplate = this.getConnector().getCompiledTemplate(this.name);
 		
 		if (compiledTemplate == null || this.dirty.get()) {
-			String templateAsString = ExpressionUtils.evaluateNoFail(template, message, "");
+			String templateAsString = (String) this.template.evaluate(message);
 			this.getConnector().putTemplate(name, templateAsString);
 			compiledTemplate = this.getConnector().getCompiledTemplate(this.name);
 			

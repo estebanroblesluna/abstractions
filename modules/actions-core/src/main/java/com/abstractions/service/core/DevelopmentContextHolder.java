@@ -1,6 +1,8 @@
 package com.abstractions.service.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +24,8 @@ public class DevelopmentContextHolder {
 
   private static final Log log = LogFactory.getLog(DevelopmentContextHolder.class);
 
-  private static final String APP_DEFINITION = "APP_DEFINITION";
-  private static final String APP_TEMPLATE = "APP_TEMPLATE";
+  public static final String APP_DEFINITION = "APP_DEFINITION";
+  public static final String APP_TEMPLATE = "APP_TEMPLATE";
 
   private final LoadingCache<String, Map<String, Object>> appDefinitions;
 
@@ -53,6 +55,33 @@ public class DevelopmentContextHolder {
     });
   }
 
+  public List<ApplicationTemplate> getApplicationTemplatesOf(Long applicationId) {
+    List<ApplicationTemplate> templates = new ArrayList<ApplicationTemplate>();
+    Map<String, Map<String, Object>> defs = this.appDefinitions.asMap();
+    
+    for (Map.Entry<String, Map<String, Object>> entry : defs.entrySet()) {
+      if (entry.getKey().endsWith(applicationId.toString())) {
+        ApplicationTemplate appTemplate = (ApplicationTemplate) entry.getValue().get(APP_TEMPLATE);
+        templates.add(appTemplate);
+      }
+    }
+    
+    return templates;
+  }
+  
+  public List<Map<String, Object>> getApplicationMaps(Long applicationId) {
+    List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
+    Map<String, Map<String, Object>> defs = this.appDefinitions.asMap();
+    
+    for (Map.Entry<String, Map<String, Object>> entry : defs.entrySet()) {
+      if (entry.getKey().endsWith(applicationId.toString())) {
+        maps.add(entry.getValue());
+      }
+    }
+    
+    return maps;
+  }
+  
   public ApplicationTemplate getApplicationTemplate(User user, Long applicationId) {
     return this.getApplicationTemplate(user, applicationId.toString());
   }

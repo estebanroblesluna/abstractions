@@ -13,7 +13,7 @@
  */
 
 /**
- * @author "Guido José Celada <celadaguido@gmail.com>"
+ * @author "Guido Jose Celada <celadaguido@gmail.com>"
  */
 
 
@@ -60,47 +60,52 @@
 
     //create a window for the script iframe
     _panel = [[CPWindow alloc]
-    initWithContentRect:CGRectMake(70, 40, 640, 480)
+    initWithContentRect:CGRectMake(70, 40, 700, 427)
     styleMask:CPClosableWindowMask | CPClosableWindowMask];
     [_panel orderFront:self];
-    [_panel setTitle: "Edit groovy script"];
+    [_panel setTitle: "Edit Groovy script"];
     [_panel setDelegate: self];
 
     //set the script editor iframe
     _scriptWebView = [[CPWebView alloc] init];
-    [_scriptWebView setFrame:CGRectMake(0, 0, 640, 480)];
+    [_scriptWebView setFrame:CGRectMake(0, 0, 700, 427)];
     [_scriptWebView setMainFrameURL:"/simple-editor/"]
     [_scriptWebView setBackgroundColor:[CPColor blackColor]];
 
     //set the save button
-    var saveButton = [[CPButton alloc] initWithFrame:CGRectMake(0,448,638,30)];
-    [saveButton setTitle:"Save"]
-    [saveButton setValue:[CPColor grayColor] forThemeAttribute:@"bezel-color"]
-    [saveButton setValue:[CPColor blackColor] forThemeAttribute:@"text-color"]
-    [saveButton setAction:@selector(saveEditorContent)];
-    [saveButton setTarget:self];
-    [saveButton setEnabled:YES];
+    //var saveButton = [[CPButton alloc] initWithFrame:CGRectMake(0,448,638,30)];
+    //[saveButton setTitle:"Save"]
+    //[saveButton setValue:[CPColor grayColor] forThemeAttribute:@"bezel-color"]
+    //[saveButton setValue:[CPColor blackColor] forThemeAttribute:@"text-color"]
+    //[saveButton setAction:@selector(saveEditorContent)];
+    //[saveButton setTarget:self];
+    //[saveButton setEnabled:YES];
 
-    [_scriptWebView addSubview: saveButton]
+    //[_scriptWebView addSubview: saveButton]
 
-    [_panel setContentView:_scriptWebView];
+	var contentView = [_panel contentView];
 
-    var drawing = [[[[[self superview] superview] superview] superview] superview];
-    [drawing addFigure: _panel];
+    [contentView addSubview: _scriptWebView];
+
+    //var drawing = [[[[[self superview] superview] superview] superview] superview];
+    //[drawing addFigure: _panel];
 
 }
 
-- (BOOL)windowShouldClose: (id)aWindow { //called when the user clicks the close button on the script editor (delegate method)
+- (BOOL)windowShouldClose: (id)aWindow {
+	//save the script
+    var scriptString = [_scriptWebView stringByEvaluatingJavaScriptFromString: "myCodeMirror.getValue()"];
+    var propertiesFigure = [[[[self superview] superview] superview] superview];
+    [propertiesFigure saveScript: scriptString];
+
+	//remove the child and close
     var scriptString = document.getElementById("scriptString");
     scriptString.parentNode.removeChild(scriptString);
     return true;
 }
 
-- (void) saveEditorContent { //called when the user clicks the save button on the script editor
-    var scriptString = [_scriptWebView stringByEvaluatingJavaScriptFromString: "myCodeMirror.getValue()"];
-    var propertiesFigure = [[[[self superview] superview] superview] superview];
-    [propertiesFigure saveScript: scriptString];
-}
+//- (void) saveEditorContent { //called when the user clicks the save button on the script editor
+//}
 
 @end
 
