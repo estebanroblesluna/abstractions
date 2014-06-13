@@ -11,8 +11,16 @@
 }
 
 .tree-folder span{
-	margin-left: 4px;
 	font-weight: bold;
+}
+
+.folder-name {
+	margin-left:4px;
+}
+
+.folderTag {
+	margin-left: 0px;
+	display: block;
 }
 
 #fileTree a{
@@ -47,8 +55,16 @@ html, body, .container, #editor-container {
 	background-color: white;
 }
 
-.selectedFile {
+.selectedFile  {
 	background-color: #3276b1;
+}
+
+.selectedFolder  >.folderTag {
+	background-color: #3276b1;
+}
+
+.selectedFolder >span >.folder-name {
+	color: white;
 }
 
 .selectedFile a{

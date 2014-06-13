@@ -15,6 +15,7 @@
 <script src="${staticResourcesUrl}js/alert.js"></script>
 <script src="${staticResourcesUrl}js/util/functionalTools.js"></script>
 <script src="${staticResourcesUrl}js/util/tree.js"></script>
+<script src="${staticResourcesUrl}js/util/misc.js"></script>
 <script src="${staticResourcesUrl}js/util/fileTree.js"></script>
 <script src="${staticResourcesUrl}js/util/fileEditor.js"></script>
 <link rel="stylesheet" href="${staticResourcesUrl}css/codemirror.css">

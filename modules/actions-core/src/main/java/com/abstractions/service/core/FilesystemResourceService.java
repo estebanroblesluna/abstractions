@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -51,12 +52,13 @@ public class FilesystemResourceService implements ResourceService {
 	 * @see com.abstractions.service.core.ResourceService#storeFile(long, java.lang.String, java.io.InputStream)
 	 */
 	@Override
-	public void storeResource(long applicationId, String path, InputStream stream) {
+	public boolean storeResource(long applicationId, String path, InputStream stream) {
 		try {
 			FileUtils.writeByteArrayToFile(new File(this.buildFilesPath(applicationId, path)), IOUtils.toByteArray(stream));
 		} catch (IOException e) {
 			log.error("Error storing file", e);
 		}
+		return true;
 	}
 
 	private String encodePath(String path) {
@@ -171,6 +173,21 @@ public class FilesystemResourceService implements ResourceService {
 	public Resource getResource(long applicationId, String path) {
 		throw new NotImplementedException();
 	}
+  
+ @Override
+  public boolean createFolder(long applicationId, String path){
+   throw new NotImplementedException();
+  }
+  
+  @Override
+  public boolean folderExists(long applicationId, String path){
+
+    throw new NotImplementedException();
+  }
+  
+  public void deleteFolder(long applicationId, String path){
+    throw new NotImplementedException();
+  }
 
   private String getResourcesDirectory() {
     return resourcesDirectory;

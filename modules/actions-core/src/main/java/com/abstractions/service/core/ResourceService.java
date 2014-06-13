@@ -7,7 +7,7 @@ import com.abstractions.model.Resource;
 
 public interface ResourceService {
 
-	public abstract void storeResource(long applicationId, String path, InputStream stream);
+	public abstract boolean storeResource(long applicationId, String path, InputStream stream);
 
 	public abstract InputStream getContentsOfResource(long applicationId, String path);
 
@@ -22,5 +22,12 @@ public interface ResourceService {
 	public abstract long getResourceLastModifiedDate(long applicationId, String path);
 	
 	public abstract Resource getResource(long applicationId, String path);
-
+	
+	//Folders
+	
+	public abstract void  deleteFolder(long applicationId, String path);
+	
+	public abstract boolean createFolder(long applicationId, String path);
+	
+	public abstract boolean folderExists(long applicationId, String path);
 }

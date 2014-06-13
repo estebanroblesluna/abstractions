@@ -7,3 +7,30 @@ function getUrlParameters(){
 	}
 	return ret;
 }
+
+
+//Multiple Hook. This object allows for many functions to be attached  to it an called when 
+//an event occurs. The call order is not documented and may change.
+
+function MHook(){
+	this.hooks = []
+	
+	//methods
+	this.add = function(hook){
+		this.hooks.push(hook)
+	}
+	
+	this.rem = function(hook){
+		for(i in this.hooks)
+			if(this.hooks[i] == hook){
+				this.hooks.splice(i,1);
+				break;
+			}
+	}
+	
+	this.execute = function(/*, 0..n args */){
+		for(i in this.hooks){
+			this.hooks[i].apply(this,arguments);
+		}
+	}
+}

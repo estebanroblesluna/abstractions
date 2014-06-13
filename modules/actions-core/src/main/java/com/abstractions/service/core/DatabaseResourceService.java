@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +12,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.NullInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.abstractions.model.Resource;
@@ -49,19 +52,31 @@ public class DatabaseResourceService implements ResourceService {
 
 	@Override
 	@Transactional
-	public void storeResource(long applicationId, String path, InputStream stream) {
-		Resource resource;
-		this.deleteResource(applicationId, path);
-		try {
-			resource = new Resource(applicationId, path, IOUtils.toByteArray(stream), this.resourceType);
-			repository.save(resource);
-		} catch (IOException e) {
-			log.error("Error storing resource", e);
-		}
+	public boolean storeResource(long applicationId, String path, InputStream stream) {
+	  if(this.folderExists(applicationId, path))
+	    return false;
+	  path = this.fixFilePath(path);
+		//Create folders if not created yet.
+	  int lastSlash = path.lastIndexOf("/");
+	  if(lastSlash != -1)
+	    this.createFolder(applicationId,path.substring(0,lastSlash));
+    this.deleteResource(applicationId,path);    //Avoid duplicates
+		this.storeFile(applicationId,path,stream);
+		return true;
+		
 	}
 
+	private void storeFile(long applicationId, String path, InputStream stream) {
+    Resource resource;
+	  try {
+      resource = new Resource(applicationId, path, IOUtils.toByteArray(stream), this.resourceType);
+      repository.save(resource);
+    } catch (IOException e) {
+      log.error("Error storing resource", e);
+    }
+	}
+	
 	@Override
-
 	@Transactional(readOnly=true)
 	public InputStream getContentsOfResource(long applicationId, String path){
 		Resource resource = this.repository.findBy(Resource.class,
@@ -89,7 +104,10 @@ public class DatabaseResourceService implements ResourceService {
 		  ZipInputStream zipInputStream = new ZipInputStream(stream);
 			ZipEntry zipEntry = zipInputStream.getNextEntry();
 			while (zipEntry != null) {
-				this.storeResource(applicationId, zipEntry.getName().replace("." + File.separator, File.separator), zipInputStream);
+			  if(zipEntry.isDirectory())
+			    this.createFolder(applicationId, zipEntry.getName().replace("." + File.separator, File.separator));
+			  else
+			    this.storeResource(applicationId, zipEntry.getName().replace("." + File.separator, File.separator), zipInputStream);
 				zipInputStream.closeEntry();
 				zipEntry = zipInputStream.getNextEntry();
 			}
@@ -109,21 +127,69 @@ public class DatabaseResourceService implements ResourceService {
 			this.repository.delete(Resource.class,toDelete.getId());
 	}
 	
+	@Override
+  @Transactional(readOnly=true)
 	public boolean resourceExists(long applicationId, String path){
+	  path = this.fixFilePath(path);
 		return this.repository.findBy(Resource.class,
 				this.makeSearchRestrictions(applicationId, path)) != null;
 	}
 	
+	@Override
+  @Transactional(readOnly=true)
 	public long getResourceLastModifiedDate(long applicationId, String path){
 		return this.repository.findBy(Resource.class,
 				this.makeSearchRestrictions(applicationId, path)).getLastModifiedDate().getTime();
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Resource getResource(long applicationId, String path) {
 		return this.repository.findBy(Resource.class,
 				this.makeSearchRestrictions(applicationId, path));
 
+	}
+	
+	@Override
+	@Transactional
+	public boolean createFolder(long applicationId, String path){
+	  if(this.resourceExists(applicationId, this.fixFilePath(path)))
+	    return false;
+	  path = this.fixFolderPath(path);
+	  String [] folders = path.split("/");
+    StringBuffer partialPath = new StringBuffer();
+    InputStream emptyIS = new StringBufferInputStream("");
+    for (int i =0; i<folders.length; i++){
+      partialPath.append(folders[i]).append("/.");
+      if(!this.resourceExists(applicationId,partialPath.toString()))
+        this.storeFile(applicationId, partialPath.toString(), emptyIS);
+      partialPath.delete(partialPath.length()-1,partialPath.length());
+    }
+    return true;
+	}
+	
+	private String fixFolderPath(String path){
+	   if(!path.endsWith("/"))
+	     return path + "/";
+	   return path;
+	}
+	
+	private String fixFilePath(String path){
+    if(path.endsWith("/"))
+      return path.substring(0, path.length()-1);
+    return path;
+ }
+	
+	@Override
+	@Transactional(readOnly=true)
+	public boolean folderExists(long applicationId, String path){
+	  return this.resourceExists(applicationId, path+".");
+	}
+	
+	@Override
+	@Transactional
+	public void deleteFolder(long applicationId, String path){
+	  this.repository.deleteFolder(applicationId, this.fixFolderPath(path));
 	}
 
 }

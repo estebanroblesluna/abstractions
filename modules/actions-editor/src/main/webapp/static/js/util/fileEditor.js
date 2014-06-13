@@ -18,6 +18,7 @@ function FileEditor(container, width, height, toolbar){
 	//Local data
 	var editingFile = null;
 	var saveFileHook = nop;
+	var originalContent = null;
 	
 	//DOM structure
 	var title = $("<h2 class='filename'></h2>");
@@ -44,15 +45,17 @@ function FileEditor(container, width, height, toolbar){
 	var saveButton = $('<button class="btn" id="saveButton" title="Save file"><span class="glyphicon glyphicon-floppy-disk"></span> </button>');
     toolbarSection.append(saveButton);
     saveButton.prop("disabled",true);
-    $(saveButton).click(function(ev){
+    $(saveButton).click(partial(function(editor,ev){
     	ev.preventDefault();
-    	saveFileHook(editingFile,editor.getValue())
-    })
+    	editor.save();
+    },this));
+   
     
 	
 	//Methods
     this.setFile = function (filename, content) {
         editor.setValue(content);
+        originalContent = editor.getValue();
         this.updateMode(filename);
         title.text(filename);
         editingFile = filename;
@@ -68,6 +71,15 @@ function FileEditor(container, width, height, toolbar){
     
     this.setSaveFileHook = function(func){
     	saveFileHook = func;
+    }
+    
+    this.isModified = function(){
+    	return (originalContent != null) && (originalContent != editor.getValue());
+    }
+    
+    this.save = function(){
+    	originalContent = editor.getValue();
+    	saveFileHook(editingFile,editor.getValue());
     }
     
 }

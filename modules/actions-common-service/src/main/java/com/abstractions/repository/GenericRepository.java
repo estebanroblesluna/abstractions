@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -141,6 +142,14 @@ public class GenericRepository {
 				.setString(0, applicationId)
 				.setString(1, elementId)
 				.list();
+	}
+	
+	public void deleteFolder(long applicationId, String path){
+	  this.getSessionFactory().getCurrentSession()
+	          .createSQLQuery("DELETE FROM resource WHERE application_id = ? AND path LIKE ?")
+	          .setLong(0, applicationId)
+	          .setString(1, path+'%')
+	          .executeUpdate();
 	}
 
   protected SessionFactory getSessionFactory() {

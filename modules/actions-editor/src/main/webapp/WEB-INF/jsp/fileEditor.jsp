@@ -4,6 +4,24 @@
 <jsp:include page="/WEB-INF/jsp/fileEditorHeader.jsp" />
 <body>
   <jsp:include page="/WEB-INF/jsp/navbar.jsp" />
+  
+	<div class="modal fade" id="saveChanges">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">The current file has changes</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Do you want to save changes?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button id="notSaveChangesBtn" type="button" class="btn btn-default" data-dismiss="modal">Don't save</button>
+	        <button id="saveChangesBtn" type="button" class="btn btn-primary" >Save</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
   <script type="text/javascript">
   
 	var applicationId = ${applicationId};
@@ -12,49 +30,52 @@
 	var currentFilename = null;
 	var newFile = false;
 	var resType = "public";
+	var openResType = resType;
 	
 	//File tree vars
 	var fileTreeView;
   
 	//File tree functions
-  	function selectFile(node, e){
-		if(!e.ctrlKey)
-		{
-			$(".selectedFile").attr("class","file");
-			node.cleanTreeSelection();
-		}
-		node.selected = !node.selected;
-		if(node.selected)
-			$(this).attr("class","file selectedFile");
-		else
-			$(this).attr("class","file");
-		if($(".selectedFile").size())
-			$("#deleteFile").prop("disabled",false);
-		else
-			$("#deleteFile").prop("disabled",true);
-  	}
 	
-	function openFile(node, e){
-		filename = node.getPath();
-        e.preventDefault(); 
-  		$.ajax({
+	function selectionChanged(){
+		$("#deleteFile").prop("disabled",(fileTreeView.model.getSelectedFiles().length == 0 && fileTreeView.model.getSelectedFolders().length == 0));
+	}
+	
+	
+  	function openFile(file){
+  		filename = file.getPath();
+		$.ajax({
   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
   			type: "GET",
   			success: function(response) {
             	editor.setFile(filename, response);
         	}
   		});
+		openResType = resType;
   		$("#saveButton").prop("disabled",false);
+  	}
+  	
+	function changeOpenFile(node, e){
+        if(editor.isModified()){
+        	$("#notSaveChangesBtn").unbind().click(partial(openFile,node));
+        	$("#saveChangesBtn").unbind().click( function(){
+        		editor.save();
+        		openFile(node);
+        		$("#saveChanges").modal("hide");
+        	});
+        	$("#saveChanges").modal("show");
+		}
+        else
+        	openFile(node);
 	}
 	
     function addFileToTree(filename) {
-    	filename = filename[0] == '/' ? filename.substring(1) : filename;
     	fileTreeView.model.addFile(filename);
     }
 	
 	//Editor functions
     
-    function fileSaved(filename, content) {
+    function fileSaved(filename) {
     	showMessage("File saved");
     	if (newFile) {
     		addFileToTree(filename);
@@ -66,20 +87,32 @@
     	if(filename[0] != "/")
     		filename = "/"+filename;
 	    $.ajax({
-	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
+	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ openResType + filename,
 	    	type: "PUT",
 	    	data: content,
 	    	success: function(response) {
 	      		fileSaved(filename, content);
 	     	}
 	    });
-    }	
+    }
+    
+    function addFileHooks(file){
+    	file.fileSelectedHook.add(selectionChanged);
+    	file.fileOpenHook.add(changeOpenFile);
+    }
+    
+    function addFolderHooks(folder){
+    	folder.newFolderHook.add(addFolderHooks);
+    	folder.newFileHook.add(addFileHooks);
+    	folder.folderSelectedHook.add(selectionChanged);
+    }
     
     function fillTree(){
     	$("#fileTree").empty();
     	fileTreeView = new FolderView($("#fileTree"));
-    	fileTreeView.fileSelectedHook = selectFile;
-    	fileTreeView.fileOpenHook = openFile;
+    	fileTreeView.makeRoot();
+    	fileTreeView.model.newFolderHook.add(addFolderHooks);
+    	fileTreeView.model.newFileHook.add(addFileHooks);
     	$.ajax({
    			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType +"/" + $(self).text(),
    			type: "GET",
@@ -93,19 +126,30 @@
     }
 
 	function deleteFiles(){
-    	$(".selectedFile").each(function(){
-    		var filename = $(this).attr("path");
+		//Delete folders first
+		while(fileTreeView.model.getSelectedFolders().length){
+			var folder = fileTreeView.model.getSelectedFolders()[0];
+			var folderName = folder.getPath();
+			folder.remove();
+    		$.ajax({
+       			url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ resType + folderName,
+       			type: "DELETE",
+       			dataType: 'html'
+    		});
+		}
+		
+		//delete remaining files
+    	$(fileTreeView.model.getSelectedFiles()).each(function(){
+    		var filename = this.getPath();
     		var self = this;
     		$.ajax({
        			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
        			type: "DELETE",
        			dataType: 'html',
        			success: function() {
-       				fileTreeView.model.deleteFile(filename);
-       				$(self).remove();
+       				self.remove();
            		}
     		});
-    		fileTreeView.model.deleteFile(filename);
     	})
     }
     
@@ -123,21 +167,24 @@
     	
     	
         editor = new FileEditor($("#editor"), 700, 500,$("#toolbar"));
-        editor.setSaveFileHook(saveFile)
+        editor.setSaveFileHook(saveFile);
         
         $("#publicResBtn").click(function(e){
+        	fileTreeView.model.cleanSelected();
         	resType="public";
+        	$("#zipUploadForm").attr("action","public/upload")
         	fillTree();
         });
         
         $("#privateResBtn").click(function(e){
+        	fileTreeView.model.cleanSelected();
         	resType="private";
+        	$("#zipUploadForm").attr("action","private/upload")
         	fillTree();
         });
         
         //File tree toolbar
         $("#uploadZip").click(function(e) {
-            var self = this;
             e.preventDefault();  
             $("#zipFile").trigger("click");
         });  
@@ -147,16 +194,47 @@
         }); 
         
         $("#newFile").click(function(e) {
-        	  e.preventDefault();
+        	e.preventDefault();
             var filename = prompt("Enter filename");
             if (!filename) {
             	return;
             }
-            if (filename[0] == '/') {
-            	filename = filename.substring(1);
+            if(filename[filename.length-1] == "/")
+            	filename = filename.substr(0,filename.length-1);
+            if(fileTreeView.model.findFolder(filename)){
+            	alert("That's the name of a folder!");
+            	return;
+            }
+            if(fileTreeView.model.findFile(filename)){
+            	alert("File already exists!");
+            	return;
             }
             editor.setFile(filename, "");
             newFile = true;
+        	openResType = resType;
+      		$("#saveButton").prop("disabled",false);
+         });
+        
+        $("#newFolder").click(function(e) {
+        	e.preventDefault();
+            var folder = prompt("Enter folderName");
+            if (!folder) {
+            	return;
+            }
+            if(fileTreeView.model.findFolder(folder)){
+            	alert("Folder already exists!");
+            	return;
+            }
+            if(fileTreeView.model.findFile(folder)){
+            	alert("That's the name of a file!");
+            	return;
+            }
+            folder = fileTreeView.model.createFolder(folder)
+            $.ajax({
+    	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ openResType + folder.getPath(),
+    	    	type: "PUT"
+    	    });
+			
          });
         
     });
@@ -176,10 +254,11 @@
 		    <input type="radio" name="resType" id="resPrivate"> Private
 		  </button>
 	  </div>
-      <form id="zipUploadForm" action="upload" method="POST" enctype="multipart/form-data">
+      <form id="zipUploadForm" action="public/upload" method="POST" enctype="multipart/form-data">
         <input id="zipFile" type="file" name="file" style="display: none" />
         <button id="uploadZip" class="btn" title="Uppload zip file"><span class="glyphicon glyphicon-upload"></span></button>
         <button id="newFile" class="btn" title="New file"><span class="glyphicon glyphicon-file"></span></button>
+        <button id="newFolder" class="btn" title="New folder"><span class="glyphicon glyphicon-folder-close"></span></button>
         <button id="deleteFile" data-toggle="confirmation" enabled="false" class="btn" title="Delete selected files?"><span class="glyphicon glyphicon-remove"></span></button>
       </form>
 

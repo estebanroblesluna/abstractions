@@ -91,6 +91,14 @@ public class ResourceRESTService {
 		resourceService.deleteResource(applicationId, path);
 		return Response.ok("File deleted").build();
 	}
+	
+	@DELETE
+  @Path("{applicationId}/folders/{resourceType}/{folderPath:.+}")
+  public Response deleteFolder(@PathParam("applicationId") long applicationId, @PathParam("folderPath") String path, @PathParam("resourceType") String resourceType) {
+    ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
+    resourceService.deleteFolder(applicationId, path);
+    return Response.ok("Folder deleted").build();
+  }
 
 	@PUT
 	@Path("{applicationId}/files/{resourceType}/{filePath:.+}")
@@ -99,6 +107,14 @@ public class ResourceRESTService {
 		resourceService.storeResource(applicationId, path, stream);
 		return Response.ok("File stored").build();
 	}
+	
+	@PUT
+  @Path("{applicationId}/folders/{resourceType}/{folderPath:.+}")
+  public Response putFolder(@PathParam("applicationId") long applicationId, @PathParam("folderPath") String path, @PathParam("resourceType") String resourceType) {
+    ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
+    resourceService.createFolder(applicationId, path);
+    return Response.ok("File stored").build();
+  }
 
 	@PUT
 	@Path("{applicationId}/files/{resourceType}/compressed")

@@ -75,10 +75,11 @@ public class FileEditorController {
 		mv.addObject("files", files);
 	}
 
-	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/upload", method = RequestMethod.POST)
-	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") long applicationId, FileUploadForm fileUploadForm, BindingResult result) {
+	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/files/{resourceType}/upload", method = RequestMethod.POST)
+	public String uploadFile(@PathVariable("teamId") String teamId, @PathVariable("applicationId") long applicationId, @PathVariable("resourceType") String resourceType, FileUploadForm fileUploadForm, BindingResult result) {
+		ResourceService resourceService = resourceType.equals("public")? publicResourceService : privateResourceService;
 		try {
-			this.publicResourceService.uncompressContent(applicationId, fileUploadForm.getFile().getInputStream());
+			resourceService.uncompressContent(applicationId, fileUploadForm.getFile().getInputStream());
 
 		} catch (IOException e) {
 			e.printStackTrace();
