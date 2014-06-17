@@ -108,6 +108,8 @@ public class SnapshotService {
 		Resource original;
 		for(String resourceName : publicResourceService.listResources(applicationId)){
 			 original = publicResourceService.getResource(applicationId, resourceName);
+			 if(original.isDirectory())
+			   continue;
 			 cloned = original.makeSnapshot();
 			 repository.save(cloned);
 			 snapshot.addResource(cloned);
@@ -115,6 +117,8 @@ public class SnapshotService {
 		
 		for(String resourceName : privateResourceService.listResources(applicationId)){
 			 original = privateResourceService.getResource(applicationId, resourceName);
+			 if(original.isDirectory())
+         continue;
 			 cloned = original.makeSnapshot();
 			 repository.save(cloned);
 			 snapshot.addResource(cloned);

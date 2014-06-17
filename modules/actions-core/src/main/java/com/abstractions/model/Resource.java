@@ -134,6 +134,10 @@ public class Resource {
 		return clone;
 	}
 	
+	public boolean isDirectory(){
+	  return this.path.substring(this.path.lastIndexOf("/")+1).equals(".");
+	}
+	
 	public InputStream getInputStream(){
 		return new ByteArrayInputStream(data);
 	}

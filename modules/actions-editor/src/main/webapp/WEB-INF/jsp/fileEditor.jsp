@@ -24,6 +24,17 @@
 	</div><!-- /.modal -->
   <script type="text/javascript">
   
+  	//Initialize popovers
+  	$('.popover-markup>.trigger').popover({
+	    html: true,
+	    title: function () {
+	        return $(this).parent().find('.head').html();
+	    },
+	    content: function () {
+	        return $(this).parent().find('.content').html();
+	    }
+	});	
+  
 	var applicationId = ${applicationId};
 	//var templateEditor;
 	var editor;
@@ -76,7 +87,7 @@
 	//Editor functions
     
     function fileSaved(filename) {
-    	showMessage("File saved");
+    	showMessage("File saved","success");
     	if (newFile) {
     		addFileToTree(filename);
     		newFile = false;
@@ -155,6 +166,87 @@
     
     $(document).ready(function() {
     	
+    	//Initialize pop-overs
+    	$('.popover-markup').popover({
+    	    html: true,
+    	    title: function () {
+    	        return $(this).find('.head').html();
+    	    },
+    	    content: function () {
+    	        return $(this).find('.content').html();
+    	    }
+    	});
+    	
+    	$('html').on('click', function(e) {
+    		  if (!$(e.target).parents().hasClass("popover-markup") &&
+    		     !$(e.target).parents().is('.popover.in')) {
+    			$(".trigger").parent().popover("hide");
+    		    $('.popover').remove();
+    		  }
+    	});
+    	
+    	$(document.body).on("submit",".newFileForm", function(e) {
+    		e.preventDefault();
+    		var ok = true;
+            var filename = $(".popover .newFileName").val();
+            if (!filename) {
+            	showMessage("Error: empty filename!","danger");
+            	ok=false;
+            }
+            if(filename[filename.length-1] == "/")
+            	filename = filename.substr(0,filename.length-1);
+            if(fileTreeView.model.findFolder(filename)){
+            	showMessage("That's the name of a folder!","danger");
+            	ok=false;
+            }
+            if(fileTreeView.model.findFile(filename)){
+            	showMessage("That file already exists!","danger");
+            	ok=false;
+            }
+            if(ok){
+	            editor.setFile(filename, "");
+	            newFile = true;
+	        	openResType = resType;
+	      		$("#saveButton").prop("disabled",false);
+            }
+      		$("#newFileForm").popover("toggle");
+         }
+    	)
+    	
+    	$(document.body).on("submit",".newFolderForm",function(e) {
+        	e.preventDefault();
+    		var ok = true;
+            var folder =  $(".popover .newFolderName").val();
+            if (!folder) {
+            	showMessage("Error: empty folder name!")
+            	ok=false;
+            }
+            if(fileTreeView.model.findFolder(folder)){
+            	showMessage("Folder already exists!","danger");
+            	ok=false;
+            }
+            if(fileTreeView.model.findFile(folder)){
+            	showMessage("That's the name of a file!","danger");
+            	ok=false;
+            }
+            if(ok){
+	            folder = fileTreeView.model.createFolder(folder);
+	            $.ajax({
+	    	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ openResType + folder.getPath(),
+	    	    	type: "PUT"
+	    	    });
+            }
+            $("#newFolderForm").popover("toggle");
+         });
+    	
+    	
+    	$('#newFileForm').on("shown.bs.popover", function(){
+    		$(".popover .newFileName").focus();
+    	});
+    	
+    	$('#newFolderForm').on("shown.bs.popover", function(){
+    		$(".popover .newFolderName").focus();
+    	});
 
     	$("#deleteFile").prop("disabled",true);
     	$("#deleteFile").confirmation({
@@ -193,49 +285,6 @@
         	$("#zipUploadForm").submit()
         }); 
         
-        $("#newFile").click(function(e) {
-        	e.preventDefault();
-            var filename = prompt("Enter filename");
-            if (!filename) {
-            	return;
-            }
-            if(filename[filename.length-1] == "/")
-            	filename = filename.substr(0,filename.length-1);
-            if(fileTreeView.model.findFolder(filename)){
-            	alert("That's the name of a folder!");
-            	return;
-            }
-            if(fileTreeView.model.findFile(filename)){
-            	alert("File already exists!");
-            	return;
-            }
-            editor.setFile(filename, "");
-            newFile = true;
-        	openResType = resType;
-      		$("#saveButton").prop("disabled",false);
-         });
-        
-        $("#newFolder").click(function(e) {
-        	e.preventDefault();
-            var folder = prompt("Enter folderName");
-            if (!folder) {
-            	return;
-            }
-            if(fileTreeView.model.findFolder(folder)){
-            	alert("Folder already exists!");
-            	return;
-            }
-            if(fileTreeView.model.findFile(folder)){
-            	alert("That's the name of a file!");
-            	return;
-            }
-            folder = fileTreeView.model.createFolder(folder)
-            $.ajax({
-    	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ openResType + folder.getPath(),
-    	    	type: "PUT"
-    	    });
-			
-         });
         
     });
     
@@ -257,10 +306,42 @@
       <form id="zipUploadForm" action="public/upload" method="POST" enctype="multipart/form-data">
         <input id="zipFile" type="file" name="file" style="display: none" />
         <button id="uploadZip" class="btn" title="Uppload zip file"><span class="glyphicon glyphicon-upload"></span></button>
-        <button id="newFile" class="btn" title="New file"><span class="glyphicon glyphicon-file"></span></button>
-        <button id="newFolder" class="btn" title="New folder"><span class="glyphicon glyphicon-folder-close"></span></button>
-        <button id="deleteFile" data-toggle="confirmation" enabled="false" class="btn" title="Delete selected files?"><span class="glyphicon glyphicon-remove"></span></button>
       </form>
+      
+      <span id="newFileForm" class="popover-markup">
+      	<button class="btn trigger" title="New file">
+      		<span class="glyphicon glyphicon-file"></span>
+      	</button>
+      	<div class="content hidden">
+      		<form class="form-inline newFileForm">
+      			<div class="form-group">
+      				<input  type="text" class="form-control newFileName" placeholder="filename..."></input>
+      			</div>
+				<div class="form-group">
+   					<button type="submit" class="btn btn-primary newFile"><span class="glyphicon glyphicon-ok"></span></button>
+   				</div>
+      		</form>
+      	</div>
+      </span>
+      
+      <span id="newFolderForm" class="popover-markup">
+      	<button class="btn trigger" title="New folder">
+      		<span class="glyphicon glyphicon-folder-close"></span>
+      	</button>
+      	<div class="content hidden">
+      		<form class="form-inline newFolderForm">
+      			<div class="form-group">
+      				<input  type="text" class="form-control newFolderName" placeholder="folder name..."></input>
+      			</div>
+				<div class="form-group">
+   					<button type="submit" class="btn btn-primary newFolder"><span class="glyphicon glyphicon-ok"></span></button>
+   				</div>
+      		</form>
+      	</div>
+      </span>
+      
+      <button id="deleteFile" data-toggle="confirmation" enabled="false" class="btn" title="Delete selected files?"><span class="glyphicon glyphicon-remove"></span></button>
+
 
     </div>
 

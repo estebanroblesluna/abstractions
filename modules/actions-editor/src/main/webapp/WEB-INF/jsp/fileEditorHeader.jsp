@@ -35,16 +35,17 @@
   }
 </style>
 <script type="text/javascript">
-		
-		function showMessage(message) {
-      $("#alerts .alert").remove();
-      var alert = $('<div class="alert alert-warning">' + 
-        message +
-        '<a  class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a></div>');
-      $("#alerts").append(alert);
-      alert.hide().fadeIn(500);
-      setTimeout(function() {alert.fadeOut(500)}, 3000);
-    }
-		
-	</script>
+	
+	function showMessage(message,type) {
+		type = typeof type !== 'undefined' ? type : "warning";
+	    $("#alerts .alert").remove();
+	    var alert = $('<div class="alert alert-'+type+'">' + 
+	      message +
+	      '<a  class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a></div>');
+	    $("#alerts").append(alert);
+	    alert.hide().fadeIn(500);
+	    setTimeout(function() {alert.fadeOut(500)}, 3000);
+	}
+	
+</script>
 </head>
