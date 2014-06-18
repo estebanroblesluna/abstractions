@@ -15,6 +15,7 @@ import com.abstractions.model.Deployment;
 import com.abstractions.model.Flow;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.DeploymentService;
+import com.abstractions.service.UserService;
 import com.abstractions.service.core.LibraryService;
 import com.abstractions.service.ServerService;
 import com.abstractions.service.TeamService;
@@ -22,47 +23,50 @@ import com.abstractions.service.TeamService;
 @Controller
 public class DeploymentController {
 
-	@Autowired
-	DeploymentService deploymentService;
-	
-	@Autowired
-	ServerService serverService;
-	
-	@Autowired
-	LibraryService libraryService;
-        
-        @Autowired
-	ApplicationService applicationService;
-        
-        @Autowired
-	TeamService teamService;
-	
+  @Autowired
+  DeploymentService deploymentService;
+
+  @Autowired
+  ServerService serverService;
+
+  @Autowired
+  LibraryService libraryService;
+
+  @Autowired
+  ApplicationService applicationService;
+
+  @Autowired
+  TeamService teamService;
+
+  @Autowired
+  UserService userService;
+
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments", method = RequestMethod.GET)
 	public ModelAndView home(@PathVariable("snapshotId") long snapshotId, @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
-		ModelAndView mv = new ModelAndView("deployments");
-		List<Deployment> deployments = this.deploymentService.getDeployments(snapshotId);
-                String teamName = this.teamService.getTeam(teamId).getName();
-                String applicationName = this.applicationService.getApplication(applicationId).getName();
-		mv.addObject("teamName", teamName);
-		mv.addObject("deployments", deployments);
-                mv.addObject("applicationName", applicationName);
+    ModelAndView mv = new ModelAndView("deployments");
+    List<Deployment> deployments = this.deploymentService.getDeployments(snapshotId);
+    String teamName = this.teamService.getTeam(teamId).getName();
+    String applicationName = this.applicationService.getApplication(applicationId).getName();
+    mv.addObject("teamName", teamName);
+    mv.addObject("deployments", deployments);
+    mv.addObject("applicationName", applicationName);
 		return mv;
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments/add", method = RequestMethod.GET)
 	public ModelAndView addDeployment(@PathVariable("snapshotId") long snapshotId, @ModelAttribute("form") AddDeploymentForm form,  @PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId) {
-		ModelAndView mv = new ModelAndView("addDeployment");
-                String teamName = this.teamService.getTeam(teamId).getName();
-                String applicationName = this.applicationService.getApplication(applicationId).getName();
-		mv.addObject("teamName", teamName);
-		mv.addObject("servers", this.serverService.getServers());
-                mv.addObject("applicationName", applicationName);
-		return mv;
+    ModelAndView mv = new ModelAndView("addDeployment");
+    String teamName = this.teamService.getTeam(teamId).getName();
+    String applicationName = this.applicationService.getApplication(applicationId).getName();
+    mv.addObject("teamName", teamName);
+    mv.addObject("servers", this.serverService.getServersOfUser(this.userService.getCurrentUser()));
+    mv.addObject("applicationName", applicationName);
+    return mv;
 	}
 	
 	@RequestMapping(value = "/teams/{teamId}/applications/{applicationId}/snapshots/{snapshotId}/deployments/add", method = RequestMethod.POST)
 	public String createDeployment(@PathVariable("teamId") long teamId, @PathVariable("applicationId") long applicationId, @PathVariable("snapshotId") long snapshotId, @ModelAttribute("form") AddDeploymentForm form) {
-		this.deploymentService.addDeployment(snapshotId, WebUser.getCurrentUserId(), new ArrayList<Long>(form.getServerIds()));
+		this.deploymentService.addDeployment(snapshotId, this.userService.getCurrentUser().getId(), new ArrayList<Long>(form.getServerIds()));
 		return "redirect:/teams/" + teamId + "/applications/" + applicationId + "/snapshots/" + snapshotId + "/deployments/";
 	}
 	

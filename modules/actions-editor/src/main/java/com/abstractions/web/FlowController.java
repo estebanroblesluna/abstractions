@@ -31,7 +31,6 @@ import com.abstractions.model.PropertyDefinition;
 import com.abstractions.service.ApplicationService;
 import com.abstractions.service.FlowService;
 import com.abstractions.service.TeamService;
-import com.abstractions.service.UserServiceImpl;
 import com.abstractions.service.UserService;
 import com.abstractions.service.core.DevelopmentContextHolder;
 import com.abstractions.service.core.LibraryService;
@@ -238,7 +237,8 @@ public class FlowController {
 		}
 
 		try {
-			this.service.addFlow(applicationId, form.getName(), context);
+			Flow flow = this.service.addFlow(applicationId, form.getName(), context);
+			result.put("flowId", flow.getId());
 		} catch (MarshallingException e) {
 			result.put("status", "failed");
 			result.put("message", "Error saving context to repository");

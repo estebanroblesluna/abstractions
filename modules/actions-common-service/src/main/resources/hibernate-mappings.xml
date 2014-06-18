@@ -239,7 +239,7 @@
       <key column="team_id" />
       <one-to-many class="com.abstractions.model.ServerGroup" />
     </bag>
-    <bag name="users" table="user_team" inverse="false" lazy="true" fetch="select" cascade="all" access="field">
+    <bag name="users" table="user_team" inverse="true">
       <key column="team_id" />
       <many-to-many class="com.abstractions.model.UserImpl" column="user_id" />
     </bag>

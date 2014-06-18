@@ -13,7 +13,7 @@ public class Authority implements GrantedAuthority {
   public static String USER = "ROLE_USER";
   public static String SOCIAL = "ROLE_SOCIAL";
 
-  private long id;
+  long id;
   private String authority;
 
   public Authority(String authority) {

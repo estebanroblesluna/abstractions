@@ -85,6 +85,8 @@
 var _actionsDrawingMode = [EditionMode new];
 var _drawing;
 var _controller;
+var _saveUrl;
+var _saveUrlAdjusted = false;
 
 /**
  * @author "Esteban Robles Luna <esteban.roblesluna@gmail.com>"
@@ -158,5 +160,21 @@ var _controller;
 	var deploymentId = window.top.location.href;
 	deploymentId = deploymentId.substring(deploymentId.lastIndexOf('/') + 1);
 	return deploymentId;
+}
+
++ (id) saveUrl
+{
+	if (_saveUrl == nil) {
+		_saveUrl = $.url().param('saveUrl');
+	}
+	return _saveUrl;
+}
+
++ (void) adjustSaveUrl: (id) aFlowId
+{
+	if (!_saveUrlAdjusted) {
+		_saveUrl = [Actions saveUrl] + "/" + aFlowId;
+		_saveUrlAdjusted = true
+	}
 }
 @end

@@ -59,7 +59,7 @@ public class FlowService {
 	}
 
 	@Transactional
-	public void addFlow(long applicationId, String name, CompositeTemplate context) throws MarshallingException {
+	public Flow addFlow(long applicationId, String name, CompositeTemplate context) throws MarshallingException {
 		String json = this.marshaller.marshall(context);
 		
 		Flow flow = new Flow(name);
@@ -70,6 +70,8 @@ public class FlowService {
 		
 		this.repository.save(flow);
 		this.repository.save(application);
+		
+		return flow;
 	}
 	
 	@Transactional

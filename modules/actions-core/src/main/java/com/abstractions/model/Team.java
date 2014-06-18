@@ -28,7 +28,6 @@ public class Team {
     this.connectors = new ArrayList<Connector>();
     this.users = new ArrayList<UserImpl>();
     this.owner = owner;
-    this.addUser(owner);
   }
 
   public String getName() {
