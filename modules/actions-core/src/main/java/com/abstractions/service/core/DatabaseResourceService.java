@@ -60,7 +60,7 @@ public class DatabaseResourceService implements ResourceService {
 	  int lastSlash = path.lastIndexOf("/");
 	  if(lastSlash != -1)
 	    this.createFolder(applicationId,path.substring(0,lastSlash));
-    this.deleteResource(applicationId,path);    //Avoid duplicates
+	  this.deleteResource(applicationId,path);    //Avoid duplicates
 		this.storeFile(applicationId,path,stream);
 		return true;
 		

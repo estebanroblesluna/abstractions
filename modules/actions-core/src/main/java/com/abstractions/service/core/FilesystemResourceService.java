@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -20,6 +21,7 @@ import org.jsoup.helper.Validate;
 
 import com.abstractions.model.Resource;
 
+
 public class FilesystemResourceService implements ResourceService {
 
 	private static Log log = LogFactory.getLog(FilesystemResourceService.class);
@@ -27,12 +29,14 @@ public class FilesystemResourceService implements ResourceService {
 	private String resourcesDirectory;
 	private String rootPath;
 	private File rootDir;
+	private String resourceType;
 
-	public FilesystemResourceService(String rootPath, String resourcesDirectory) {
+	public FilesystemResourceService(String rootPath, String resourcesDirectory, String resourceType) {
 		Validate.notNull(rootPath);
 
 		this.setRootPath(rootPath);
 		this.setResourcesDirectory(resourcesDirectory);
+		this.setResourceType(resourceType);
 		this.initializeDirectory();
 	}
 
@@ -137,7 +141,11 @@ public class FilesystemResourceService implements ResourceService {
 	}
 	
 	private String buildFilesPath(long applicationId, String path) {
-		return this.getRootPath() + File.separator + applicationId + this.getResourcesDirectory() + File.separator + this.encodePath(path);
+		return this.getRootPath() +
+		        File.separator + applicationId +
+		        this.getResourcesDirectory() +
+		        File.separator + this.getResourceType() +
+		        File.separator + this.encodePath(path);
 	}
 
 	/* (non-Javadoc)
@@ -168,25 +176,47 @@ public class FilesystemResourceService implements ResourceService {
 	private void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
 	}
-
+	
+	
+	/**
+	 * Warning: Filesystem implementation doesn't keep track of resources IDs.
+	 * 
+	 */
 	@Override
 	public Resource getResource(long applicationId, String path) {
-		throw new NotImplementedException();
+	  Resource ret = null;
+	  try{
+		ret = new Resource(applicationId,
+		        path,
+		        IOUtils.toByteArray(this.getContentsOfResource(applicationId, path)),
+		        this.resourceType);
+		ret.setLastModifiedDate(new Date(this.getResourceLastModifiedDate(applicationId, path)));
+	  } catch (IOException e){
+	    e.printStackTrace();
+	  }
+	  return ret;
+
 	}
   
- @Override
+	@Override
   public boolean createFolder(long applicationId, String path){
-   throw new NotImplementedException();
+	  try{
+	    FileUtils.forceMkdir(new File(this.buildFilesPath(applicationId, path)));
+	  } catch (IOException e){
+	    return false;   //can't create the dir.
+	  }
+	  return true;
   }
   
   @Override
   public boolean folderExists(long applicationId, String path){
-
-    throw new NotImplementedException();
+    return new File(this.buildFilesPath(applicationId, path)).isDirectory();
   }
   
   public void deleteFolder(long applicationId, String path){
-    throw new NotImplementedException();
+    File dir = new File(this.buildFilesPath(applicationId, path));
+    if(dir.isDirectory())
+      dir.delete();
   }
 
   private String getResourcesDirectory() {
@@ -195,5 +225,13 @@ public class FilesystemResourceService implements ResourceService {
 
   private void setResourcesDirectory(String resourcesDirectory) {
     this.resourcesDirectory = resourcesDirectory;
+  }
+  
+  private void setResourceType(String resourceType){
+    this.resourceType = resourceType;
+  }
+  
+  private String getResourceType(){
+    return this.resourceType;
   }
 }	

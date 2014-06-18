@@ -26,12 +26,14 @@
   
   <bean id="privateResourceService" class="com.abstractions.service.core.FilesystemResourceService">
     <constructor-arg index="0" value="${server.apps.directory}" />
-    <constructor-arg index="1" value="/resources/private" />
+    <constructor-arg index="1" value="/resources" />
+    <constructor-arg index="2" value="private" />
   </bean>
   
   <bean id="publicResourceService" class="com.abstractions.service.core.FilesystemResourceService">
     <constructor-arg index="0" value="${server.apps.directory}" />
-    <constructor-arg index="1" value="/resources/public" />
+    <constructor-arg index="1" value="/resources" />
+    <constructor-arg index="2" value="public" />
   </bean>
   
   <bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">

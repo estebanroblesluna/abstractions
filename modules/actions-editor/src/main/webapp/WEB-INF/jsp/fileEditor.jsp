@@ -136,33 +136,6 @@
 		});
     }
 
-	function deleteFiles(){
-		//Delete folders first
-		while(fileTreeView.model.getSelectedFolders().length){
-			var folder = fileTreeView.model.getSelectedFolders()[0];
-			var folderName = folder.getPath();
-			folder.remove();
-    		$.ajax({
-       			url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ resType + folderName,
-       			type: "DELETE",
-       			dataType: 'html'
-    		});
-		}
-		
-		//delete remaining files
-    	$(fileTreeView.model.getSelectedFiles()).each(function(){
-    		var filename = this.getPath();
-    		var self = this;
-    		$.ajax({
-       			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
-       			type: "DELETE",
-       			dataType: 'html',
-       			success: function() {
-       				self.remove();
-           		}
-    		});
-    	})
-    }
     
     $(document).ready(function() {
     	
@@ -175,6 +148,7 @@
     	    content: function () {
     	        return $(this).find('.content').html();
     	    }
+    	    
     	});
     	
     	$('html').on('click', function(e) {
@@ -184,6 +158,19 @@
     		    $('.popover').remove();
     		  }
     	});
+    	
+    	$('#newFileForm').on("shown.bs.popover", function(){
+    		$(".popover .newFileName").focus();
+    	});
+    	
+    	$('#newFolderForm').on("shown.bs.popover", function(){
+    		$(".popover .newFolderName").focus();
+    	});
+    	
+    	$(".popover-markup").on("show.bs.popover",function(e){
+    		$(".trigger").parent().popover("hide");
+		    $('.popover').remove();
+    	})
     	
     	$(document.body).on("submit",".newFileForm", function(e) {
     		e.preventDefault();
@@ -237,22 +224,40 @@
 	    	    });
             }
             $("#newFolderForm").popover("toggle");
-         });
+        });
     	
-    	
-    	$('#newFileForm').on("shown.bs.popover", function(){
-    		$(".popover .newFileName").focus();
+    	$(document.body).on("click",".deleteFilesBtn",function(){
+    		while(fileTreeView.model.getSelectedFolders().length){
+    			var folder = fileTreeView.model.getSelectedFolders()[0];
+    			var folderName = folder.getPath();
+    			folder.remove();
+        		$.ajax({
+           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ resType + folderName,
+           			type: "DELETE",
+           			dataType: 'html'
+        		});
+    		}
+    		
+    		//delete remaining files
+        	$(fileTreeView.model.getSelectedFiles()).each(function(){
+        		var filename = this.getPath();
+        		var self = this;
+        		$.ajax({
+           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
+           			type: "DELETE",
+           			dataType: 'html',
+           			success: function() {
+           				self.remove();
+               		}
+        		});
+        	});
+    		$("#deleteForm").popover("toggle");
     	});
     	
-    	$('#newFolderForm').on("shown.bs.popover", function(){
-    		$(".popover .newFolderName").focus();
-    	});
+    	
+    	
 
     	$("#deleteFile").prop("disabled",true);
-    	$("#deleteFile").confirmation({
-    		onConfirm: deleteFiles,
-    		placement: 'bottom'
-    	});
     	
     	//Initialize the file tree
     	fillTree();
@@ -285,7 +290,6 @@
         	$("#zipUploadForm").submit()
         }); 
         
-        
     });
     
 		</script>
@@ -299,7 +303,7 @@
 		  <button class="btn btn-primary active" id="publicResBtn">
 		    <input type="radio" name="resType" id="resPublic"> Public
 		  </button>
-		  <button class="btn btn-primary" id="privateResBtn">
+		  <button class="btn btn-danger" id="privateResBtn">
 		    <input type="radio" name="resType" id="resPrivate"> Private
 		  </button>
 	  </div>
@@ -339,10 +343,14 @@
       		</form>
       	</div>
       </span>
-      
-      <button id="deleteFile" data-toggle="confirmation" enabled="false" class="btn" title="Delete selected files?"><span class="glyphicon glyphicon-remove"></span></button>
-
-
+      <span id="deleteForm" class="popover-markup">
+     	<button id="deleteFile" enabled="false" class="btn trigger" title="Delete selected files?"><span class="glyphicon glyphicon-remove"></span></button>
+     	<div class="head hidden"><span>Are you sure?</span></div>
+     	<div class="content hidden">
+   			<button type="submit" class="btn btn-danger btn-sm deleteFilesBtn"><span class="glyphicon glyphicon-ok"></span> Delete</button>
+   			<button class="btn btn-sm btn-default"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+      	</div>
+	  </span>
     </div>
 
     <div class="row" id="editor-container">
