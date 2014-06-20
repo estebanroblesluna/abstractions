@@ -14,8 +14,10 @@
       $(".serverCheckbox:checked").each(function(i, checkbox) {
     	  ids = ids + (ids ? "," : "") + $(checkbox).val();
       })
-      $("#selectedServers").val(ids);
-      $("form")[0].submit();
+      if(ids != ""){
+        $("#selectedServers").val(ids);
+        $("form")[0].submit();
+      }
     })
   })
   </script>
