@@ -7,6 +7,8 @@
 <body>
   <script type="text/javascript">
   $(document).ready(function() {
+	  
+	linkToSelection($("#deleteButton"),".selectedObjects");
     $("#deleteButton").click(function(e) {
       var propertiesIds = "";
       e.preventDefault();
@@ -33,7 +35,7 @@
       </div>
       <div class="col-lg-12" style="text-align: right;">
         <a href="add" class="btn btn-primary">Add</a> 
-        <a href="button" class="btn btn-danger" id="deleteButton">Delete</a>
+        <button href="button" class="btn btn-danger" id="deleteButton">Delete</button>
       </div>
     </div>
 

@@ -12,5 +12,6 @@
     <![endif]-->
 <script src="/static/js/jquery-1.9.1.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/util/misc.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>

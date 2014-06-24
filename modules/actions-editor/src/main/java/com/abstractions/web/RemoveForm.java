@@ -19,7 +19,12 @@ public class RemoveForm {
 	public Collection<Long> getIdsToRemove() {
 		List<Long> ids = new ArrayList<Long>();
 		for (String id : this.objectsToRemove.split(",")) {
-			ids.add(Long.parseLong(id));
+		  try{
+		    ids.add(Long.parseLong(id));
+		  } catch (NumberFormatException e){
+		    if(id != "")
+		      throw e; 
+		  }
 		}
 		return ids;
 	}

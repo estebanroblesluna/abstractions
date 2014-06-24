@@ -34,3 +34,12 @@ function MHook(){
 		}
 	}
 }
+
+
+//Link a button enable state to the selection of a group of checkboxes
+function linkToSelection(button,checkboxClass){
+	$(document.body).on("change",checkboxClass,function(){
+		button.prop("disabled",$(checkboxClass+":checked").length ==0);
+	});
+	button.prop("disabled",$(checkboxClass+":checked").length ==0);
+}
