@@ -13,13 +13,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class LoginController {
  
-	@Value("${social.login.enabled}")
-    private boolean socialLoginEnabled;
+  @Value("${social.login.enabled}")
+  private boolean socialLoginEnabled;
+
+  @Value("${build.date}")
+  private String buildNumber;
 	
 	@RequestMapping(value="/login", method = RequestMethod.GET)
 	public ModelAndView login() {
 		ModelAndView mv = new ModelAndView("login");
 		mv.addObject("socialLoginEnabled", socialLoginEnabled);
+    mv.addObject("buildNumber", buildNumber);
 		return mv;
 	}
  

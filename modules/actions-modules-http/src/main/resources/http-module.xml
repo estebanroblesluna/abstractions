@@ -23,5 +23,6 @@
     <constructor-arg value="${http.initialization.dev.port}" />
     <constructor-arg value="${http.initialization.environment}" />
     <constructor-arg value="${http.initialization.ec2dns}" />
+    <constructor-arg value="${http.initialization.isLocal}" />
   </bean>
 </beans>
