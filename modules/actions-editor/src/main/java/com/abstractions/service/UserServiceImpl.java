@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
   private static Log log = LogFactory.getLog(UserServiceImpl.class);
 
   @Value("${register.salt}")
-  static String salt;
+  String salt;
 
   public UserServiceImpl() {
   }
@@ -99,7 +99,8 @@ public class UserServiceImpl implements UserService {
     boolean confirmed = false;
     String sha1password = DigestUtils.shaHex(password);
     Collection<GrantedAuthority> auths = new HashSet<GrantedAuthority>();
-    auths.add(new Authority(Authority.USER));
+    Authority authority = new Authority(Authority.USER);
+    auths.add(authority);
 
     UserImpl newUser = new UserImpl(username, sha1password, email, firstName, lastName, new Date(), enabled, confirmed, auths);
 
@@ -107,25 +108,29 @@ public class UserServiceImpl implements UserService {
     if (emailExists(username)) throw new EmailExistsException();
     
     userRepository.save(newUser);
-    
+
+    String token = this.generateConfirmationToken(newUser);
+
     try {
-      emailService.sendRegistrationMail(newUser);
+      emailService.sendRegistrationMail(newUser, token);
     } catch (AddressException e) {
       log.error(e.getMessage());
     }
   }
 
-  public static String generateConfirmationToken(User user) {
-    return DigestUtils.shaHex(user.getUsername() + user.getCreationDate() + salt);
+  public String generateConfirmationToken(User user) {
+    return DigestUtils.shaHex(user.getUsername() + salt);
   }
 
   @Transactional
   public void confirmUser(String username, String token) throws Exception {
     User user = getUserByUsername(username);
-    if (generateConfirmationToken(user).equals(token))
+    if (generateConfirmationToken(user).equals(token)) {
+      user.setConfirmed(true);
       userRepository.update(user);
-    else
+    } else {
       throw new Exception("Invalid confirmation token");
+    }
   }
 
   @Transactional
