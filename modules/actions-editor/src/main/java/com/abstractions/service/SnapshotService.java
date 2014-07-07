@@ -31,24 +31,30 @@ import com.abstractions.service.core.ResourceService;
 public class SnapshotService {
 
 	private static final Log log = LogFactory.getLog(SnapshotService.class);
-	
+
 	private GenericRepository repository;
 	private ResourceService publicResourceService;
 	private ResourceService privateResourceService;
 	private ApplicationService applicationService;
 	private List<ResourceAppender> resourceAppenders;
 	private List<SnapshotProcessor> snapshotProcessors;
-	
-	protected SnapshotService() { }
-	
-	public SnapshotService(GenericRepository repository, ApplicationService applicationService, ResourceService publicResourceService, ResourceService privateResourceService, List<ResourceAppender> resourceAppenders, List<SnapshotProcessor> snapshotProcessors, String rootPath) {
+
+	protected SnapshotService() {
+	}
+
+	public SnapshotService(GenericRepository repository,
+			ApplicationService applicationService,
+			ResourceService publicResourceService,
+			ResourceService privateResourceService,
+			List<ResourceAppender> resourceAppenders,
+			List<SnapshotProcessor> snapshotProcessors, String rootPath) {
 		Validate.notNull(repository);
 		Validate.notNull(applicationService);
 		Validate.notNull(publicResourceService);
 		Validate.notNull(privateResourceService);
 		Validate.notNull(resourceAppenders);
 		Validate.notNull(snapshotProcessors);
-		
+
 		this.repository = repository;
 		this.resourceAppenders = resourceAppenders;
 		this.applicationService = applicationService;
@@ -56,15 +62,16 @@ public class SnapshotService {
 		this.privateResourceService = privateResourceService;
 		this.snapshotProcessors = snapshotProcessors;
 	}
-	
+
 	@Transactional
 	public void generateSnapshot(long applicationId, Environment env) {
-		Application application = this.applicationService.getApplication(applicationId);
-		
+		Application application = this.applicationService
+				.getApplication(applicationId);
+
 		ApplicationSnapshot snapshot = new ApplicationSnapshot(application);
 		snapshot.setEnvironment(env);
-		
-		//clone all properties
+
+		// clone all properties
 		for (Property property : application.getProperties(env)) {
 			try {
 				Property clonedProperty = property.clone();
@@ -75,18 +82,18 @@ public class SnapshotService {
 			}
 		}
 
-    //clone all connectors
-    for (Connector connector : application.getTeam().getConnectors()) {
-      try {
-        Connector clonedConnector = connector.clone();
-        this.repository.save(clonedConnector);
-        snapshot.addConnector(clonedConnector);
-      } catch (CloneNotSupportedException e) {
-        log.warn("Error clonning connector", e);
-      }
-    }
+		// clone all connectors
+		for (Connector connector : application.getTeam().getConnectors()) {
+			try {
+				Connector clonedConnector = connector.clone();
+				this.repository.save(clonedConnector);
+				snapshot.addConnector(clonedConnector);
+			} catch (CloneNotSupportedException e) {
+				log.warn("Error clonning connector", e);
+			}
+		}
 
-		//clone all flows
+		// clone all flows
 		for (Flow flow : application.getFlows()) {
 			try {
 				Flow clonedFlow = flow.clone();
@@ -103,48 +110,55 @@ public class SnapshotService {
 			log.error("Error when processing snapshot", e);
 		}
 
-		//clone all resources
+		// clone all resources
 		Resource cloned;
 		Resource original;
-		for(String resourceName : publicResourceService.listResources(applicationId)){
-			 original = publicResourceService.getResource(applicationId, resourceName);
-			 if(original.isDirectory())
-			   continue;
-			 cloned = original.makeSnapshot();
-			 repository.save(cloned);
-			 snapshot.addResource(cloned);
+		for (String resourceName : publicResourceService
+				.listResources(applicationId)) {
+			original = publicResourceService.getResource(applicationId,
+					resourceName);
+			if (original.isDirectory())
+				continue;
+			cloned = original.makeSnapshot();
+			repository.save(cloned);
+			snapshot.addResource(cloned);
 		}
-		
-		for(String resourceName : privateResourceService.listResources(applicationId)){
-			 original = privateResourceService.getResource(applicationId, resourceName);
-			 if(original.isDirectory())
-         continue;
-			 cloned = original.makeSnapshot();
-			 repository.save(cloned);
-			 snapshot.addResource(cloned);
+
+		for (String resourceName : privateResourceService
+				.listResources(applicationId)) {
+			original = privateResourceService.getResource(applicationId,
+					resourceName);
+			if (original.isDirectory())
+				continue;
+			cloned = original.makeSnapshot();
+			repository.save(cloned);
+			snapshot.addResource(cloned);
 		}
-		
-		Resource okResource = new Resource(applicationId, "_ok", "OK".getBytes(), "P");
+
+		Resource okResource = new Resource(applicationId, "_ok",
+				"OK".getBytes(), "P");
 		okResource.setSnapshot(true);
-		
-    snapshot.addResource(okResource);
-		
+
+		snapshot.addResource(okResource);
+
 		application.addSnapshot(snapshot);
 
-    this.repository.save(application);
-    this.repository.save(snapshot);
+		this.repository.save(application);
+		this.repository.save(snapshot);
 	}
-	
-	private void processSnapshot(Application application, ApplicationSnapshot snapshot) throws Exception {
+
+	private void processSnapshot(Application application,
+			ApplicationSnapshot snapshot) throws Exception {
 		for (SnapshotProcessor snapshotProcessor : this.snapshotProcessors) {
 			snapshotProcessor.process(application, snapshot);
 		}
 	}
-	
+
 	@Transactional
 	public List<ApplicationSnapshot> getSnapshots(long applicationId) {
-		Application application = this.applicationService.getApplication(applicationId);
-		
+		Application application = this.applicationService
+				.getApplication(applicationId);
+
 		List<ApplicationSnapshot> snapshots = new ArrayList<ApplicationSnapshot>();
 		snapshots.addAll(application.getSnapshots());
 		return snapshots;
@@ -155,46 +169,60 @@ public class SnapshotService {
 		return this.repository.get(ApplicationSnapshot.class, snapshotId);
 	}
 
-  @Transactional
-  public InputStream getZipFor(long snapshotId) throws IOException {
-    ApplicationSnapshot snapshot = this.getSnapshot(snapshotId);
-    Application application = snapshot.getApplication();
-    ByteArrayOutputStream bytes = new ByteArrayOutputStream(4096);
-    ZipOutputStream zipOutputStream = new ZipOutputStream(bytes);
-    
-    for (ResourceAppender resourceAppender : this.resourceAppenders) {
-      for (Resource resource : resourceAppender.getResources()) {
-        zipOutputStream.putNextEntry(new ZipEntry(resource.getPath()));
-        IOUtils.copy(new ByteArrayInputStream(resource.getData()), zipOutputStream);
-      }
-    }
-    
-    for (Flow flow : snapshot.getFlows()) {
-      zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName() + ".json"));
-      IOUtils.write(flow.getJson(), zipOutputStream);
-    }
-    
-    String connectorMarshalled = ConnectorMarshaller.marshall(snapshot.getConnectors());
-    zipOutputStream.putNextEntry(new ZipEntry("connectors.json"));
-    IOUtils.write(connectorMarshalled, zipOutputStream);
-    
-    for (String resourceName : this.privateResourceService.listResources(application.getId())) {
-      zipOutputStream.putNextEntry(new ZipEntry("resources/private/" + resourceName));
-      IOUtils.write(this.privateResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
-    }
-    for (String resourceName : this.publicResourceService.listResources(application.getId())) {
-      zipOutputStream.putNextEntry(new ZipEntry("resources/public/" + resourceName));
-      IOUtils.write(this.publicResourceService.getResource(application.getId(), resourceName).getData(), zipOutputStream);
-    }
-    
-    // Properties
-    zipOutputStream.putNextEntry(new ZipEntry("properties"));
-    for (Property property : snapshot.getProperties()) {
-      IOUtils.write(property.getName() + "=" + property.getValue() + "\n", zipOutputStream);
-    }
-    
-    zipOutputStream.closeEntry();
-    zipOutputStream.close();
-    return new ByteArrayInputStream(bytes.toByteArray());
-  }
+	@Transactional
+	public InputStream getZipFor(long snapshotId) throws IOException {
+		ApplicationSnapshot snapshot = this.getSnapshot(snapshotId);
+		Application application = snapshot.getApplication();
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream(4096);
+		ZipOutputStream zipOutputStream = new ZipOutputStream(bytes);
+
+		for (ResourceAppender resourceAppender : this.resourceAppenders) {
+			for (Resource resource : resourceAppender.getResources()) {
+				zipOutputStream.putNextEntry(new ZipEntry(resource.getPath()));
+				IOUtils.copy(new ByteArrayInputStream(resource.getData()),
+						zipOutputStream);
+			}
+		}
+
+		for (Flow flow : snapshot.getFlows()) {
+			zipOutputStream.putNextEntry(new ZipEntry("flows/" + flow.getName()
+					+ ".json"));
+			IOUtils.write(flow.getJson(), zipOutputStream);
+		}
+
+		String connectorMarshalled = ConnectorMarshaller.marshall(snapshot
+				.getConnectors());
+		zipOutputStream.putNextEntry(new ZipEntry("connectors.json"));
+		IOUtils.write(connectorMarshalled, zipOutputStream);
+
+		for (String resourceName : this.privateResourceService
+				.listResources(application.getId())) {
+			zipOutputStream.putNextEntry(new ZipEntry("resources/private/"
+					+ resourceName));
+			IOUtils.write(
+					this.privateResourceService.getResource(
+							application.getId(), resourceName).getData(),
+					zipOutputStream);
+		}
+		for (String resourceName : this.publicResourceService
+				.listResources(application.getId())) {
+			zipOutputStream.putNextEntry(new ZipEntry("resources/public/"
+					+ resourceName));
+			IOUtils.write(
+					this.publicResourceService.getResource(application.getId(),
+							resourceName).getData(), zipOutputStream);
+		}
+
+		// Properties
+		zipOutputStream.putNextEntry(new ZipEntry("properties"));
+		for (Property property : snapshot.getProperties()) {
+			IOUtils.write(
+					property.getName() + "=" + property.getValue() + "\n",
+					zipOutputStream);
+		}
+
+		zipOutputStream.closeEntry();
+		zipOutputStream.close();
+		return new ByteArrayInputStream(bytes.toByteArray());
+	}
 }

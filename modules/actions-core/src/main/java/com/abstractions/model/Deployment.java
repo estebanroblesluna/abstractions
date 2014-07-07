@@ -12,18 +12,19 @@ public class Deployment {
 	private UserImpl triggerBy;
 	private ApplicationSnapshot snapshot;
 	private List<DeploymentToServer> toServers;
-	
-	public Deployment() { }
+
+	public Deployment() {
+	}
 
 	public Deployment(ApplicationSnapshot snapshot, UserImpl user) {
 		Validate.notNull(snapshot);
 		Validate.notNull(user);
-		
+
 		this.snapshot = snapshot;
 		this.triggerBy = user;
 		this.toServers = new ArrayList<DeploymentToServer>();
 	}
-	
+
 	public void addServer(Server server) {
 		Validate.notNull(server);
 
@@ -46,11 +47,11 @@ public class Deployment {
 	public UserImpl getTriggerBy() {
 		return triggerBy;
 	}
-	
+
 	public long getId() {
 		return this.id;
 	}
-	
+
 	public String getServerList() {
 		String list = "";
 		for (Server server : this.getServers()) {
@@ -74,4 +75,5 @@ public class Deployment {
 	public List<DeploymentToServer> getToServers() {
 		return toServers;
 	}
+
 }
