@@ -58,6 +58,7 @@
 		$.ajax({
   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
   			type: "GET",
+  			dataType: "text",
   			success: function(response) {
             	editor.setFile(filename, response);
         	}
