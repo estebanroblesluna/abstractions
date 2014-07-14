@@ -1,4 +1,4 @@
-function FileEditor(container, width, height, toolbar){
+function FileEditor(container, width, height){
 	//Helper functions and vars
 	var extensionModeMappings = {
     	js: "javascript",
@@ -16,21 +16,13 @@ function FileEditor(container, width, height, toolbar){
     }
 	
 	//Local data
-	var editingFile = null;
-	var saveFileHook = nop;
-	var originalContent = null;
+	this.filename = null;
+	this.originalContent = null;
 	
 	//DOM structure
 	var title = $("<h2 class='filename'></h2>");
 	container.append(title);
-	if(!toolbar){
-		toolbar = $("<div></div>");
-		container.append(toolbar);
-	}else{
-		toolbar = $(toolbar);
-	}
-	var toolbarSection = $("<span class='editor-buttons'></span>");
-	toolbar.append(toolbarSection);
+
 	
 	var innerDiv = $("<div></div>");
 	container.append(innerDiv);
@@ -41,24 +33,13 @@ function FileEditor(container, width, height, toolbar){
     });  
 	editor.setSize(width, height);
 	
-	//Toolbar buttons
-	var saveButton = $('<button class="btn" id="saveButton" title="Save file"><span class="glyphicon glyphicon-floppy-disk"></span> </button>');
-    toolbarSection.append(saveButton);
-    saveButton.prop("disabled",true);
-    $(saveButton).click(partial(function(editor,ev){
-    	ev.preventDefault();
-    	editor.save();
-    },this));
-   
-    
-	
 	//Methods
     this.setFile = function (filename, content) {
         editor.setValue(content);
-        originalContent = editor.getValue();
+        this.originalContent = editor.getValue();
         this.updateMode(filename);
         title.text(filename);
-        editingFile = filename;
+        this.filename = filename;
         $("#editorContainer",innerDiv).fadeIn(500);
     }
     
@@ -69,17 +50,12 @@ function FileEditor(container, width, height, toolbar){
     	}
     }
     
-    this.setSaveFileHook = function(func){
-    	saveFileHook = func;
-    }
-    
     this.isModified = function(){
-    	return (originalContent != null) && (originalContent != editor.getValue());
+    	return (this.originalContent != null) && (this.originalContent != editor.getValue());
     }
     
-    this.save = function(){
-    	originalContent = editor.getValue();
-    	saveFileHook(editingFile,editor.getValue());
+    this.markAsSaved = function(){
+    	this.originalContent = editor.getValue();
     }
     
 }

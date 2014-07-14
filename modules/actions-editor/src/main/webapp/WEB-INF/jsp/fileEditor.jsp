@@ -41,7 +41,7 @@
 	var currentFilename = null;
 	var newFile = false;
 	var resType = "public";
-	var openResType = resType;
+	var currentFile
 	
 	//File tree vars
 	var fileTreeView;
@@ -54,7 +54,8 @@
 	
 	
   	function openFile(file){
-  		filename = file.getPath();
+  		var filename = file.getPath();
+  		
 		$.ajax({
   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
   			type: "GET",
@@ -66,7 +67,6 @@
 		openResType = resType;
   		$("#saveButton").prop("disabled",false);
   	}
-  	
 	function changeOpenFile(node, e){
         if(editor.isModified()){
         	$("#notSaveChangesBtn").unbind().click(partial(openFile,node));
@@ -93,6 +93,7 @@
     		addFileToTree(filename);
     		newFile = false;
     	}
+    	editor.markAsSaved()
     } 
 	
     function saveFile(filename,content){
@@ -264,8 +265,7 @@
     	fillTree();
     	
     	
-        editor = new FileEditor($("#editor"), 700, 500,$("#toolbar"));
-        editor.setSaveFileHook(saveFile);
+        editor = new FileEditor($("#editor"), 700, 500);
         
         $("#publicResBtn").click(function(e){
         	fileTreeView.model.cleanSelected();
@@ -290,6 +290,10 @@
         $("#zipFile").change(function(e) {
         	$("#zipUploadForm").submit()
         }); 
+        
+        $("#saveButton").click(function (){
+        	saveFile(editor.filename,editor.content);
+        })
         
     });
     
@@ -352,6 +356,8 @@
    			<button class="btn btn-sm btn-default"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
       	</div>
 	  </span>
+	  <button id="saveButton" enabled="false" class="btn" title="Save files."><span class="glyphicon glyphicon-floppy-disk"></span></button>
+
     </div>
 
     <div class="row" id="editor-container">
