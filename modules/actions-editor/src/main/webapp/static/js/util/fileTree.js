@@ -250,8 +250,8 @@ function FolderView(domRoot, model){
 		//Add the new file in the correct position.
 		//TODO: binary search for the position to insert.
 		var found = false;
-		$(">li",newView.domRoot).each(function(){
-			if($(this).attr("path") > res.attr("path")){
+		$(">li",view.fileList).each(function(){
+			if($(this).attr("path") > newView.dom.attr("path")){
 				$(this).before(newView.dom);
 				found = true;
 				return false;

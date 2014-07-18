@@ -20,13 +20,7 @@ function FileEditor(container, width, height){
 	this.originalContent = null;
 	
 	//DOM structure
-	var title = $("<h2 class='filename'></h2>");
-	container.append(title);
-
-	
-	var innerDiv = $("<div></div>");
-	container.append(innerDiv);
-	var editor = CodeMirror(innerDiv[0], {
+	var editor = CodeMirror(container[0], {
         value: "",
         mode:  "dust",
         lineNumbers: true
@@ -38,9 +32,8 @@ function FileEditor(container, width, height){
         editor.setValue(content);
         this.originalContent = editor.getValue();
         this.updateMode(filename);
-        title.text(filename);
         this.filename = filename;
-        $("#editorContainer",innerDiv).fadeIn(500);
+        $("#editorContainer",container[0]).fadeIn(500);
     }
     
     this.updateMode = function(filename) {
@@ -52,6 +45,10 @@ function FileEditor(container, width, height){
     
     this.isModified = function(){
     	return (this.originalContent != null) && (this.originalContent != editor.getValue());
+    }
+    
+    this.getContent = function(){
+    	return editor.getValue();
     }
     
     this.markAsSaved = function(){

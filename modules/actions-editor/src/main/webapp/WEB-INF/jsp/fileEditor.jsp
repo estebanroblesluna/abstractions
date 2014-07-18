@@ -37,54 +37,120 @@
   
 	var applicationId = ${applicationId};
 	//var templateEditor;
-	var editor;
+	var editor = null;
 	var currentFilename = null;
 	var newFile = false;
-	var resType = "public";
-	var currentFile
+	var currentResType = "public";
+	var openResType;
+	var currentFile;
+	var openFiles = {}
 	
 	//File tree vars
 	var fileTreeView;
   
+	//Tabs
+    function autoCollapse() {
+  	  var tabs = $('#tabs');
+	  var tabsHeight = tabs.innerHeight();
+	  $("#lastTab").show();
+	  if (tabsHeight >= 50) {
+	    while(tabsHeight > 50) {
+	      //console.log("new"+tabsHeight);
+	      
+	      var children = tabs.children('li:not(:last-child)');
+	      var count = children.size();
+	      $(children[count-1]).prependTo('#collapsed');
+	      
+	      tabsHeight = tabs.innerHeight();
+	    }
+	  }
+	  else {
+	  	while(tabsHeight < 50 && ($('#collapsed').children('li').size()>0)) {
+	  	  var collapsed = $('#collapsed').children('li');
+	      var count = collapsed.size();
+	      $(collapsed[0]).insertBefore(tabs.children('li:last-child'));
+	      tabsHeight = tabs.innerHeight();
+	    }
+	  	if(tabsHeight > 50)
+	  		tabs.children('li:not(:last-child)').last().prependTo('#collapsed');
+	    if ($('#collapsed').children('li').size() == 0)
+	    	$("#lastTab").hide();
+	    else
+	    	$("#lastTab").show();
+	  }  
+	}
+    
+	
 	//File tree functions
 	
 	function selectionChanged(){
 		$("#deleteFile").prop("disabled",(fileTreeView.model.getSelectedFiles().length == 0 && fileTreeView.model.getSelectedFolders().length == 0));
 	}
 	
+	function genFileId(filename,resType){
+		var tabId = resType+filename;
+		tabId = tabId.replace(/\//g,"_____");
+		tabId = tabId.replace(/\./g,"______");
+		return tabId;
+	}
 	
-  	function openFile(file){
-  		var filename = file.getPath();
-  		
-		$.ajax({
-  			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
-  			type: "GET",
-  			dataType: "text",
-  			success: function(response) {
-            	editor.setFile(filename, response);
-        	}
-  		});
-		openResType = resType;
+	function createTab(filename,resType){
+		var file = $(filename.split("/"));
+		file = file[file.length-1];
+		tab = $("<li class='fileTab tab"+resType+"'><a file='"+filename+"' restype='"+resType+"' role='tab' data-toggle='tab' href='#"+genFileId(filename,resType)+"'>"+file+"</a></li>")
+		tabPane = $("<div class='tab-pane' id='"+genFileId(filename,resType)+"'></div>")
+		$("#tabs").prepend(tab);
+		autoCollapse();
+		$("#tabContents").append(tabPane);
+		var editor = new FileEditor(tabPane,700,500)
+		return editor;
+	}
+	
+	function newFileTab(filename,resType){
+		var fileId = genFileId(filename,resType);
+		editor = createTab(filename,resType);
+		openFiles[fileId] = {};
+		openFiles[fileId].editor = editor;
+		openFiles[fileId].resType = resType
+		autoCollapse();
+	}
+	
+	function openFile(filename,resType){
+  		var fileId = genFileId(filename,resType);
+  		if(fileId in openFiles){
+  			editor = openFiles[fileId].editor;
+  			openResType = openFiles[fileId].resType;
+  			$("a[href='#"+fileId+"']").tab("show")
+  		}
+  		else{
+  			newFileTab(filename,resType);
+  			editor = openFiles[fileId].editor;
+  			openResType = openFiles[fileId].resType;
+  			$("a[href='#"+fileId+"']").tab("show")
+			$.ajax({
+	  			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
+	  			type: "GET",
+	  			dataType: "text",
+	  			success: function(response) {
+	            	editor.setFile(filename, response);
+	        	}
+	  		});
+  		}
+		
   		$("#saveButton").prop("disabled",false);
   	}
-	function changeOpenFile(node, e){
-        if(editor.isModified()){
-        	$("#notSaveChangesBtn").unbind().click(partial(openFile,node));
-        	$("#saveChangesBtn").unbind().click( function(){
-        		editor.save();
-        		openFile(node);
-        		$("#saveChanges").modal("hide");
-        	});
-        	$("#saveChanges").modal("show");
-		}
-        else
-        	openFile(node);
+  	
+	function changeOpenFile(file){
+		openFile(file.getPath(),currentResType);
 	}
+	
+
 	
     function addFileToTree(filename) {
     	fileTreeView.model.addFile(filename);
     }
 	
+    
 	//Editor functions
     
     function fileSaved(filename) {
@@ -127,7 +193,7 @@
     	fileTreeView.model.newFolderHook.add(addFolderHooks);
     	fileTreeView.model.newFileHook.add(addFileHooks);
     	$.ajax({
-   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType +"/" + $(self).text(),
+   			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ currentResType +"/" + $(self).text(),
    			type: "GET",
    			dataType: 'json',
    			success: function(response) {
@@ -161,6 +227,19 @@
     		  }
     	});
     	
+    	$('html').on("click",".fileTab",function(e){
+    		var filename = $(e.target).attr("file");
+    		var resType = $(e.target).attr("resType");
+    		openFile(filename,resType);
+    		
+    	})
+    	
+    	$("#lastTab").on("shown.bs.tab",function(e){
+    		li=$(e.target).parent()
+    		$("#tabs").prepend(li);
+    		autoCollapse();
+    	});
+    	
     	$('#newFileForm').on("shown.bs.popover", function(){
     		$(".popover .newFileName").focus();
     	});
@@ -172,7 +251,7 @@
     	$(".popover-markup").on("show.bs.popover",function(e){
     		$(".trigger").parent().popover("hide");
 		    $('.popover').remove();
-    	})
+    	}) 
     	
     	$(document.body).on("submit",".newFileForm", function(e) {
     		e.preventDefault();
@@ -193,10 +272,9 @@
             	ok=false;
             }
             if(ok){
-	            editor.setFile(filename, "");
+	            newFileTab(filename);
+	            editor.setFile(filename,"");
 	            newFile = true;
-	        	openResType = resType;
-	      		$("#saveButton").prop("disabled",false);
             }
       		$("#newFileForm").popover("toggle");
          }
@@ -234,7 +312,7 @@
     			var folderName = folder.getPath();
     			folder.remove();
         		$.ajax({
-           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ resType + folderName,
+           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ currentResType + folderName,
            			type: "DELETE",
            			dataType: 'html'
         		});
@@ -245,7 +323,7 @@
         		var filename = this.getPath();
         		var self = this;
         		$.ajax({
-           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
+           			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ currentResType + filename,
            			type: "DELETE",
            			dataType: 'html',
            			success: function() {
@@ -263,20 +341,18 @@
     	
     	//Initialize the file tree
     	fillTree();
-    	
-    	
-        editor = new FileEditor($("#editor"), 700, 500);
+    	autoCollapse()
         
         $("#publicResBtn").click(function(e){
         	fileTreeView.model.cleanSelected();
-        	resType="public";
+        	currentResType="public";
         	$("#zipUploadForm").attr("action","public/upload")
         	fillTree();
         });
         
         $("#privateResBtn").click(function(e){
         	fileTreeView.model.cleanSelected();
-        	resType="private";
+        	currentResType="private";
         	$("#zipUploadForm").attr("action","private/upload")
         	fillTree();
         });
@@ -292,7 +368,7 @@
         }); 
         
         $("#saveButton").click(function (){
-        	saveFile(editor.filename,editor.content);
+        	saveFile(editor.filename,editor.getContent());
         })
         
     });
@@ -367,9 +443,19 @@
       </div>
       <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
         <div class="row">
-          <div id="editorContainer">
-            <div id="editor"></div>
-          </div>
+          <ul class="nav nav-tabs" id="tabs" role="tablist">
+            <li id="lastTab">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              More <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" id="collapsed">
+              
+            </ul>
+          </li>
+     	 </ul>
+         <div class="tab-content" id="tabContents">
+         
+         </div>
         </div>
       </div>
     </div>
