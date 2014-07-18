@@ -17,7 +17,7 @@
 	      </div>
 	      <div class="modal-footer">
 	        <button id="notSaveChangesBtn" type="button" class="btn btn-default" data-dismiss="modal">Don't save</button>
-	        <button id="saveChangesBtn" type="button" class="btn btn-primary" >Save</button>
+	        <button id="saveChangesBtn" type="button" class="btn btn-primary"  data-dismiss="modal">Save</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -38,10 +38,10 @@
 	var applicationId = ${applicationId};
 	//var templateEditor;
 	var editor = null;
-	var currentFilename = null;
 	var newFile = false;
 	var currentResType = "public";
 	var openResType;
+	var openFileId
 	var currentFile;
 	var openFiles = {}
 	
@@ -87,11 +87,45 @@
 		$("#deleteFile").prop("disabled",(fileTreeView.model.getSelectedFiles().length == 0 && fileTreeView.model.getSelectedFolders().length == 0));
 	}
 	
+	var nextId = 0;
+	function genTabId(){
+		var ret = "filetab_"+nextId
+		nextId += 1
+		return ret;
+	}
+	
 	function genFileId(filename,resType){
 		var tabId = resType+filename;
-		tabId = tabId.replace(/\//g,"_____");
-		tabId = tabId.replace(/\./g,"______");
 		return tabId;
+	}
+	
+	function closeTab(fileId){
+		if(openFileId == fileId){
+			editor = null;
+			$("#saveButton").prop("disabled",true);
+		}
+		openFiles[fileId].tab.remove()
+		openFiles[fileId].tabPane.remove();
+		delete openFiles[fileId];
+	}
+	
+	function tryToCloseTab(filename,resType){
+		var fileId = genFileId(filename,resType)
+		if(openFiles[fileId].editor.isModified()){
+			$("#notSaveChangesBtn").unbind().click(function(){
+				closeTab(fileId);
+			})
+			$("#saveChangesBtn").unbind().click(function(){
+				saveFile(filename,resType,openFiles[fileId].editor.getContent())
+				closeTab(fileId);
+			})
+			$("#saveChanges").modal("show")
+		}
+		else {
+			closeTab(fileId)
+		}
+		
+		
 	}
 	
 	function createTab(filename,resType){
@@ -102,36 +136,44 @@
 			icon = '<span class="glyphicon glyphicon-plus-sign"></span>'
 		else
 			icon = '<span class="glyphicon glyphicon-minus-sign"></span>'	
-		tab = $("<li><a class='btn btn-active' file='"+filename+"' restype='"+resType+"' role='tab' data-toggle='tab' href='#"+genFileId(filename,resType)+"'>"+icon+file+"</a></li>")
-		tabPane = $("<div class='tab-pane' id='"+genFileId(filename,resType)+"'></div>")
+		var closeButton = $('<button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>')
+		closeButton.click(function(e){
+			e.stopPropagation();
+			tryToCloseTab(filename,resType);
+		});
+		var tabId = genTabId();
+		tab = $("<li><a class='fileTab' file='"+filename+"' restype='"+resType+"' role='tab' data-toggle='tab' href='#"+tabId+"'>"+icon+file+"</a></li>")
+		$("a",tab).append(closeButton)
+		tabPane = $("<div class='tab-pane' id='"+tabId+"'></div>")
 		$("#tabs").prepend(tab);
 		autoCollapse();
 		$("#tabContents").append(tabPane);
-		var editor = new FileEditor(tabPane,700,500)
-		return editor;
-	}
-	
-	function newFileTab(filename,resType){
+		$("a",tab).tab("show")
+		var editorl = new FileEditor(tabPane,700,500)
 		var fileId = genFileId(filename,resType);
-		editor = createTab(filename,resType);
-		openFiles[fileId] = {};
-		openFiles[fileId].editor = editor;
+		openFiles[fileId] = {}
+		openFiles[fileId].editor = editorl
 		openFiles[fileId].resType = resType
+		openFiles[fileId].tab = $("a",tab)
+		openFiles[fileId].tabPane = tabPane
+		openResType = resType
+		editor = editorl
 		autoCollapse();
 	}
+	
 	
 	function openFile(filename,resType){
   		var fileId = genFileId(filename,resType);
   		if(fileId in openFiles){
   			editor = openFiles[fileId].editor;
   			openResType = openFiles[fileId].resType;
-  			$("a[href='#"+fileId+"']").tab("show")
+  			openFiles[fileId].tab.tab("show");
+  			openFileId = fileId
   		}
   		else{
-  			newFileTab(filename,resType);
-  			editor = openFiles[fileId].editor;
+  			createTab(filename,resType);
   			openResType = openFiles[fileId].resType;
-  			$("a[href='#"+fileId+"']").tab("show")
+  			openFileId = fileId;
 			$.ajax({
 	  			url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
 	  			type: "GET",
@@ -167,11 +209,11 @@
     	editor.markAsSaved()
     } 
 	
-    function saveFile(filename,content){
+    function saveFile(filename,resType,content){
     	if(filename[0] != "/")
     		filename = "/"+filename;
 	    $.ajax({
-	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ openResType + filename,
+	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/files/"+ resType + filename,
 	    	type: "PUT",
 	    	data: content,
 	    	success: function(response) {
@@ -242,6 +284,7 @@
     	$("#lastTab").on("shown.bs.tab",function(e){
     		li=$(e.target).parent()
     		$("#tabs").prepend(li);
+    		$("#saveButton").prop("disabled",false)
     		autoCollapse();
     	});
     	
@@ -277,7 +320,7 @@
             	ok=false;
             }
             if(ok){
-	            newFileTab(filename);
+	            createTab(filename,currentResType);
 	            editor.setFile(filename,"");
 	            newFile = true;
             }
@@ -304,7 +347,7 @@
             if(ok){
 	            folder = fileTreeView.model.createFolder(folder);
 	            $.ajax({
-	    	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ openResType + folder.getPath(),
+	    	    	url: "${fileStorageServiceBaseUrl}" + applicationId + "/folders/"+ currentResType + folder.getPath(),
 	    	    	type: "PUT"
 	    	    });
             }
@@ -373,7 +416,7 @@
         }); 
         
         $("#saveButton").click(function (){
-        	saveFile(editor.filename,editor.getContent());
+        	saveFile(editor.filename,openResType,editor.getContent());
         })
         
     });

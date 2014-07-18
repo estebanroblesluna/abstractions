@@ -144,11 +144,12 @@ public class GenericRepository {
 				.list();
 	}
 	
-	public void deleteFolder(long applicationId, String path){
+	public void deleteFolder(long applicationId, String resourceType, String path){
 	  this.getSessionFactory().getCurrentSession()
-	          .createSQLQuery("DELETE FROM resource WHERE application_id = ? AND path LIKE ?")
+	          .createSQLQuery("DELETE FROM resource WHERE application_id = ? AND type = ? AND path LIKE ?")
 	          .setLong(0, applicationId)
-	          .setString(1, path+'%')
+	          .setString(1, resourceType)
+	          .setString(2, path+'%')
 	          .executeUpdate();
 	}
 

@@ -189,7 +189,7 @@ public class DatabaseResourceService implements ResourceService {
 	@Override
 	@Transactional
 	public void deleteFolder(long applicationId, String path){
-	  this.repository.deleteFolder(applicationId, this.fixFolderPath(path));
+	  this.repository.deleteFolder(applicationId,this.resourceType, this.fixFolderPath(path));
 	}
 
 }
