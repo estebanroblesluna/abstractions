@@ -97,7 +97,12 @@
 	function createTab(filename,resType){
 		var file = $(filename.split("/"));
 		file = file[file.length-1];
-		tab = $("<li class='fileTab tab"+resType+"'><a file='"+filename+"' restype='"+resType+"' role='tab' data-toggle='tab' href='#"+genFileId(filename,resType)+"'>"+file+"</a></li>")
+		var icon
+		if(resType == "public")
+			icon = '<span class="glyphicon glyphicon-plus-sign"></span>'
+		else
+			icon = '<span class="glyphicon glyphicon-minus-sign"></span>'	
+		tab = $("<li><a class='btn btn-active' file='"+filename+"' restype='"+resType+"' role='tab' data-toggle='tab' href='#"+genFileId(filename,resType)+"'>"+icon+file+"</a></li>")
 		tabPane = $("<div class='tab-pane' id='"+genFileId(filename,resType)+"'></div>")
 		$("#tabs").prepend(tab);
 		autoCollapse();
@@ -382,10 +387,10 @@
       <label class="light">Resource Type:</label>
 	  <div class="btn-group" data-toggle="buttons">
 		  <button class="btn btn-primary active" id="publicResBtn">
-		    <input type="radio" name="resType" id="resPublic"> Public
+		    <input type="radio" name="resType" id="resPublic"><span class="glyphicon glyphicon-plus-sign"></span> Public
 		  </button>
 		  <button class="btn btn-danger" id="privateResBtn">
-		    <input type="radio" name="resType" id="resPrivate"> Private
+		    <input type="radio" name="resType" id="resPrivate"><span class="glyphicon glyphicon-minus-sign"></span> Private
 		  </button>
 	  </div>
       <form id="zipUploadForm" action="public/upload" method="POST" enctype="multipart/form-data">
