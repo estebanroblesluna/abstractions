@@ -29,7 +29,10 @@ public class TeamService {
 	public void addTeam(String name, long ownerID) {
 	  UserImpl user = this.repository.get(UserImpl.class, ownerID);
 		if (user != null) {
-			new Team(name, user);
+			Team team = new Team(name, user);
+			this.repository.save(team);
+			
+			team.addUser(user);
 			this.repository.save(user);
 		}
 	}

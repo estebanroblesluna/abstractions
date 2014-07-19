@@ -69,7 +69,7 @@ public class EmailService {
         		});
     }
 			 
-	public void sendRegistrationMail(User user) throws AddressException, MessagingException {	
+	public void sendRegistrationMail(User user, String token) throws AddressException, MessagingException {	
         final Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(username));
         message.setRecipients(Message.RecipientType.TO,
@@ -81,7 +81,7 @@ public class EmailService {
                 +"<br/>Username : <b>" + user.getUsername() +"</b>"+
                 "<br/>Full Name : <b>" + user.getFirstName() +" "+ user.getLastName() + "</b>"+
                 "<br/>Click the link to activate your account : <br>" +
-                "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + UserServiceImpl.generateConfirmationToken(user) +
+                "<a href='" + host + "register/confirm?username="+ user.getUsername() + "&token=" + token +
                 "'><b>Activate Account</b></a>"+
                 "<br/>*************************************** ", "text/html" );
         

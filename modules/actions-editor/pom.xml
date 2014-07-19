@@ -20,6 +20,8 @@
     <jetty.port>9091</jetty.port>
     <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
     <project.build.sourceEncoding>US-ASCII</project.build.sourceEncoding>
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
   </properties>
 
   <dependencies>
@@ -201,6 +203,12 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

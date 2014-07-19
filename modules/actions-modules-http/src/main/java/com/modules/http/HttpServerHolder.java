@@ -22,15 +22,17 @@ public class HttpServerHolder {
 	private static Integer DEV_PORT = 9090;
 	private static Environment ENVIRONMENT = Environment.DEV;
 	private static String DNS_RESOLVER = "";
+	private static boolean IS_LOCAL = true;
 	
 	private static Log log = LogFactory.getLog(HttpServerHolder.class);
 	private static HttpServerHolder INSTANCE;
 	
 	
-	public static Boolean initialize(Integer devPort, Environment env, String dnsResolver) {
+	public static Boolean initialize(Integer devPort, Environment env, String dnsResolver, boolean isLocal) {
 		DEV_PORT = devPort;
 		ENVIRONMENT = env;
 		DNS_RESOLVER = dnsResolver;
+		IS_LOCAL = isLocal;
 		return true;
 	}
 	
@@ -131,7 +133,7 @@ public class HttpServerHolder {
 	
 	public String getTestUrl(HttpMessageSource httpMessageSource) {
 		try {
-			String serverName = this.isDev() ? "localhost" : this.getServerName();
+			String serverName = this.isDev() && IS_LOCAL ? "localhost" : this.getServerName();
 			Integer port = this.isDev() ? DEV_PORT : httpMessageSource.getPort();
 			String extraParam = this.isDev() ? "/?" + HttpUtils.DEV_HTTP_PARAM + "=" + httpMessageSource.getId() : "";
 			

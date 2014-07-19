@@ -1,7 +1,5 @@
 package com.abstractions.meta;
 
-import org.apache.commons.lang.Validate;
-
 import com.abstractions.runtime.interpreter.Thread;
 
 public class ConnectorDefinition extends ElementDefinition {

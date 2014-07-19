@@ -120,6 +120,9 @@
                     </a>
                   </div>
                 </div>
+                <div class="row" style="margin-top:20px; color: #EEEEEE;">
+                  <p>Build ${buildNumber}</p>
+                </div>
             </div>
 
         </div>

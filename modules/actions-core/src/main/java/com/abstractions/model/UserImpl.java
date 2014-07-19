@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
 public class UserImpl implements User { 
   private static final long serialVersionUID = 1L;
   
-  private long id;
+  long id;
   private String firstName;
   private String lastName;
   private List<Team> teams;

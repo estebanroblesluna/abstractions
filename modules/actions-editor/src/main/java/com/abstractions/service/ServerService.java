@@ -19,6 +19,7 @@ import com.abstractions.model.ServerCommand;
 import com.abstractions.model.ServerCommandState;
 import com.abstractions.model.ServerGroup;
 import com.abstractions.model.ServerStats;
+import com.abstractions.model.User;
 import com.abstractions.repository.GenericRepository;
 import com.abstractions.utils.IdGenerator;
 
@@ -148,4 +149,10 @@ public class ServerService {
 			log.warn("Command " + id + " doesn't belong to server " + serverId);
 		}
 	}
+
+  @SuppressWarnings("unchecked")
+  @Transactional
+  public List<Server> getServersOfUser(User currentUser) {
+    return this.repository.getServersOfUser(currentUser.getId());
+  }
 }
