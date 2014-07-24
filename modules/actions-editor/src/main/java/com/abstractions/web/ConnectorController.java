@@ -1,6 +1,7 @@
 package com.abstractions.web;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.abstractions.meta.ConnectorDefinition;
 import com.abstractions.service.ConnectorService;
 import com.abstractions.service.TeamService;
 
@@ -51,8 +53,10 @@ public class ConnectorController {
   public ModelAndView add(@PathVariable("teamId") long teamId) {
     ModelAndView mv = new ModelAndView("addConnector");
     String teamName = this.teamService.getTeam(teamId).getName();
+    List<ConnectorDefinition> connectors = this.service.getConnectorDefinitions();
     mv.addObject("teamName", teamName);
     mv.addObject("teamId", teamId);
+    mv.addObject("connectors", connectors);
     return mv;
   }
 

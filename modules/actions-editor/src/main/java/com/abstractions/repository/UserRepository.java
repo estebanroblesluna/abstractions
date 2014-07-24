@@ -23,8 +23,7 @@ public class UserRepository extends GenericRepository {
 
   public User getUserByUsernameWithAuthorities(String username) {
     String query = "from UserImpl as user " + 
-                   "inner join fetch user.authorities as auth " + 
-                   "where username = :username";
+                   "where user.username = :username";
     Query q = this.getSessionFactory().getCurrentSession().createQuery(query);
     q.setString("username", username);
     return (User) q.uniqueResult();

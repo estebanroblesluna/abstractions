@@ -8,6 +8,7 @@ import org.jsoup.helper.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.abstractions.meta.ConnectorDefinition;
 import com.abstractions.model.Application;
 import com.abstractions.model.Connector;
 import com.abstractions.model.Team;
@@ -38,6 +39,11 @@ public class ConnectorService {
     this.developmentEnvironmentService = developmentEnvironmentService;
   }
 
+  @Transactional
+  public List<ConnectorDefinition> getConnectorDefinitions() {
+    return this.repository.get(ConnectorDefinition.class, "name");
+  }
+  
   @Transactional
   public Connector addConnector(long teamId, String name, String type, Map<String, String> configurations) {
     Team team = this.teamService.getTeam(teamId);

@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -166,6 +165,13 @@ public class GenericRepository {
             .createQuery("SELECT p FROM Application app INNER JOIN app.properties as p WHERE app.id = :applicationId AND p.environment = :environment")
             .setString("environment", environment.toString())
             .setLong("applicationId", applicationId)
+            .list();
+  }
+
+  public List getServersOfUser(Long userId) {
+    return this.getSessionFactory().getCurrentSession()
+            .createQuery("SELECT DISTINCT s FROM UserImpl u INNER JOIN u.teams as t INNER JOIN t.serverGroups as sg INNER JOIN sg.servers as s WHERE u.id = :userId ORDER BY s.name")
+            .setLong("userId", userId)
             .list();
   }
 }

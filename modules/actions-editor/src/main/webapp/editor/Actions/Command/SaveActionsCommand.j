@@ -47,7 +47,7 @@
 	}
 	
 	var jsonAsString = JSON.stringify(json);
-	var saveUrl = $.url().param('saveUrl');
+	var saveUrl = [Actions saveUrl];
 	
 	CPLog.debug("Saving context " + contextId);
 	
@@ -62,6 +62,8 @@
 	        [newAlert setAlertStyle: CPInformationalAlertStyle];
 	        [newAlert setTitle: @"Message"];
 	        [newAlert runModal];
+	        var flowId = response.flowId;
+	        [Actions adjustSaveUrl: flowId]
         },
         error: function() {
 	        var newAlert = [CPAlert alertWithError: @"Error saving"];

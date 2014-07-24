@@ -24,6 +24,8 @@
               <div class="col-lg-10">
                 <input type="text" class="form-control" id="inputServerGroupName" name="name" placeholder="">
               </div>
+            </div>
+            <div class="form-group">
               <label for="inputServerGroupEnvironment" class="col-lg-2 control-label">Server group Environment</label>
              
               <div class="col-lg-10">

@@ -95,6 +95,8 @@ echo -e "${yellow}Executing add-snapshot-connector.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/add-snapshot-connector.sql
 echo -e "${yellow}Executing remove-user-fk.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/remove-user-fk.sql
+echo -e "${yellow}Executing change-authority.sql${reset}";
+mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/migration/0.3/change-authority.sql
 
 echo -e "${green}Done recreating schema!${reset}";
 
@@ -108,5 +110,8 @@ echo -e "${yellow}Executing delete-extra-flow-in-lifia-site.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/delete-extra-flow-in-lifia-site.sql
 echo -e "${yellow}Executing abstractions.sql${reset}";
 mysql -h $HOST -u $USER $PASS $DATABASE < $BASEDIR/data/abstractions.sql
+
+
+
 
 echo -e "${green}DONE Adding some data${reset}";

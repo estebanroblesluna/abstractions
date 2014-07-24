@@ -11,8 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.abstractions.model.Team;
 import com.abstractions.service.TeamService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.abstractions.service.UserService;
 
 @Controller
 @RequestMapping("/teams")
@@ -21,11 +20,14 @@ public class TeamController {
 	@Autowired
 	TeamService service;
 
+	@Autowired
+	UserService userService;
+
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView list() {
 		ModelAndView mv = new ModelAndView("teams");
 
-		List<Team> teams = this.service.getTeamsOf(WebUser.getCurrentUserId());
+		List<Team> teams = this.service.getTeamsOf(this.userService.getCurrentUser().getId());
 		mv.addObject("teams", teams);
 
 		return mv; 
@@ -38,7 +40,7 @@ public class TeamController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String addTeam(@ModelAttribute("form") AddTeamForm form) {
-		this.service.addTeam(form.getName(), WebUser.getCurrentUserId());
+		this.service.addTeam(form.getName(), this.userService.getCurrentUser().getId());
 		return "redirect:/teams/";
 	}
 }

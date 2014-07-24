@@ -239,7 +239,7 @@
       <key column="team_id" />
       <one-to-many class="com.abstractions.model.ServerGroup" />
     </bag>
-    <bag name="users" table="user_team" inverse="false" lazy="true" fetch="select" cascade="all" access="field">
+    <bag name="users" table="user_team" inverse="true">
       <key column="team_id" />
       <many-to-many class="com.abstractions.model.UserImpl" column="user_id" />
     </bag>
@@ -253,20 +253,21 @@
   </class>	
 	
   <class name="com.abstractions.model.UserImpl" table="users">
-    <id name="id" type="long" column="user_id" access="field">
+    <id name="id" type="long" column="user_id">
       <generator class="native" />
     </id>
+
     <property name="firstName" column="first_name" type="string" />
     <property name="lastName" column="last_name" type="string" />
     <property name="username" column="username" type="string" unique="true" />
     <property name="email" column="email" type="string" unique="true"/>
-    <property name="creationDate" column="creationDate" type="date" />
+    <property name="creationDate" column="creationDate" type="java.util.Date" />
     <property name="confirmed" column="confirmed"/>
     <property name="enabled" column="enabled"/>
 	<property name="password" column="password" type="string" />
 	
-    <bag name="authorities" table="authorities" inverse="true" lazy="false">
-      <key column="auth_id" not-null="true"/>
+    <bag name="authorities" table="authorities" lazy="false" cascade="all">
+      <key column="user_id"/>
       <one-to-many class="com.abstractions.model.Authority"/>
     </bag>   
     

@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <jsp:include page="/WEB-INF/jsp/header.jsp">
   <jsp:param name="title" value="Add connector"/>
 </jsp:include>
@@ -37,7 +39,11 @@
             <div class="form-group">
               <label for="inputConnectorType" class="col-lg-2 control-label">Connector type</label>
               <div class="col-lg-10">
-                <input type="text" class="form-control" id="inputConnectorType" name="type" placeholder="Connector type...">
+                <select class="form-control" id="inputConnectorType" name="type">
+                  <c:forEach var="connector" items="${connectors}">
+                    <option>${connector.name}</option>
+                  </c:forEach>
+                </select>
               </div>
             </div>
 
