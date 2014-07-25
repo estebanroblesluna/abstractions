@@ -77,3 +77,24 @@ html, body, .container, #editor-container {
 .light{
 	color: #D0D0D0;
 }
+
+
+#collapsed .fileTab:hover .tabClose{
+	visibility: collapse;
+	display: none;
+}
+
+#collapsed  .tabClose{
+	visibility: collapse;
+	display: none;
+}
+
+.fileTab:hover .tabClose{
+	visibility: visible;
+}
+
+
+
+.tabClose {
+	visibility: hidden;
+}

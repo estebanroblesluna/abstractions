@@ -107,6 +107,7 @@
 		openFiles[fileId].tab.remove()
 		openFiles[fileId].tabPane.remove();
 		delete openFiles[fileId];
+		autoCollapse();
 	}
 	
 	function tryToCloseTab(filename,resType){
@@ -136,7 +137,7 @@
 			icon = '<span class="glyphicon glyphicon-plus-sign"></span>'
 		else
 			icon = '<span class="glyphicon glyphicon-minus-sign"></span>'	
-		var closeButton = $('<button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>')
+		var closeButton = $('<button type="button" class=" tabClose close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>')
 		closeButton.click(function(e){
 			e.stopPropagation();
 			tryToCloseTab(filename,resType);
